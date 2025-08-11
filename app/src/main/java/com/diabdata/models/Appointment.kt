@@ -1,0 +1,14 @@
+package com.diabdata.models
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import java.time.LocalDate
+
+@Entity(tableName = "appointments")
+data class Appointment (
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val date: LocalDate,
+    val doctor: String?,
+    val notes: String?
+)
