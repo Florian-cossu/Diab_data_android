@@ -1,4 +1,5 @@
 package com.diabdata.ui
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -50,7 +51,13 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            val hasData = weightEntries.isNotEmpty() || hba1cEntries.isNotEmpty() || appointments.isNotEmpty() || treatments.isNotEmpty()
+            val hasData = listOf(
+                weightEntries,
+                hba1cEntries,
+                appointments,
+                treatments,
+                diagnosisDates
+            ).any { it.isNotEmpty() }
 
             if (hasData) {
                 LatestMeasurements(

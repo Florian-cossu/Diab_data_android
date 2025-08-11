@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.diabdata.models.DiagnosisDate
@@ -27,73 +28,98 @@ import java.time.format.DateTimeFormatter
 @SuppressLint("DefaultLocale")
 @Composable
 fun LatestMeasurements(
-    weightEntries: List<WeightEntry>,
-    hba1cEntries: List<HBA1CEntry>,
-    diagnosisEntries: List<DiagnosisDate>
+    weightEntries: List<WeightEntry> = emptyList(),
+    hba1cEntries: List<HBA1CEntry> = emptyList(),
+    diagnosisEntries: List<DiagnosisDate> = emptyList()
 ) {
-    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-    val latestWeight = weightEntries.maxByOrNull { it.date }
-    val latestHba1c = hba1cEntries.maxByOrNull { it.date }
-    val primaryColor = MaterialTheme.colorScheme.primary
-
     Column(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        if (diagnosisEntries.isNotEmpty()) {
-            Text(
-                text = "Dates importantes",
-                style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
-                color = MaterialTheme.colorScheme.surfaceTint
-            )
+        ImportantDatesList(diagnosisEntries)
+        LatestMeasures(weightEntries, hba1cEntries)
+    }
+}
 
-            diagnosisEntries.forEach { diagnosis ->
-                Surface(
-                    shape = MaterialTheme.shapes.medium,
-                    tonalElevation = 4.dp,
-                    modifier = Modifier.fillMaxWidth()
+@Composable
+fun ImportantDatesList(diagnosisEntries: List<DiagnosisDate>) {
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    val primaryColor = MaterialTheme.colorScheme.primary
+
+    if (diagnosisEntries.isEmpty()) {
+        return
+    }
+
+    Column {
+        Text(
+            text = "Dates importantes",
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
+            color = MaterialTheme.colorScheme.surfaceTint
+        )
+        Spacer(Modifier.height(8.dp))
+
+        diagnosisEntries.forEach { diagnosis ->
+            Surface(
+                shape = MaterialTheme.shapes.medium,
+                tonalElevation = 4.dp,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        SvgIcon(
-                            name = "diagnosis_icon_vector",
-                            modifier = Modifier.size(40.dp),
-                            color = primaryColor
+                    SvgIcon(
+                        name = "diagnosis_icon_vector",
+                        modifier = Modifier.size(40.dp),
+                        color = primaryColor
+                    )
+                    Spacer(Modifier.width(16.dp))
+                    Column {
+                        Text(
+                            text = diagnosis.diagnosis,
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                color = primaryColor,
+                                fontWeight = FontWeight.Bold
+                            )
                         )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column {
-                            Text(
-                                text = diagnosis.diagnosis,
-                                style = MaterialTheme.typography.titleLarge.copy(
-                                    color = primaryColor,
-                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                                )
-                            )
-                            Text(
-                                text = "Diagnostiqué le ${diagnosis.date.format(formatter)}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                        Text(
+                            text = "Diagnostiqué le ${diagnosis.date.format(formatter)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(18.dp))
+            Spacer(Modifier.height(8.dp))
         }
+    }
+}
 
+@Composable
+fun LatestMeasures(
+    weightEntries: List<WeightEntry>,
+    hba1cEntries: List<HBA1CEntry>
+) {
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    val primaryColor = MaterialTheme.colorScheme.primary
+
+    if (weightEntries.isEmpty() && hba1cEntries.isEmpty()) {
+        return
+    }
+
+    Column {
         Text(
             text = "Dernières mesures",
             style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
             color = MaterialTheme.colorScheme.surfaceTint
         )
+        Spacer(Modifier.height(8.dp))
 
-        latestWeight?.let { weight ->
+        weightEntries.maxByOrNull { it.date }?.let { weight ->
             Surface(
                 shape = MaterialTheme.shapes.medium,
                 tonalElevation = 4.dp,
@@ -110,13 +136,13 @@ fun LatestMeasurements(
                         modifier = Modifier.size(40.dp),
                         color = primaryColor
                     )
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(Modifier.width(16.dp))
                     Column {
                         Text(
                             text = String.format("%.2f kg", weight.weightKg),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 color = primaryColor,
-                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                fontWeight = FontWeight.Bold
                             )
                         )
                         Text(
@@ -127,9 +153,10 @@ fun LatestMeasurements(
                     }
                 }
             }
+            Spacer(Modifier.height(8.dp))
         }
 
-        latestHba1c?.let { hba1c ->
+        hba1cEntries.maxByOrNull { it.date }?.let { hba1c ->
             Surface(
                 shape = MaterialTheme.shapes.medium,
                 tonalElevation = 4.dp,
@@ -146,13 +173,13 @@ fun LatestMeasurements(
                         modifier = Modifier.size(40.dp),
                         color = primaryColor
                     )
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(Modifier.width(16.dp))
                     Column {
                         Text(
                             text = String.format("%.1f%%", hba1c.value),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 color = primaryColor,
-                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                fontWeight = FontWeight.Bold
                             )
                         )
                         Text(
