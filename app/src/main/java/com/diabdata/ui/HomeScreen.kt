@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
+import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
@@ -33,6 +34,7 @@ fun HomeScreen(
     hba1cEntries: List<HBA1CEntry>,
     appointments: List<Appointment>,
     treatments: List<Treatment>,
+    diagnosisDates: List<DiagnosisDate>,
     dataViewModel: DataViewModel
 ) {
     val (selectedType, setSelectedType) = remember { mutableStateOf<AddableType?>(null) }
@@ -53,7 +55,8 @@ fun HomeScreen(
             if (hasData) {
                 LatestMeasurements(
                     weightEntries = weightEntries,
-                    hba1cEntries = hba1cEntries
+                    hba1cEntries = hba1cEntries,
+                    diagnosisEntries = diagnosisDates,
                 )
             } else {
                 Box(

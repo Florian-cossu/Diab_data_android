@@ -48,6 +48,16 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                 }
             )
             DropdownMenuItem(
+                text = { Text("Date de diagnostic") },
+                onClick = {
+                    expanded = false
+                    onSelect(AddableType.DIAGNOSIS)
+                },
+                leadingIcon = {
+                    SvgIcon(name = "diagnosis_icon_vector", modifier = Modifier.size(24.dp))
+                }
+            )
+            DropdownMenuItem(
                 text = { Text("Traitement") },
                 onClick = {
                     expanded = false

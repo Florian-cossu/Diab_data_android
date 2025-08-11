@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
+import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
@@ -52,20 +53,6 @@ fun AddDataPopup(
     var field1 by remember { mutableStateOf("") }
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
     var notes by remember { mutableStateOf("") }
-
-    // Permission launcher
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = @androidx.annotation.RequiresPermission(android.Manifest.permission.POST_NOTIFICATIONS) { granted ->
-            if (granted) {
-                // Show notification after permission granted
-                val data = buildDataMap(type, field1, selectedDate, notes)
-                context.showNotification(data)
-            } else {
-                Toast.makeText(context, "Permission refusée", Toast.LENGTH_SHORT).show()
-            }
-        }
-    )
 
     Box(
         modifier = Modifier
@@ -104,6 +91,7 @@ fun AddDataPopup(
                                 AddableType.HBA1C -> "HBA1C (%)"
                                 AddableType.TREATMENT -> "Nom du traitement"
                                 AddableType.APPOINTMENT -> "Date / Heure"
+                                AddableType.DIAGNOSIS -> "Date de diagnostic"
                             }
                         )
                     },
@@ -154,6 +142,18 @@ fun AddDataPopup(
                                     )
                                 )
                             }
+                            AddableType.DIAGNOSIS -> {
+                                if (field1.isBlank()) {
+                                    Toast.makeText(context, "Bug d'ajout du diagnostic", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    dataViewModel.addDiagnosisDate(
+                                        DiagnosisDate(
+                                            date = date,
+                                            diagnosis = field1,
+                                        )
+                                    )
+                                }
+                            }
                             AddableType.APPOINTMENT -> {
                                 dataViewModel.addAppointment(
                                     Appointment(
@@ -164,9 +164,6 @@ fun AddDataPopup(
                                 )
                             }
                         }
-
-                        // Optionnel : notification
-                        context.showNotification(buildDataMap(type, field1, selectedDate, notes))
 
                         onDismiss()
                     }) {

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.WeightEntry
 import com.diabdata.ui.utils.SvgIcon
@@ -26,7 +28,8 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun LatestMeasurements(
     weightEntries: List<WeightEntry>,
-    hba1cEntries: List<HBA1CEntry>
+    hba1cEntries: List<HBA1CEntry>,
+    diagnosisEntries: List<DiagnosisDate>
 ) {
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val latestWeight = weightEntries.maxByOrNull { it.date }
@@ -39,6 +42,51 @@ fun LatestMeasurements(
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        if (diagnosisEntries.isNotEmpty()) {
+            Text(
+                text = "Dates importantes",
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
+                color = MaterialTheme.colorScheme.surfaceTint
+            )
+
+            diagnosisEntries.forEach { diagnosis ->
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    tonalElevation = 4.dp,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        SvgIcon(
+                            name = "diagnosis_icon_vector",
+                            modifier = Modifier.size(40.dp),
+                            color = primaryColor
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column {
+                            Text(
+                                text = diagnosis.diagnosis,
+                                style = MaterialTheme.typography.titleLarge.copy(
+                                    color = primaryColor,
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                )
+                            )
+                            Text(
+                                text = "Diagnostiqué le ${diagnosis.date.format(formatter)}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(18.dp))
+        }
+
         Text(
             text = "Dernières mesures",
             style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
@@ -72,7 +120,7 @@ fun LatestMeasurements(
                             )
                         )
                         Text(
-                            text = "Le ${weight.date.format(formatter)}",
+                            text = "Pesée réalisée le ${weight.date.format(formatter)}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -101,14 +149,14 @@ fun LatestMeasurements(
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
                         Text(
-                            text = String.format("%.1f %%", hba1c.value),
+                            text = String.format("%.1f%%", hba1c.value),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 color = primaryColor,
                                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                             )
                         )
                         Text(
-                            text = "Le ${hba1c.date.format(formatter)}",
+                            text = "HBA1C mesurée le ${hba1c.date.format(formatter)}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

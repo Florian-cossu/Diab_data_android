@@ -21,7 +21,8 @@ class MainActivity : ComponentActivity() {
             weightDao = db.weightDao(),
             hba1cDao = db.hba1cDao(),
             appointmentDao = db.appointmentDao(),
-            treatmentDao = db.treatmentDao()
+            treatmentDao = db.treatmentDao(),
+            diagnosisDao = db.diagnosisDao()
         )
 
         val factory = DataViewModelFactory(repository)

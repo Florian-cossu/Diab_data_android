@@ -9,18 +9,16 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://fcossu.chat-mockup.vercel.app/">
-    <img src="app/src/main/res/drawable/hba1c_icon_vector.xml" alt="Logo" width="80" height="80">
+  <a href="https://github.com/Florian-cossu/android_app">
+    <img src="resources/logo.svg" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Chat Mockup</h3>
+  <h3 align="center">Diab Data</h3>
   <p align="center">
-  <a href="https://chat-mockup-fcossu-dev.vercel.app/">Dev preview</a> 
-  &middot; 
-  <a href="https://chat-mockup-fcossu.vercel.app/">Production link</a>
+  <a href="https://github.com/Florian-cossu/android_app/releases">Releases</a>
   </p>
   <p align="center">
-    A small next JS project to let people create an anonymised conversation screenshot freely for illustration or quoting purpose.
+    An android app that lets you keep track of all diabetes related information that you may need to communicate on a regular basis.
   </p>
   <br/>
 </div>
@@ -49,16 +47,14 @@
 
 <!-- ![image](public/imgs/product_screenshot.png) -->
 
-proj pres
+This project was born from my habit of tracking my diabetes related information on a google sheets document which was a bit
+annoying on the long run. This app aims to let users add important dates and add their medical results to the app in order to
+have everything in the same place and easier to find and update.
 
 <table>
   <tr>
-    <td><img src="public/screenshots/large_preview.png" width="200"/></td>
-    <td><img src="public/screenshots/large_preview_2.png" width="200"/></td>
-    <td><img src="public/screenshots/large_preview_3.png" width="200"/></td>
-    <td><img src="public/screenshots/mobile_preview.png" width="200"/></td>
-    <td><img src="public/screenshots/mobile_preview_2.png" width="200"/></td>
-    <td><img src="public/screenshots/mobile_preview_3.png" width="200"/></td>
+    <td><img src="resources/screenshots/empty_homescreen_light.png" width="200"/></td>
+    <td><img src="resources/screenshots/filled_homescreen_light.png" width="200"/></td>
   </tr>
 </table>
 
@@ -68,8 +64,8 @@ proj pres
 
 This project is built using the following frameworks/libraries:
 
-[![Static Badge](https://img.shields.io/badge/Tailwind-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Static Badge](https://img.shields.io/badge/Next%20JS-000000?logo=nextdotjs)](https://nextjs.org/)
+[![Static Badge](https://img.shields.io/badge/Android%20Studio-3DDC84?logo=androidstudio&logoColor=white)](https://tailwindcss.com/)
+[![Static Badge](https://img.shields.io/badge/Google%20material%20font-4285F4?logo=googlefonts&logoColor=white)](https://fonts.google.com/icons?icon.size=24&icon.color=%235f6368&icon.query=date&icon.set=Material+Symbols&icon.style=Outlined)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -82,51 +78,18 @@ This project is built using the following frameworks/libraries:
 Clone repository
 
 ```bash
-git clone https://github.com/Florian-cossu/chat_mockup.git
+git clone https://github.com/Florian-cossu/android_app.git
 ```
 
-### Run project
-
-Make sure to install all the project dependancies:
-
-```bash
-pnpm install
-```
-
-Once you're done you can start the project from the project's directory:
-
-```bash
-pnpm dev
-```
+You can then open the project in Android Studio.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- PWA SECTION -->
 
-<!-- ### PWA
-
-This app is a PWA built with `next-pwa` (see [`app/manifest.json`](app/manifest.json)).
-
-> ⚠️ Important Notice
-> This app registers a **service worker** for PWA support. If you're switching projects or cloning
-> another repo on `localhost`, make sure to:
->
-> **Clear site data:**
-> Chrome DevTools → `Application` tab → `Clear storage` → Click "Clear site data"
->
-> **Unregister the service worker:**
-> DevTools → `Application` tab → `Service Workers` → Click "Unregister"
->
-> If you skip this, the browser might serve **stale cached content**, causing unexpected bugs. 
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
--->
-
-<!-- CONTRIBUTING -->
-
 ## Contributing
 
-When contributing to the Chat Mockup project, always start by creating a branch from the `dev` branch and once you are done with your contribution, push into remote `dev`.
+When contributing to the project, always start by creating a branch from the `dev` branch and once you are done with your contribution, push into remote `dev`.
 
 1. Find a name for your branch. The naming convention is as follows:
 
@@ -141,12 +104,12 @@ When contributing to the Chat Mockup project, always start by creating a branch 
 - **For example if Florian cossu is working on migrating the project to Next JS**
 
 ```
-FCOSSU-Screenshot
+FCOSSU-Database_migration
 ```
 
-2. Create your Feature Branch (`git checkout -b dev/FCOSSU-Nextjs_migration`)
+2. Create your Feature Branch (`git checkout -b dev/FCOSSU-Database_migration`)
 3. Commit your Changes (`git commit -m 'Add some new feature'`)
-4. Push to the **`dev`** Branch (`git push origin/dev dev/FCOSSU-Nextjs_migration`)
+4. Push to the **`dev`** Branch (`git push origin/dev dev/FCOSSU-Database_migration`)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -154,7 +117,7 @@ FCOSSU-Screenshot
 
 ## Roadmap
 
-See the [open issues](https://github.com/Florian-cossu/chat_mockup/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/Florian-cossu/android_app/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -176,6 +139,6 @@ Here is a list of some of the sources used for the readme creation:
 
 Florian Cossu - [Linkedin](https://www.linkedin.com/in/florian-cossu/) - florian.cossu@gmail.com - [Github](https://github.com/Florian-cossu)
 
-Project Link: [https://github.com/Florian-cossu/chat_mockup](https://github.com/Florian-cossu/chat_mockup)
+Project Link: [https://github.com/Florian-cossu/chat_mockup](https://github.com/Florian-cossu/android_app)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

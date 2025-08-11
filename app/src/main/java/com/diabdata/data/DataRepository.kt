@@ -1,10 +1,12 @@
 package com.diabdata.data
 
 import com.diabdata.dao.AppointmentDao
+import com.diabdata.dao.DiagnosisDateDao
 import com.diabdata.dao.HBA1CDao
 import com.diabdata.dao.TreatmentDao
 import com.diabdata.dao.WeightDao
 import com.diabdata.models.Appointment
+import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
@@ -13,7 +15,8 @@ class DataRepository(
     private val weightDao: WeightDao,
     private val hba1cDao: HBA1CDao,
     private val appointmentDao: AppointmentDao,
-    private val treatmentDao: TreatmentDao
+    private val treatmentDao: TreatmentDao,
+    private val diagnosisDao: DiagnosisDateDao,
 ) {
     // Weight
     suspend fun insertWeight(weightEntry: WeightEntry) = weightDao.insert(weightEntry)
@@ -30,4 +33,8 @@ class DataRepository(
     // Treatment
     suspend fun insertTreatment(treatment: Treatment) = treatmentDao.insert(treatment)
     suspend fun getAllTreatments(): List<Treatment> = treatmentDao.getAllTreatments()
+
+    // Diagnosis dates
+    suspend fun insertDiagnosisDate(diagnosisDate: DiagnosisDate) = diagnosisDao.insert(diagnosisDate)
+    suspend fun getAllDiagnosisDate(): List<DiagnosisDate> = diagnosisDao.getDiagnosisDates()
 }

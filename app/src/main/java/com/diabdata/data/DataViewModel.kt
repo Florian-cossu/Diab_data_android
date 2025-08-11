@@ -6,6 +6,7 @@ import com.diabdata.models.Appointment
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
+import com.diabdata.models.DiagnosisDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -28,6 +29,10 @@ class DataViewModel(private val repository: DataRepository) : ViewModel() {
     private val _treatments = MutableStateFlow<List<Treatment>>(emptyList())
     val treatments: StateFlow<List<Treatment>> = _treatments
 
+    // Diagnosis dates
+    private val _diagnosis = MutableStateFlow<List<DiagnosisDate>>(emptyList())
+    val diagnosis: StateFlow<List<DiagnosisDate>> = _diagnosis
+
     // Chargement général
     fun loadAllData() {
         viewModelScope.launch {
@@ -35,6 +40,7 @@ class DataViewModel(private val repository: DataRepository) : ViewModel() {
             _hba1cEntries.value = repository.getAllHba1c()
             _appointments.value = repository.getAllAppointments()
             _treatments.value = repository.getAllTreatments()
+            _diagnosis.value = repository.getAllDiagnosisDate()
         }
     }
 
@@ -67,6 +73,13 @@ class DataViewModel(private val repository: DataRepository) : ViewModel() {
         viewModelScope.launch {
             repository.insertTreatment(treatment)
             _treatments.value = repository.getAllTreatments()
+        }
+    }
+
+    fun addDiagnosisDate(diagnosisDate: DiagnosisDate) {
+        viewModelScope.launch {
+            repository.insertDiagnosisDate(diagnosisDate)
+            _diagnosis.value = repository.getAllDiagnosisDate()
         }
     }
 }
