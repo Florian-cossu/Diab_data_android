@@ -3,6 +3,9 @@ package com.diabdata
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModelProvider
 import com.diabdata.data.DataRepository
 import com.diabdata.data.DataViewModel
@@ -29,9 +32,18 @@ class MainActivity : ComponentActivity() {
 
         dataViewModel = ViewModelProvider(this, factory).get(DataViewModel::class.java)
 
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
-            DiabDataTheme {
-                App()
+            val darkTheme = isSystemInDarkTheme()
+
+            // Update status bar icon colors
+            val controller = WindowInsetsControllerCompat(window, window.decorView)
+            controller.isAppearanceLightStatusBars = !darkTheme
+            setContent {
+                DiabDataTheme {
+                    App()
+                }
             }
         }
     }
