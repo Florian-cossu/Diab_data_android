@@ -117,6 +117,7 @@ fun LatestMeasures(
             style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
             color = MaterialTheme.colorScheme.surfaceTint
         )
+
         Spacer(Modifier.height(8.dp))
 
         weightEntries.maxByOrNull { it.date }?.let { weight ->
