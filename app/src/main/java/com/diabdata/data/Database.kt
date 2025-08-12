@@ -38,6 +38,37 @@ abstract class DiabDataDatabase : RoomDatabase() {
     abstract fun treatmentDao(): TreatmentDao
     abstract fun diagnosisDao(): DiagnosisDateDao
 
+    fun getAllTableNames(): List<String> {
+        val db = openHelper.readableDatabase
+        val cursor = db.query(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name != 'room_master_table' AND name != 'android_metadata'"
+        )
+        val tables = mutableListOf<String>()
+        while (cursor.moveToNext()) {
+            val name = cursor.getString(0)
+            tables.add(name)
+        }
+        cursor.close()
+        return tables
+    }
+
+    fun clearAllDataAndReset() {
+        runInTransaction {
+            // Liste toutes les tables à purger
+            val tables = getAllTableNames()
+
+            // Suppression de tout le contenu + reset auto-incrément
+            tables.forEach { table ->
+                // Supprime toutes les lignes
+                openHelper.writableDatabase.execSQL("DELETE FROM $table")
+                // Réinitialise l'AUTOINCREMENT
+                openHelper.writableDatabase.execSQL("DELETE FROM sqlite_sequence WHERE name='$table'")
+            }
+        }
+        // VACUUM pour libérer l'espace
+        openHelper.writableDatabase.execSQL("VACUUM")
+    }
+
     companion object {
         @Volatile
         private var INSTANCE: DiabDataDatabase? = null

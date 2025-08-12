@@ -13,6 +13,7 @@ import com.diabdata.data.DataViewModelFactory
 import com.diabdata.data.DiabDataDatabase
 import com.diabdata.ui.theme.DiabDataTheme
 
+
 class MainActivity : ComponentActivity() {
     private lateinit var dataViewModel: DataViewModel
 
@@ -25,7 +26,8 @@ class MainActivity : ComponentActivity() {
             hba1cDao = db.hba1cDao(),
             appointmentDao = db.appointmentDao(),
             treatmentDao = db.treatmentDao(),
-            diagnosisDao = db.diagnosisDao()
+            diagnosisDao = db.diagnosisDao(),
+            database = db
         )
 
         val factory = DataViewModelFactory(repository)

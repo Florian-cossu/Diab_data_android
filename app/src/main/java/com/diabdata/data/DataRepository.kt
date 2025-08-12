@@ -17,6 +17,7 @@ class DataRepository(
     private val appointmentDao: AppointmentDao,
     private val treatmentDao: TreatmentDao,
     private val diagnosisDao: DiagnosisDateDao,
+    private val database: DiabDataDatabase,
 ) {
     // Weight
     suspend fun insertWeight(weightEntry: WeightEntry) = weightDao.insert(weightEntry)
@@ -37,4 +38,9 @@ class DataRepository(
     // Diagnosis dates
     suspend fun insertDiagnosisDate(diagnosisDate: DiagnosisDate) = diagnosisDao.insert(diagnosisDate)
     suspend fun getAllDiagnosisDate(): List<DiagnosisDate> = diagnosisDao.getDiagnosisDates()
+
+    // Purge database
+    suspend fun clearAllDataAndReset() {
+        database.clearAllDataAndReset()
+    }
 }

@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -17,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
@@ -27,7 +31,7 @@ import com.diabdata.models.WeightEntry
 import com.diabdata.ui.components.AddDataFab
 import com.diabdata.ui.components.AddDataPopup
 import com.diabdata.ui.components.LatestMeasurements
-import com.diabdata.ui.utils.SvgIcon
+import com.diabdata.utils.SvgIcon
 
 @Composable
 fun HomeScreen(
@@ -39,58 +43,62 @@ fun HomeScreen(
     dataViewModel: DataViewModel
 ) {
     val (selectedType, setSelectedType) = remember { mutableStateOf<AddableType?>(null) }
+    val scrollState = rememberScrollState()
 
     Scaffold(
         floatingActionButton = {
             AddDataFab(onSelect = setSelectedType)
         }
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            val hasData = listOf(
-                weightEntries,
-                hba1cEntries,
-                appointments,
-                treatments,
-                diagnosisDates
-            ).any { it.isNotEmpty() }
+        val hasData = listOf(
+            weightEntries,
+            hba1cEntries,
+            appointments,
+            treatments,
+            diagnosisDates
+        ).any { it.isNotEmpty() }
 
-            if (hasData) {
+        if (hasData) {
+            // Contenu scrollable (les données)
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .verticalScroll(scrollState)
+            ) {
                 LatestMeasurements(
                     weightEntries = weightEntries,
                     hba1cEntries = hba1cEntries,
                     diagnosisEntries = diagnosisDates,
                 )
-            } else {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+            }
+        } else {
+            // Message "No data" centré verticalement et horizontalement
+            Box(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.wrapContentWidth()
                 ) {
-                    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+                    SvgIcon(
+                        resId = (R.drawable.inbox_icon_vector),
+                        modifier = Modifier
+                            .width(LocalConfiguration.current.screenWidthDp.dp * 0.4f)
+                            .aspectRatio(1f),
+                        color = MaterialTheme.colorScheme.surfaceTint
+                    )
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.width(screenWidth)
-                    ) {
-                        SvgIcon(
-                            name = "inbox_icon_vector",
-                            modifier = Modifier
-                                .width(screenWidth * 0.4f)
-                                .aspectRatio(1f),
-                            color = MaterialTheme.colorScheme.surfaceTint
-                        )
-
-                        Text(
-                            text = "No data found",
-                            modifier = Modifier.padding(top = 16.dp),
-                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
-                            color = MaterialTheme.colorScheme.surfaceTint
-                        )
-                    }
+                    Text(
+                        text = "No data found",
+                        modifier = Modifier.padding(top = 16.dp),
+                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
+                        color = MaterialTheme.colorScheme.surfaceTint
+                    )
                 }
             }
         }

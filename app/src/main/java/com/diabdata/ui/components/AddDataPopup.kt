@@ -2,8 +2,6 @@ package com.diabdata.ui.components
 
 import DateSelector
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,7 +35,6 @@ import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
-import com.diabdata.ui.utils.showNotification
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -114,7 +111,7 @@ fun AddDataPopup(
                     TextButton(onClick = onDismiss) { Text("Annuler") }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(onClick = {
-                        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                        DateTimeFormatter.ofPattern("dd/MM/yyyy")
                         val date = selectedDate ?: LocalDate.now()
 
                         when (type) {

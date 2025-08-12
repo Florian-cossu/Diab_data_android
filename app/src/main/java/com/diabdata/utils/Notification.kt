@@ -1,15 +1,17 @@
-package com.diabdata.ui.utils
+package com.diabdata.utils
 
-import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
+import com.diabdata.R
 
-@RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-fun Context.showNotification(data: Map<String, String>) {
+
+fun Context.showNotification(
+    title: String,
+    content: String,
+    iconName: String? = null
+) {
     val channelId = "diabdata_channel"
 
     val channel = NotificationChannel(
@@ -19,17 +21,20 @@ fun Context.showNotification(data: Map<String, String>) {
     ).apply {
         description = "Notifications pour tests"
     }
+
     val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     manager.createNotificationChannel(channel)
 
-    val content = data.entries.joinToString("\n") { "${it.key}: ${it.value}" }
+    val iconResId = iconName?.let {
+        resources.getIdentifier(it, "drawable", packageName)
+    } ?: R.drawable.logo_icon_vector
 
     val builder = NotificationCompat.Builder(this, channelId)
-        .setSmallIcon(android.R.drawable.ic_dialog_info)
-        .setContentTitle("Données saisies")
+        .setSmallIcon(if (iconResId != 0) iconResId else R.drawable.logo_icon_vector)
+        .setContentTitle(title)
         .setContentText(content)
         .setStyle(NotificationCompat.BigTextStyle().bigText(content))
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
-    NotificationManagerCompat.from(this).notify(1, builder.build())
+    manager.notify(System.currentTimeMillis().toInt(), builder.build())
 }

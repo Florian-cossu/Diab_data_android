@@ -3,13 +3,18 @@ package com.diabdata.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.diabdata.models.Appointment
+import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
-import com.diabdata.models.DiagnosisDate
+import com.diabdata.utils.LocalDateAdapter
+import com.google.gson.GsonBuilder
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.time.LocalDate
 
 class DataViewModel(private val repository: DataRepository) : ViewModel() {
 
@@ -82,4 +87,50 @@ class DataViewModel(private val repository: DataRepository) : ViewModel() {
             _diagnosis.value = repository.getAllDiagnosisDate()
         }
     }
+
+    fun clearDatabase() = viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+            repository.clearAllDataAndReset()
+        }
+        loadAllData()
+    }
+
+    fun exportDataAsJsonString(): String {
+        val gson = GsonBuilder()
+            .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
+            .setPrettyPrinting()
+            .create()
+
+        val exportData = ExportData(
+            weights = weights.value,
+            hba1c = hba1cEntries.value,
+            appointments = appointments.value,
+            treatments = treatments.value,
+            diagnosisDates = diagnosis.value
+        )
+
+        return gson.toJson(exportData)
+    }
+
+
+    fun importDataFromJsonString(json: String) {
+        val gson = GsonBuilder()
+            .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
+            .create()
+
+        val importedData: ExportData = gson.fromJson(json, ExportData::class.java)
+
+        viewModelScope.launch {
+            // Insère chaque élément dans la base
+            importedData.weights.forEach { repository.insertWeight(it) }
+            importedData.hba1c.forEach { repository.insertHba1c(it) }
+            importedData.appointments.forEach { repository.insertAppointment(it) }
+            importedData.treatments.forEach { repository.insertTreatment(it) }
+            importedData.diagnosisDates.forEach { repository.insertDiagnosisDate(it) }
+
+            // Recharge les données pour mettre à jour les StateFlow
+            loadAllData()
+        }
+    }
+
 }

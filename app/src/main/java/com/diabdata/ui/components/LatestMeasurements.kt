@@ -19,10 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.diabdata.R
 import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.WeightEntry
-import com.diabdata.ui.utils.SvgIcon
+import com.diabdata.utils.SvgIcon
 import java.time.format.DateTimeFormatter
 
 @SuppressLint("DefaultLocale")
@@ -73,7 +74,7 @@ fun ImportantDatesList(diagnosisEntries: List<DiagnosisDate>) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     SvgIcon(
-                        name = "diagnosis_icon_vector",
+                        resId = (R.drawable.diagnosis_icon_vector),
                         modifier = Modifier.size(40.dp),
                         color = primaryColor
                     )
@@ -133,7 +134,7 @@ fun LatestMeasures(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     SvgIcon(
-                        name = "weight_icon_vector",
+                        resId = (R.drawable.weight_icon_vector),
                         modifier = Modifier.size(40.dp),
                         color = primaryColor
                     )
@@ -170,7 +171,7 @@ fun LatestMeasures(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     SvgIcon(
-                        name = "hba1c_icon_vector",
+                        resId = (R.drawable.hba1c_icon_vector),
                         modifier = Modifier.size(40.dp),
                         color = primaryColor
                     )

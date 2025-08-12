@@ -20,7 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,17 +31,30 @@ import com.diabdata.data.DataViewModelFactory
 import com.diabdata.data.DiabDataDatabase
 import com.diabdata.ui.HomeScreen
 import com.diabdata.ui.SettingsScreen
+import com.diabdata.utils.RequestNotificationPermission
 
 @Composable
 fun App() {
     val context = LocalContext.current
+
+    RequestNotificationPermission(
+        context = context,
+        onPermissionGranted = {
+            println("Permission notification accordée ✅")
+        },
+        onPermissionDenied = {
+            println("Permission notification refusée ❌")
+        }
+    )
+
     val db = DiabDataDatabase.getDatabase(context)
     val repository = DataRepository(
         db.weightDao(),
         db.hba1cDao(),
         db.appointmentDao(),
         db.treatmentDao(),
-        db.diagnosisDao()
+        db.diagnosisDao(),
+        db
     )
     val factory = DataViewModelFactory(repository)
     val dataViewModel: DataViewModel = androidx.lifecycle.viewmodel.compose.viewModel(factory = factory)
@@ -56,7 +69,7 @@ fun App() {
         dataViewModel.loadAllData()
     }
 
-    var selectedTab by remember { mutableStateOf("home") }
+    var selectedTab by rememberSaveable { mutableStateOf("home") }
 
     Scaffold(
         bottomBar = {
@@ -105,7 +118,9 @@ fun App() {
                     diagnosisDates = diagnosisDate.value,
                     dataViewModel = dataViewModel
                 )
-                "settings" -> SettingsScreen()
+                "settings" -> SettingsScreen(
+                    dataViewModel = dataViewModel
+                )
             }
         }
     }

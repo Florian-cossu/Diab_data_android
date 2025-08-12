@@ -15,8 +15,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.diabdata.R
 import com.diabdata.models.AddableType
-import com.diabdata.ui.utils.SvgIcon
+import com.diabdata.utils.SvgIcon
 
 @Composable
 fun AddDataFab(onSelect: (AddableType) -> Unit) {
@@ -34,7 +35,10 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                     onSelect(AddableType.WEIGHT)
                 },
                 leadingIcon = {
-                    SvgIcon(name = "weight_add_icon_vector", modifier = Modifier.size(24.dp))
+                    SvgIcon(
+                        resId = (R.drawable.weight_add_icon_vector),
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
             )
             DropdownMenuItem(
@@ -44,7 +48,10 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                     onSelect(AddableType.HBA1C)
                 },
                 leadingIcon = {
-                    SvgIcon(name = "hba1c_edit_icon_vector", modifier = Modifier.size(24.dp))
+                    SvgIcon(
+                        resId = (R.drawable.hba1c_edit_icon_vector),
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
             )
             DropdownMenuItem(
@@ -54,7 +61,10 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                     onSelect(AddableType.DIAGNOSIS)
                 },
                 leadingIcon = {
-                    SvgIcon(name = "diagnosis_icon_vector", modifier = Modifier.size(24.dp))
+                    SvgIcon(
+                        resId = (R.drawable.diagnosis_icon_vector),
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
             )
             DropdownMenuItem(
@@ -64,7 +74,10 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                     onSelect(AddableType.TREATMENT)
                 },
                 leadingIcon = {
-                    SvgIcon(name = "medication_icon_vector", modifier = Modifier.size(24.dp))
+                    SvgIcon(
+                        resId = (R.drawable.medication_icon_vector),
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
             )
             DropdownMenuItem(
@@ -74,7 +87,10 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                     onSelect(AddableType.APPOINTMENT)
                 },
                 leadingIcon = {
-                    SvgIcon(name = "event_add_icon_vector", modifier = Modifier.size(24.dp))
+                    SvgIcon(
+                        resId = (R.drawable.event_add_icon_vector),
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
             )
         }
