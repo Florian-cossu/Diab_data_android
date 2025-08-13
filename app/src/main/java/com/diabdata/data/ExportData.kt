@@ -7,9 +7,9 @@ import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
 
 data class ExportData(
-    val weights: List<WeightEntry>,
-    val hba1c: List<HBA1CEntry>,
-    val appointments: List<Appointment>,
-    val treatments: List<Treatment>,
-    val diagnosisDates: List<DiagnosisDate>
+    val weights: List<WeightEntry> = emptyList(),
+    val hba1c: List<HBA1CEntry> = emptyList(),
+    val appointments: List<Appointment> = emptyList(),
+    val treatments: List<Treatment> = emptyList(),
+    val diagnosisDates: List<DiagnosisDate> = emptyList()
 )

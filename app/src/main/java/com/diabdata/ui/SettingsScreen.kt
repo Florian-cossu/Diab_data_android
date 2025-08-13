@@ -147,7 +147,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                             bottomStart = 3.dp,
                             bottomEnd = 3.dp
                         ),
-                        icon = "backup_db_vector"
+                        icon = "backup_db_icon_vector"
                     )
                     Spacer(modifier = Modifier.height(3.dp))
                     SettingsButton(
@@ -156,7 +156,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                             importFileLauncher.launch(arrayOf("application/json"))
                         },
                         shape = RoundedCornerShape(3.dp),
-                        icon = "restore_db_vector"
+                        icon = "restore_db_icon_vector"
                     )
                     Spacer(modifier = Modifier.height(3.dp))
                     SettingsButton(
@@ -171,9 +171,33 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                             bottomEnd = 16.dp
                         ),
                         isDestructive = true,
-                        icon = "purge_db_vector"
+                        icon = "purge_db_icon_vector"
                     )
                 }
+            }
+
+            Spacer(Modifier.height(32.dp))
+
+            Text(
+                text = "Application",
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
+                color = MaterialTheme.colorScheme.surfaceTint
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            Column {
+                SettingsButton(
+                    text = "Version 1.0",
+                    onClick = { },
+                    shape = RoundedCornerShape(
+                        topStart = 16.dp,
+                        topEnd = 16.dp,
+                        bottomStart = 16.dp,
+                        bottomEnd = 16.dp
+                    ),
+                    icon = "app_version_icon_vector"
+                )
             }
         }
     }
@@ -215,7 +239,6 @@ fun SettingsButton(
 ) {
     val context = LocalContext.current
 
-    // Surface pour l'élévation + fond
     Surface(
         shape = shape,
         tonalElevation = 4.dp, // Tonal elevation sur le bouton

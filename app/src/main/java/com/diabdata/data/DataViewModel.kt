@@ -121,16 +121,13 @@ class DataViewModel(private val repository: DataRepository) : ViewModel() {
         val importedData: ExportData = gson.fromJson(json, ExportData::class.java)
 
         viewModelScope.launch {
-            // Insère chaque élément dans la base
             importedData.weights.forEach { repository.insertWeight(it) }
             importedData.hba1c.forEach { repository.insertHba1c(it) }
             importedData.appointments.forEach { repository.insertAppointment(it) }
             importedData.treatments.forEach { repository.insertTreatment(it) }
             importedData.diagnosisDates.forEach { repository.insertDiagnosisDate(it) }
 
-            // Recharge les données pour mettre à jour les StateFlow
             loadAllData()
         }
     }
-
 }
