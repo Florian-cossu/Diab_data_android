@@ -10,9 +10,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -31,13 +36,14 @@ import androidx.compose.ui.unit.dp
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
+import com.diabdata.models.AppointmentType
 import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddDataPopup(
     type: AddableType,
@@ -50,6 +56,12 @@ fun AddDataPopup(
     var field1 by remember { mutableStateOf("") }
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
     var notes by remember { mutableStateOf("") }
+
+    // Déclare ces états UNE SEULE FOIS (pas dans le if)
+    val appointmentTypes =
+        remember { AppointmentType.entries } // ou AppointmentType.entries si dispo
+    var selectedType by remember { mutableStateOf(AppointmentType.APPOINTMENT) }
+    var expanded by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -72,7 +84,6 @@ fun AddDataPopup(
             ) {
                 Text("Ajouter une entrée pour $type")
 
-                // Fields
                 DateSelector(
                     initialDate = LocalDate.now(),
                     onDateSelected = { selectedDate = it }
@@ -87,8 +98,8 @@ fun AddDataPopup(
                                 AddableType.WEIGHT -> "Poids (kg)"
                                 AddableType.HBA1C -> "HBA1C (%)"
                                 AddableType.TREATMENT -> "Nom du traitement"
-                                AddableType.APPOINTMENT -> "Date / Heure"
-                                AddableType.DIAGNOSIS -> "Date de diagnostic"
+                                AddableType.APPOINTMENT -> "Nom du praticien"
+                                AddableType.DIAGNOSIS -> "Affection diagnostiquée"
                             }
                         )
                     },
@@ -96,6 +107,39 @@ fun AddDataPopup(
                 )
 
                 if (type == AddableType.APPOINTMENT) {
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded }
+                    ) {
+                        OutlinedTextField(
+                            value = selectedType.displayName,   // <-- nécessite enum avec displayName
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text("Type de RDV") },
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+                            modifier = Modifier
+                                .menuAnchor()                    // <-- important !
+                                .fillMaxWidth()
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            appointmentTypes.forEach { typeOption ->
+                                DropdownMenuItem(
+                                    text = { Text(typeOption.displayName) },
+                                    onClick = {
+                                        selectedType = typeOption
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(Modifier.height(8.dp))
+
                     OutlinedTextField(
                         value = notes,
                         onValueChange = { notes = it },
@@ -109,15 +153,14 @@ fun AddDataPopup(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     TextButton(onClick = onDismiss) { Text("Annuler") }
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(Modifier.width(8.dp))
                     Button(onClick = {
-                        DateTimeFormatter.ofPattern("dd/MM/yyyy")
                         val date = selectedDate ?: LocalDate.now()
 
                         when (type) {
                             AddableType.WEIGHT -> {
                                 val weight = field1.replace(',', '.').toDoubleOrNull()
-                                if(weight != null) {
+                                if (weight != null) {
                                     dataViewModel.addWeight(WeightEntry(date = date, weightKg = weight))
                                 } else {
                                     Toast.makeText(context, "Poids invalide", Toast.LENGTH_SHORT).show()
@@ -125,7 +168,7 @@ fun AddDataPopup(
                             }
                             AddableType.HBA1C -> {
                                 val hba1c = field1.replace(',', '.').toFloatOrNull()
-                                if(hba1c != null) {
+                                if (hba1c != null) {
                                     dataViewModel.addHba1c(HBA1CEntry(date = date, value = hba1c))
                                 } else {
                                     Toast.makeText(context, "HBA1C invalide", Toast.LENGTH_SHORT).show()
@@ -133,10 +176,7 @@ fun AddDataPopup(
                             }
                             AddableType.TREATMENT -> {
                                 dataViewModel.addTreatment(
-                                    Treatment(
-                                        expirationDate = date,
-                                        name = field1
-                                    )
+                                    Treatment(expirationDate = date, name = field1)
                                 )
                             }
                             AddableType.DIAGNOSIS -> {
@@ -144,10 +184,7 @@ fun AddDataPopup(
                                     Toast.makeText(context, "Bug d'ajout du diagnostic", Toast.LENGTH_SHORT).show()
                                 } else {
                                     dataViewModel.addDiagnosisDate(
-                                        DiagnosisDate(
-                                            date = date,
-                                            diagnosis = field1,
-                                        )
+                                        DiagnosisDate(date = date, diagnosis = field1)
                                     )
                                 }
                             }
@@ -155,7 +192,8 @@ fun AddDataPopup(
                                 dataViewModel.addAppointment(
                                     Appointment(
                                         date = date,
-                                        doctor = "",
+                                        doctor = field1,
+                                        type = selectedType,   // <-- l’état sélectionné ici fonctionne
                                         notes = notes
                                     )
                                 )
@@ -170,23 +208,4 @@ fun AddDataPopup(
             }
         }
     }
-}
-
-// Helper to build the map
-private fun buildDataMap(
-    type: AddableType,
-    field1: String,
-    selectedDate: LocalDate?,
-    notes: String
-): Map<String, String> {
-    val data = mutableMapOf<String, String>()
-    data["field1"] = field1
-    selectedDate?.let {
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        data["date"] = it.format(formatter)
-    }
-    if (type == AddableType.APPOINTMENT && notes.isNotBlank()) {
-        data["notes"] = notes
-    }
-    return data
 }

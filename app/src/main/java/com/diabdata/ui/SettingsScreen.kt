@@ -119,7 +119,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .padding(32.dp)
+                .padding(32.dp, 32.dp, 32.dp, 0.dp)
                 .background(Color.Transparent)
                 .verticalScroll(scrollState)
         ) {

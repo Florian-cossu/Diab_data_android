@@ -49,7 +49,7 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                 },
                 leadingIcon = {
                     SvgIcon(
-                        resId = (R.drawable.hba1c_edit_icon_vector),
+                        resId = (R.drawable.hba1c_add_icon_vector),
                         modifier = Modifier.size(24.dp)
                     )
                 }

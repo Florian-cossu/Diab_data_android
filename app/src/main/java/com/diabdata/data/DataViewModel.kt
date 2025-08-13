@@ -3,10 +3,12 @@ package com.diabdata.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.diabdata.models.Appointment
+import com.diabdata.models.AppointmentType
 import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
+import com.diabdata.utils.AppointmentTypeAdapter
 import com.diabdata.utils.LocalDateAdapter
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
@@ -116,6 +118,7 @@ class DataViewModel(private val repository: DataRepository) : ViewModel() {
     fun importDataFromJsonString(json: String) {
         val gson = GsonBuilder()
             .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
+            .registerTypeAdapter(AppointmentType::class.java, AppointmentTypeAdapter())
             .create()
 
         val importedData: ExportData = gson.fromJson(json, ExportData::class.java)

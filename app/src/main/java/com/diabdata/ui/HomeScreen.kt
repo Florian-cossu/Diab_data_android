@@ -64,13 +64,14 @@ fun HomeScreen(
                 modifier = Modifier
                     .padding(padding)
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(16.dp, 16.dp, 16.dp, 0.dp)
                     .verticalScroll(scrollState)
             ) {
                 LatestMeasurements(
                     weightEntries = weightEntries,
                     hba1cEntries = hba1cEntries,
                     diagnosisEntries = diagnosisDates,
+                    appointmentEntries = appointments
                 )
             }
         } else {

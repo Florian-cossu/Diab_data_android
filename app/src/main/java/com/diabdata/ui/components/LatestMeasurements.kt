@@ -26,18 +26,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.diabdata.R
+import com.diabdata.models.Appointment
 import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.WeightEntry
 import com.diabdata.utils.SvgIcon
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 @SuppressLint("DefaultLocale")
 @Composable
 fun LatestMeasurements(
     weightEntries: List<WeightEntry> = emptyList(),
     hba1cEntries: List<HBA1CEntry> = emptyList(),
-    diagnosisEntries: List<DiagnosisDate> = emptyList()
+    diagnosisEntries: List<DiagnosisDate> = emptyList(),
+    appointmentEntries: List<Appointment> = emptyList()
 ) {
     Column(
         modifier = Modifier
@@ -66,6 +70,8 @@ fun LatestMeasurements(
         ImportantDatesList(diagnosisEntries)
         Spacer(modifier = Modifier.height(8.dp))
         LatestMeasures(sources)
+        Spacer(modifier = Modifier.height(8.dp))
+        UpcomingAppointmentsList(appointmentEntries)
     }
 }
 
@@ -73,7 +79,7 @@ fun LatestMeasurements(
 fun ImportantDatesList(diagnosisEntries: List<DiagnosisDate>) {
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val primaryColor = MaterialTheme.colorScheme.primary
-
+    val today = LocalDate.now()
 
     Column(
         modifier = Modifier
@@ -89,6 +95,17 @@ fun ImportantDatesList(diagnosisEntries: List<DiagnosisDate>) {
         Spacer(Modifier.height(8.dp))
 
         diagnosisEntries.forEachIndexed { index, diagnosis ->
+            val years = ChronoUnit.YEARS.between(diagnosis.date, today)
+            val monthsTotal = ChronoUnit.MONTHS.between(diagnosis.date, today)
+            val remainingMonths = monthsTotal - years * 12
+
+            val elapsedText = when {
+                years == 0L && remainingMonths == 0L -> "Aujourd’hui"
+                years == 0L -> "$remainingMonths mois"
+                remainingMonths == 0L -> "$years an${if (years > 1) "s" else ""}"
+                else -> "$years an${if (years > 1) "s" else ""} et $remainingMonths mois"
+            }
+
             Surface(
                 shape = getItemShape(index, diagnosisEntries.size),
                 tonalElevation = 4.dp,
@@ -100,13 +117,18 @@ fun ImportantDatesList(diagnosisEntries: List<DiagnosisDate>) {
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    // Icône à gauche
                     SvgIcon(
                         resId = R.drawable.diagnosis_icon_vector,
                         modifier = Modifier.size(25.dp),
                         color = primaryColor
                     )
                     Spacer(Modifier.width(16.dp))
-                    Column {
+
+                    // Texte principal
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
                         Text(
                             text = diagnosis.diagnosis,
                             style = MaterialTheme.typography.titleMedium.copy(
@@ -120,9 +142,132 @@ fun ImportantDatesList(diagnosisEntries: List<DiagnosisDate>) {
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
+
+                    // Temps écoulé à droite
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        SvgIcon(
+                            resId = R.drawable.event_icon_vector,
+                            modifier = Modifier.size(15.dp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = elapsedText,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
+
             if (index != diagnosisEntries.size - 1) {
+                Spacer(modifier = Modifier.height(3.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun UpcomingAppointmentsList(appointments: List<Appointment>) {
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val today = LocalDate.now()
+
+    val upcomingAppointments = appointments.filter { it.date.isAfter(today) }
+        .sortedBy { it.date } // on trie du plus proche au plus lointain
+
+    if (upcomingAppointments.isEmpty()) return
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Transparent)
+    ) {
+        Text(
+            text = "Prochains rendez-vous",
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
+            color = MaterialTheme.colorScheme.surfaceTint
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        upcomingAppointments.forEachIndexed { index, appointment ->
+            val daysUntil = ChronoUnit.DAYS.between(today, appointment.date)
+            val monthsUntil = ChronoUnit.MONTHS.between(today, appointment.date)
+            val yearsUntil = ChronoUnit.YEARS.between(today, appointment.date)
+
+            val remainingText = when {
+                daysUntil == 0L -> "Aujourd’hui"
+                daysUntil in 1..6 -> "Dans $daysUntil jour${if (daysUntil > 1) "s" else ""}"
+                yearsUntil == 0L -> "Dans $monthsUntil mois"
+                else -> "Dans $yearsUntil an${if (yearsUntil > 1) "s" else ""}"
+            }
+
+            Surface(
+                shape = getItemShape(index, upcomingAppointments.size),
+                tonalElevation = 4.dp,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val iconResId = when (appointment.type.name) {
+                        "APPOINTMENT" -> R.drawable.stethoscope_icon_vector
+                        "ANNUAL_CHECKUP" -> R.drawable.recurring_event_icon_vector
+                        else -> R.drawable.event_icon_vector
+                    }
+
+                    SvgIcon(
+                        resId = iconResId,
+                        modifier = Modifier.size(25.dp),
+                        color = primaryColor
+                    )
+
+                    Spacer(Modifier.width(16.dp))
+
+                    // Texte principal
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = "${appointment.doctor} - (${appointment.type.displayName})",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                color = primaryColor,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                        Text(
+                            text = "Le ${appointment.date.format(formatter)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        SvgIcon(
+                            resId = R.drawable.hourglass_icon_vector,
+                            modifier = Modifier.size(15.dp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        // Temps restant à droite
+                        Text(
+                            text = remainingText,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+
+            if (index != upcomingAppointments.size - 1) {
                 Spacer(modifier = Modifier.height(3.dp))
             }
         }
