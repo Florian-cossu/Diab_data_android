@@ -57,7 +57,6 @@ fun AddDataPopup(
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
     var notes by remember { mutableStateOf("") }
 
-    // Déclare ces états UNE SEULE FOIS (pas dans le if)
     val appointmentTypes =
         remember { AppointmentType.entries } // ou AppointmentType.entries si dispo
     var selectedType by remember { mutableStateOf(AppointmentType.APPOINTMENT) }
