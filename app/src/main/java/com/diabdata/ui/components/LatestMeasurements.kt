@@ -45,7 +45,7 @@ fun LatestMeasurements(
 ) {
     Column(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(20.dp)
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -113,14 +113,14 @@ fun ImportantDatesList(diagnosisEntries: List<DiagnosisDate>) {
             ) {
                 Row(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(20.dp)
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Icône à gauche
                     SvgIcon(
                         resId = R.drawable.diagnosis_icon_vector,
-                        modifier = Modifier.size(25.dp),
+                        modifier = Modifier.size(26.dp),
                         color = primaryColor
                     )
                     Spacer(Modifier.width(16.dp))
@@ -212,7 +212,7 @@ fun UpcomingAppointmentsList(appointments: List<Appointment>) {
             ) {
                 Row(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(20.dp)
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -224,7 +224,7 @@ fun UpcomingAppointmentsList(appointments: List<Appointment>) {
 
                     SvgIcon(
                         resId = iconResId,
-                        modifier = Modifier.size(25.dp),
+                        modifier = Modifier.size(26.dp),
                         color = primaryColor
                     )
 
@@ -277,7 +277,8 @@ fun UpcomingAppointmentsList(appointments: List<Appointment>) {
 data class MeasureCardData(
     val titleText: String,
     val dateText: String,
-    @DrawableRes val icon: Int
+    @DrawableRes val icon: Int,
+    val trendIcon: Int? = null
 )
 
 data class MeasureSource<T>(
@@ -293,27 +294,62 @@ fun LatestMeasures(
     sources: List<MeasureSource<*>>
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
+    val today = LocalDate.now()
+    val oneYearAgo = today.minusYears(1)
 
     val cards = sources.mapNotNull { source ->
-        source.entries
-            .mapNotNull { entry ->
-                when (entry) {
-                    is WeightEntry -> entry to entry.date
-                    is HBA1CEntry -> entry to entry.date
-                    else -> null
+        // Dernière entrée toutes périodes confondues
+        val latestEntry = source.entries.maxByOrNull {
+            when (it) {
+                is WeightEntry -> it.date
+                is HBA1CEntry -> it.date
+                else -> LocalDate.MIN
+            }
+        } ?: return@mapNotNull null
+
+        // Entrées de l'année passée pour la tendance
+        val lastYearEntries = source.entries.filter { entry ->
+            when (entry) {
+                is WeightEntry -> entry.date.isAfter(oneYearAgo)
+                is HBA1CEntry -> entry.date.isAfter(oneYearAgo)
+                else -> false
+            }
+        }
+
+        val trendIcon = if (lastYearEntries.size >= 2) {
+            val sortedEntries = lastYearEntries.sortedBy {
+                when (it) {
+                    is WeightEntry -> it.date
+                    is HBA1CEntry -> it.date
+                    else -> LocalDate.MIN
                 }
             }
-            .maxByOrNull { it.second }
-            ?.first
-            ?.let { latest ->
-                @Suppress("UNCHECKED_CAST")
-                val typedSource = source as MeasureSource<Any>
-                MeasureCardData(
-                    titleText = typedSource.formatTitle(latest),
-                    dateText = typedSource.formatDate(latest),
-                    icon = typedSource.icon
-                )
+            val firstValue = when (val first = sortedEntries.first()) {
+                is WeightEntry -> first.weightKg
+                is HBA1CEntry -> first.value
+                else -> 0.0
             }
+            val lastValue = when (val last = sortedEntries.last()) {
+                is WeightEntry -> last.weightKg
+                is HBA1CEntry -> last.value
+                else -> 0.0
+            }
+
+            when {
+                lastValue.toDouble() > firstValue.toDouble() -> R.drawable.trending_up_icon_vector
+                lastValue.toDouble() < firstValue.toDouble() -> R.drawable.trending_down_icon_vector
+                else -> R.drawable.trending_flat_icon_vector
+            }
+        } else null
+
+        @Suppress("UNCHECKED_CAST")
+        val typedSource = source as MeasureSource<Any>
+        MeasureCardData(
+            titleText = typedSource.formatTitle(latestEntry),
+            dateText = typedSource.formatDate(latestEntry),
+            icon = typedSource.icon,
+            trendIcon = trendIcon
+        )
     }
 
     if (cards.isEmpty()) return
@@ -335,16 +371,18 @@ fun LatestMeasures(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(20.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     SvgIcon(
                         resId = card.icon,
-                        modifier = Modifier.size(25.dp),
+                        modifier = Modifier.size(26.dp),
                         color = primaryColor
                     )
                     Spacer(Modifier.width(16.dp))
-                    Column {
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
                         Text(
                             text = card.titleText,
                             style = MaterialTheme.typography.titleMedium.copy(
@@ -355,6 +393,14 @@ fun LatestMeasures(
                         Text(
                             text = card.dateText,
                             style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    // Icône de tendance si dispo
+                    card.trendIcon?.let { iconRes ->
+                        SvgIcon(
+                            resId = iconRes,
+                            modifier = Modifier.size(15.dp),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }

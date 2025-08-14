@@ -75,7 +75,7 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                 },
                 leadingIcon = {
                     SvgIcon(
-                        resId = (R.drawable.medication_icon_vector),
+                        resId = (R.drawable.medication_add_icon_vector),
                         modifier = Modifier.size(24.dp)
                     )
                 }

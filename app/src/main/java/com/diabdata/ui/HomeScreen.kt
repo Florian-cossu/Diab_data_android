@@ -95,7 +95,7 @@ fun HomeScreen(
                     )
 
                     Text(
-                        text = "No data found",
+                        text = "Aucune données",
                         modifier = Modifier.padding(top = 16.dp),
                         style = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
                         color = MaterialTheme.colorScheme.surfaceTint

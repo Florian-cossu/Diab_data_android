@@ -188,7 +188,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
 
             Column {
                 SettingsButton(
-                    text = "Version 1.0",
+                    text = "Version 1.5",
                     onClick = { },
                     shape = RoundedCornerShape(
                         topStart = 16.dp,
@@ -257,7 +257,7 @@ fun SettingsButton(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .padding(start = 15.dp, top = 10.dp, end = 10.dp, bottom = 10.dp),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -271,7 +271,7 @@ fun SettingsButton(
                             color = if (isDestructive) MaterialTheme.colorScheme.error
                             else MaterialTheme.colorScheme.onSurface
                         )
-                        Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(16.dp))
                     }
                 }
 
