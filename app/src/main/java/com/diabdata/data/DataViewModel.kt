@@ -90,6 +90,21 @@ class DataViewModel(private val repository: DataRepository) : ViewModel() {
         }
     }
 
+    fun deleteEntry(id: Int, tableName: String) {
+        val rowsDeleted: Int = repository.deleteEntry(id, tableName) // rowsDeleted is Int now
+        if (rowsDeleted > 0) {
+            when (tableName) {
+                "weight_entries" -> _weights.value = _weights.value.filter { it.id != id }
+                "hba1c_entries" -> _hba1cEntries.value = _hba1cEntries.value.filter { it.id != id }
+                "appointments" -> _appointments.value = _appointments.value.filter { it.id != id }
+                "treatments" -> _treatments.value = _treatments.value.filter { it.id != id }
+                "diagnosis_date_entries" -> _diagnosis.value =
+                    _diagnosis.value.filter { it.id != id }
+            }
+        }
+    }
+
+
     fun clearDatabase() = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             repository.clearAllDataAndReset()

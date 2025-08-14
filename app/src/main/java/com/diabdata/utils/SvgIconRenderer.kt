@@ -2,7 +2,6 @@ package com.diabdata.utils
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,13 +13,15 @@ import androidx.compose.ui.res.painterResource
 fun SvgIcon(
     @DrawableRes resId: Int,
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.onSurface
+    color: Color? = null,
+    contentDescription: String? = null
 ) {
     Image(
         painter = painterResource(id = resId),
-        contentDescription = null, // ou une description si besoin
+        contentDescription = contentDescription,
         modifier = modifier,
         contentScale = ContentScale.Fit,
-        colorFilter = ColorFilter.tint(color)
+        colorFilter = color?.let { ColorFilter.tint(it) }
     )
 }
+

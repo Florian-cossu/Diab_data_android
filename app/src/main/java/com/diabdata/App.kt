@@ -29,9 +29,11 @@ import com.diabdata.data.DataRepository
 import com.diabdata.data.DataViewModel
 import com.diabdata.data.DataViewModelFactory
 import com.diabdata.data.DiabDataDatabase
+import com.diabdata.ui.DatabaseEditionView
 import com.diabdata.ui.HomeScreen
 import com.diabdata.ui.SettingsScreen
 import com.diabdata.utils.RequestNotificationPermission
+import com.diabdata.utils.SvgIcon
 
 @Composable
 fun App() {
@@ -87,6 +89,27 @@ fun App() {
                     )
                 )
                 NavigationBarItem(
+                    icon = {
+                        SvgIcon(
+                            resId = R.drawable.database_filled_icon_vector,
+                            color = if (selectedTab == "data") {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            }
+                        )
+                    },
+                    label = { Text("Accueil") },
+                    selected = selectedTab == "data",
+                    onClick = { selectedTab = "data" },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                )
+                NavigationBarItem(
                     icon = { Icon(Icons.Filled.Settings, contentDescription = "Paramètres") },
                     label = { Text("Paramètres") },
                     selected = selectedTab == "settings",
@@ -116,6 +139,10 @@ fun App() {
                     appointments = appointments.value,
                     treatments = treatments.value,
                     diagnosisDates = diagnosisDate.value,
+                    dataViewModel = dataViewModel
+                )
+
+                "data" -> DatabaseEditionView(
                     dataViewModel = dataViewModel
                 )
                 "settings" -> SettingsScreen(

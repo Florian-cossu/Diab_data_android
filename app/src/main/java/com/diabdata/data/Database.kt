@@ -52,6 +52,11 @@ abstract class DiabDataDatabase : RoomDatabase() {
         return tables
     }
 
+    fun deleteEntry(id: Int, tableName: String): Int {
+        val db = openHelper.writableDatabase
+        return db.delete(tableName, "id = ?", arrayOf(id.toString()))
+    }
+
     fun clearAllDataAndReset() {
         runInTransaction {
             // Liste toutes les tables à purger

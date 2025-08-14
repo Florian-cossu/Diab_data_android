@@ -7,6 +7,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,7 +38,8 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                 leadingIcon = {
                     SvgIcon(
                         resId = (R.drawable.weight_add_icon_vector),
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             )
@@ -50,7 +52,8 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                 leadingIcon = {
                     SvgIcon(
                         resId = (R.drawable.hba1c_add_icon_vector),
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             )
@@ -63,7 +66,8 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                 leadingIcon = {
                     SvgIcon(
                         resId = (R.drawable.diagnosis_icon_vector),
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             )
@@ -76,7 +80,8 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                 leadingIcon = {
                     SvgIcon(
                         resId = (R.drawable.medication_add_icon_vector),
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             )
@@ -89,7 +94,8 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                 leadingIcon = {
                     SvgIcon(
                         resId = (R.drawable.event_add_icon_vector),
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             )

@@ -39,6 +39,10 @@ class DataRepository(
     suspend fun insertDiagnosisDate(diagnosisDate: DiagnosisDate) = diagnosisDao.insert(diagnosisDate)
     suspend fun getAllDiagnosisDate(): List<DiagnosisDate> = diagnosisDao.getDiagnosisDates()
 
+    fun deleteEntry(id: Int, tableName: String): Int {
+        return database.deleteEntry(id, tableName)
+    }
+
     // Purge database
     suspend fun clearAllDataAndReset() {
         database.clearAllDataAndReset()
