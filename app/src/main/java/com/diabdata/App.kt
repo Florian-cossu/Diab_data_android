@@ -99,7 +99,7 @@ fun App() {
                             }
                         )
                     },
-                    label = { Text("Accueil") },
+                    label = { Text("Données") },
                     selected = selectedTab == "data",
                     onClick = { selectedTab = "data" },
                     colors = NavigationBarItemDefaults.colors(

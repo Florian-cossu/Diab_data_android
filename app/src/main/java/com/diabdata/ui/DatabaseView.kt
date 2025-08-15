@@ -1,11 +1,20 @@
 package com.diabdata.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,12 +29,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -39,6 +53,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -53,6 +68,7 @@ import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
+import com.diabdata.ui.components.FlippableSelectionIcon
 import com.diabdata.ui.components.getItemShape
 import com.diabdata.utils.SvgIcon
 import kotlinx.coroutines.launch
@@ -95,6 +111,90 @@ fun DatabaseEditionView(
 
             Spacer(Modifier.height(8.dp))
 
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AnimatedVisibility(
+                    visible = selectionMode && selectedEntries.isNotEmpty(),
+                    enter = expandHorizontally() + fadeIn(),
+                    exit = shrinkHorizontally() + fadeOut()
+                ) {
+                    val interactionSource = remember { MutableInteractionSource() }
+                    val isPressed by interactionSource.collectIsPressedAsState()
+                    val isHovered by interactionSource.collectIsHoveredAsState()
+
+                    val bgColor = if (isPressed || isHovered) MaterialTheme.colorScheme.error
+                    else MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
+
+                    val textColor = if (isPressed || isHovered) MaterialTheme.colorScheme.onError
+                    else MaterialTheme.colorScheme.error
+
+                    val badgeColor = if (isPressed || isHovered) MaterialTheme.colorScheme.onError
+                    else MaterialTheme.colorScheme.error
+
+                    val badgeTextColor = if (isPressed || isHovered) MaterialTheme.colorScheme.error
+                    else MaterialTheme.colorScheme.onError
+
+                    Button(
+                        onClick = {
+                            selectedEntries.forEach {
+                                dataViewModel.deleteEntry(it.id, it.type.tableName)
+                            }
+                            selectedEntries = emptySet()
+                            selectionMode = false
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = bgColor,
+                            contentColor = textColor
+                        ),
+                        interactionSource = interactionSource
+                    ) {
+                        BadgedBox(
+                            badge = {
+                                Badge(containerColor = badgeColor) {
+                                    Text(selectedEntries.size.toString(), color = badgeTextColor)
+                                }
+                            }
+                        ) {
+                            SvgIcon(
+                                resId = R.drawable.delete_icon_vector,
+                                color = textColor
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Supprimer")
+                    }
+                }
+
+                if (!selectionMode && selectedEntries.isEmpty())
+                    Spacer(Modifier.width(8.dp))
+
+                IconButton(
+                    onClick = {
+                        val selectingAll = selectedEntries.size < allEntries.size
+                        selectedEntries = if (selectingAll) allEntries.toSet() else emptySet()
+                        selectionMode = selectingAll
+                    },
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                ) {
+                    SvgIcon(
+                        resId = if (selectedEntries.size < allEntries.size)
+                            R.drawable.select_all_icon_vector
+                        else
+                            R.drawable.deselect_all_icon_vector,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
             LazyColumn {
                 itemsIndexed(
                     filteredEntries,
@@ -107,6 +207,10 @@ fun DatabaseEditionView(
                         onClick = {
                             if (selectionMode) {
                                 selectedEntries = toggleEntrySelection(selectedEntries, entry)
+                                if (selectionMode && selectedEntries.isEmpty())
+                                    selectionMode = false
+                            } else {
+                                selectionMode = true
                             }
                         },
                         onLongPress = {
@@ -118,21 +222,6 @@ fun DatabaseEditionView(
                         }
                     )
                     Spacer(Modifier.height(4.dp))
-                }
-            }
-
-            if (selectionMode && selectedEntries.isNotEmpty()) {
-                Button(
-                    onClick = {
-                        selectedEntries.forEach {
-                            dataViewModel.deleteEntry(it.id, it.type.tableName)
-                        }
-                        selectedEntries = emptySet()
-                        selectionMode = false
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Supprimer ${selectedEntries.size} élément(s)")
                 }
             }
         }
@@ -195,6 +284,8 @@ fun EntryCardSwipeM3(
                 Text(entry.title, fontWeight = FontWeight.Bold)
                 Text(entry.subtitle, style = MaterialTheme.typography.bodySmall)
             }
+
+            FlippableSelectionIcon(isSelected)
         }
     }
 }
