@@ -188,7 +188,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
 
             Column {
                 SettingsButton(
-                    text = "Version 2.1",
+                    text = "Version 2.5",
                     onClick = { },
                     shape = RoundedCornerShape(
                         topStart = 16.dp,
