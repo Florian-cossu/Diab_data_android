@@ -45,9 +45,6 @@ fun HomeScreen(
     val (selectedType, setSelectedType) = remember { mutableStateOf<AddableType?>(null) }
     val scrollState = rememberScrollState()
 
-    val containerWidth = LocalWindowInfo.current.containerSize.width
-    val width = (containerWidth * 0.4f).dp
-
     Scaffold(
         floatingActionButton = {
             AddDataFab(onSelect = setSelectedType)
@@ -92,7 +89,7 @@ fun HomeScreen(
                     SvgIcon(
                         resId = (R.drawable.inbox_icon_vector),
                         modifier = Modifier
-                            .width(width)
+                            .width((LocalWindowInfo.current.containerSize.width * 0.15f).dp)
                             .aspectRatio(1f),
                         color = MaterialTheme.colorScheme.surfaceTint
                     )
