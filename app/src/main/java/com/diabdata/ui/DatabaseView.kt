@@ -69,8 +69,8 @@ import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
 import com.diabdata.ui.components.FlippableSelectionIcon
-import com.diabdata.ui.components.getItemShape
 import com.diabdata.utils.SvgIcon
+import com.diabdata.utils.getItemShape
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 

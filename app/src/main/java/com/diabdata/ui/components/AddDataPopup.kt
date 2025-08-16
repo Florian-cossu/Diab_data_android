@@ -10,14 +10,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -40,6 +36,7 @@ import com.diabdata.models.AppointmentType
 import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.Treatment
+import com.diabdata.models.TreatmentType
 import com.diabdata.models.WeightEntry
 import java.time.LocalDate
 
@@ -57,10 +54,10 @@ fun AddDataPopup(
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
     var notes by remember { mutableStateOf("") }
 
-    val appointmentTypes =
-        remember { AppointmentType.entries } // ou AppointmentType.entries si dispo
-    var selectedType by remember { mutableStateOf(AppointmentType.APPOINTMENT) }
-    var expanded by remember { mutableStateOf(false) }
+    remember { AppointmentType.entries }
+    remember { TreatmentType.entries }
+    var selectedAppointmentType by remember { mutableStateOf(AppointmentType.APPOINTMENT) }
+    var selectedTreatmentType by remember { mutableStateOf(TreatmentType.FAST_ACTING_RAPID_VIAL) }
 
     Box(
         modifier = Modifier
@@ -88,6 +85,30 @@ fun AddDataPopup(
                     onDateSelected = { selectedDate = it }
                 )
 
+                when (type) {
+                    AddableType.APPOINTMENT -> {
+                        EnumDropdown(
+                            label = "Type de RDV",
+                            options = AppointmentType.entries,
+                            selected = selectedAppointmentType,
+                            displayName = { it.displayName },
+                            onSelectedChange = { selectedAppointmentType = it }
+                        )
+                    }
+
+                    AddableType.TREATMENT -> {
+                        EnumDropdown(
+                            label = "Type de traitement",
+                            options = TreatmentType.entries,
+                            selected = selectedTreatmentType,
+                            displayName = { it.displayName },
+                            onSelectedChange = { selectedTreatmentType = it }
+                        )
+                    }
+
+                    else -> {}
+                }
+
                 OutlinedTextField(
                     value = field1,
                     onValueChange = { field1 = it },
@@ -104,48 +125,6 @@ fun AddDataPopup(
                     },
                     modifier = Modifier.fillMaxWidth()
                 )
-
-                if (type == AddableType.APPOINTMENT) {
-                    ExposedDropdownMenuBox(
-                        expanded = expanded,
-                        onExpandedChange = { expanded = !expanded }
-                    ) {
-                        OutlinedTextField(
-                            value = selectedType.displayName,   // <-- nécessite enum avec displayName
-                            onValueChange = {},
-                            readOnly = true,
-                            label = { Text("Type de RDV") },
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                            modifier = Modifier
-                                .menuAnchor()                    // <-- important !
-                                .fillMaxWidth()
-                        )
-
-                        ExposedDropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            appointmentTypes.forEach { typeOption ->
-                                DropdownMenuItem(
-                                    text = { Text(typeOption.displayName) },
-                                    onClick = {
-                                        selectedType = typeOption
-                                        expanded = false
-                                    }
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(Modifier.height(8.dp))
-
-                    OutlinedTextField(
-                        value = notes,
-                        onValueChange = { notes = it },
-                        label = { Text("Notes (optionnel)") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
 
                 Row(
                     horizontalArrangement = Arrangement.End,
@@ -175,7 +154,11 @@ fun AddDataPopup(
                             }
                             AddableType.TREATMENT -> {
                                 dataViewModel.addTreatment(
-                                    Treatment(expirationDate = date, name = field1)
+                                    Treatment(
+                                        expirationDate = date,
+                                        name = field1,
+                                        type = selectedTreatmentType
+                                    )
                                 )
                             }
                             AddableType.DIAGNOSIS -> {
@@ -192,7 +175,7 @@ fun AddDataPopup(
                                     Appointment(
                                         date = date,
                                         doctor = field1,
-                                        type = selectedType,   // <-- l’état sélectionné ici fonctionne
+                                        type = selectedAppointmentType,
                                         notes = notes
                                     )
                                 )

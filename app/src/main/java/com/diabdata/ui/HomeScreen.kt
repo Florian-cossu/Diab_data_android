@@ -30,7 +30,7 @@ import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
 import com.diabdata.ui.components.AddDataFab
 import com.diabdata.ui.components.AddDataPopup
-import com.diabdata.ui.components.LatestMeasurements
+import com.diabdata.ui.components.latestMeasurements.LatestMeasurements
 import com.diabdata.utils.SvgIcon
 
 @Composable
@@ -71,7 +71,8 @@ fun HomeScreen(
                     weightEntries = weightEntries,
                     hba1cEntries = hba1cEntries,
                     diagnosisEntries = diagnosisDates,
-                    appointmentEntries = appointments
+                    appointmentEntries = appointments,
+                    treatmentEntries = treatments
                 )
             }
         } else {
