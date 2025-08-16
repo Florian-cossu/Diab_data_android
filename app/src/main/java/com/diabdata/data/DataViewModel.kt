@@ -13,13 +13,26 @@ import com.diabdata.utils.LocalDateAdapter
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
 class DataViewModel(private val repository: DataRepository) : ViewModel() {
+    // Flow based queries
+    // HBA1C
+    val recentHba1c: StateFlow<List<HBA1CEntry>> =
+        repository.getRecentHba1cFlow()
+            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
+    // Weights
+    val recentWeights: StateFlow<List<WeightEntry>> =
+        repository.getRecentWeightsFlow()
+            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    // Legacy
     // Poids
     private val _weights = MutableStateFlow<List<WeightEntry>>(emptyList())
     val weights: StateFlow<List<WeightEntry>> = _weights

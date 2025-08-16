@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.diabdata.R
+import com.diabdata.data.DataViewModel
 import com.diabdata.models.Appointment
 import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
@@ -25,12 +28,14 @@ import java.time.format.DateTimeFormatter
 @SuppressLint("DefaultLocale")
 @Composable
 fun LatestMeasurements(
-    weightEntries: List<WeightEntry> = emptyList(),
-    hba1cEntries: List<HBA1CEntry> = emptyList(),
     diagnosisEntries: List<DiagnosisDate> = emptyList(),
     appointmentEntries: List<Appointment> = emptyList(),
-    treatmentEntries: List<Treatment> = emptyList()
+    treatmentEntries: List<Treatment> = emptyList(),
+    viewModel: DataViewModel
 ) {
+    val hba1cEntries by viewModel.recentHba1c.collectAsState()
+    val weightEntries by viewModel.recentWeights.collectAsState()
+
     Column(
         modifier = Modifier
             .padding(20.dp)

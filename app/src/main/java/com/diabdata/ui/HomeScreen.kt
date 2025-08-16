@@ -17,7 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.diabdata.R
@@ -45,6 +45,9 @@ fun HomeScreen(
     val (selectedType, setSelectedType) = remember { mutableStateOf<AddableType?>(null) }
     val scrollState = rememberScrollState()
 
+    val containerWidth = LocalWindowInfo.current.containerSize.width
+    val width = (containerWidth * 0.4f).dp
+
     Scaffold(
         floatingActionButton = {
             AddDataFab(onSelect = setSelectedType)
@@ -68,11 +71,10 @@ fun HomeScreen(
                     .verticalScroll(scrollState)
             ) {
                 LatestMeasurements(
-                    weightEntries = weightEntries,
-                    hba1cEntries = hba1cEntries,
                     diagnosisEntries = diagnosisDates,
                     appointmentEntries = appointments,
-                    treatmentEntries = treatments
+                    treatmentEntries = treatments,
+                    viewModel = dataViewModel
                 )
             }
         } else {
@@ -90,7 +92,7 @@ fun HomeScreen(
                     SvgIcon(
                         resId = (R.drawable.inbox_icon_vector),
                         modifier = Modifier
-                            .width(LocalConfiguration.current.screenWidthDp.dp * 0.4f)
+                            .width(width)
                             .aspectRatio(1f),
                         color = MaterialTheme.colorScheme.surfaceTint
                     )
