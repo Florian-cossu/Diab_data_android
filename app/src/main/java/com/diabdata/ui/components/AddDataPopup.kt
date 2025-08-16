@@ -87,11 +87,12 @@ fun AddDataPopup(
 
                 when (type) {
                     AddableType.APPOINTMENT -> {
+                        val context = LocalContext.current
                         EnumDropdown(
                             label = "Type de RDV",
                             options = AppointmentType.entries,
                             selected = selectedAppointmentType,
-                            displayName = { it.displayName },
+                            displayName = { it.displayName(context) },
                             onSelectedChange = { selectedAppointmentType = it }
                         )
                     }
@@ -101,7 +102,7 @@ fun AddDataPopup(
                             label = "Type de traitement",
                             options = TreatmentType.entries,
                             selected = selectedTreatmentType,
-                            displayName = { it.displayName },
+                            displayName = { it.displayName(context) },
                             onSelectedChange = { selectedTreatmentType = it }
                         )
                     }

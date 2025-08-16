@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,6 +55,7 @@ fun TreatmentType.iconRes(): Int = when (this) {
 fun UpcomingTreatmentExpirationDates(
     treatments: List<Treatment>
 ) {
+    val context = LocalContext.current
     if (treatments.isEmpty()) return
 
     val today = LocalDate.now()
@@ -64,11 +66,11 @@ fun UpcomingTreatmentExpirationDates(
     val cards = treatments.sortedBy { it.expirationDate }
         .map { treatment ->
             TreatmentCardData(
-                titleText = treatment.name.ifBlank { treatment.type.displayName },
+                titleText = treatment.name.ifBlank { treatment.type.displayName(context) },
                 dateText = "Expire le ${treatment.expirationDate.format(formatter)}",
                 icon = treatment.type.iconRes(),
                 isExpiringSoon = treatment.expirationDate.isBefore(soonThreshold),
-                type = treatment.type.displayName
+                type = treatment.type.displayName(context)
             )
         }
 

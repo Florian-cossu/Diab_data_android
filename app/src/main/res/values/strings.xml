@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Diab Data</string>
+    <string name="annual_checkup">Bilan annuel</string>
+    <string name="appointment">RDV ponctuel</string>
+    <string name="fast_acting_rapid_cartridge">Insuline rapide cartouche</string>
+    <string name="fast_acting_rapid_syringe">Insuline rapide stylo</string>
+    <string name="fast_acting_rapid_vial">Insuline rapide flacon</string>
+    <string name="slow_acting_rapid_syringe">Insuline lente stylo</string>
+    <string name="slow_acting_rapid_cartridge">Insuline Lente cartouche</string>
+    <string name="slow_acting_rapid_vial">Insuline lente flacon</string>
+    <string name="glucagon_syringe">Seringue glucagen</string>
+    <string name="glucagon_spray">Glucagen Voie Nasale (Baqsimi)</string>
 </resources>

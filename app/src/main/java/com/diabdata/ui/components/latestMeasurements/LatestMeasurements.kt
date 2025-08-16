@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
-import com.diabdata.models.Appointment
 import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.Treatment
@@ -29,12 +28,12 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun LatestMeasurements(
     diagnosisEntries: List<DiagnosisDate> = emptyList(),
-    appointmentEntries: List<Appointment> = emptyList(),
     treatmentEntries: List<Treatment> = emptyList(),
     viewModel: DataViewModel
 ) {
     val hba1cEntries by viewModel.recentHba1c.collectAsState()
     val weightEntries by viewModel.recentWeights.collectAsState()
+    val appointmentEntries by viewModel.upcomingAppointment.collectAsState()
 
     Column(
         modifier = Modifier

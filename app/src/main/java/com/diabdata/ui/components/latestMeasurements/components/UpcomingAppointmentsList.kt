@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,12 +31,14 @@ import java.time.temporal.ChronoUnit
 
 @Composable
 fun UpcomingAppointmentsList(appointments: List<Appointment>) {
+    val context = LocalContext.current   // <-- le bon context Android
+
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val primaryColor = MaterialTheme.colorScheme.primary
     val today = LocalDate.now()
 
     val upcomingAppointments = appointments.filter { it.date.isAfter(today) }
-        .sortedBy { it.date } // on trie du plus proche au plus lointain
+        .sortedBy { it.date }
 
     if (upcomingAppointments.isEmpty()) return
 
@@ -89,12 +92,11 @@ fun UpcomingAppointmentsList(appointments: List<Appointment>) {
 
                     Spacer(Modifier.width(16.dp))
 
-                    // Texte principal
                     Column(
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            text = "${appointment.doctor} - (${appointment.type.displayName})",
+                            text = "${appointment.doctor} - (${appointment.type.displayName(context)})",
                             style = MaterialTheme.typography.titleMedium.copy(
                                 color = primaryColor,
                                 fontWeight = FontWeight.Bold
@@ -116,7 +118,6 @@ fun UpcomingAppointmentsList(appointments: List<Appointment>) {
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(Modifier.width(4.dp))
-                        // Temps restant à droite
                         Text(
                             text = remainingText,
                             style = MaterialTheme.typography.bodySmall,

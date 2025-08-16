@@ -69,7 +69,6 @@ fun HomeScreen(
             ) {
                 LatestMeasurements(
                     diagnosisEntries = diagnosisDates,
-                    appointmentEntries = appointments,
                     treatmentEntries = treatments,
                     viewModel = dataViewModel
                 )

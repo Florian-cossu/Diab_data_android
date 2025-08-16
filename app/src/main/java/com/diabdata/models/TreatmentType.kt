@@ -1,12 +1,19 @@
 package com.diabdata.models
 
-enum class TreatmentType(val displayName: String) {
-    FAST_ACTING_RAPID_CARTRIDGE("Cartouche Insuline Rapide"),
-    FAST_ACTING_RAPID_SYRINGE("Stylo Insuline Rapide"),
-    FAST_ACTING_RAPID_VIAL("Flacon Insuline Rapide"),
-    SLOW_ACTING_RAPID_SYRINGE("Stylo Insuline Lente"),
-    SLOW_ACTING_RAPID_CARTRIDGE("Cartouche Insuline Lente"),
-    SLOW_ACTING_RAPID_VIAL("Flacon Insuline Lente"),
-    GLUCAGON_SYRINGE("Stylo Glucagen"),
-    GLUCAGON_SPRAY("Glucagen Voie Nasale"),
+import android.content.Context
+import androidx.annotation.StringRes
+import com.diabdata.R
+
+enum class TreatmentType(@StringRes val displayNameRes: Int) {
+    FAST_ACTING_RAPID_CARTRIDGE(R.string.fast_acting_rapid_cartridge),
+    FAST_ACTING_RAPID_SYRINGE(R.string.fast_acting_rapid_syringe),
+    FAST_ACTING_RAPID_VIAL(R.string.fast_acting_rapid_vial),
+    SLOW_ACTING_RAPID_SYRINGE(R.string.slow_acting_rapid_syringe),
+    SLOW_ACTING_RAPID_CARTRIDGE(R.string.slow_acting_rapid_cartridge),
+    SLOW_ACTING_RAPID_VIAL(R.string.slow_acting_rapid_vial),
+    GLUCAGON_SYRINGE(R.string.glucagon_syringe),
+    GLUCAGON_SPRAY(R.string.glucagon_spray);
+
+    fun displayName(context: Context): String =
+        context.getString(displayNameRes)
 }

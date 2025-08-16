@@ -32,6 +32,7 @@ class DataRepository(
         return weightDao.getWeightsSince(oneYearAgo)
     }
 
+    // ----------------
     // HBA1C
     // Legacy
     suspend fun insertHba1c(hba1cEntry: HBA1CEntry) = hba1cDao.insert(hba1cEntry)
@@ -49,9 +50,16 @@ class DataRepository(
 
     suspend fun deleteHBA1CEntry(hba1cEntry: HBA1CEntry) = hba1cDao.deleteHBA1CEntry(hba1cEntry)
 
+    //------------------
     // Appointment
     suspend fun insertAppointment(appointment: Appointment) = appointmentDao.insert(appointment)
     suspend fun getAllAppointments(): List<Appointment> = appointmentDao.getAllAppointments()
+
+    // Flow based
+    fun getUpcomingAoppointments(): Flow<List<Appointment>> {
+        val today = LocalDate.now()
+        return appointmentDao.getUpcomingAppointmentsFlow(today)
+    }
 
     // Treatment
     suspend fun insertTreatment(treatment: Treatment) = treatmentDao.insert(treatment)

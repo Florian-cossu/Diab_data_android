@@ -32,6 +32,10 @@ class DataViewModel(private val repository: DataRepository) : ViewModel() {
         repository.getRecentWeightsFlow()
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
+    val upcomingAppointment: StateFlow<List<Appointment>> =
+        repository.getUpcomingAoppointments()
+            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
     // Legacy
     // Poids
     private val _weights = MutableStateFlow<List<WeightEntry>>(emptyList())
