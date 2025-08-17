@@ -11,5 +11,31 @@
     <string name="slow_acting_rapid_vial">Slow acting insulin vial</string>
     <string name="glucagon_syringe">Glucagon syringe</string>
     <string name="glucagon_spray">Glucagon nasal spray (Baqsimi)</string>
-
+    <string name="addable_weight">Weight</string>
+    <string name="addable_hba1c">HbA1c</string>
+    <string name="addable_appointment">Appointment</string>
+    <string name="addable_treatment">Medication</string>
+    <string name="addable_diagnosis">Diagnosis date</string>
+    <string name="important_dates_card_section_heading">Important dates</string>
+    <string name="latest_measures_card_section_heading">Recent readings</string>
+    <string name="upcoming_appointment_card_section_heading">Upcoming appoitments</string>
+    <string name="upcoming_expiration_dates_card_section_heading">My medication</string>
+    <string name="home_menu_title">Home</string>
+    <string name="database_management_menu_title">Data</string>
+    <string name="settings_menu_title">Settings</string>
+    <string name="settings_page_data_heading">Data</string>
+    <string name="settings_page_application_heading">Application</string>
+    <string name="settings_page_data_export_button_text">Export data</string>
+    <string name="settings_page_data_import_button_text">Import data</string>
+    <string name="settings_page_data_purge_button_text">Empty database</string>
+    <string name="database_data_purge_modal_title">Comfirm delete</string>
+    <string name="database_data_purge_modal_contents">Are you sure you want to completely empty the database? This action cannot be undone.</string>
+    <string name="notification_channel_name_data">Data Management</string>
+    <string name="data_export_success_text">Data exported successfully</string>
+    <string name="data_export_error_text">Error while exporting data</string>
+    <string name="data_import_success_text">Data imported successfully</string>
+    <string name="data_import_error_text">Error while importing data</string>
+    <string name="empty_file_error_text">The file is empty</string>
+    <string name="confirm_button_text">Confirm</string>
+    <string name="cancel_button_text">Cancel</string>
 </resources>

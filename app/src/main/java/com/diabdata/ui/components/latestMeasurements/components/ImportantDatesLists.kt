@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,7 +41,7 @@ fun ImportantDatesList(diagnosisEntries: List<DiagnosisDate>) {
             .background(Color.Transparent)
     ) {
         Text(
-            text = "Dates importantes",
+            text = stringResource(R.string.important_dates_card_section_heading),
             style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
             color = MaterialTheme.colorScheme.surfaceTint
         )

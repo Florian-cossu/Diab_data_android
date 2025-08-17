@@ -24,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.LayoutDirection
 import com.diabdata.data.DataRepository
 import com.diabdata.data.DataViewModel
@@ -78,7 +79,7 @@ fun App() {
             NavigationBar {
                 NavigationBarItem(
                     icon = { Icon(Icons.Filled.Home, contentDescription = "Accueil") },
-                    label = { Text("Accueil") },
+                    label = { Text(stringResource(R.string.home_menu_title)) },
                     selected = selectedTab == "home",
                     onClick = { selectedTab = "home" },
                     colors = NavigationBarItemDefaults.colors(
@@ -99,7 +100,7 @@ fun App() {
                             }
                         )
                     },
-                    label = { Text("Données") },
+                    label = { Text(stringResource(R.string.database_management_menu_title)) },
                     selected = selectedTab == "data",
                     onClick = { selectedTab = "data" },
                     colors = NavigationBarItemDefaults.colors(
@@ -111,7 +112,7 @@ fun App() {
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Filled.Settings, contentDescription = "Paramètres") },
-                    label = { Text("Paramètres") },
+                    label = { Text(stringResource(R.string.settings_menu_title)) },
                     selected = selectedTab == "settings",
                     onClick = { selectedTab = "settings" },
                     colors = NavigationBarItemDefaults.colors(

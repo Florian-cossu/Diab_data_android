@@ -56,6 +56,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -361,6 +362,8 @@ fun FilterChips(
     selectedTypes: Set<AddableType>,
     onTypeToggle: (AddableType) -> Unit
 ) {
+    val context = LocalContext.current
+
     val scrollState = rememberScrollState()
     val defaultBackground = MaterialTheme.colorScheme.surfaceVariant // léger contraste
     val selectedBackground = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
@@ -378,7 +381,7 @@ fun FilterChips(
             FilterChip(
                 selected = isSelected,
                 onClick = { onTypeToggle(type) },
-                label = { Text(type.name) },
+                label = { Text(type.getDisplayName(context).uppercase()) },
                 leadingIcon = if (isSelected) {
                     { Icon(Icons.Outlined.Check, contentDescription = null) }
                 } else null,

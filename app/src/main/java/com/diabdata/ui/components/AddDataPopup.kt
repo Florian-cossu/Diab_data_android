@@ -78,7 +78,7 @@ fun AddDataPopup(
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text("Ajouter une entrée pour $type")
+                Text("Ajouter ${type.getDisplayName(context)}")
 
                 DateSelector(
                     initialDate = LocalDate.now(),
