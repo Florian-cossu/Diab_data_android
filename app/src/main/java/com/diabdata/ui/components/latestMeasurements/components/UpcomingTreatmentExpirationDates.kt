@@ -28,13 +28,16 @@ import com.diabdata.utils.SvgIcon
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 data class TreatmentCardData(
     val titleText: String,
     val dateText: String,
     val icon: Int,
     val isExpiringSoon: Boolean,
-    val type: String
+    val untilDateIcon: Int,
+    val type: String,
+    val remainingText: String
 )
 
 @DrawableRes
@@ -64,16 +67,68 @@ fun UpcomingTreatmentExpirationDates(
 
     val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
 
+    fun getUntilIconIdMap(isExpiringSoon: Boolean): Int {
+        return if (isExpiringSoon) {
+            R.drawable.warning_icon_vector
+        } else {
+            R.drawable.hourglass_icon_vector
+        }
+    }
+
     val cards = treatments.sortedBy { it.expirationDate }
         .map { treatment ->
+            val daysUntil = ChronoUnit.DAYS.between(today, treatment.expirationDate).toInt()
+            val yearsUntil = ChronoUnit.YEARS.between(today, treatment.expirationDate).toInt()
+            val totalMonths = ChronoUnit.MONTHS.between(today, treatment.expirationDate).toInt()
+            val remainingMonths = totalMonths - yearsUntil * 12
+
+            val remainingText = when {
+                daysUntil == 0 -> context.getString(R.string.today) // Aujourd’hui
+                daysUntil in 1..29 -> context.resources.getQuantityString(
+                    R.plurals.in_days,
+                    daysUntil,
+                    daysUntil
+                )
+
+                yearsUntil == 0 && remainingMonths > 0 -> context.resources.getQuantityString(
+                    R.plurals.in_months,
+                    remainingMonths,
+                    remainingMonths
+                )
+
+                yearsUntil > 0 && remainingMonths == 0 -> context.resources.getQuantityString(
+                    R.plurals.in_years,
+                    yearsUntil,
+                    yearsUntil
+                )
+
+                yearsUntil > 0 && remainingMonths > 0 -> context.resources.getQuantityString(
+                    R.plurals.in_years_and_months,
+                    1,
+                    yearsUntil,
+                    remainingMonths
+                )
+
+                else -> context.getString(R.string.today) // fallback
+            }
+
+            val isExpiringSoon = daysUntil in 0..29
+            val untilDateIcon = getUntilIconIdMap(isExpiringSoon)
+
             TreatmentCardData(
                 titleText = treatment.name.ifBlank { treatment.type.displayName(context) },
-                dateText = "Expire le ${treatment.expirationDate.format(formatter)}",
+                dateText = context.resources.getString(
+                    R.string.expires_on_text,
+                    treatment.expirationDate.format(formatter)
+                ),
                 icon = treatment.type.iconRes(),
                 isExpiringSoon = treatment.expirationDate.isBefore(soonThreshold),
-                type = treatment.type.displayName(context)
+                type = treatment.type.displayName(context),
+                remainingText = remainingText,
+                untilDateIcon = untilDateIcon,
             )
         }
+
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -125,6 +180,27 @@ fun UpcomingTreatmentExpirationDates(
                             text = card.dateText,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        SvgIcon(
+                            resId = card.untilDateIcon,
+                            modifier = Modifier.size(15.dp),
+                            color = if (card.isExpiringSoon)
+                                MaterialTheme.colorScheme.error
+                            else
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = card.remainingText,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (card.isExpiringSoon)
+                                MaterialTheme.colorScheme.error
+                            else
+                                MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }

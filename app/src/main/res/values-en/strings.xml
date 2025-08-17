@@ -38,4 +38,45 @@
     <string name="empty_file_error_text">The file is empty</string>
     <string name="confirm_button_text">Confirm</string>
     <string name="cancel_button_text">Cancel</string>
+    <plurals name="in_days">
+        <item quantity="one">In %d day</item>
+        <item quantity="other">In %d days</item>
+    </plurals>
+
+    <plurals name="in_months">
+        <item quantity="one">In %d month</item>
+        <item quantity="other">In %d months</item>
+    </plurals>
+
+    <plurals name="in_years">
+        <item quantity="one">In %d year</item>
+        <item quantity="other">In %d years</item>
+    </plurals>
+
+    <plurals name="in_years_and_months">
+        <item quantity="one">In %d year and %d months</item>
+        <item quantity="other">In %d years and %d months</item>
+    </plurals>
+
+    <plurals name="years">
+        <item quantity="one">%d year</item>
+        <item quantity="other">%d years</item>
+    </plurals>
+
+    <plurals name="months">
+        <item quantity="one">%d month</item>
+        <item quantity="other">%d months</item>
+    </plurals>
+
+    <plurals name="years_and_months">
+        <item quantity="one">%d year and %d months</item>
+        <item quantity="other">%d years and %d months</item>
+    </plurals>
+
+    <string name="today">Today</string>
+    <string name="diagnosed_on_text">Diagnosed on %1$s</string>
+    <string name="expires_on_text">Expires on %1$s</string>
+    <string name="scheduled_on_date_text">Scheduled on %1$s</string>
+    <string name="hba1c_on_date_text">HBA1C measured on %1$s</string>
+    <string name="weight_on_date_text">Weighing performed on %1$s</string>
 </resources>

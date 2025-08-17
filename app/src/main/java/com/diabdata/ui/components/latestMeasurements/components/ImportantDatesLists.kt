@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -31,9 +32,12 @@ import java.time.temporal.ChronoUnit
 
 @Composable
 fun ImportantDatesList(diagnosisEntries: List<DiagnosisDate>) {
-    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
     val primaryColor = MaterialTheme.colorScheme.primary
     val today = LocalDate.now()
+
+    val context = LocalContext.current
+
 
     Column(
         modifier = Modifier
@@ -54,10 +58,24 @@ fun ImportantDatesList(diagnosisEntries: List<DiagnosisDate>) {
             val remainingMonths = monthsTotal - years * 12
 
             val elapsedText = when {
-                years == 0L && remainingMonths == 0L -> "Aujourd’hui"
-                years == 0L -> "$remainingMonths mois"
-                remainingMonths == 0L -> "$years an${if (years > 1) "s" else ""}"
-                else -> "$years an${if (years > 1) "s" else ""} et $remainingMonths mois"
+                years == 0L && remainingMonths == 0L -> context.getString(R.string.today)
+                years == 0L -> context.resources.getQuantityString(
+                    R.plurals.months,
+                    remainingMonths.toInt(),
+                    remainingMonths
+                )
+
+                remainingMonths == 0L -> context.resources.getQuantityString(
+                    R.plurals.years,
+                    years.toInt(),
+                    years
+                )
+
+                else -> context.resources.getQuantityString(
+                    R.plurals.years_and_months,
+                    years.toInt(),
+                    years, remainingMonths
+                )
             }
 
             Surface(
@@ -91,7 +109,10 @@ fun ImportantDatesList(diagnosisEntries: List<DiagnosisDate>) {
                             )
                         )
                         Text(
-                            text = "Diagnostiqué le ${diagnosis.date.format(formatter)}",
+                            text = context.resources.getString(
+                                R.string.diagnosed_on_text,
+                                diagnosis.date.format(formatter)
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

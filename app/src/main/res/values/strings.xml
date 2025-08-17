@@ -37,4 +37,46 @@
     <string name="empty_file_error_text">Le fichier est vide</string>
     <string name="confirm_button_text">Confirmer</string>
     <string name="cancel_button_text">Annuler</string>
+    <plurals name="in_days">
+        <item quantity="one">Dans %d jour</item>
+        <item quantity="other">Dans %d jours</item>
+    </plurals>
+
+    <plurals name="in_months">
+        <item quantity="one">Dans %d mois</item>
+        <item quantity="other">Dans %d mois</item>
+    </plurals>
+
+    <plurals name="in_years">
+        <item quantity="one">Dans %d an</item>
+        <item quantity="other">Dans %d ans</item>
+    </plurals>
+
+    <plurals name="in_years_and_months">
+        <item quantity="one">Dans %d an et %d mois</item>
+        <item quantity="other">Dans %d ans et %d mois</item>
+    </plurals>
+
+    <plurals name="years">
+        <item quantity="one">%d an</item>
+        <item quantity="other">%d ans</item>
+    </plurals>
+
+    <plurals name="months">
+        <item quantity="one">%d mois</item>
+        <item quantity="other">%d mois</item>
+    </plurals>
+
+    <plurals name="years_and_months">
+        <item quantity="one">%d an et %d mois</item>
+        <item quantity="other">%d ans et %d mois</item>
+    </plurals>
+
+    <string name="today">Aujourd’hui</string>
+    <string name="diagnosed_on_text">Diagnostiqué le %1$s</string>
+    <string name="expires_on_text">Expire le %1$s</string>
+
+    <string name="scheduled_on_date_text">Programmé le %1$s</string>
+    <string name="hba1c_on_date_text">HBA1C mesurée le %1$s</string>
+    <string name="weight_on_date_text">Pesée réalisée le %1$s</string>
 </resources>

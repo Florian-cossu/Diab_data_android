@@ -32,9 +32,9 @@ import java.time.temporal.ChronoUnit
 
 @Composable
 fun UpcomingAppointmentsList(appointments: List<Appointment>) {
-    val context = LocalContext.current   // <-- le bon context Android
+    val context = LocalContext.current
 
-    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
     val primaryColor = MaterialTheme.colorScheme.primary
     val today = LocalDate.now()
 
@@ -57,15 +57,39 @@ fun UpcomingAppointmentsList(appointments: List<Appointment>) {
         Spacer(Modifier.height(8.dp))
 
         upcomingAppointments.forEachIndexed { index, appointment ->
-            val daysUntil = ChronoUnit.DAYS.between(today, appointment.date)
-            val monthsUntil = ChronoUnit.MONTHS.between(today, appointment.date)
-            val yearsUntil = ChronoUnit.YEARS.between(today, appointment.date)
+            val daysUntil = ChronoUnit.DAYS.between(today, appointment.date).toInt()
+            val yearsUntil = ChronoUnit.YEARS.between(today, appointment.date).toInt()
+            val totalMonths = ChronoUnit.MONTHS.between(today, appointment.date).toInt()
+            val remainingMonths = totalMonths - yearsUntil * 12
 
             val remainingText = when {
-                daysUntil == 0L -> "Aujourd’hui"
-                daysUntil in 1..6 -> "Dans $daysUntil jour${if (daysUntil > 1) "s" else ""}"
-                yearsUntil == 0L -> "Dans $monthsUntil mois"
-                else -> "Dans $yearsUntil an${if (yearsUntil > 1) "s" else ""}"
+                daysUntil == 0 -> context.getString(R.string.today)
+                daysUntil in 1..29 -> context.resources.getQuantityString(
+                    R.plurals.in_days,
+                    daysUntil,
+                    daysUntil
+                )
+
+                yearsUntil == 0 && remainingMonths > 0 -> context.resources.getQuantityString(
+                    R.plurals.in_months,
+                    remainingMonths,
+                    remainingMonths
+                )
+
+                yearsUntil > 0 && remainingMonths == 0 -> context.resources.getQuantityString(
+                    R.plurals.in_years,
+                    yearsUntil,
+                    yearsUntil
+                )
+
+                yearsUntil > 0 && remainingMonths > 0 -> context.resources.getQuantityString(
+                    R.plurals.in_years_and_months,
+                    1,
+                    yearsUntil,
+                    remainingMonths
+                )
+
+                else -> context.getString(R.string.today)
             }
 
             Surface(
@@ -104,7 +128,10 @@ fun UpcomingAppointmentsList(appointments: List<Appointment>) {
                             )
                         )
                         Text(
-                            text = "Le ${appointment.date.format(formatter)}",
+                            text = context.resources.getString(
+                                R.string.scheduled_on_date_text,
+                                appointment.date.format(formatter)
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

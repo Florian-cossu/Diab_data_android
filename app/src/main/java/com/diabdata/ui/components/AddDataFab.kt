@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.models.AddableType
@@ -22,6 +23,7 @@ import com.diabdata.utils.SvgIcon
 
 @Composable
 fun AddDataFab(onSelect: (AddableType) -> Unit) {
+    val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
 
     Box {
@@ -30,7 +32,7 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
         }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             DropdownMenuItem(
-                text = { Text("Poids") },
+                text = { Text(context.getString(R.string.addable_weight)) },
                 onClick = {
                     expanded = false
                     onSelect(AddableType.WEIGHT)
@@ -44,7 +46,7 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                 }
             )
             DropdownMenuItem(
-                text = { Text("HBA1C") },
+                text = { Text(context.getString(R.string.addable_hba1c)) },
                 onClick = {
                     expanded = false
                     onSelect(AddableType.HBA1C)
@@ -58,7 +60,7 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                 }
             )
             DropdownMenuItem(
-                text = { Text("Date de diagnostic") },
+                text = { Text(context.getString(R.string.addable_diagnosis)) },
                 onClick = {
                     expanded = false
                     onSelect(AddableType.DIAGNOSIS)
@@ -72,7 +74,7 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                 }
             )
             DropdownMenuItem(
-                text = { Text("Traitement") },
+                text = { Text(context.getString(R.string.addable_treatment)) },
                 onClick = {
                     expanded = false
                     onSelect(AddableType.TREATMENT)
@@ -86,7 +88,7 @@ fun AddDataFab(onSelect: (AddableType) -> Unit) {
                 }
             )
             DropdownMenuItem(
-                text = { Text("RDV") },
+                text = { Text(context.getString(R.string.addable_appointment)) },
                 onClick = {
                     expanded = false
                     onSelect(AddableType.APPOINTMENT)
