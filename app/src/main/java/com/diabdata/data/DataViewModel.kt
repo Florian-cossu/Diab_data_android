@@ -156,11 +156,21 @@ class DataViewModel(private val repository: DataRepository) : ViewModel() {
         val importedData: ExportData = gson.fromJson(json, ExportData::class.java)
 
         viewModelScope.launch {
-            importedData.weights.forEach { repository.insertWeight(it) }
-            importedData.hba1c.forEach { repository.insertHba1c(it) }
-            importedData.appointments.forEach { repository.insertAppointment(it) }
-            importedData.treatments.forEach { repository.insertTreatment(it) }
-            importedData.diagnosisDates.forEach { repository.insertDiagnosisDate(it) }
+            importedData.weights.forEach { weight ->
+                repository.insertWeight(weight.copy(id = 0)) // Reset IDs to have them auto incremented by Room to prevent app crashes
+            }
+            importedData.hba1c.forEach { hba1c ->
+                repository.insertHba1c(hba1c.copy(id = 0))
+            }
+            importedData.appointments.forEach { appointment ->
+                repository.insertAppointment(appointment.copy(id = 0))
+            }
+            importedData.treatments.forEach { treatment ->
+                repository.insertTreatment(treatment.copy(id = 0))
+            }
+            importedData.diagnosisDates.forEach { diagnosis ->
+                repository.insertDiagnosisDate(diagnosis.copy(id = 0))
+            }
 
             loadAllData()
         }

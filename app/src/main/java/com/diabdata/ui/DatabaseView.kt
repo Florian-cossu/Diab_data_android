@@ -58,8 +58,10 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
@@ -73,6 +75,7 @@ import com.diabdata.ui.components.FlippableSelectionIcon
 import com.diabdata.utils.SvgIcon
 import com.diabdata.utils.getItemShape
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
 import kotlin.math.abs
 
 @Composable
@@ -267,7 +270,7 @@ fun EntryCardSwipeM3(
                     }
                 )
             }
-            .offset { androidx.compose.ui.unit.IntOffset(offsetX.value.toInt(), 0) }
+            .offset { IntOffset(offsetX.value.toInt(), 0) }
             .combinedClickable(onClick = onClick, onLongClick = onLongPress)
     ) {
         Row(
@@ -297,6 +300,7 @@ data class DbEntry(
     val subtitle: String
 )
 
+@Composable
 fun mergeEntries(
     weights: List<WeightEntry>,
     hba1cs: List<HBA1CEntry>,
@@ -304,13 +308,15 @@ fun mergeEntries(
     treatments: List<Treatment>,
     diagnoses: List<DiagnosisDate>
 ): List<DbEntry> {
+    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+
     return buildList {
         addAll(weights.map {
             DbEntry(
                 it.id,
                 AddableType.WEIGHT,
                 "${it.weightKg} kg",
-                it.date.toString()
+                it.date.format(formatter)
             )
         })
         addAll(hba1cs.map {
@@ -318,7 +324,7 @@ fun mergeEntries(
                 it.id,
                 AddableType.HBA1C,
                 "${it.value} %",
-                it.date.toString()
+                it.date.format(formatter)
             )
         })
         addAll(appointments.map {
@@ -326,16 +332,23 @@ fun mergeEntries(
                 it.id,
                 AddableType.APPOINTMENT,
                 it.doctor,
-                it.date.toString()
+                it.date.format(formatter)
             )
         })
-        addAll(treatments.map { DbEntry(it.id, AddableType.TREATMENT, it.name, "Traitement") })
+        addAll(treatments.map {
+            DbEntry(
+                it.id,
+                AddableType.TREATMENT,
+                it.name,
+                stringResource(R.string.addable_treatment)
+            )
+        })
         addAll(diagnoses.map {
             DbEntry(
                 it.id,
                 AddableType.DIAGNOSIS,
                 it.diagnosis,
-                it.date.toString()
+                it.date.format(formatter)
             )
         })
     }
