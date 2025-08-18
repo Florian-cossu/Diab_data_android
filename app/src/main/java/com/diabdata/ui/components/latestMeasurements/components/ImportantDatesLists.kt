@@ -38,6 +38,7 @@ fun ImportantDatesList(diagnosisEntries: List<DiagnosisDate>) {
 
     val context = LocalContext.current
 
+    if (diagnosisEntries.isEmpty()) return
 
     Column(
         modifier = Modifier

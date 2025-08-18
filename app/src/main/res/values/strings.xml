@@ -91,4 +91,5 @@
     <string name="add_data_popup_invalid_weigth_kg_input_hint">Le poids doit-être compris entre 0 et 600 (kg)</string>
     <string name="add_data_popup_invalid_HBA1C_input_hint">La HBA1C doit être comprise entre 0 et 15 (%)</string>
     <string name="add_data_popup_title">Ajouter nouveau %1$s</string>
+    <string name="homescreen_no_data_text">Aucune données</string>
 </resources>

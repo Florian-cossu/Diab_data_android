@@ -59,8 +59,9 @@ fun TreatmentType.iconRes(): Int = when (this) {
 fun UpcomingTreatmentExpirationDates(
     treatments: List<Treatment>
 ) {
-    val context = LocalContext.current
     if (treatments.isEmpty()) return
+
+    val context = LocalContext.current
 
     val today = LocalDate.now()
     val soonThreshold = today.plusDays(30)

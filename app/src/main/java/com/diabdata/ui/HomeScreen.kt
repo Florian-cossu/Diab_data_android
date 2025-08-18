@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.diabdata.R
@@ -59,7 +60,6 @@ fun HomeScreen(
         ).any { it.isNotEmpty() }
 
         if (hasData) {
-            // Contenu scrollable (les données)
             Column(
                 modifier = Modifier
                     .padding(padding)
@@ -74,7 +74,6 @@ fun HomeScreen(
                 )
             }
         } else {
-            // Message "No data" centré verticalement et horizontalement
             Box(
                 modifier = Modifier
                     .padding(padding)
@@ -94,7 +93,7 @@ fun HomeScreen(
                     )
 
                     Text(
-                        text = "Aucune données",
+                        text = stringResource(R.string.homescreen_no_data_text),
                         modifier = Modifier.padding(top = 16.dp),
                         style = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
                         color = MaterialTheme.colorScheme.surfaceTint
@@ -103,7 +102,6 @@ fun HomeScreen(
             }
         }
 
-        // Popup pour ajouter une entrée
         selectedType?.let { type ->
             AddDataPopup(
                 type = type,
