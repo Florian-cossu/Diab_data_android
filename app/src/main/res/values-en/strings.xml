@@ -85,4 +85,10 @@
     <string name="add_data_popup_medication_field_placeholder">Medication name</string>
     <string name="add_data_popup_doctor_field_placeholder">Doctor\'s name</string>
     <string name="add_data_popup_diagnosis_field_placeholder">Diagnosed ailment</string>
+    <string name="add_data_popup_invalid_weight_field_message">Invalid weight</string>
+    <string name="add_data_popup_invalid_HBA1C_field_message">Invalid HBA1C</string>
+    <string name="add_data_popup_diagnosis_date_insertion_error">Error while adding diagnosis date</string>
+    <string name="add_data_popup_invalid_weigth_kg_input_hint">Weight must be between 0 and 600( kg)</string>
+    <string name="add_data_popup_invalid_HBA1C_input_hint">HBA1C must be between 0 and 15 (%)</string>
+    <string name="add_data_popup_title">Add new %1$s</string>
 </resources>

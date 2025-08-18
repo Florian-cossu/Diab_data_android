@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -28,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
@@ -60,6 +63,9 @@ fun AddDataPopup(
     var selectedAppointmentType by remember { mutableStateOf(AppointmentType.APPOINTMENT) }
     var selectedTreatmentType by remember { mutableStateOf(TreatmentType.FAST_ACTING_RAPID_VIAL) }
 
+    var isError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -79,7 +85,7 @@ fun AddDataPopup(
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text("Ajouter ${type.getDisplayName(context)}")
+                Text(context.getString(R.string.add_data_popup_title, type.getDisplayName(context)))
 
                 DateSelector(
                     initialDate = LocalDate.now(),
@@ -113,17 +119,60 @@ fun AddDataPopup(
 
                 OutlinedTextField(
                     value = field1,
-                    onValueChange = { field1 = it },
+                    onValueChange = {
+                        field1 = it
+                        when (type) {
+                            AddableType.WEIGHT -> {
+                                val weight = it.replace(',', '.').toDoubleOrNull()
+                                if (weight == null || weight < 0 || weight > 600) {
+                                    isError = true
+                                    errorMessage =
+                                        context.getString(R.string.add_data_popup_invalid_weigth_kg_input_hint)
+                                } else {
+                                    isError = false
+                                    errorMessage = null
+                                }
+                            }
+
+                            AddableType.HBA1C -> {
+                                val hba1c = it.replace(',', '.').toFloatOrNull()
+                                if (hba1c == null || hba1c < 0 || hba1c > 15) {
+                                    isError = true
+                                    errorMessage =
+                                        context.getString(R.string.add_data_popup_invalid_HBA1C_input_hint)
+                                } else {
+                                    isError = false
+                                    errorMessage = null
+                                }
+                            }
+
+                            else -> {
+                                isError = false
+                                errorMessage = null
+                            }
+                        }
+                    },
                     label = {
                         Text(
                             when (type) {
-                                AddableType.WEIGHT -> context.resources.getString(R.string.add_data_popup_weight_field_placeholder)
-                                AddableType.HBA1C -> context.resources.getString(R.string.add_data_popup_HBA1C_field_placeholder)
-                                AddableType.TREATMENT -> context.resources.getString(R.string.add_data_popup_medication_field_placeholder)
-                                AddableType.APPOINTMENT -> context.resources.getString(R.string.add_data_popup_doctor_field_placeholder)
-                                AddableType.DIAGNOSIS -> context.resources.getString(R.string.add_data_popup_diagnosis_field_placeholder)
+                                AddableType.WEIGHT -> context.getString(R.string.add_data_popup_weight_field_placeholder)
+                                AddableType.HBA1C -> context.getString(R.string.add_data_popup_HBA1C_field_placeholder)
+                                AddableType.TREATMENT -> context.getString(R.string.add_data_popup_medication_field_placeholder)
+                                AddableType.APPOINTMENT -> context.getString(R.string.add_data_popup_doctor_field_placeholder)
+                                AddableType.DIAGNOSIS -> context.getString(R.string.add_data_popup_diagnosis_field_placeholder)
                             }
                         )
+                    },
+                    isError = isError,
+                    supportingText = {
+                        if (isError && errorMessage != null) {
+                            Text(errorMessage!!, color = MaterialTheme.colorScheme.error)
+                        }
+                    },
+                    keyboardOptions = if (type == AddableType.WEIGHT || type == AddableType.HBA1C) {
+                        KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                    } else {
+                        KeyboardOptions.Default
                     },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -132,8 +181,24 @@ fun AddDataPopup(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    TextButton(onClick = onDismiss) { Text("Annuler") }
+                    TextButton(onClick = onDismiss) { Text(context.getString(R.string.cancel_button_text)) }
                     Spacer(Modifier.width(8.dp))
+                    val isValid = when (type) {
+                        AddableType.WEIGHT -> {
+                            val weight = field1.replace(',', '.').toDoubleOrNull()
+                            weight != null && weight in 0.0..600.0
+                        }
+
+                        AddableType.HBA1C -> {
+                            val hba1c = field1.replace(',', '.').toFloatOrNull()
+                            hba1c != null && hba1c in 0f..15f
+                        }
+
+                        AddableType.TREATMENT -> field1.isNotBlank()
+                        AddableType.DIAGNOSIS -> field1.isNotBlank()
+                        AddableType.APPOINTMENT -> field1.isNotBlank()
+                    }
+
                     Button(onClick = {
                         val date = selectedDate ?: LocalDate.now()
 
@@ -143,7 +208,11 @@ fun AddDataPopup(
                                 if (weight != null) {
                                     dataViewModel.addWeight(WeightEntry(date = date, weightKg = weight))
                                 } else {
-                                    Toast.makeText(context, "Poids invalide", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.add_data_popup_invalid_weight_field_message),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                             AddableType.HBA1C -> {
@@ -151,7 +220,11 @@ fun AddDataPopup(
                                 if (hba1c != null) {
                                     dataViewModel.addHba1c(HBA1CEntry(date = date, value = hba1c))
                                 } else {
-                                    Toast.makeText(context, "HBA1C invalide", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.add_data_popup_invalid_HBA1C_field_message),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                             AddableType.TREATMENT -> {
@@ -165,7 +238,11 @@ fun AddDataPopup(
                             }
                             AddableType.DIAGNOSIS -> {
                                 if (field1.isBlank()) {
-                                    Toast.makeText(context, "Bug d'ajout du diagnostic", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.add_data_popup_diagnosis_date_insertion_error),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 } else {
                                     dataViewModel.addDiagnosisDate(
                                         DiagnosisDate(date = date, diagnosis = field1)
@@ -185,8 +262,11 @@ fun AddDataPopup(
                         }
 
                         onDismiss()
-                    }) {
-                        Text("Valider")
+                    },
+                        enabled = isValid,
+                        colors = ButtonDefaults.buttonColors()
+                    ) {
+                        Text(context.getString(R.string.confirm_button_text))
                     }
                 }
             }
