@@ -38,6 +38,7 @@
     <string name="empty_file_error_text">The file is empty</string>
     <string name="confirm_button_text">Confirm</string>
     <string name="cancel_button_text">Cancel</string>
+    <string name="delete_button_text">Delete</string>
     <plurals name="in_days">
         <item quantity="one">In %d day</item>
         <item quantity="other">In %d days</item>
@@ -79,4 +80,9 @@
     <string name="scheduled_on_date_text">Scheduled on %1$s</string>
     <string name="hba1c_on_date_text">HBA1C measured on %1$s</string>
     <string name="weight_on_date_text">Weighing performed on %1$s</string>
+    <string name="add_data_popup_weight_field_placeholder">Weight</string>
+    <string name="add_data_popup_HBA1C_field_placeholder">HBA1C (%)</string>
+    <string name="add_data_popup_medication_field_placeholder">Medication name</string>
+    <string name="add_data_popup_doctor_field_placeholder">Doctor\'s name</string>
+    <string name="add_data_popup_diagnosis_field_placeholder">Diagnosed ailment</string>
 </resources>

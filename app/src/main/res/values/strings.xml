@@ -37,6 +37,7 @@
     <string name="empty_file_error_text">Le fichier est vide</string>
     <string name="confirm_button_text">Confirmer</string>
     <string name="cancel_button_text">Annuler</string>
+    <string name="delete_button_text">Supprimer</string>
     <plurals name="in_days">
         <item quantity="one">Dans %d jour</item>
         <item quantity="other">Dans %d jours</item>
@@ -79,4 +80,9 @@
     <string name="scheduled_on_date_text">Programmé le %1$s</string>
     <string name="hba1c_on_date_text">HBA1C mesurée le %1$s</string>
     <string name="weight_on_date_text">Pesée réalisée le %1$s</string>
+    <string name="add_data_popup_weight_field_placeholder">Poids</string>
+    <string name="add_data_popup_HBA1C_field_placeholder">HBA1C (%)</string>
+    <string name="add_data_popup_medication_field_placeholder">Nom du traitement</string>
+    <string name="add_data_popup_doctor_field_placeholder">Nom du praticien</string>
+    <string name="add_data_popup_diagnosis_field_placeholder">Affection diagnostiquée</string>
 </resources>

@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
@@ -116,11 +117,11 @@ fun AddDataPopup(
                     label = {
                         Text(
                             when (type) {
-                                AddableType.WEIGHT -> "Poids (kg)"
-                                AddableType.HBA1C -> "HBA1C (%)"
-                                AddableType.TREATMENT -> "Nom du traitement"
-                                AddableType.APPOINTMENT -> "Nom du praticien"
-                                AddableType.DIAGNOSIS -> "Affection diagnostiquée"
+                                AddableType.WEIGHT -> context.resources.getString(R.string.add_data_popup_weight_field_placeholder)
+                                AddableType.HBA1C -> context.resources.getString(R.string.add_data_popup_HBA1C_field_placeholder)
+                                AddableType.TREATMENT -> context.resources.getString(R.string.add_data_popup_medication_field_placeholder)
+                                AddableType.APPOINTMENT -> context.resources.getString(R.string.add_data_popup_doctor_field_placeholder)
+                                AddableType.DIAGNOSIS -> context.resources.getString(R.string.add_data_popup_diagnosis_field_placeholder)
                             }
                         )
                     },

@@ -79,6 +79,7 @@ import kotlin.math.abs
 fun DatabaseEditionView(
     dataViewModel: DataViewModel
 ) {
+    val context = LocalContext.current
     var selectedTypes by remember { mutableStateOf(setOf<AddableType>()) }
     var selectionMode by remember { mutableStateOf(false) }
     var selectedEntries by remember { mutableStateOf(setOf<DbEntry>()) }
@@ -166,7 +167,7 @@ fun DatabaseEditionView(
                             )
                         }
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Supprimer")
+                        Text(context.getString(R.string.delete_button_text))
                     }
                 }
 
@@ -210,8 +211,6 @@ fun DatabaseEditionView(
                                 selectedEntries = toggleEntrySelection(selectedEntries, entry)
                                 if (selectionMode && selectedEntries.isEmpty())
                                     selectionMode = false
-                            } else {
-                                selectionMode = true
                             }
                         },
                         onLongPress = {

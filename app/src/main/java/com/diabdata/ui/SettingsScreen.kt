@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.diabdata.BuildConfig
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.utils.SvgIcon
@@ -53,6 +54,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     val fileName = "diabdata_export_$currentDate.json"
     val context = LocalContext.current
     val scrollState = rememberScrollState()
+    val versionName = BuildConfig.VERSION_NAME
 
     var showConfirmDialog by remember { mutableStateOf(false) }
 
@@ -97,7 +99,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 val channelName = context.getString(R.string.notification_channel_name_data)
                 val successText = context.getString(R.string.data_import_success_text)
                 val errorText = context.getString(R.string.data_import_error_text)
-                context.getString(R.string.empty_file_error_text)
+                val errorEmptyFile = context.getString(R.string.empty_file_error_text)
 
                 try {
                     val jsonString = context.contentResolver.openInputStream(uri)?.bufferedReader()
@@ -116,12 +118,12 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                             notificationDescription = ""
                         )
                     } else {
-                        Toast.makeText(context, "Fichier vide", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, errorEmptyFile, Toast.LENGTH_LONG).show()
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
                     context.showNotification(
-                        title = "${errorText} : ${e.message}",
+                        title = "$errorText : ${e.message}",
                         content = uri.lastPathSegment.orEmpty(),
                         notificationChannel = channelName,
                         notificationDescription = ""
@@ -205,7 +207,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
 
             Column {
                 SettingsButton(
-                    text = "Version 2.5",
+                    text = "Version $versionName",
                     onClick = { },
                     shape = RoundedCornerShape(
                         topStart = 16.dp,
