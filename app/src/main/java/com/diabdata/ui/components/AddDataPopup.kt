@@ -10,14 +10,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -32,7 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
@@ -40,6 +40,7 @@ import com.diabdata.models.AppointmentType
 import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.Treatment
+import com.diabdata.models.TreatmentType
 import com.diabdata.models.WeightEntry
 import java.time.LocalDate
 
@@ -57,10 +58,13 @@ fun AddDataPopup(
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
     var notes by remember { mutableStateOf("") }
 
-    val appointmentTypes =
-        remember { AppointmentType.entries } // ou AppointmentType.entries si dispo
-    var selectedType by remember { mutableStateOf(AppointmentType.APPOINTMENT) }
-    var expanded by remember { mutableStateOf(false) }
+    remember { AppointmentType.entries }
+    remember { TreatmentType.entries }
+    var selectedAppointmentType by remember { mutableStateOf(AppointmentType.APPOINTMENT) }
+    var selectedTreatmentType by remember { mutableStateOf(TreatmentType.FAST_ACTING_RAPID_VIAL) }
+
+    var isError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     Box(
         modifier = Modifier
@@ -81,78 +85,120 @@ fun AddDataPopup(
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text("Ajouter une entrée pour $type")
+                Text(context.getString(R.string.add_data_popup_title, type.getDisplayName(context)))
 
                 DateSelector(
                     initialDate = LocalDate.now(),
                     onDateSelected = { selectedDate = it }
                 )
 
+                when (type) {
+                    AddableType.APPOINTMENT -> {
+                        val context = LocalContext.current
+                        EnumDropdown(
+                            label = "Type de RDV",
+                            options = AppointmentType.entries,
+                            selected = selectedAppointmentType,
+                            displayName = { it.displayName(context) },
+                            onSelectedChange = { selectedAppointmentType = it }
+                        )
+                    }
+
+                    AddableType.TREATMENT -> {
+                        EnumDropdown(
+                            label = "Type de traitement",
+                            options = TreatmentType.entries,
+                            selected = selectedTreatmentType,
+                            displayName = { it.displayName(context) },
+                            onSelectedChange = { selectedTreatmentType = it }
+                        )
+                    }
+
+                    else -> {}
+                }
+
                 OutlinedTextField(
                     value = field1,
-                    onValueChange = { field1 = it },
+                    onValueChange = {
+                        field1 = it
+                        when (type) {
+                            AddableType.WEIGHT -> {
+                                val weight = it.replace(',', '.').toDoubleOrNull()
+                                if (weight == null || weight < 0 || weight > 600) {
+                                    isError = true
+                                    errorMessage =
+                                        context.getString(R.string.add_data_popup_invalid_weigth_kg_input_hint)
+                                } else {
+                                    isError = false
+                                    errorMessage = null
+                                }
+                            }
+
+                            AddableType.HBA1C -> {
+                                val hba1c = it.replace(',', '.').toFloatOrNull()
+                                if (hba1c == null || hba1c < 0 || hba1c > 15) {
+                                    isError = true
+                                    errorMessage =
+                                        context.getString(R.string.add_data_popup_invalid_HBA1C_input_hint)
+                                } else {
+                                    isError = false
+                                    errorMessage = null
+                                }
+                            }
+
+                            else -> {
+                                isError = false
+                                errorMessage = null
+                            }
+                        }
+                    },
                     label = {
                         Text(
                             when (type) {
-                                AddableType.WEIGHT -> "Poids (kg)"
-                                AddableType.HBA1C -> "HBA1C (%)"
-                                AddableType.TREATMENT -> "Nom du traitement"
-                                AddableType.APPOINTMENT -> "Nom du praticien"
-                                AddableType.DIAGNOSIS -> "Affection diagnostiquée"
+                                AddableType.WEIGHT -> context.getString(R.string.add_data_popup_weight_field_placeholder)
+                                AddableType.HBA1C -> context.getString(R.string.add_data_popup_HBA1C_field_placeholder)
+                                AddableType.TREATMENT -> context.getString(R.string.add_data_popup_medication_field_placeholder)
+                                AddableType.APPOINTMENT -> context.getString(R.string.add_data_popup_doctor_field_placeholder)
+                                AddableType.DIAGNOSIS -> context.getString(R.string.add_data_popup_diagnosis_field_placeholder)
                             }
                         )
                     },
+                    isError = isError,
+                    supportingText = {
+                        if (isError && errorMessage != null) {
+                            Text(errorMessage!!, color = MaterialTheme.colorScheme.error)
+                        }
+                    },
+                    keyboardOptions = if (type == AddableType.WEIGHT || type == AddableType.HBA1C) {
+                        KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                    } else {
+                        KeyboardOptions.Default
+                    },
                     modifier = Modifier.fillMaxWidth()
                 )
-
-                if (type == AddableType.APPOINTMENT) {
-                    ExposedDropdownMenuBox(
-                        expanded = expanded,
-                        onExpandedChange = { expanded = !expanded }
-                    ) {
-                        OutlinedTextField(
-                            value = selectedType.displayName,   // <-- nécessite enum avec displayName
-                            onValueChange = {},
-                            readOnly = true,
-                            label = { Text("Type de RDV") },
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                            modifier = Modifier
-                                .menuAnchor()                    // <-- important !
-                                .fillMaxWidth()
-                        )
-
-                        ExposedDropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            appointmentTypes.forEach { typeOption ->
-                                DropdownMenuItem(
-                                    text = { Text(typeOption.displayName) },
-                                    onClick = {
-                                        selectedType = typeOption
-                                        expanded = false
-                                    }
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(Modifier.height(8.dp))
-
-                    OutlinedTextField(
-                        value = notes,
-                        onValueChange = { notes = it },
-                        label = { Text("Notes (optionnel)") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
 
                 Row(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    TextButton(onClick = onDismiss) { Text("Annuler") }
+                    TextButton(onClick = onDismiss) { Text(context.getString(R.string.cancel_button_text)) }
                     Spacer(Modifier.width(8.dp))
+                    val isValid = when (type) {
+                        AddableType.WEIGHT -> {
+                            val weight = field1.replace(',', '.').toDoubleOrNull()
+                            weight != null && weight in 0.0..600.0
+                        }
+
+                        AddableType.HBA1C -> {
+                            val hba1c = field1.replace(',', '.').toFloatOrNull()
+                            hba1c != null && hba1c in 0f..15f
+                        }
+
+                        AddableType.TREATMENT -> field1.isNotBlank()
+                        AddableType.DIAGNOSIS -> field1.isNotBlank()
+                        AddableType.APPOINTMENT -> field1.isNotBlank()
+                    }
+
                     Button(onClick = {
                         val date = selectedDate ?: LocalDate.now()
 
@@ -162,7 +208,11 @@ fun AddDataPopup(
                                 if (weight != null) {
                                     dataViewModel.addWeight(WeightEntry(date = date, weightKg = weight))
                                 } else {
-                                    Toast.makeText(context, "Poids invalide", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.add_data_popup_invalid_weight_field_message),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                             AddableType.HBA1C -> {
@@ -170,17 +220,29 @@ fun AddDataPopup(
                                 if (hba1c != null) {
                                     dataViewModel.addHba1c(HBA1CEntry(date = date, value = hba1c))
                                 } else {
-                                    Toast.makeText(context, "HBA1C invalide", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.add_data_popup_invalid_HBA1C_field_message),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                             AddableType.TREATMENT -> {
                                 dataViewModel.addTreatment(
-                                    Treatment(expirationDate = date, name = field1)
+                                    Treatment(
+                                        expirationDate = date,
+                                        name = field1,
+                                        type = selectedTreatmentType
+                                    )
                                 )
                             }
                             AddableType.DIAGNOSIS -> {
                                 if (field1.isBlank()) {
-                                    Toast.makeText(context, "Bug d'ajout du diagnostic", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.add_data_popup_diagnosis_date_insertion_error),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 } else {
                                     dataViewModel.addDiagnosisDate(
                                         DiagnosisDate(date = date, diagnosis = field1)
@@ -192,7 +254,7 @@ fun AddDataPopup(
                                     Appointment(
                                         date = date,
                                         doctor = field1,
-                                        type = selectedType,   // <-- l’état sélectionné ici fonctionne
+                                        type = selectedAppointmentType,
                                         notes = notes
                                     )
                                 )
@@ -200,8 +262,11 @@ fun AddDataPopup(
                         }
 
                         onDismiss()
-                    }) {
-                        Text("Valider")
+                    },
+                        enabled = isValid,
+                        colors = ButtonDefaults.buttonColors()
+                    ) {
+                        Text(context.getString(R.string.confirm_button_text))
                     }
                 }
             }

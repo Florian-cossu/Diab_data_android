@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Diab Data</string>
+    <string name="annual_checkup">Annual Checkup</string>
+    <string name="appointment">One-time appointment</string>
+    <string name="fast_acting_rapid_cartridge">Fast acting insulin cartridge</string>
+    <string name="fast_acting_rapid_syringe">Fast acting insulin pen</string>
+    <string name="fast_acting_rapid_vial">Fast acting insulin vial</string>
+    <string name="slow_acting_rapid_syringe">Slow acting insulin pen</string>
+    <string name="slow_acting_rapid_cartridge">Slow acting insulin cartridge</string>
+    <string name="slow_acting_rapid_vial">Slow acting insulin vial</string>
+    <string name="glucagon_syringe">Glucagon syringe</string>
+    <string name="glucagon_spray">Glucagon nasal spray (Baqsimi)</string>
+    <string name="addable_weight">Weight</string>
+    <string name="addable_hba1c">HbA1c</string>
+    <string name="addable_appointment">Appointment</string>
+    <string name="addable_treatment">Medication</string>
+    <string name="addable_diagnosis">Diagnosis date</string>
+    <string name="important_dates_card_section_heading">Important dates</string>
+    <string name="latest_measures_card_section_heading">Recent readings</string>
+    <string name="upcoming_appointment_card_section_heading">Upcoming appoitments</string>
+    <string name="upcoming_expiration_dates_card_section_heading">My medication</string>
+    <string name="home_menu_title">Home</string>
+    <string name="database_management_menu_title">Data</string>
+    <string name="settings_menu_title">Settings</string>
+    <string name="settings_page_data_heading">Data</string>
+    <string name="settings_page_application_heading">Application</string>
+    <string name="settings_page_data_export_button_text">Export data</string>
+    <string name="settings_page_data_import_button_text">Import data</string>
+    <string name="settings_page_data_purge_button_text">Empty database</string>
+    <string name="database_data_purge_modal_title">Comfirm delete</string>
+    <string name="database_data_purge_modal_contents">Are you sure you want to completely empty the database? This action cannot be undone.</string>
+    <string name="notification_channel_name_data">Data Management</string>
+    <string name="data_export_success_text">Data exported successfully</string>
+    <string name="data_export_error_text">Error while exporting data</string>
+    <string name="data_import_success_text">Data imported successfully</string>
+    <string name="data_import_error_text">Error while importing data</string>
+    <string name="empty_file_error_text">The file is empty</string>
+    <string name="confirm_button_text">Confirm</string>
+    <string name="cancel_button_text">Cancel</string>
+    <string name="delete_button_text">Delete</string>
+    <plurals name="in_days">
+        <item quantity="one">In %d day</item>
+        <item quantity="other">In %d days</item>
+    </plurals>
+
+    <plurals name="in_months">
+        <item quantity="one">In %d month</item>
+        <item quantity="other">In %d months</item>
+    </plurals>
+
+    <plurals name="in_years">
+        <item quantity="one">In %d year</item>
+        <item quantity="other">In %d years</item>
+    </plurals>
+
+    <plurals name="in_years_and_months">
+        <item quantity="one">In %d year and %d months</item>
+        <item quantity="other">In %d years and %d months</item>
+    </plurals>
+
+    <plurals name="years">
+        <item quantity="one">%d year</item>
+        <item quantity="other">%d years</item>
+    </plurals>
+
+    <plurals name="months">
+        <item quantity="one">%d month</item>
+        <item quantity="other">%d months</item>
+    </plurals>
+
+    <plurals name="years_and_months">
+        <item quantity="one">%d year and %d months</item>
+        <item quantity="other">%d years and %d months</item>
+    </plurals>
+
+    <string name="today">Today</string>
+    <string name="diagnosed_on_text">Diagnosed on %1$s</string>
+    <string name="expires_on_text">Expires on %1$s</string>
+    <string name="scheduled_on_date_text">Scheduled on %1$s</string>
+    <string name="hba1c_on_date_text">HBA1C measured on %1$s</string>
+    <string name="weight_on_date_text">Weighing performed on %1$s</string>
+    <string name="add_data_popup_weight_field_placeholder">Weight</string>
+    <string name="add_data_popup_HBA1C_field_placeholder">HBA1C (%)</string>
+    <string name="add_data_popup_medication_field_placeholder">Medication name</string>
+    <string name="add_data_popup_doctor_field_placeholder">Doctor\'s name</string>
+    <string name="add_data_popup_diagnosis_field_placeholder">Diagnosed ailment</string>
+    <string name="add_data_popup_invalid_weight_field_message">Invalid weight</string>
+    <string name="add_data_popup_invalid_HBA1C_field_message">Invalid HBA1C</string>
+    <string name="add_data_popup_diagnosis_date_insertion_error">Error while adding diagnosis date</string>
+    <string name="add_data_popup_invalid_weigth_kg_input_hint">Weight must be between 0 and 600( kg)</string>
+    <string name="add_data_popup_invalid_HBA1C_input_hint">HBA1C must be between 0 and 15 (%)</string>
+    <string name="add_data_popup_title">Add new %1$s</string>
+</resources>

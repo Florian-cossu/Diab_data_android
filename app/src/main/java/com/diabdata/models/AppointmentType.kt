@@ -1,6 +1,13 @@
 package com.diabdata.models
 
-enum class AppointmentType(val displayName: String) {
-    ANNUAL_CHECKUP("Bilan annuel"),
-    APPOINTMENT("RDV ponctuel")
+import android.content.Context
+import androidx.annotation.StringRes
+import com.diabdata.R
+
+enum class AppointmentType(@StringRes val displayNameRes: Int) {
+    ANNUAL_CHECKUP(R.string.annual_checkup),
+    APPOINTMENT(R.string.appointment);
+
+    fun displayName(context: Context): String =
+        context.getString(displayNameRes)
 }

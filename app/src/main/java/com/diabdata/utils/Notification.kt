@@ -9,17 +9,29 @@ import com.diabdata.R
 
 fun Context.showNotification(
     title: String,
+    notificationChannel: String?,
     content: String,
+    notificationDescription: String?,
     iconName: String? = null
 ) {
     val channelId = "diabdata_channel"
+    var notificationChannel = notificationChannel
+    var notificationDescription = notificationDescription
+
+    if (notificationChannel.isNullOrEmpty()) {
+        notificationChannel = "DiabData Notifications"
+    }
+
+    if (notificationDescription.isNullOrEmpty()) {
+        notificationDescription = ""
+    }
 
     val channel = NotificationChannel(
         channelId,
-        "DiabData Notifications",
+        notificationChannel,
         NotificationManager.IMPORTANCE_DEFAULT
     ).apply {
-        description = "Notifications pour tests"
+        description = notificationDescription
     }
 
     val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

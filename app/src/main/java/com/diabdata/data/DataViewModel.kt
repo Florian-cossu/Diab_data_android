@@ -13,13 +13,30 @@ import com.diabdata.utils.LocalDateAdapter
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
 class DataViewModel(private val repository: DataRepository) : ViewModel() {
+    // Flow based queries
+    // HBA1C
+    val recentHba1c: StateFlow<List<HBA1CEntry>> =
+        repository.getRecentHba1cFlow()
+            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
+    // Weights
+    val recentWeights: StateFlow<List<WeightEntry>> =
+        repository.getRecentWeightsFlow()
+            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    val upcomingAppointment: StateFlow<List<Appointment>> =
+        repository.getUpcomingAoppointments()
+            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    // Legacy
     // Poids
     private val _weights = MutableStateFlow<List<WeightEntry>>(emptyList())
     val weights: StateFlow<List<WeightEntry>> = _weights
@@ -139,11 +156,21 @@ class DataViewModel(private val repository: DataRepository) : ViewModel() {
         val importedData: ExportData = gson.fromJson(json, ExportData::class.java)
 
         viewModelScope.launch {
-            importedData.weights.forEach { repository.insertWeight(it) }
-            importedData.hba1c.forEach { repository.insertHba1c(it) }
-            importedData.appointments.forEach { repository.insertAppointment(it) }
-            importedData.treatments.forEach { repository.insertTreatment(it) }
-            importedData.diagnosisDates.forEach { repository.insertDiagnosisDate(it) }
+            importedData.weights.forEach { weight ->
+                repository.insertWeight(weight.copy(id = 0)) // Reset IDs to have them auto incremented by Room to prevent app crashes
+            }
+            importedData.hba1c.forEach { hba1c ->
+                repository.insertHba1c(hba1c.copy(id = 0))
+            }
+            importedData.appointments.forEach { appointment ->
+                repository.insertAppointment(appointment.copy(id = 0))
+            }
+            importedData.treatments.forEach { treatment ->
+                repository.insertTreatment(treatment.copy(id = 0))
+            }
+            importedData.diagnosisDates.forEach { diagnosis ->
+                repository.insertDiagnosisDate(diagnosis.copy(id = 0))
+            }
 
             loadAllData()
         }

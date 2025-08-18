@@ -10,6 +10,8 @@ import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
+import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 class DataRepository(
     private val weightDao: WeightDao,
@@ -20,16 +22,44 @@ class DataRepository(
     private val database: DiabDataDatabase,
 ) {
     // Weight
+    // Legacy
     suspend fun insertWeight(weightEntry: WeightEntry) = weightDao.insert(weightEntry)
     suspend fun getAllWeights(): List<WeightEntry> = weightDao.getAllWeights()
 
+    // Flow based
+    fun getRecentWeightsFlow(): Flow<List<WeightEntry>> {
+        val oneYearAgo = LocalDate.now().minusYears(1)
+        return weightDao.getWeightsSince(oneYearAgo)
+    }
+
+    // ----------------
     // HBA1C
+    // Legacy
     suspend fun insertHba1c(hba1cEntry: HBA1CEntry) = hba1cDao.insert(hba1cEntry)
     suspend fun getAllHba1c(): List<HBA1CEntry> = hba1cDao.getAllHBA1C()
 
+    // Flow based
+    fun getAllHba1cFlow(): Flow<List<HBA1CEntry>> {
+        return hba1cDao.getAllHBA1CFlow()
+    }
+
+    fun getRecentHba1cFlow(): Flow<List<HBA1CEntry>> {
+        val oneYearAgo = LocalDate.now().minusYears(1)
+        return hba1cDao.getHBA1CEntriesSince(oneYearAgo)
+    }
+
+    suspend fun deleteHBA1CEntry(hba1cEntry: HBA1CEntry) = hba1cDao.deleteHBA1CEntry(hba1cEntry)
+
+    //------------------
     // Appointment
     suspend fun insertAppointment(appointment: Appointment) = appointmentDao.insert(appointment)
     suspend fun getAllAppointments(): List<Appointment> = appointmentDao.getAllAppointments()
+
+    // Flow based
+    fun getUpcomingAoppointments(): Flow<List<Appointment>> {
+        val today = LocalDate.now()
+        return appointmentDao.getUpcomingAppointmentsFlow(today)
+    }
 
     // Treatment
     suspend fun insertTreatment(treatment: Treatment) = treatmentDao.insert(treatment)
@@ -44,7 +74,9 @@ class DataRepository(
     }
 
     // Purge database
-    suspend fun clearAllDataAndReset() {
+    fun clearAllDataAndReset() {
         database.clearAllDataAndReset()
     }
 }
+
+

@@ -35,8 +35,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.diabdata.BuildConfig
+import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.utils.SvgIcon
 import com.diabdata.utils.showNotification
@@ -51,6 +54,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     val fileName = "diabdata_export_$currentDate.json"
     val context = LocalContext.current
     val scrollState = rememberScrollState()
+    val versionName = BuildConfig.VERSION_NAME
 
     var showConfirmDialog by remember { mutableStateOf(false) }
 
@@ -59,22 +63,30 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
         onResult = { uri: Uri? ->
             uri?.let {
                 val jsonString = dataViewModel.exportDataAsJsonString()
+
+                val channelName = context.getString(R.string.notification_channel_name_data)
+                val successText = context.getString(R.string.data_export_success_text)
+                val errorText = context.getString(R.string.data_export_error_text)
+
                 try {
                     context.contentResolver.openOutputStream(uri)?.use { outputStream ->
                         outputStream.write(jsonString.toByteArray())
                     }
-                    Toast.makeText(context, "Export réussi", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, successText, Toast.LENGTH_SHORT).show()
                     context.showNotification(
-                        title = "Export des données effectué",
-                        content = uri.lastPathSegment.orEmpty()
+                        title = successText,
+                        content = uri.lastPathSegment.orEmpty(),
+                        notificationChannel = channelName,
+                        notificationDescription = ""
                     )
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    Toast.makeText(
-                        context,
-                        "Erreur lors de l'export : ${e.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    context.showNotification(
+                        title = "${errorText} : ${e.message}",
+                        content = uri.lastPathSegment.orEmpty(),
+                        notificationChannel = channelName,
+                        notificationDescription = ""
+                    )
                 }
             }
         }
@@ -84,6 +96,11 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri: Uri? ->
             uri?.let {
+                val channelName = context.getString(R.string.notification_channel_name_data)
+                val successText = context.getString(R.string.data_import_success_text)
+                val errorText = context.getString(R.string.data_import_error_text)
+                val errorEmptyFile = context.getString(R.string.empty_file_error_text)
+
                 try {
                     val jsonString = context.contentResolver.openInputStream(uri)?.bufferedReader()
                         ?.use { reader ->
@@ -91,24 +108,26 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         }
 
                     if (!jsonString.isNullOrEmpty()) {
-                        // Utiliser ta fonction dans ViewModel qui fait le parsing et met à jour les states
                         dataViewModel.importDataFromJsonString(jsonString)
 
-                        Toast.makeText(context, "Import réussi", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, successText, Toast.LENGTH_SHORT).show()
                         context.showNotification(
-                            title = "Import des données effectué",
-                            content = uri.lastPathSegment.orEmpty()
+                            title = successText,
+                            content = uri.lastPathSegment.orEmpty(),
+                            notificationChannel = channelName,
+                            notificationDescription = ""
                         )
                     } else {
-                        Toast.makeText(context, "Fichier vide", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, errorEmptyFile, Toast.LENGTH_LONG).show()
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    Toast.makeText(
-                        context,
-                        "Erreur lors de l'import : ${e.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    context.showNotification(
+                        title = "$errorText : ${e.message}",
+                        content = uri.lastPathSegment.orEmpty(),
+                        notificationChannel = channelName,
+                        notificationDescription = ""
+                    )
                 }
             }
         }
@@ -124,7 +143,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 .verticalScroll(scrollState)
         ) {
             Text(
-                text = "Données",
+                text = stringResource(R.string.settings_page_data_heading),
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
                 color = MaterialTheme.colorScheme.surfaceTint
             )
@@ -139,7 +158,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
             ) {
                 Column {
                     SettingsButton(
-                        text = "Exporter les données",
+                        text = stringResource(R.string.settings_page_data_export_button_text),
                         onClick = { createFileLauncher.launch(fileName) },
                         shape = RoundedCornerShape(
                             topStart = 16.dp,
@@ -151,7 +170,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     )
                     Spacer(modifier = Modifier.height(3.dp))
                     SettingsButton(
-                        text = "Importer des données",
+                        text = stringResource(R.string.settings_page_data_import_button_text),
                         onClick = {
                             importFileLauncher.launch(arrayOf("application/json"))
                         },
@@ -160,7 +179,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     )
                     Spacer(modifier = Modifier.height(3.dp))
                     SettingsButton(
-                        text = "Vider la base de données",
+                        text = stringResource(R.string.settings_page_data_purge_button_text),
                         onClick = {
                             showConfirmDialog = true
                         },
@@ -179,7 +198,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
             Spacer(Modifier.height(32.dp))
 
             Text(
-                text = "Application",
+                text = stringResource(R.string.settings_page_application_heading),
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
                 color = MaterialTheme.colorScheme.surfaceTint
             )
@@ -188,7 +207,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
 
             Column {
                 SettingsButton(
-                    text = "Version 2.1",
+                    text = "Version $versionName",
                     onClick = { },
                     shape = RoundedCornerShape(
                         topStart = 16.dp,
@@ -204,10 +223,17 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
 
     // Dialog de confirmation
     if (showConfirmDialog) {
+        val purgeDatabaseModalTitle =
+            context.resources.getString(R.string.database_data_purge_modal_title)
+        val purgeDatabaseModalContents =
+            context.resources.getString(R.string.database_data_purge_modal_contents)
+        val confirmButtonText = context.resources.getString(R.string.confirm_button_text)
+        val cancelButtonText = context.resources.getString(R.string.cancel_button_text)
+
         AlertDialog(
             onDismissRequest = { showConfirmDialog = false },
-            title = { Text("Confirmer la suppression") },
-            text = { Text("Êtes-vous sûr de vouloir vider complètement la base de données ? Cette action est irréversible.") },
+            title = { Text(purgeDatabaseModalTitle) },
+            text = { Text(purgeDatabaseModalContents) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -215,14 +241,14 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         showConfirmDialog = false
                     }
                 ) {
-                    Text("Confirmer", color = MaterialTheme.colorScheme.error)
+                    Text(confirmButtonText, color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { showConfirmDialog = false }
                 ) {
-                    Text("Annuler")
+                    Text(cancelButtonText)
                 }
             }
         )
