@@ -78,6 +78,7 @@ fun LatestMeasurements(
         }
         if (treatmentEntries.isNotEmpty()) {
             UpcomingTreatmentExpirationDates(treatments = treatmentEntries)
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
