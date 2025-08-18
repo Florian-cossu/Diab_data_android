@@ -61,7 +61,7 @@ fun AddDataPopup(
     remember { AppointmentType.entries }
     remember { TreatmentType.entries }
     var selectedAppointmentType by remember { mutableStateOf(AppointmentType.APPOINTMENT) }
-    var selectedTreatmentType by remember { mutableStateOf(TreatmentType.FAST_ACTING_RAPID_VIAL) }
+    var selectedTreatmentType by remember { mutableStateOf(TreatmentType.FAST_ACTING_INSULIN_VIAL) }
 
     var isError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
