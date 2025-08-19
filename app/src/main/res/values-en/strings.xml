@@ -96,4 +96,5 @@
     <string name="add_data_popup_add">Add</string>
     <string name="add_data_popup_appointment_dropdown_placeholder">Appointment type</string>
     <string name="add_data_popup_medication_dropdown_placeholder">Medication type</string>
+    <string name="data_matrix_scanner_hint">Scan your medication DataMatrix (small QR Code)</string>
 </resources>

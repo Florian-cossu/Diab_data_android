@@ -13,8 +13,8 @@ android {
         applicationId = "com.diabdata"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "2.5"
+        versionCode = getVersionCode()
+        versionName = "2.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -43,6 +43,17 @@ android {
     buildToolsVersion = "36.0.0"
 }
 
+fun getVersionCode(): Int {
+    val versionFile = file("version.properties")
+    if (!versionFile.exists()) {
+        versionFile.writeText("1")
+    }
+    val current = versionFile.readText().trim().toInt()
+    val newCode = current + 1
+    versionFile.writeText(newCode.toString())
+    return newCode
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -51,15 +62,21 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+
+    // Material
     implementation(libs.androidx.material3)
     implementation(libs.material)
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.material3)
+    implementation(libs.androidx.material3.v150alpha01)
+
     implementation(libs.androidx.foundation)
     implementation(libs.places)
-    implementation(libs.material3)
     implementation(libs.androidx.runtime)
     implementation(libs.androidx.animation.core)
     implementation(libs.ui.graphics)
     implementation(libs.androidx.animation)
+    implementation(libs.androidx.runtime.saveable)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -67,6 +84,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
     //Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.common)
@@ -85,5 +103,4 @@ dependencies {
     // ZXing
     implementation(libs.zxing.core)
     implementation(libs.zxing.android.embedded)
-
 }

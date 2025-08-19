@@ -63,18 +63,17 @@ abstract class DiabDataDatabase : RoomDatabase() {
 
     fun clearAllDataAndReset() {
         runInTransaction {
-            // Liste toutes les tables à purger
+
             val tables = getAllTableNames().filter { it != "medications" }
 
-            // Suppression de tout le contenu + reset auto-incrément
             tables.forEach { table ->
-                // Supprime toutes les lignes
+
                 openHelper.writableDatabase.execSQL("DELETE FROM $table")
-                // Réinitialise l'AUTOINCREMENT
+
                 openHelper.writableDatabase.execSQL("DELETE FROM sqlite_sequence WHERE name='$table'")
             }
         }
-        // VACUUM pour libérer l'espace
+
         openHelper.writableDatabase.execSQL("VACUUM")
     }
 

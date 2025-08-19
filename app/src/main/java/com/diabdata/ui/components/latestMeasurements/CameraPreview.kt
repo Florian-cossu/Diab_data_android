@@ -1,10 +1,13 @@
 package com.diabdata.ui.components.latestMeasurements
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
+import android.view.MotionEvent
 import androidx.annotation.OptIn
 import androidx.annotation.RequiresApi
 import androidx.camera.core.ExperimentalGetImage
+import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.compose.foundation.layout.fillMaxSize
@@ -82,6 +85,7 @@ class ZxingAnalyzer(
     }
 }
 
+@SuppressLint("ClickableViewAccessibility")
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun CameraPreview(
@@ -92,9 +96,10 @@ fun CameraPreview(
     val lifecycleOwner = LocalLifecycleOwner.current
 
     AndroidView(
-        modifier = modifier.fillMaxSize(), // ✅ fillMaxSize pour éviter l'écran noir
+        modifier = modifier.fillMaxSize(),
         factory = { ctx ->
             val previewView = androidx.camera.view.PreviewView(ctx)
+
             val cameraProviderFuture =
                 androidx.camera.lifecycle.ProcessCameraProvider.getInstance(ctx)
 
@@ -113,17 +118,35 @@ fun CameraPreview(
                         it.setAnalyzer(ctx.mainExecutor, ZxingAnalyzer(onBarcodeDetected))
                     }
 
-                // --- CameraSelector ---
                 val cameraSelector = androidx.camera.core.CameraSelector.DEFAULT_BACK_CAMERA
 
                 try {
                     cameraProvider.unbindAll()
-                    cameraProvider.bindToLifecycle(
-                        lifecycleOwner, // ✅ utiliser le vrai LifecycleOwner
+
+                    // ✅ récupérer la Camera pour piloter le focus
+                    val camera = cameraProvider.bindToLifecycle(
+                        lifecycleOwner,
                         cameraSelector,
                         preview,
                         analyzer
                     )
+
+                    // --- Autofocus en continu ---
+                    val factory = previewView.meteringPointFactory
+                    val point = factory.createPoint(0.5f, 0.5f) // centre
+                    val action = FocusMeteringAction.Builder(point).build()
+                    camera.cameraControl.startFocusAndMetering(action)
+
+                    // --- Tap to focus ---
+                    previewView.setOnTouchListener { _, event ->
+                        if (event.action == MotionEvent.ACTION_UP) {
+                            val tapPoint = factory.createPoint(event.x, event.y)
+                            val focusAction = FocusMeteringAction.Builder(tapPoint).build()
+                            camera.cameraControl.startFocusAndMetering(focusAction)
+                        }
+                        true
+                    }
+
                 } catch (exc: Exception) {
                     Log.e("ZXING_SCANNER", "Use case binding failed", exc)
                 }

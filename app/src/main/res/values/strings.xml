@@ -91,9 +91,10 @@
     <string name="add_data_popup_diagnosis_date_insertion_error">Erreur lors de l\'ajout de la date de diagnostic</string>
     <string name="add_data_popup_invalid_weigth_kg_input_hint">Le poids doit-être compris entre 0 et 600 (kg)</string>
     <string name="add_data_popup_invalid_HBA1C_input_hint">La HBA1C doit être comprise entre 0 et 15 (%)</string>
-    <string name="add_data_popup_title">Ajouter nouveau %1$s</string>
+    <string name="add_data_popup_title">Ajouter %1$s</string>
     <string name="homescreen_no_data_text">Aucune données</string>
     <string name="add_data_popup_add">Ajouter</string>
     <string name="add_data_popup_appointment_dropdown_placeholder">Type de RDV</string>
     <string name="add_data_popup_medication_dropdown_placeholder">Type de traitement</string>
+    <string name="data_matrix_scanner_hint">Scannez la DataMatrix de votre traitement (petit QR Code)</string>
 </resources>

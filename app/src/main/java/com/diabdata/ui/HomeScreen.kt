@@ -166,7 +166,8 @@ fun HomeScreen(
                         }
                         showScanner = false
                     }
-                }
+                },
+                visible = showScanner
             )
         }
 

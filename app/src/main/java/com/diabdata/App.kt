@@ -47,12 +47,8 @@ fun App() {
 
     RequestNotificationPermission(
         context = context,
-        onPermissionGranted = {
-            println("Permission notification accordée ✅")
-        },
-        onPermissionDenied = {
-            println("Permission notification refusée ❌")
-        }
+        onPermissionGranted = { },
+        onPermissionDenied = { }
     )
 
     val db = DiabDataDatabase.getDatabase(context)
