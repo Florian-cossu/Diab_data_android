@@ -15,6 +15,7 @@
     <string name="addable_hba1c">HbA1c</string>
     <string name="addable_appointment">Appointment</string>
     <string name="addable_treatment">Medication</string>
+    <string name="addable_treatment_scan">Scan a code</string>
     <string name="addable_diagnosis">Diagnosis date</string>
     <string name="important_dates_card_section_heading">Important dates</string>
     <string name="latest_measures_card_section_heading">Recent readings</string>
@@ -92,4 +93,7 @@
     <string name="add_data_popup_invalid_HBA1C_input_hint">HBA1C must be between 0 and 15 (%)</string>
     <string name="add_data_popup_title">Add new %1$s</string>
     <string name="homescreen_no_data_text">No data</string>
+    <string name="add_data_popup_add">Add</string>
+    <string name="add_data_popup_appointment_dropdown_placeholder">Appointment type</string>
+    <string name="add_data_popup_medication_dropdown_placeholder">Medication type</string>
 </resources>

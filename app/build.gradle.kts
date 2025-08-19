@@ -56,6 +56,10 @@ dependencies {
     implementation(libs.androidx.foundation)
     implementation(libs.places)
     implementation(libs.material3)
+    implementation(libs.androidx.runtime)
+    implementation(libs.androidx.animation.core)
+    implementation(libs.ui.graphics)
+    implementation(libs.androidx.animation)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -70,4 +74,16 @@ dependencies {
     implementation(libs.gson)
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // Data Matrix scanner
+    implementation(libs.barcode.scanning)
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+
+    // ZXing
+    implementation(libs.zxing.core)
+    implementation(libs.zxing.android.embedded)
+
 }

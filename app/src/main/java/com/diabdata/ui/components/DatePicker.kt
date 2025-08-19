@@ -78,6 +78,6 @@ fun DateSelector(
             .fillMaxWidth()
             .padding(vertical = 4.dp)
             .clickable { openDatePicker() }, // Champ entier cliquable
-        shape = MaterialTheme.shapes.medium
+        shape = MaterialTheme.shapes.small
     )
 }

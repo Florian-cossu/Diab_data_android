@@ -1,15 +1,22 @@
 package com.diabdata.data
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import android.content.Context
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.diabdata.models.Appointment
 import com.diabdata.models.AppointmentType
 import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
+import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
 import com.diabdata.utils.AppointmentTypeAdapter
 import com.diabdata.utils.LocalDateAdapter
+import com.diabdata.utils.MedicationInitializer
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +27,19 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
-class DataViewModel(private val repository: DataRepository) : ViewModel() {
+class DataViewModel(
+    private val repository: DataRepository,
+    application: Application
+) : AndroidViewModel(application) {
+    val appContext: Context = getApplication<Application>().applicationContext
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            MedicationInitializer(appContext, repository.database).initialize()
+        }
+
+    }
+
     // Flow based queries
     // HBA1C
     val recentHba1c: StateFlow<List<HBA1CEntry>> =
@@ -33,7 +52,7 @@ class DataViewModel(private val repository: DataRepository) : ViewModel() {
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     val upcomingAppointment: StateFlow<List<Appointment>> =
-        repository.getUpcomingAoppointments()
+        repository.getUpcomingAppointments()
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     // Legacy
@@ -121,12 +140,22 @@ class DataViewModel(private val repository: DataRepository) : ViewModel() {
         }
     }
 
-
     fun clearDatabase() = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             repository.clearAllDataAndReset()
         }
         loadAllData()
+    }
+
+    // Buffer pour le préremplissage
+    var prefilledTreatment: Treatment? by mutableStateOf(null)
+    fun updatePrefilledTreatment(t: Treatment?) {
+        prefilledTreatment = t
+    }
+
+    // <- NOUVEAU : getter suspend qui retourne l’entity
+    suspend fun getMedicationByGtin(gtin: String): MedicationEntity? {
+        return repository.findMedicationByCode(gtin)
     }
 
     fun exportDataAsJsonString(): String {

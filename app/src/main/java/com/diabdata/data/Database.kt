@@ -8,12 +8,14 @@ import androidx.room.TypeConverters
 import com.diabdata.dao.AppointmentDao
 import com.diabdata.dao.DiagnosisDateDao
 import com.diabdata.dao.HBA1CDao
+import com.diabdata.dao.MedicationDao
 import com.diabdata.dao.TreatmentDao
 import com.diabdata.dao.WeightDao
 import com.diabdata.data.converters.DateConverters
 import com.diabdata.models.Appointment
 import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
+import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
 
@@ -23,9 +25,10 @@ import com.diabdata.models.WeightEntry
         HBA1CEntry::class,
         Appointment::class,
         Treatment::class,
-        DiagnosisDate::class
+        DiagnosisDate::class,
+        MedicationEntity::class
     ],
-    version = 3,
+    version = 5,
     exportSchema = false
 )
 
@@ -37,6 +40,7 @@ abstract class DiabDataDatabase : RoomDatabase() {
     abstract fun appointmentDao(): AppointmentDao
     abstract fun treatmentDao(): TreatmentDao
     abstract fun diagnosisDao(): DiagnosisDateDao
+    abstract fun medicationDao(): MedicationDao
 
     fun getAllTableNames(): List<String> {
         val db = openHelper.readableDatabase
@@ -60,7 +64,7 @@ abstract class DiabDataDatabase : RoomDatabase() {
     fun clearAllDataAndReset() {
         runInTransaction {
             // Liste toutes les tables à purger
-            val tables = getAllTableNames()
+            val tables = getAllTableNames().filter { it != "medications" }
 
             // Suppression de tout le contenu + reset auto-incrément
             tables.forEach { table ->
