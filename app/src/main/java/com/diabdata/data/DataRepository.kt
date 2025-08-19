@@ -3,11 +3,13 @@ package com.diabdata.data
 import com.diabdata.dao.AppointmentDao
 import com.diabdata.dao.DiagnosisDateDao
 import com.diabdata.dao.HBA1CDao
+import com.diabdata.dao.MedicationDao
 import com.diabdata.dao.TreatmentDao
 import com.diabdata.dao.WeightDao
 import com.diabdata.models.Appointment
 import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
+import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
 import kotlinx.coroutines.flow.Flow
@@ -19,8 +21,10 @@ class DataRepository(
     private val appointmentDao: AppointmentDao,
     private val treatmentDao: TreatmentDao,
     private val diagnosisDao: DiagnosisDateDao,
-    private val database: DiabDataDatabase,
+    val database: DiabDataDatabase,
 ) {
+    private val medicationDao: MedicationDao = database.medicationDao()
+
     // Weight
     // Legacy
     suspend fun insertWeight(weightEntry: WeightEntry) = weightDao.insert(weightEntry)
@@ -56,7 +60,7 @@ class DataRepository(
     suspend fun getAllAppointments(): List<Appointment> = appointmentDao.getAllAppointments()
 
     // Flow based
-    fun getUpcomingAoppointments(): Flow<List<Appointment>> {
+    fun getUpcomingAppointments(): Flow<List<Appointment>> {
         val today = LocalDate.now()
         return appointmentDao.getUpcomingAppointmentsFlow(today)
     }
@@ -64,6 +68,9 @@ class DataRepository(
     // Treatment
     suspend fun insertTreatment(treatment: Treatment) = treatmentDao.insert(treatment)
     suspend fun getAllTreatments(): List<Treatment> = treatmentDao.getAllTreatments()
+
+    suspend fun findMedicationByCode(code: String): MedicationEntity? =
+        medicationDao.findByCode(code)
 
     // Diagnosis dates
     suspend fun insertDiagnosisDate(diagnosisDate: DiagnosisDate) = diagnosisDao.insert(diagnosisDate)

@@ -1,106 +1,121 @@
 package com.diabdata.ui.components
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingActionButtonMenu
+import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleFloatingActionButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.diabdata.R
 import com.diabdata.models.AddableType
-import com.diabdata.utils.SvgIcon
 
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AddDataFab(onSelect: (AddableType) -> Unit) {
-    val context = LocalContext.current
-    var expanded by remember { mutableStateOf(false) }
+fun AddDataFab(
+    onSelect: (AddableType) -> Unit,
+    onScanClick: () -> Unit
+) {
+    var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
 
-    Box {
-        FloatingActionButton(onClick = {expanded = !expanded}) {
-            Icon(Icons.Default.Add, contentDescription = "Ajouter")
+    BackHandler(fabMenuExpanded) { fabMenuExpanded = false }
+
+    val fabItems = listOf(
+        Triple(
+            stringResource(R.string.addable_treatment_scan),
+            R.drawable.data_matrix_icon_vector
+        ) { onScanClick() },
+        Triple(
+            stringResource(R.string.addable_weight),
+            R.drawable.weight_add_icon_vector
+        ) { onSelect(AddableType.WEIGHT) },
+        Triple(stringResource(R.string.addable_hba1c), R.drawable.hba1c_add_icon_vector) {
+            onSelect(
+                AddableType.HBA1C
+            )
+        },
+        Triple(
+            stringResource(R.string.addable_diagnosis),
+            R.drawable.diagnosis_icon_vector
+        ) { onSelect(AddableType.DIAGNOSIS) },
+        Triple(
+            stringResource(R.string.addable_treatment),
+            R.drawable.medication_add_icon_vector
+        ) { onSelect(AddableType.TREATMENT) },
+        Triple(
+            stringResource(R.string.addable_appointment),
+            R.drawable.event_add_icon_vector
+        ) { onSelect(AddableType.APPOINTMENT) }
+    )
+
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
+        if (fabMenuExpanded) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.95f))
+                    .clickable { fabMenuExpanded = false }
+            )
         }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            DropdownMenuItem(
-                text = { Text(context.getString(R.string.addable_weight)) },
-                onClick = {
-                    expanded = false
-                    onSelect(AddableType.WEIGHT)
-                },
-                leadingIcon = {
-                    SvgIcon(
-                        resId = (R.drawable.weight_add_icon_vector),
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+
+        FloatingActionButtonMenu(
+            expanded = fabMenuExpanded,
+            modifier = Modifier,
+            button = {
+                ToggleFloatingActionButton(
+                    checked = fabMenuExpanded,
+                    onCheckedChange = { fabMenuExpanded = !fabMenuExpanded }
+                ) {
+                    val imageVector by remember {
+                        derivedStateOf {
+                            if (fabMenuExpanded) Icons.Filled.Close else Icons.Filled.Add
+                        }
+                    }
+
+                    Icon(
+                        imageVector = imageVector,
+                        contentDescription = if (fabMenuExpanded) "Fermer menu" else "Ouvrir menu"
                     )
+
                 }
-            )
-            DropdownMenuItem(
-                text = { Text(context.getString(R.string.addable_hba1c)) },
-                onClick = {
-                    expanded = false
-                    onSelect(AddableType.HBA1C)
-                },
-                leadingIcon = {
-                    SvgIcon(
-                        resId = (R.drawable.hba1c_add_icon_vector),
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            )
-            DropdownMenuItem(
-                text = { Text(context.getString(R.string.addable_diagnosis)) },
-                onClick = {
-                    expanded = false
-                    onSelect(AddableType.DIAGNOSIS)
-                },
-                leadingIcon = {
-                    SvgIcon(
-                        resId = (R.drawable.diagnosis_icon_vector),
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            )
-            DropdownMenuItem(
-                text = { Text(context.getString(R.string.addable_treatment)) },
-                onClick = {
-                    expanded = false
-                    onSelect(AddableType.TREATMENT)
-                },
-                leadingIcon = {
-                    SvgIcon(
-                        resId = (R.drawable.medication_add_icon_vector),
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            )
-            DropdownMenuItem(
-                text = { Text(context.getString(R.string.addable_appointment)) },
-                onClick = {
-                    expanded = false
-                    onSelect(AddableType.APPOINTMENT)
-                },
-                leadingIcon = {
-                    SvgIcon(
-                        resId = (R.drawable.event_add_icon_vector),
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            )
+            }
+        ) {
+            fabItems.forEach { (label, iconRes, action) ->
+                FloatingActionButtonMenuItem(
+                    onClick = {
+                        fabMenuExpanded = false
+                        action()
+                    },
+                    text = { Text(label) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = iconRes),
+                            contentDescription = null
+                        )
+                    }
+                )
+            }
+
         }
     }
 }

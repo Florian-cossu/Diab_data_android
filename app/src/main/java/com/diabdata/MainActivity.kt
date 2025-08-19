@@ -1,8 +1,11 @@
 package com.diabdata
 
+import android.app.Application
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -17,6 +20,7 @@ import com.diabdata.ui.theme.DiabDataTheme
 class MainActivity : ComponentActivity() {
     private lateinit var dataViewModel: DataViewModel
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -30,7 +34,7 @@ class MainActivity : ComponentActivity() {
             database = db
         )
 
-        val factory = DataViewModelFactory(repository)
+        val factory = DataViewModelFactory(repository, applicationContext as Application)
 
         dataViewModel = ViewModelProvider(this, factory).get(DataViewModel::class.java)
 

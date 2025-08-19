@@ -1,0 +1,88 @@
+package com.diabdata.ui.components
+
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.diabdata.R
+import com.diabdata.ui.components.latestMeasurements.CameraPreview
+import com.diabdata.utils.MedicationInfo
+import com.diabdata.utils.SvgIcon
+import com.diabdata.utils.parseGS1
+
+@RequiresApi(Build.VERSION_CODES.P)
+@Composable
+fun DataMatrixScannerDialog(
+    visible: Boolean,
+    onDismiss: () -> Unit,
+    onResult: (MedicationInfo) -> Unit
+) {
+    if (!visible) return
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.95f))
+            .clickable { onDismiss() } // ferme si on clique en dehors
+    ) {
+        val scanSize = 280.dp
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(scanSize)
+                .clip(RoundedCornerShape(24.dp))
+                .clickable(enabled = false) {}
+                .border(
+                    width = 3.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(24.dp)
+                )
+        ) {
+            CameraPreview(
+                modifier = Modifier.matchParentSize(),
+                onBarcodeDetected = { rawValue ->
+                    val parsed = parseGS1(rawValue)
+                    onResult(parsed)
+                    onDismiss()
+                }
+            )
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(y = scanSize / 2 + 16.dp) // sous le carré
+        ) {
+            SvgIcon(
+                resId = R.drawable.lightbulb_icon_vector,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.data_matrix_scanner_hint),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}

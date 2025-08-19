@@ -3,18 +3,19 @@
     <string name="app_name">Diab Data</string>
     <string name="annual_checkup">Annual Checkup</string>
     <string name="appointment">One-time appointment</string>
-    <string name="fast_acting_rapid_cartridge">Fast acting insulin cartridge</string>
-    <string name="fast_acting_rapid_syringe">Fast acting insulin pen</string>
-    <string name="fast_acting_rapid_vial">Fast acting insulin vial</string>
-    <string name="slow_acting_rapid_syringe">Slow acting insulin pen</string>
-    <string name="slow_acting_rapid_cartridge">Slow acting insulin cartridge</string>
-    <string name="slow_acting_rapid_vial">Slow acting insulin vial</string>
+    <string name="fast_acting_insulin_cartridge">Fast acting insulin cartridge</string>
+    <string name="fast_acting_insulin_syringe">Fast acting insulin pen</string>
+    <string name="fast_acting_insulin_vial">Fast acting insulin vial</string>
+    <string name="slow_acting_insulin_syringe">Slow acting insulin pen</string>
+    <string name="slow_acting_insulin_cartridge">Slow acting insulin cartridge</string>
+    <string name="slow_acting_insulin_vial">Slow acting insulin vial</string>
     <string name="glucagon_syringe">Glucagon syringe</string>
     <string name="glucagon_spray">Glucagon nasal spray (Baqsimi)</string>
     <string name="addable_weight">Weight</string>
     <string name="addable_hba1c">HbA1c</string>
     <string name="addable_appointment">Appointment</string>
     <string name="addable_treatment">Medication</string>
+    <string name="addable_treatment_scan">Scan a code</string>
     <string name="addable_diagnosis">Diagnosis date</string>
     <string name="important_dates_card_section_heading">Important dates</string>
     <string name="latest_measures_card_section_heading">Recent readings</string>
@@ -91,4 +92,9 @@
     <string name="add_data_popup_invalid_weigth_kg_input_hint">Weight must be between 0 and 600( kg)</string>
     <string name="add_data_popup_invalid_HBA1C_input_hint">HBA1C must be between 0 and 15 (%)</string>
     <string name="add_data_popup_title">Add new %1$s</string>
+    <string name="homescreen_no_data_text">No data</string>
+    <string name="add_data_popup_add">Add</string>
+    <string name="add_data_popup_appointment_dropdown_placeholder">Appointment type</string>
+    <string name="add_data_popup_medication_dropdown_placeholder">Medication type</string>
+    <string name="data_matrix_scanner_hint">Scan your medication DataMatrix (small QR Code)</string>
 </resources>

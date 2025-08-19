@@ -42,6 +42,7 @@ import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.Treatment
 import com.diabdata.models.TreatmentType
 import com.diabdata.models.WeightEntry
+import com.diabdata.utils.SvgIcon
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,18 +51,28 @@ fun AddDataPopup(
     type: AddableType,
     dataViewModel: DataViewModel,
     onSubmit: (Map<String, String>) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    prefilledTreatment: Treatment? = null
 ) {
     val context = LocalContext.current
 
-    var field1 by remember { mutableStateOf("") }
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+    var field1 by remember { mutableStateOf(prefilledTreatment?.name ?: "") }
+
+    var selectedDate by remember {
+        mutableStateOf(
+            prefilledTreatment?.expirationDate ?: LocalDate.now()
+        )
+    }
     var notes by remember { mutableStateOf("") }
 
     remember { AppointmentType.entries }
     remember { TreatmentType.entries }
     var selectedAppointmentType by remember { mutableStateOf(AppointmentType.APPOINTMENT) }
-    var selectedTreatmentType by remember { mutableStateOf(TreatmentType.FAST_ACTING_RAPID_VIAL) }
+    var selectedTreatmentType by remember {
+        mutableStateOf(
+            prefilledTreatment?.type ?: TreatmentType.FAST_ACTING_INSULIN_VIAL
+        )
+    }
 
     var isError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -85,10 +96,23 @@ fun AddDataPopup(
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(context.getString(R.string.add_data_popup_title, type.getDisplayName(context)))
+                val resId = getPopupTitleIcon(type)
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SvgIcon(resId = resId, color = MaterialTheme.colorScheme.primary)
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        context.getString(
+                            R.string.add_data_popup_title,
+                            type.getDisplayName(context)
+                        ).uppercase(), color = MaterialTheme.colorScheme.primary
+                    )
+                }
 
                 DateSelector(
-                    initialDate = LocalDate.now(),
+                    initialDate = selectedDate,
                     onDateSelected = { selectedDate = it }
                 )
 
@@ -96,7 +120,7 @@ fun AddDataPopup(
                     AddableType.APPOINTMENT -> {
                         val context = LocalContext.current
                         EnumDropdown(
-                            label = "Type de RDV",
+                            label = context.getString(R.string.add_data_popup_appointment_dropdown_placeholder),
                             options = AppointmentType.entries,
                             selected = selectedAppointmentType,
                             displayName = { it.displayName(context) },
@@ -106,7 +130,7 @@ fun AddDataPopup(
 
                     AddableType.TREATMENT -> {
                         EnumDropdown(
-                            label = "Type de traitement",
+                            label = context.getString(R.string.add_data_popup_medication_dropdown_placeholder),
                             options = TreatmentType.entries,
                             selected = selectedTreatmentType,
                             displayName = { it.displayName(context) },
@@ -174,7 +198,8 @@ fun AddDataPopup(
                     } else {
                         KeyboardOptions.Default
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.small,
                 )
 
                 Row(
@@ -272,4 +297,12 @@ fun AddDataPopup(
             }
         }
     }
+}
+
+fun getPopupTitleIcon(type: AddableType): Int = when (type) {
+    AddableType.APPOINTMENT -> R.drawable.event_add_icon_vector
+    AddableType.TREATMENT -> R.drawable.medication_add_icon_vector
+    AddableType.WEIGHT -> R.drawable.weight_add_icon_vector
+    AddableType.HBA1C -> R.drawable.hba1c_add_icon_vector
+    AddableType.DIAGNOSIS -> R.drawable.diagnosis_icon_vector
 }

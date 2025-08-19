@@ -32,16 +32,16 @@ import java.time.temporal.ChronoUnit
 
 @Composable
 fun UpcomingAppointmentsList(appointments: List<Appointment>) {
+    if (appointments.isEmpty()) return
+
     val context = LocalContext.current
 
     val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
     val primaryColor = MaterialTheme.colorScheme.primary
     val today = LocalDate.now()
 
-    val upcomingAppointments = appointments.filter { it.date.isAfter(today) }
+    val upcomingAppointments = appointments.filter { it.date >= today }
         .sortedBy { it.date }
-
-    if (upcomingAppointments.isEmpty()) return
 
     Column(
         modifier = Modifier

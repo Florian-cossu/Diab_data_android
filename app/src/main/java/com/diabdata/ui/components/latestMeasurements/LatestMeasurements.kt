@@ -62,15 +62,24 @@ fun LatestMeasurements(
                     stringResource(R.string.hba1c_on_date_text, h.date.format(formatter))
                 }
             )
-        )
+        ).filter { it.entries.isNotEmpty() }
 
-        ImportantDatesList(diagnosisEntries)
-        Spacer(modifier = Modifier.height(8.dp))
-        LatestMeasures(sources)
-        Spacer(modifier = Modifier.height(8.dp))
-        UpcomingAppointmentsList(appointmentEntries)
-        Spacer(modifier = Modifier.height(8.dp))
-        UpcomingTreatmentExpirationDates(treatments = treatmentEntries)
+        if (diagnosisEntries.isNotEmpty()) {
+            ImportantDatesList(diagnosisEntries)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        if (sources.isNotEmpty()) {
+            LatestMeasures(sources)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        if (appointmentEntries.isNotEmpty()) {
+            UpcomingAppointmentsList(appointmentEntries)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        if (treatmentEntries.isNotEmpty()) {
+            UpcomingTreatmentExpirationDates(treatments = treatmentEntries)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
     }
 }
 

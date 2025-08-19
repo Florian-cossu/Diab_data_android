@@ -41,12 +41,13 @@ data class MeasureCardData(
 fun LatestMeasures(
     sources: List<MeasureSource<*>>
 ) {
+    if (sources.isEmpty()) return
+
     val primaryColor = MaterialTheme.colorScheme.primary
     val today = LocalDate.now()
     val oneYearAgo = today.minusYears(1)
 
     val cards = sources.mapNotNull { source ->
-        // Dernière entrée toutes périodes confondues
         val latestEntry = source.entries.maxByOrNull {
             when (it) {
                 is WeightEntry -> it.date
@@ -99,8 +100,6 @@ fun LatestMeasures(
             trendIcon = trendIcon
         )
     }
-
-    if (cards.isEmpty()) return
 
     Column(
         modifier = Modifier.fillMaxSize()

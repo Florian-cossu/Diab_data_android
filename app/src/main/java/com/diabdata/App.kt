@@ -1,5 +1,8 @@
 package com.diabdata
 
+import android.app.Application
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -33,21 +36,19 @@ import com.diabdata.data.DiabDataDatabase
 import com.diabdata.ui.DatabaseEditionView
 import com.diabdata.ui.HomeScreen
 import com.diabdata.ui.SettingsScreen
+import com.diabdata.utils.MedicationInitializer
 import com.diabdata.utils.RequestNotificationPermission
 import com.diabdata.utils.SvgIcon
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun App() {
-    val context = LocalContext.current
+    val context = LocalContext.current.applicationContext
 
     RequestNotificationPermission(
         context = context,
-        onPermissionGranted = {
-            println("Permission notification accordée ✅")
-        },
-        onPermissionDenied = {
-            println("Permission notification refusée ❌")
-        }
+        onPermissionGranted = { },
+        onPermissionDenied = { }
     )
 
     val db = DiabDataDatabase.getDatabase(context)
@@ -59,7 +60,7 @@ fun App() {
         db.diagnosisDao(),
         db
     )
-    val factory = DataViewModelFactory(repository)
+    val factory = DataViewModelFactory(repository, context as Application)
     val dataViewModel: DataViewModel = androidx.lifecycle.viewmodel.compose.viewModel(factory = factory)
 
     val weightEntries = dataViewModel.weights.collectAsState(initial = emptyList())
@@ -69,6 +70,7 @@ fun App() {
     val diagnosisDate = dataViewModel.diagnosis.collectAsState(initial = emptyList())
 
     LaunchedEffect(Unit) {
+        MedicationInitializer(context, db).initialize()
         dataViewModel.loadAllData()
     }
 

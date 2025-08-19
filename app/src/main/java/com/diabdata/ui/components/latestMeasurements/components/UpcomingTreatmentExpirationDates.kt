@@ -42,15 +42,15 @@ data class TreatmentCardData(
 
 @DrawableRes
 fun TreatmentType.iconRes(): Int = when (this) {
-    TreatmentType.FAST_ACTING_RAPID_CARTRIDGE -> R.drawable.fast_acting_insulin_cartridge_icon_vector
-    TreatmentType.SLOW_ACTING_RAPID_CARTRIDGE -> R.drawable.slow_acting_insulin_cartridge_icon_vector
+    TreatmentType.FAST_ACTING_INSULIN_CARTRIDGE -> R.drawable.fast_acting_insulin_cartridge_icon_vector
+    TreatmentType.SLOW_ACTING_INSULIN_CARTRIDGE -> R.drawable.slow_acting_insulin_cartridge_icon_vector
 
-    TreatmentType.FAST_ACTING_RAPID_SYRINGE -> R.drawable.fast_acting_insulin_syringe_icon_vector
-    TreatmentType.SLOW_ACTING_RAPID_SYRINGE -> R.drawable.slow_acting_insulin_syringe_icon_vector
+    TreatmentType.FAST_ACTING_INSULIN_SYRINGE -> R.drawable.fast_acting_insulin_syringe_icon_vector
+    TreatmentType.SLOW_ACTING_INSULIN_SYRINGE -> R.drawable.slow_acting_insulin_syringe_icon_vector
     TreatmentType.GLUCAGON_SYRINGE -> R.drawable.syringe_icon_vector
 
-    TreatmentType.FAST_ACTING_RAPID_VIAL -> R.drawable.fast_acting_insulin_vial_icon_vector
-    TreatmentType.SLOW_ACTING_RAPID_VIAL -> R.drawable.slow_acting_insulin_vial_icon_vector
+    TreatmentType.FAST_ACTING_INSULIN_VIAL -> R.drawable.fast_acting_insulin_vial_icon_vector
+    TreatmentType.SLOW_ACTING_INSULIN_VIAL -> R.drawable.slow_acting_insulin_vial_icon_vector
 
     TreatmentType.GLUCAGON_SPRAY -> R.drawable.nasal_spray_icon_vector
 }
@@ -59,8 +59,9 @@ fun TreatmentType.iconRes(): Int = when (this) {
 fun UpcomingTreatmentExpirationDates(
     treatments: List<Treatment>
 ) {
-    val context = LocalContext.current
     if (treatments.isEmpty()) return
+
+    val context = LocalContext.current
 
     val today = LocalDate.now()
     val soonThreshold = today.plusDays(30)
