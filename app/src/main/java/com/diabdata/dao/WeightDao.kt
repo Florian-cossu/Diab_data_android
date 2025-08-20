@@ -1,7 +1,6 @@
 package com.diabdata.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.diabdata.models.WeightEntry
@@ -13,8 +12,8 @@ interface WeightDao {
     @Insert
     suspend fun insert(weightEntry: WeightEntry)
 
-    @Delete
-    suspend fun deleteWeightEntry(weightEntry: WeightEntry)
+    @Query("DELETE FROM weight_entries WHERE id = :id")
+    suspend fun deleteById(id: Int)
 
     @Query("SELECT * FROM weight_entries ORDER BY date DESC")
     fun getAllWeightsFlow(): Flow<List<WeightEntry>>

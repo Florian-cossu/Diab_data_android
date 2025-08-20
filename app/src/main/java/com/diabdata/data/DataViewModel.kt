@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
 import com.diabdata.models.AppointmentType
 import com.diabdata.models.DiagnosisDate
@@ -14,6 +15,7 @@ import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
+import com.diabdata.ui.DbEntry
 import com.diabdata.utils.AppointmentTypeAdapter
 import com.diabdata.utils.LocalDateAdapter
 import com.diabdata.utils.MedicationInitializer
@@ -100,9 +102,13 @@ class DataViewModel(
     }
 
     // Deletion functions
-    fun deleteEntry(id: Int, tableName: String) {
-        viewModelScope.launch {
-            repository.deleteEntry(id, tableName)
+    fun deleteEntry(entry: DbEntry) = viewModelScope.launch {
+        when (entry.type) {
+            AddableType.WEIGHT -> repository.deleteWeight(entry.id)
+            AddableType.HBA1C -> repository.deleteHba1c(entry.id)
+            AddableType.APPOINTMENT -> repository.deleteAppointment(entry.id)
+            AddableType.TREATMENT -> repository.deleteTreatment(entry.id)
+            AddableType.DIAGNOSIS -> repository.deleteDiagnosis(entry.id)
         }
     }
 

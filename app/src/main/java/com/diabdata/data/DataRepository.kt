@@ -40,14 +40,15 @@ class DataRepository(
         return weightDao.getWeightsSince(oneYearAgo)
     }
 
+    /** Delete a weight record by Id**/
+    suspend fun deleteWeight(id: Int) = weightDao.deleteById(id)
+
+
     // ----------------
     // HBA1C
     // ----------------
     /** Insert a new HBA1C entry */
     suspend fun insertHba1c(hba1cEntry: HBA1CEntry) = hba1cDao.insert(hba1cEntry)
-
-    /** Delete a specific HBA1C entry */
-    suspend fun deleteHBA1CEntry(hba1cEntry: HBA1CEntry) = hba1cDao.deleteHBA1CEntry(hba1cEntry)
 
     /** Flow of all HBA1C entries */
     fun getAllHba1cFlow(): Flow<List<HBA1CEntry>> = hba1cDao.getAllHBA1CFlow()
@@ -57,6 +58,9 @@ class DataRepository(
         val oneYearAgo = LocalDate.now().minusYears(1)
         return hba1cDao.getHBA1CEntriesSince(oneYearAgo)
     }
+
+    /** Delete an HBA1C record by Id**/
+    suspend fun deleteHba1c(id: Int) = hba1cDao.deleteById(id)
 
     // ----------------
     // Appointment
@@ -73,6 +77,9 @@ class DataRepository(
         return appointmentDao.getUpcomingAppointmentsFlow(today)
     }
 
+    /** Delete an Appointment record by Id**/
+    suspend fun deleteAppointment(id: Int) = appointmentDao.deleteById(id)
+
     // ----------------
     // Treatment
     // ----------------
@@ -81,6 +88,9 @@ class DataRepository(
 
     /** Flow of all treatments */
     fun getAllTreatmentsFlow(): Flow<List<Treatment>> = treatmentDao.getAllTreatmentsFlow()
+
+    /** Delete a treatment record by Id**/
+    suspend fun deleteTreatment(id: Int) = treatmentDao.deleteById(id)
 
     // ----------------
     // Medication
@@ -98,6 +108,9 @@ class DataRepository(
     /** Flow of all diagnosis dates */
     fun getAllDiagnosisDatesFlow(): Flow<List<DiagnosisDate>> =
         diagnosisDao.getAllDiagnosisDatesFlow()
+
+    /** Delete a diagnosis date record by Id**/
+    suspend fun deleteDiagnosis(id: Int) = diagnosisDao.deleteById(id)
 
     // ----------------
     // Generic / Database Utilities

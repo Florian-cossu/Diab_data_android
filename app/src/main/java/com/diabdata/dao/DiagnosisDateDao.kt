@@ -1,7 +1,6 @@
 package com.diabdata.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.diabdata.models.DiagnosisDate
@@ -12,8 +11,8 @@ interface DiagnosisDateDao {
     @Insert
     suspend fun insert(diagnosisDate: DiagnosisDate)
 
-    @Delete
-    suspend fun deleteDiagnosisDate(diagnosisDate: DiagnosisDate)
+    @Query("DELETE FROM diagnosis_date_entries WHERE id = :id")
+    suspend fun deleteById(id: Int)
 
     @Query("SELECT * FROM diagnosis_date_entries ORDER BY date ASC")
     fun getAllDiagnosisDatesFlow(): Flow<List<DiagnosisDate>>

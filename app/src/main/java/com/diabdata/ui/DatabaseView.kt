@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -16,18 +17,19 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -53,15 +55,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
@@ -146,7 +149,7 @@ fun DatabaseEditionView(
                     Button(
                         onClick = {
                             selectedEntries.forEach {
-                                dataViewModel.deleteEntry(it.id, it.type.tableName)
+                                dataViewModel.deleteEntry(it)
                             }
                             selectedEntries = emptySet()
                             selectionMode = false
@@ -201,12 +204,13 @@ fun DatabaseEditionView(
             Spacer(Modifier.height(8.dp))
 
             LazyColumn {
-                itemsIndexed(
-                    filteredEntries,
-                    key = { _, entry -> "${entry.type}-${entry.id}" }) { index, entry ->
+                items(
+                    items = filteredEntries,
+                    key = { entry -> "${entry.type}-${entry.id}" }
+                ) { entry ->
                     EntryCardSwipeM3(
                         entry = entry,
-                        shape = getItemShape(index, filteredEntries.size),
+                        shape = getItemShape(filteredEntries.indexOf(entry), filteredEntries.size),
                         selectionMode = selectionMode,
                         isSelected = selectedEntries.contains(entry),
                         onClick = {
@@ -221,8 +225,9 @@ fun DatabaseEditionView(
                             selectedEntries = selectedEntries + entry
                         },
                         onDeleteFromDb = {
-                            dataViewModel.deleteEntry(entry.id, entry.type.tableName)
-                        }
+                            dataViewModel.deleteEntry(entry)
+                        },
+                        onArchive = {}
                     )
                     Spacer(Modifier.height(4.dp))
                 }
@@ -234,61 +239,134 @@ fun DatabaseEditionView(
 @Composable
 fun EntryCardSwipeM3(
     entry: DbEntry,
+    modifier: Modifier = Modifier,
     shape: Shape,
     selectionMode: Boolean,
     isSelected: Boolean,
     onClick: () -> Unit,
     onLongPress: () -> Unit,
     onDeleteFromDb: () -> Unit,
+    onArchive: () -> Unit,
     swipeThreshold: Dp = 100.dp
 ) {
     val scope = rememberCoroutineScope()
     val offsetX = remember { Animatable(0f) }
+    val alphaAnim = remember { Animatable(1f) }
     val thresholdPx = with(LocalDensity.current) { swipeThreshold.toPx() }
 
-    Surface(
-        shape = shape,
-        tonalElevation = 4.dp,
-        color = if (selectionMode && isSelected)
-            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-        else MaterialTheme.colorScheme.surface,
-        modifier = Modifier
+    Box(
+        modifier = modifier
             .fillMaxWidth()
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures(
-                    onHorizontalDrag = { _, dragAmount ->
-                        val newOffset = (offsetX.value + dragAmount).coerceIn(-300f, 300f)
-                        scope.launch { offsetX.snapTo(newOffset) }
-                    },
-                    onDragEnd = {
-                        if (abs(offsetX.value) > thresholdPx) {
-                            onDeleteFromDb()
-                        }
-                        scope.launch {
-                            offsetX.animateTo(0f, spring(stiffness = Spring.StiffnessMedium))
-                        }
-                    }
-                )
-            }
-            .offset { IntOffset(offsetX.value.toInt(), 0) }
-            .combinedClickable(onClick = onClick, onLongClick = onLongPress)
+            .height(IntrinsicSize.Min)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            SvgIcon(
-                resId = getIconForType(entry.type),
-                modifier = Modifier.size(24.dp),
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(Modifier.width(12.dp))
-            Column(Modifier.weight(1f)) {
-                Text(entry.title, fontWeight = FontWeight.Bold)
-                Text(entry.subtitle, style = MaterialTheme.typography.bodySmall)
-            }
+        Box(modifier = Modifier.matchParentSize()) {
+            val absOffset = abs(offsetX.value)
+            val progress = (absOffset / thresholdPx).coerceIn(0f, 1f)
 
-            FlippableSelectionIcon(isSelected)
+            if (offsetX.value > 0) { // swipe droite = delete
+                Surface(
+                    shape = shape,
+                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.2f + 0.8f * progress),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        SvgIcon(
+                            resId = R.drawable.delete_icon_vector,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .alpha(progress)
+                                .padding(start = 16.dp),
+                            color = MaterialTheme.colorScheme.onError
+                        )
+                    }
+                }
+            } else if (offsetX.value < 0) { // swipe gauche = archive
+                Surface(
+                    shape = shape,
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f + 0.8f * progress),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+                        SvgIcon(
+                            resId = R.drawable.inbox_icon_vector,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .alpha(progress)
+                                .padding(end = 16.dp),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
+            }
+        }
+
+        Surface(
+            shape = shape,
+            tonalElevation = 4.dp,
+            color = if (selectionMode && isSelected)
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+            else MaterialTheme.colorScheme.surface,
+            modifier = Modifier
+                .fillMaxWidth()
+                .graphicsLayer {
+                    translationX = offsetX.value
+                    alpha = alphaAnim.value
+                }
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures(
+                        onHorizontalDrag = { _, dragAmount ->
+                            scope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
+                        },
+                        onDragEnd = {
+                            scope.launch {
+                                when {
+                                    offsetX.value > thresholdPx -> { // swipe droit
+                                        offsetX.animateTo(1000f, tween(200))
+                                        alphaAnim.animateTo(0f, tween(200))
+                                        onDeleteFromDb()
+                                    }
+
+                                    offsetX.value < -thresholdPx -> { // swipe gauche
+                                        offsetX.animateTo(-1000f, tween(200))
+                                        alphaAnim.animateTo(0f, tween(200))
+                                        onArchive()
+                                    }
+
+                                    else -> {
+                                        offsetX.animateTo(
+                                            0f,
+                                            spring(stiffness = Spring.StiffnessMedium)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    )
+                }
+                .combinedClickable(onClick = onClick, onLongClick = onLongPress)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                SvgIcon(
+                    resId = getIconForType(entry.type),
+                    modifier = Modifier.size(24.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(Modifier.width(12.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(entry.title, fontWeight = FontWeight.Bold)
+                    Text(entry.subtitle, style = MaterialTheme.typography.bodySmall)
+                }
+                FlippableSelectionIcon(isSelected)
+            }
         }
     }
 }

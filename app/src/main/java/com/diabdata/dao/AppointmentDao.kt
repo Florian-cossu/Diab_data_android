@@ -1,7 +1,6 @@
 package com.diabdata.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.diabdata.models.Appointment
@@ -13,8 +12,8 @@ interface AppointmentDao {
     @Insert
     suspend fun insert(appointment: Appointment)
 
-    @Delete
-    suspend fun deleteAppointment(appointment: Appointment)
+    @Query("DELETE FROM appointments WHERE id = :id")
+    suspend fun deleteById(id: Int)
 
     @Query("SELECT * FROM appointments ORDER BY date DESC")
     fun getAllAppointmentsFlow(): Flow<List<Appointment>>
