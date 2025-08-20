@@ -291,7 +291,6 @@ fun SettingsButton(
                     else MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.width(16.dp))
-
                 Text(
                     text,
                     style = MaterialTheme.typography.titleMedium
