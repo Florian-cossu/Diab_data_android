@@ -115,9 +115,6 @@ class DataRepository(
     // ----------------
     // Generic / Database Utilities
     // ----------------
-    /** Delete an entry from any table by ID */
-    fun deleteEntry(id: Int, tableName: String): Int = database.deleteEntry(id, tableName)
-
     /** Clear the entire database and reset autoincrement IDs */
     fun clearAllDataAndReset() = database.clearAllDataAndReset()
 }
