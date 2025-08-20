@@ -15,10 +15,6 @@ interface HBA1CDao {
     suspend fun insert(hba1cEntry: HBA1CEntry)
 
     @Query("SELECT * FROM hba1c_entries ORDER BY date DESC")
-    suspend fun getAllHBA1C(): List<HBA1CEntry>
-
-    // Flow versions
-    @Query("SELECT * FROM hba1c_entries ORDER BY date DESC")
     fun getAllHBA1CFlow(): Flow<List<HBA1CEntry>>
 
     @Query("SELECT * FROM hba1c_entries WHERE date >= :minDate ORDER BY date DESC")

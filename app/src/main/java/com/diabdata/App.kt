@@ -71,7 +71,6 @@ fun App() {
 
     LaunchedEffect(Unit) {
         MedicationInitializer(context, db).initialize()
-        dataViewModel.loadAllData()
     }
 
     var selectedTab by rememberSaveable { mutableStateOf("home") }
@@ -84,6 +83,27 @@ fun App() {
                     label = { Text(stringResource(R.string.home_menu_title)) },
                     selected = selectedTab == "home",
                     onClick = { selectedTab = "home" },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                )
+                NavigationBarItem(
+                    icon = {
+                        SvgIcon(
+                            resId = R.drawable.chart_filled_icon_vector,
+                            color = if (selectedTab == "charts") {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            }
+                        )
+                    },
+                    label = { Text(stringResource(R.string.chart_menu_title)) },
+                    selected = selectedTab == "charts",
+                    onClick = { selectedTab = "charts" },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = MaterialTheme.colorScheme.primary,
                         unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -144,7 +164,7 @@ fun App() {
                     diagnosisDates = diagnosisDate.value,
                     dataViewModel = dataViewModel
                 )
-
+                "chart" -> {}
                 "data" -> DatabaseEditionView(
                     dataViewModel = dataViewModel
                 )

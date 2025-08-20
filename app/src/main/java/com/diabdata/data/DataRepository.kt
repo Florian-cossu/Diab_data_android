@@ -25,12 +25,16 @@ class DataRepository(
 ) {
     private val medicationDao: MedicationDao = database.medicationDao()
 
+    // ----------------
     // Weight
-    // Legacy
+    // ----------------
+    /** Insert a new weight entry */
     suspend fun insertWeight(weightEntry: WeightEntry) = weightDao.insert(weightEntry)
-    suspend fun getAllWeights(): List<WeightEntry> = weightDao.getAllWeights()
 
-    // Flow based
+    /** Flow of all weight entries, sorted by date */
+    fun getAllWeightsFlow(): Flow<List<WeightEntry>> = weightDao.getAllWeightsFlow()
+
+    /** Flow of weight entries from the last year */
     fun getRecentWeightsFlow(): Flow<List<WeightEntry>> {
         val oneYearAgo = LocalDate.now().minusYears(1)
         return weightDao.getWeightsSince(oneYearAgo)
@@ -38,52 +42,69 @@ class DataRepository(
 
     // ----------------
     // HBA1C
-    // Legacy
+    // ----------------
+    /** Insert a new HBA1C entry */
     suspend fun insertHba1c(hba1cEntry: HBA1CEntry) = hba1cDao.insert(hba1cEntry)
-    suspend fun getAllHba1c(): List<HBA1CEntry> = hba1cDao.getAllHBA1C()
 
-    // Flow based
-    fun getAllHba1cFlow(): Flow<List<HBA1CEntry>> {
-        return hba1cDao.getAllHBA1CFlow()
-    }
+    /** Delete a specific HBA1C entry */
+    suspend fun deleteHBA1CEntry(hba1cEntry: HBA1CEntry) = hba1cDao.deleteHBA1CEntry(hba1cEntry)
 
+    /** Flow of all HBA1C entries */
+    fun getAllHba1cFlow(): Flow<List<HBA1CEntry>> = hba1cDao.getAllHBA1CFlow()
+
+    /** Flow of HBA1C entries from the last year */
     fun getRecentHba1cFlow(): Flow<List<HBA1CEntry>> {
         val oneYearAgo = LocalDate.now().minusYears(1)
         return hba1cDao.getHBA1CEntriesSince(oneYearAgo)
     }
 
-    suspend fun deleteHBA1CEntry(hba1cEntry: HBA1CEntry) = hba1cDao.deleteHBA1CEntry(hba1cEntry)
-
-    //------------------
+    // ----------------
     // Appointment
+    // ----------------
+    /** Insert a new appointment */
     suspend fun insertAppointment(appointment: Appointment) = appointmentDao.insert(appointment)
-    suspend fun getAllAppointments(): List<Appointment> = appointmentDao.getAllAppointments()
 
-    // Flow based
+    /** Flow of all appointments */
+    fun getAllAppointmentsFlow(): Flow<List<Appointment>> = appointmentDao.getAllAppointmentsFlow()
+
+    /** Flow of upcoming appointments starting today */
     fun getUpcomingAppointments(): Flow<List<Appointment>> {
         val today = LocalDate.now()
         return appointmentDao.getUpcomingAppointmentsFlow(today)
     }
 
+    // ----------------
     // Treatment
+    // ----------------
+    /** Insert a new treatment */
     suspend fun insertTreatment(treatment: Treatment) = treatmentDao.insert(treatment)
-    suspend fun getAllTreatments(): List<Treatment> = treatmentDao.getAllTreatments()
 
+    /** Flow of all treatments */
+    fun getAllTreatmentsFlow(): Flow<List<Treatment>> = treatmentDao.getAllTreatmentsFlow()
+
+    // ----------------
+    // Medication
+    // ----------------
+    /** Find a medication by its code (GTIN or CIP) */
     suspend fun findMedicationByCode(code: String): MedicationEntity? =
         medicationDao.findByCode(code)
 
-    // Diagnosis dates
+    // ----------------
+    // Diagnosis Dates
+    // ----------------
+    /** Insert a new diagnosis date */
     suspend fun insertDiagnosisDate(diagnosisDate: DiagnosisDate) = diagnosisDao.insert(diagnosisDate)
-    suspend fun getAllDiagnosisDate(): List<DiagnosisDate> = diagnosisDao.getDiagnosisDates()
 
-    fun deleteEntry(id: Int, tableName: String): Int {
-        return database.deleteEntry(id, tableName)
-    }
+    /** Flow of all diagnosis dates */
+    fun getAllDiagnosisDatesFlow(): Flow<List<DiagnosisDate>> =
+        diagnosisDao.getAllDiagnosisDatesFlow()
 
-    // Purge database
-    fun clearAllDataAndReset() {
-        database.clearAllDataAndReset()
-    }
+    // ----------------
+    // Generic / Database Utilities
+    // ----------------
+    /** Delete an entry from any table by ID */
+    fun deleteEntry(id: Int, tableName: String): Int = database.deleteEntry(id, tableName)
+
+    /** Clear the entire database and reset autoincrement IDs */
+    fun clearAllDataAndReset() = database.clearAllDataAndReset()
 }
-
-
