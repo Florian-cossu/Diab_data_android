@@ -55,6 +55,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
     val versionName = BuildConfig.VERSION_NAME
+    val versionCode = BuildConfig.VERSION_CODE
 
     var showConfirmDialog by remember { mutableStateOf(false) }
 
@@ -82,7 +83,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 } catch (e: Exception) {
                     e.printStackTrace()
                     context.showNotification(
-                        title = "${errorText} : ${e.message}",
+                        title = "$errorText : ${e.message}",
                         content = uri.lastPathSegment.orEmpty(),
                         notificationChannel = channelName,
                         notificationDescription = ""
@@ -166,7 +167,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                             bottomStart = 3.dp,
                             bottomEnd = 3.dp
                         ),
-                        icon = "backup_db_icon_vector"
+                        icon = R.drawable.backup_db_icon_vector
                     )
                     Spacer(modifier = Modifier.height(3.dp))
                     SettingsButton(
@@ -175,7 +176,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                             importFileLauncher.launch(arrayOf("application/json"))
                         },
                         shape = RoundedCornerShape(3.dp),
-                        icon = "restore_db_icon_vector"
+                        icon = R.drawable.restore_db_icon_vector
                     )
                     Spacer(modifier = Modifier.height(3.dp))
                     SettingsButton(
@@ -190,7 +191,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                             bottomEnd = 16.dp
                         ),
                         isDestructive = true,
-                        icon = "purge_db_icon_vector"
+                        icon = R.drawable.purge_db_icon_vector
                     )
                 }
             }
@@ -207,7 +208,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
 
             Column {
                 SettingsButton(
-                    text = "Version $versionName",
+                    text = "Version $versionName (code: $versionCode)",
                     onClick = { },
                     shape = RoundedCornerShape(
                         topStart = 16.dp,
@@ -215,7 +216,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         bottomStart = 16.dp,
                         bottomEnd = 16.dp
                     ),
-                    icon = "app_version_icon_vector"
+                    icon = R.drawable.app_version_icon_vector
                 )
             }
         }
@@ -223,12 +224,10 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
 
     // Dialog de confirmation
     if (showConfirmDialog) {
-        val purgeDatabaseModalTitle =
-            context.resources.getString(R.string.database_data_purge_modal_title)
-        val purgeDatabaseModalContents =
-            context.resources.getString(R.string.database_data_purge_modal_contents)
-        val confirmButtonText = context.resources.getString(R.string.confirm_button_text)
-        val cancelButtonText = context.resources.getString(R.string.cancel_button_text)
+        val purgeDatabaseModalTitle = stringResource(R.string.database_data_purge_modal_title)
+        val purgeDatabaseModalContents = stringResource(R.string.database_data_purge_modal_contents)
+        val confirmButtonText = stringResource(R.string.confirm_button_text)
+        val cancelButtonText = stringResource(R.string.cancel_button_text)
 
         AlertDialog(
             onDismissRequest = { showConfirmDialog = false },
@@ -261,10 +260,8 @@ fun SettingsButton(
     onClick: () -> Unit,
     shape: Shape,
     isDestructive: Boolean = false,
-    icon: String? = null
+    icon: Int = 0
 ) {
-    val context = LocalContext.current
-
     Surface(
         shape = shape,
         tonalElevation = 4.dp, // Tonal elevation sur le bouton
@@ -287,20 +284,13 @@ fun SettingsButton(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                icon?.takeIf { it.isNotBlank() }?.let { iconName ->
-                    val resId =
-                        context.resources.getIdentifier(iconName, "drawable", context.packageName)
-                    if (resId != 0) {
-                        SvgIcon(
-                            resId = resId,
-                            modifier = Modifier.size(25.dp),
-                            color = if (isDestructive) MaterialTheme.colorScheme.error
-                            else MaterialTheme.colorScheme.onSurface
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                    }
-                }
-
+                SvgIcon(
+                    resId = icon,
+                    modifier = Modifier.size(25.dp),
+                    color = if (isDestructive) MaterialTheme.colorScheme.error
+                    else MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text,
                     style = MaterialTheme.typography.titleMedium

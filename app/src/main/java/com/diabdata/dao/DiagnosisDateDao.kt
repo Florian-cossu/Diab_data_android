@@ -8,13 +8,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DiagnosisDateDao {
-    //legacy
     @Insert
     suspend fun insert(diagnosisDate: DiagnosisDate)
-    @Query("SELECT * FROM diagnosis_date_entries ORDER BY date ASC")
-    suspend fun getDiagnosisDates(): List<DiagnosisDate>
 
-    // Updated flow version
+    @Query("DELETE FROM diagnosis_date_entries WHERE id = :id")
+    suspend fun deleteById(id: Int)
+
     @Query("SELECT * FROM diagnosis_date_entries ORDER BY date ASC")
-    fun getAllDiagnosisFlow(): Flow<List<DiagnosisDate>>
+    fun getAllDiagnosisDatesFlow(): Flow<List<DiagnosisDate>>
 }

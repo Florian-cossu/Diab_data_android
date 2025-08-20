@@ -1,8 +1,11 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
+    id("com.google.devtools.ksp") version "2.2.0-2.0.2"
 }
 
 android {
@@ -14,7 +17,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = getVersionCode()
-        versionName = "2.7"
+        versionName = "2.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -32,9 +35,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-        freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+            freeCompilerArgs.addAll(
+                "-opt-in=kotlin.RequiresOptIn"
+            )
+        }
     }
     buildFeatures {
         compose = true
@@ -48,7 +55,10 @@ fun getVersionCode(): Int {
     if (!versionFile.exists()) {
         versionFile.writeText("1")
     }
-    val current = versionFile.readText().trim().toInt()
+    val current = versionFile.readText().trim().replace(
+        regex = Regex("=$"),
+        replacement = ""
+    ).toInt()
     val newCode = current + 1
     versionFile.writeText(newCode.toString())
     return newCode
@@ -68,7 +78,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.material3)
-    implementation(libs.androidx.material3.v150alpha01)
 
     implementation(libs.androidx.foundation)
     implementation(libs.places)
@@ -77,6 +86,7 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.androidx.animation)
     implementation(libs.androidx.runtime.saveable)
+    implementation(libs.androidx.foundation.layout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -88,7 +98,7 @@ dependencies {
     //Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.common)
-    kapt(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.gson)
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)

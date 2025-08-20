@@ -25,65 +25,96 @@ class DataRepository(
 ) {
     private val medicationDao: MedicationDao = database.medicationDao()
 
+    // ----------------
     // Weight
-    // Legacy
+    // ----------------
+    /** Insert a new weight entry */
     suspend fun insertWeight(weightEntry: WeightEntry) = weightDao.insert(weightEntry)
-    suspend fun getAllWeights(): List<WeightEntry> = weightDao.getAllWeights()
 
-    // Flow based
+    /** Flow of all weight entries, sorted by date */
+    fun getAllWeightsFlow(): Flow<List<WeightEntry>> = weightDao.getAllWeightsFlow()
+
+    /** Flow of weight entries from the last year */
     fun getRecentWeightsFlow(): Flow<List<WeightEntry>> {
         val oneYearAgo = LocalDate.now().minusYears(1)
         return weightDao.getWeightsSince(oneYearAgo)
     }
 
+    /** Delete a weight record by Id**/
+    suspend fun deleteWeight(id: Int) = weightDao.deleteById(id)
+
+
     // ----------------
     // HBA1C
-    // Legacy
+    // ----------------
+    /** Insert a new HBA1C entry */
     suspend fun insertHba1c(hba1cEntry: HBA1CEntry) = hba1cDao.insert(hba1cEntry)
-    suspend fun getAllHba1c(): List<HBA1CEntry> = hba1cDao.getAllHBA1C()
 
-    // Flow based
-    fun getAllHba1cFlow(): Flow<List<HBA1CEntry>> {
-        return hba1cDao.getAllHBA1CFlow()
-    }
+    /** Flow of all HBA1C entries */
+    fun getAllHba1cFlow(): Flow<List<HBA1CEntry>> = hba1cDao.getAllHBA1CFlow()
 
+    /** Flow of HBA1C entries from the last year */
     fun getRecentHba1cFlow(): Flow<List<HBA1CEntry>> {
         val oneYearAgo = LocalDate.now().minusYears(1)
         return hba1cDao.getHBA1CEntriesSince(oneYearAgo)
     }
 
-    suspend fun deleteHBA1CEntry(hba1cEntry: HBA1CEntry) = hba1cDao.deleteHBA1CEntry(hba1cEntry)
+    /** Delete an HBA1C record by Id**/
+    suspend fun deleteHba1c(id: Int) = hba1cDao.deleteById(id)
 
-    //------------------
+    // ----------------
     // Appointment
+    // ----------------
+    /** Insert a new appointment */
     suspend fun insertAppointment(appointment: Appointment) = appointmentDao.insert(appointment)
-    suspend fun getAllAppointments(): List<Appointment> = appointmentDao.getAllAppointments()
 
-    // Flow based
+    /** Flow of all appointments */
+    fun getAllAppointmentsFlow(): Flow<List<Appointment>> = appointmentDao.getAllAppointmentsFlow()
+
+    /** Flow of upcoming appointments starting today */
     fun getUpcomingAppointments(): Flow<List<Appointment>> {
         val today = LocalDate.now()
         return appointmentDao.getUpcomingAppointmentsFlow(today)
     }
 
-    // Treatment
-    suspend fun insertTreatment(treatment: Treatment) = treatmentDao.insert(treatment)
-    suspend fun getAllTreatments(): List<Treatment> = treatmentDao.getAllTreatments()
+    /** Delete an Appointment record by Id**/
+    suspend fun deleteAppointment(id: Int) = appointmentDao.deleteById(id)
 
+    // ----------------
+    // Treatment
+    // ----------------
+    /** Insert a new treatment */
+    suspend fun insertTreatment(treatment: Treatment) = treatmentDao.insert(treatment)
+
+    /** Flow of all treatments */
+    fun getAllTreatmentsFlow(): Flow<List<Treatment>> = treatmentDao.getAllTreatmentsFlow()
+
+    /** Delete a treatment record by Id**/
+    suspend fun deleteTreatment(id: Int) = treatmentDao.deleteById(id)
+
+    // ----------------
+    // Medication
+    // ----------------
+    /** Find a medication by its code (GTIN or CIP) */
     suspend fun findMedicationByCode(code: String): MedicationEntity? =
         medicationDao.findByCode(code)
 
-    // Diagnosis dates
+    // ----------------
+    // Diagnosis Dates
+    // ----------------
+    /** Insert a new diagnosis date */
     suspend fun insertDiagnosisDate(diagnosisDate: DiagnosisDate) = diagnosisDao.insert(diagnosisDate)
-    suspend fun getAllDiagnosisDate(): List<DiagnosisDate> = diagnosisDao.getDiagnosisDates()
 
-    fun deleteEntry(id: Int, tableName: String): Int {
-        return database.deleteEntry(id, tableName)
-    }
+    /** Flow of all diagnosis dates */
+    fun getAllDiagnosisDatesFlow(): Flow<List<DiagnosisDate>> =
+        diagnosisDao.getAllDiagnosisDatesFlow()
 
-    // Purge database
-    fun clearAllDataAndReset() {
-        database.clearAllDataAndReset()
-    }
+    /** Delete a diagnosis date record by Id**/
+    suspend fun deleteDiagnosis(id: Int) = diagnosisDao.deleteById(id)
+
+    // ----------------
+    // Generic / Database Utilities
+    // ----------------
+    /** Clear the entire database and reset autoincrement IDs */
+    fun clearAllDataAndReset() = database.clearAllDataAndReset()
 }
-
-

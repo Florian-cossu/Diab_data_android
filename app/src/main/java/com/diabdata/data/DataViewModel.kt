@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
 import com.diabdata.models.AppointmentType
 import com.diabdata.models.DiagnosisDate
@@ -14,12 +15,12 @@ import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
+import com.diabdata.ui.DbEntry
 import com.diabdata.utils.AppointmentTypeAdapter
 import com.diabdata.utils.LocalDateAdapter
 import com.diabdata.utils.MedicationInitializer
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -37,11 +38,25 @@ class DataViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             MedicationInitializer(appContext, repository.database).initialize()
         }
-
     }
 
-    // Flow based queries
-    // HBA1C
+    // Load all data
+    val weights: StateFlow<List<WeightEntry>> = repository.getAllWeightsFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val hba1cEntries: StateFlow<List<HBA1CEntry>> = repository.getAllHba1cFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val appointments: StateFlow<List<Appointment>> = repository.getAllAppointmentsFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val treatments: StateFlow<List<Treatment>> = repository.getAllTreatmentsFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val diagnosis: StateFlow<List<DiagnosisDate>> = repository.getAllDiagnosisDatesFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    // Get recent and upcoming data
     val recentHba1c: StateFlow<List<HBA1CEntry>> =
         repository.getRecentHba1cFlow()
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
@@ -55,88 +70,45 @@ class DataViewModel(
         repository.getUpcomingAppointments()
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    // Legacy
-    // Poids
-    private val _weights = MutableStateFlow<List<WeightEntry>>(emptyList())
-    val weights: StateFlow<List<WeightEntry>> = _weights
-
-    // HBA1C
-    private val _hba1cEntries = MutableStateFlow<List<HBA1CEntry>>(emptyList())
-    val hba1cEntries: StateFlow<List<HBA1CEntry>> = _hba1cEntries
-
-    // RDV
-    private val _appointments = MutableStateFlow<List<Appointment>>(emptyList())
-    val appointments: StateFlow<List<Appointment>> = _appointments
-
-    // Traitements
-    private val _treatments = MutableStateFlow<List<Treatment>>(emptyList())
-    val treatments: StateFlow<List<Treatment>> = _treatments
-
-    // Diagnosis dates
-    private val _diagnosis = MutableStateFlow<List<DiagnosisDate>>(emptyList())
-    val diagnosis: StateFlow<List<DiagnosisDate>> = _diagnosis
-
-    // Chargement général
-    fun loadAllData() {
-        viewModelScope.launch {
-            _weights.value = repository.getAllWeights()
-            _hba1cEntries.value = repository.getAllHba1c()
-            _appointments.value = repository.getAllAppointments()
-            _treatments.value = repository.getAllTreatments()
-            _diagnosis.value = repository.getAllDiagnosisDate()
-        }
-    }
-
-    // Ajout d’une entrée poids
+    // Insertion functions
     fun addWeight(weightEntry: WeightEntry) {
         viewModelScope.launch {
             repository.insertWeight(weightEntry)
-            _weights.value = repository.getAllWeights()
         }
     }
 
-    // Ajout d’une entrée HBA1C
     fun addHba1c(hba1cEntry: HBA1CEntry) {
         viewModelScope.launch {
             repository.insertHba1c(hba1cEntry)
-            _hba1cEntries.value = repository.getAllHba1c()
         }
     }
 
-    // Ajout d’un RDV
     fun addAppointment(appointment: Appointment) {
         viewModelScope.launch {
             repository.insertAppointment(appointment)
-            _appointments.value = repository.getAllAppointments()
         }
     }
 
-    // Ajout d’un traitement
     fun addTreatment(treatment: Treatment) {
         viewModelScope.launch {
             repository.insertTreatment(treatment)
-            _treatments.value = repository.getAllTreatments()
         }
     }
 
     fun addDiagnosisDate(diagnosisDate: DiagnosisDate) {
         viewModelScope.launch {
             repository.insertDiagnosisDate(diagnosisDate)
-            _diagnosis.value = repository.getAllDiagnosisDate()
         }
     }
 
-    fun deleteEntry(id: Int, tableName: String) {
-        val rowsDeleted: Int = repository.deleteEntry(id, tableName) // rowsDeleted is Int now
-        if (rowsDeleted > 0) {
-            when (tableName) {
-                "weight_entries" -> _weights.value = _weights.value.filter { it.id != id }
-                "hba1c_entries" -> _hba1cEntries.value = _hba1cEntries.value.filter { it.id != id }
-                "appointments" -> _appointments.value = _appointments.value.filter { it.id != id }
-                "treatments" -> _treatments.value = _treatments.value.filter { it.id != id }
-                "diagnosis_date_entries" -> _diagnosis.value =
-                    _diagnosis.value.filter { it.id != id }
-            }
+    // Deletion functions
+    fun deleteEntry(entry: DbEntry) = viewModelScope.launch {
+        when (entry.type) {
+            AddableType.WEIGHT -> repository.deleteWeight(entry.id)
+            AddableType.HBA1C -> repository.deleteHba1c(entry.id)
+            AddableType.APPOINTMENT -> repository.deleteAppointment(entry.id)
+            AddableType.TREATMENT -> repository.deleteTreatment(entry.id)
+            AddableType.DIAGNOSIS -> repository.deleteDiagnosis(entry.id)
         }
     }
 
@@ -144,16 +116,14 @@ class DataViewModel(
         withContext(Dispatchers.IO) {
             repository.clearAllDataAndReset()
         }
-        loadAllData()
     }
 
-    // Buffer pour le préremplissage
+    // Section for scanned medication
     var prefilledTreatment: Treatment? by mutableStateOf(null)
     fun updatePrefilledTreatment(t: Treatment?) {
         prefilledTreatment = t
     }
 
-    // <- NOUVEAU : getter suspend qui retourne l’entity
     suspend fun getMedicationByGtin(gtin: String): MedicationEntity? {
         return repository.findMedicationByCode(gtin)
     }
@@ -174,7 +144,6 @@ class DataViewModel(
 
         return gson.toJson(exportData)
     }
-
 
     fun importDataFromJsonString(json: String) {
         val gson = GsonBuilder()
@@ -200,8 +169,6 @@ class DataViewModel(
             importedData.diagnosisDates.forEach { diagnosis ->
                 repository.insertDiagnosisDate(diagnosis.copy(id = 0))
             }
-
-            loadAllData()
         }
     }
 }
