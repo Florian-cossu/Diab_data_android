@@ -23,6 +23,7 @@ import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -56,6 +57,40 @@ class DataViewModel(
     val diagnosis: StateFlow<List<DiagnosisDate>> = repository.getAllDiagnosisDatesFlow()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    // Helpers to check if we have Data
+    data class DataAvailability(
+        val hasAnyData: Boolean,
+        val hasWeights: Boolean,
+        val hasAppointments: Boolean,
+        val hasTreatments: Boolean,
+        val hasDiagnoses: Boolean,
+        val hasHba1c: Boolean
+    ) {
+        companion object {
+            val EMPTY = DataAvailability(
+                hasAnyData = false,
+                hasWeights = false,
+                hasAppointments = false,
+                hasTreatments = false,
+                hasDiagnoses = false,
+                hasHba1c = false
+            )
+        }
+    }
+
+    val dataAvailability: StateFlow<DataAvailability> = combine(
+        weights, hba1cEntries, appointments, treatments, diagnosis
+    ) { w, h, a, t, d ->
+        DataAvailability(
+            hasAnyData = w.isNotEmpty() || h.isNotEmpty() || a.isNotEmpty() || t.isNotEmpty() || d.isNotEmpty(),
+            hasWeights = w.isNotEmpty(),
+            hasAppointments = a.isNotEmpty(),
+            hasTreatments = t.isNotEmpty(),
+            hasDiagnoses = d.isNotEmpty(),
+            hasHba1c = h.isNotEmpty()
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DataAvailability.EMPTY)
+
     // Get recent and upcoming data
     val recentHba1c: StateFlow<List<HBA1CEntry>> =
         repository.getRecentHba1cFlow()
@@ -66,6 +101,7 @@ class DataViewModel(
         repository.getRecentWeightsFlow()
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
+    // Appointments
     val upcomingAppointment: StateFlow<List<Appointment>> =
         repository.getUpcomingAppointments()
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())

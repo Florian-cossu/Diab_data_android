@@ -11,81 +11,44 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
-import com.diabdata.models.DiagnosisDate
-import com.diabdata.models.HBA1CEntry
-import com.diabdata.models.Treatment
-import com.diabdata.models.WeightEntry
 import com.diabdata.ui.components.latestMeasurements.components.ImportantDatesList
 import com.diabdata.ui.components.latestMeasurements.components.LatestMeasures
 import com.diabdata.ui.components.latestMeasurements.components.UpcomingAppointmentsList
 import com.diabdata.ui.components.latestMeasurements.components.UpcomingTreatmentExpirationDates
-import java.time.format.DateTimeFormatter
 
 @SuppressLint("DefaultLocale")
 @Composable
 fun LatestMeasurements(
-    diagnosisEntries: List<DiagnosisDate> = emptyList(),
-    treatmentEntries: List<Treatment> = emptyList(),
     viewModel: DataViewModel
 ) {
-    val hba1cEntries by viewModel.recentHba1c.collectAsState()
-    val weightEntries by viewModel.recentWeights.collectAsState()
-    val appointmentEntries by viewModel.upcomingAppointment.collectAsState()
-
     Column(
         modifier = Modifier
             .padding(20.dp)
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+        val availability by viewModel.dataAvailability.collectAsState()
 
-        val sources = listOf(
-            MeasureSource(
-                entries = weightEntries,
-                icon = R.drawable.weight_icon_vector,
-                formatTitle = { w: WeightEntry -> String.format("%.2f kg", w.value) },
-                formatDate = { w: WeightEntry ->
-                    stringResource(R.string.weight_on_date_text, w.date.format(formatter))
-                }
+        val appointmentEntries by viewModel.appointments.collectAsState()
+        val treatmentEntries by viewModel.treatments.collectAsState()
 
-            ),
-            MeasureSource(
-                entries = hba1cEntries,
-                icon = R.drawable.hba1c_icon_vector,
-                formatTitle = { h: HBA1CEntry -> String.format("%.1f%%", h.value) },
-                formatDate = { h: HBA1CEntry ->
-                    stringResource(R.string.hba1c_on_date_text, h.date.format(formatter))
-                }
-            )
-        ).filter { it.entries.isNotEmpty() }
-
-        if (diagnosisEntries.isNotEmpty()) {
-            ImportantDatesList(diagnosisEntries)
+        if (availability.hasDiagnoses) {
+            ImportantDatesList(viewModel)
             Spacer(modifier = Modifier.height(8.dp))
         }
-        if (sources.isNotEmpty()) {
-            LatestMeasures(sources)
+        if (availability.hasWeights && availability.hasHba1c) {
+            LatestMeasures(viewModel)
             Spacer(modifier = Modifier.height(8.dp))
         }
-        if (appointmentEntries.isNotEmpty()) {
+        if (availability.hasAppointments) {
             UpcomingAppointmentsList(appointmentEntries)
             Spacer(modifier = Modifier.height(8.dp))
         }
-        if (treatmentEntries.isNotEmpty()) {
+        if (availability.hasTreatments) {
             UpcomingTreatmentExpirationDates(treatments = treatmentEntries)
             Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
-
-data class MeasureSource<T>(
-    val entries: List<T>,
-    val icon: Int,
-    val formatTitle: (T) -> String,
-    val formatDate: @Composable (T) -> String
-)

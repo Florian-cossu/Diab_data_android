@@ -16,7 +16,6 @@ import com.diabdata.data.DataViewModelFactory
 import com.diabdata.data.DiabDataDatabase
 import com.diabdata.ui.theme.DiabDataTheme
 
-
 class MainActivity : ComponentActivity() {
     private lateinit var dataViewModel: DataViewModel
 
@@ -24,6 +23,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // --- Création unique de la DB et du ViewModel ---
         val db = DiabDataDatabase.getDatabase(this)
         val repository = DataRepository(
             weightDao = db.weightDao(),
@@ -33,25 +33,20 @@ class MainActivity : ComponentActivity() {
             diagnosisDao = db.diagnosisDao(),
             database = db
         )
-
         val factory = DataViewModelFactory(repository, applicationContext as Application)
+        dataViewModel = ViewModelProvider(this, factory)[DataViewModel::class.java]
 
-        dataViewModel = ViewModelProvider(this, factory).get(DataViewModel::class.java)
-
+        // --- Gestion du status bar ---
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             val darkTheme = isSystemInDarkTheme()
-
-            // Update status bar icon colors
             val controller = WindowInsetsControllerCompat(window, window.decorView)
             controller.isAppearanceLightStatusBars = !darkTheme
-            setContent {
-                DiabDataTheme {
-                    App()
-                }
+
+            DiabDataTheme {
+                App(db, dataViewModel)
             }
         }
     }
 }
-

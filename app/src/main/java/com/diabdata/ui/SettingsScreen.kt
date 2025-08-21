@@ -137,11 +137,18 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     Scaffold { padding ->
         Column(
             modifier = Modifier
-                .padding(padding)
                 .fillMaxSize()
-                .padding(32.dp, 32.dp, 32.dp, 0.dp)
+                // we start with padding start=16.dp, end=16.dp, top=0.dp, bottom=0.dp to mirror
+                // homescreen and then add another 20.dp just like latestMeasurements has
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 0.dp,
+                    bottom = 0.dp
+                )
                 .background(Color.Transparent)
                 .verticalScroll(scrollState)
+                .padding(20.dp)
         ) {
             Text(
                 text = stringResource(R.string.settings_page_data_heading),

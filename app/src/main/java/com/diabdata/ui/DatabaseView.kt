@@ -104,9 +104,13 @@ fun DatabaseEditionView(
     Scaffold { padding ->
         Column(
             modifier = Modifier
-                .padding(padding)
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 0.dp,
+                    bottom = 0.dp
+                )
         ) {
             FilterChips(
                 types = AddableType.entries,
