@@ -393,7 +393,7 @@ fun mergeEntries(
             DbEntry(
                 it.id,
                 AddableType.WEIGHT,
-                "${it.weightKg} kg",
+                "${it.value} kg",
                 it.date.format(formatter)
             )
         })

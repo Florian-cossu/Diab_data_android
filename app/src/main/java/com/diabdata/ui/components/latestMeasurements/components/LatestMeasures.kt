@@ -74,12 +74,12 @@ fun LatestMeasures(
                 }
             }
             val firstValue = when (val first = sortedEntries.first()) {
-                is WeightEntry -> first.weightKg
+                is WeightEntry -> first.value
                 is HBA1CEntry -> first.value
                 else -> 0.0
             }
             val lastValue = when (val last = sortedEntries.last()) {
-                is WeightEntry -> last.weightKg
+                is WeightEntry -> last.value
                 is HBA1CEntry -> last.value
                 else -> 0.0
             }

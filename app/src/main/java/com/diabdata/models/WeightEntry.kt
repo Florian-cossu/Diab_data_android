@@ -9,5 +9,5 @@ data class WeightEntry (
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val date: LocalDate,
-    val weightKg: Double,
+    val value: Float,
 )

@@ -229,9 +229,14 @@ fun AddDataPopup(
 
                         when (type) {
                             AddableType.WEIGHT -> {
-                                val weight = field1.replace(',', '.').toDoubleOrNull()
+                                val weight = field1.replace(',', '.').toFloatOrNull()
                                 if (weight != null) {
-                                    dataViewModel.addWeight(WeightEntry(date = date, weightKg = weight))
+                                    dataViewModel.addWeight(
+                                        WeightEntry(
+                                            date = date,
+                                            value = weight
+                                        )
+                                    )
                                 } else {
                                     Toast.makeText(
                                         context,

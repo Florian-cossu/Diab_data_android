@@ -28,7 +28,7 @@ import com.diabdata.models.WeightEntry
         DiagnosisDate::class,
         MedicationEntity::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 

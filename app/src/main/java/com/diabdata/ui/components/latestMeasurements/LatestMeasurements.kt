@@ -48,7 +48,7 @@ fun LatestMeasurements(
             MeasureSource(
                 entries = weightEntries,
                 icon = R.drawable.weight_icon_vector,
-                formatTitle = { w: WeightEntry -> String.format("%.2f kg", w.weightKg) },
+                formatTitle = { w: WeightEntry -> String.format("%.2f kg", w.value) },
                 formatDate = { w: WeightEntry ->
                     stringResource(R.string.weight_on_date_text, w.date.format(formatter))
                 }
