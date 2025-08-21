@@ -12,17 +12,13 @@ import java.lang.reflect.Type
 class AppointmentTypeAdapter : JsonSerializer<AppointmentType>, JsonDeserializer<AppointmentType> {
 
     override fun serialize(
-        src: AppointmentType?,
-        typeOfSrc: Type?,
-        context: JsonSerializationContext?
+        src: AppointmentType?, typeOfSrc: Type?, context: JsonSerializationContext?
     ): JsonElement {
         return JsonPrimitive(src?.name?.lowercase())
     }
 
     override fun deserialize(
-        json: JsonElement?,
-        typeOfT: Type?,
-        context: JsonDeserializationContext?
+        json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?
     ): AppointmentType? {
         return json?.asString?.let {
             when (it.lowercase()) {

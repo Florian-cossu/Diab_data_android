@@ -33,8 +33,7 @@ import com.diabdata.models.AddableType
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AddDataFab(
-    onSelect: (AddableType) -> Unit,
-    onScanClick: () -> Unit
+    onSelect: (AddableType) -> Unit, onScanClick: () -> Unit
 ) {
     var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
 
@@ -42,12 +41,10 @@ fun AddDataFab(
 
     val fabItems = listOf(
         Triple(
-            stringResource(R.string.addable_treatment_scan),
-            R.drawable.data_matrix_icon_vector
+            stringResource(R.string.addable_treatment_scan), R.drawable.data_matrix_icon_vector
         ) { onScanClick() },
         Triple(
-            stringResource(R.string.addable_weight),
-            R.drawable.weight_add_icon_vector
+            stringResource(R.string.addable_weight), R.drawable.weight_add_icon_vector
         ) { onSelect(AddableType.WEIGHT) },
         Triple(stringResource(R.string.addable_hba1c), R.drawable.hba1c_add_icon_vector) {
             onSelect(
@@ -55,18 +52,14 @@ fun AddDataFab(
             )
         },
         Triple(
-            stringResource(R.string.addable_diagnosis),
-            R.drawable.diagnosis_icon_vector
+            stringResource(R.string.addable_diagnosis), R.drawable.diagnosis_icon_vector
         ) { onSelect(AddableType.DIAGNOSIS) },
         Triple(
-            stringResource(R.string.addable_treatment),
-            R.drawable.medication_add_icon_vector
+            stringResource(R.string.addable_treatment), R.drawable.medication_add_icon_vector
         ) { onSelect(AddableType.TREATMENT) },
         Triple(
-            stringResource(R.string.addable_appointment),
-            R.drawable.event_add_icon_vector
-        ) { onSelect(AddableType.APPOINTMENT) }
-    )
+            stringResource(R.string.addable_appointment), R.drawable.event_add_icon_vector
+        ) { onSelect(AddableType.APPOINTMENT) })
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
         if (fabMenuExpanded) {
@@ -74,18 +67,14 @@ fun AddDataFab(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.95f))
-                    .clickable { fabMenuExpanded = false }
-            )
+                    .clickable { fabMenuExpanded = false })
         }
 
         FloatingActionButtonMenu(
-            expanded = fabMenuExpanded,
-            modifier = Modifier,
-            button = {
+            expanded = fabMenuExpanded, modifier = Modifier, button = {
                 ToggleFloatingActionButton(
                     checked = fabMenuExpanded,
-                    onCheckedChange = { fabMenuExpanded = !fabMenuExpanded }
-                ) {
+                    onCheckedChange = { fabMenuExpanded = !fabMenuExpanded }) {
                     val imageVector by remember {
                         derivedStateOf {
                             if (fabMenuExpanded) Icons.Filled.Close else Icons.Filled.Add
@@ -98,22 +87,16 @@ fun AddDataFab(
                     )
 
                 }
-            }
-        ) {
+            }) {
             fabItems.forEach { (label, iconRes, action) ->
-                FloatingActionButtonMenuItem(
-                    onClick = {
-                        fabMenuExpanded = false
-                        action()
-                    },
-                    text = { Text(label) },
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = iconRes),
-                            contentDescription = null
-                        )
-                    }
-                )
+                FloatingActionButtonMenuItem(onClick = {
+                    fabMenuExpanded = false
+                    action()
+                }, text = { Text(label) }, icon = {
+                    Icon(
+                        painter = painterResource(id = iconRes), contentDescription = null
+                    )
+                })
             }
 
         }

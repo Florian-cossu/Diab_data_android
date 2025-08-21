@@ -53,7 +53,6 @@ fun LatestMeasures(
 
     if (weightEntries.isEmpty() && hba1cEntries.isEmpty()) return
 
-    // On construit directement la liste de "cards"
     val cards = buildList {
         // ---- Weight ----
         weightEntries.maxByOrNull { it.date }?.let { latest ->
@@ -68,8 +67,7 @@ fun LatestMeasures(
                     trendIcon = computeTrendIcon(
                         entries = weightEntries,
                         oneYearAgo = oneYearAgo,
-                        valueExtractor = { it.value }
-                    )
+                        valueExtractor = { it.value })
                 )
             )
         }
@@ -87,8 +85,7 @@ fun LatestMeasures(
                     trendIcon = computeTrendIcon(
                         entries = hba1cEntries,
                         oneYearAgo = oneYearAgo,
-                        valueExtractor = { it.value }
-                    )
+                        valueExtractor = { it.value })
                 )
             )
         }
@@ -115,9 +112,7 @@ fun LatestMeasures(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     SvgIcon(
-                        resId = card.icon,
-                        modifier = Modifier.size(26.dp),
-                        color = primaryColor
+                        resId = card.icon, modifier = Modifier.size(26.dp), color = primaryColor
                     )
                     Spacer(Modifier.width(16.dp))
                     Column(
@@ -126,8 +121,7 @@ fun LatestMeasures(
                         Text(
                             text = card.titleText,
                             style = MaterialTheme.typography.titleMedium.copy(
-                                color = primaryColor,
-                                fontWeight = FontWeight.Bold
+                                color = primaryColor, fontWeight = FontWeight.Bold
                             )
                         )
                         Text(

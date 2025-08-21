@@ -31,9 +31,6 @@ fun LatestMeasurements(
     ) {
         val availability by viewModel.dataAvailability.collectAsState()
 
-        val appointmentEntries by viewModel.appointments.collectAsState()
-        val treatmentEntries by viewModel.treatments.collectAsState()
-
         if (availability.hasDiagnoses) {
             ImportantDatesList(viewModel)
             Spacer(modifier = Modifier.height(8.dp))
@@ -43,11 +40,11 @@ fun LatestMeasurements(
             Spacer(modifier = Modifier.height(8.dp))
         }
         if (availability.hasAppointments) {
-            UpcomingAppointmentsList(appointmentEntries)
+            UpcomingAppointmentsList(viewModel)
             Spacer(modifier = Modifier.height(8.dp))
         }
         if (availability.hasTreatments) {
-            UpcomingTreatmentExpirationDates(treatments = treatmentEntries)
+            UpcomingTreatmentExpirationDates(viewModel)
             Spacer(modifier = Modifier.height(8.dp))
         }
     }

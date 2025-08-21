@@ -90,12 +90,10 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     )
                 }
             }
-        }
-    )
+        })
 
     val importFileLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocument(),
-        onResult = { uri: Uri? ->
+        contract = ActivityResultContracts.OpenDocument(), onResult = { uri: Uri? ->
             uri?.let {
                 val channelName = context.getString(R.string.notification_channel_name_data)
                 val successText = context.getString(R.string.data_import_success_text)
@@ -131,8 +129,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     )
                 }
             }
-        }
-    )
+        })
 
     Scaffold { padding ->
         Column(
@@ -141,10 +138,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 // we start with padding start=16.dp, end=16.dp, top=0.dp, bottom=0.dp to mirror
                 // homescreen and then add another 20.dp just like latestMeasurements has
                 .padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 0.dp,
-                    bottom = 0.dp
+                    start = 16.dp, end = 16.dp, top = 0.dp, bottom = 0.dp
                 )
                 .background(Color.Transparent)
                 .verticalScroll(scrollState)
@@ -169,10 +163,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         text = stringResource(R.string.settings_page_data_export_button_text),
                         onClick = { createFileLauncher.launch(fileName) },
                         shape = RoundedCornerShape(
-                            topStart = 16.dp,
-                            topEnd = 16.dp,
-                            bottomStart = 3.dp,
-                            bottomEnd = 3.dp
+                            topStart = 16.dp, topEnd = 16.dp, bottomStart = 3.dp, bottomEnd = 3.dp
                         ),
                         icon = R.drawable.backup_db_icon_vector
                     )
@@ -192,10 +183,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                             showConfirmDialog = true
                         },
                         shape = RoundedCornerShape(
-                            topStart = 3.dp,
-                            topEnd = 3.dp,
-                            bottomStart = 16.dp,
-                            bottomEnd = 16.dp
+                            topStart = 3.dp, topEnd = 3.dp, bottomStart = 16.dp, bottomEnd = 16.dp
                         ),
                         isDestructive = true,
                         icon = R.drawable.purge_db_icon_vector
@@ -218,10 +206,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     text = "Version $versionName (code: $versionCode)",
                     onClick = { },
                     shape = RoundedCornerShape(
-                        topStart = 16.dp,
-                        topEnd = 16.dp,
-                        bottomStart = 16.dp,
-                        bottomEnd = 16.dp
+                        topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 16.dp
                     ),
                     icon = R.drawable.app_version_icon_vector
                 )
@@ -245,44 +230,33 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     onClick = {
                         dataViewModel.clearDatabase()
                         showConfirmDialog = false
-                    }
-                ) {
+                    }) {
                     Text(confirmButtonText, color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(
-                    onClick = { showConfirmDialog = false }
-                ) {
+                    onClick = { showConfirmDialog = false }) {
                     Text(cancelButtonText)
                 }
-            }
-        )
+            })
     }
 }
 
 @Composable
 fun SettingsButton(
-    text: String,
-    onClick: () -> Unit,
-    shape: Shape,
-    isDestructive: Boolean = false,
-    icon: Int = 0
+    text: String, onClick: () -> Unit, shape: Shape, isDestructive: Boolean = false, icon: Int = 0
 ) {
     Surface(
-        shape = shape,
-        tonalElevation = 4.dp, // Tonal elevation sur le bouton
+        shape = shape, tonalElevation = 4.dp, // Tonal elevation sur le bouton
         modifier = Modifier.fillMaxWidth()
     ) {
         TextButton(
-            onClick = onClick,
-            shape = shape,
-            colors = ButtonDefaults.textButtonColors(
+            onClick = onClick, shape = shape, colors = ButtonDefaults.textButtonColors(
                 containerColor = Color.Transparent, // On laisse la Surface gérer le fond
                 contentColor = if (isDestructive) MaterialTheme.colorScheme.error
                 else MaterialTheme.colorScheme.onSurface
-            ),
-            modifier = Modifier.fillMaxWidth()
+            ), modifier = Modifier.fillMaxWidth()
         ) {
             Row(
                 modifier = Modifier
@@ -299,8 +273,7 @@ fun SettingsButton(
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text,
-                    style = MaterialTheme.typography.titleMedium
+                    text, style = MaterialTheme.typography.titleMedium
                 )
             }
         }

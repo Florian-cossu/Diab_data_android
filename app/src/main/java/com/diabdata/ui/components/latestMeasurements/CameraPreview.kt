@@ -49,7 +49,8 @@ class ZxingAnalyzer(
                 data,
                 mediaImage.width,
                 mediaImage.height,
-                0, 0,
+                0,
+                0,
                 mediaImage.width,
                 mediaImage.height,
                 false
@@ -89,15 +90,13 @@ class ZxingAnalyzer(
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun CameraPreview(
-    modifier: Modifier = Modifier,
-    onBarcodeDetected: (String) -> Unit
+    modifier: Modifier = Modifier, onBarcodeDetected: (String) -> Unit
 ) {
     LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     AndroidView(
-        modifier = modifier.fillMaxSize(),
-        factory = { ctx ->
+        modifier = modifier.fillMaxSize(), factory = { ctx ->
             val previewView = androidx.camera.view.PreviewView(ctx)
 
             val cameraProviderFuture =
@@ -112,9 +111,7 @@ fun CameraPreview(
 
                 // --- Analyzer ---
                 val analyzer = ImageAnalysis.Builder()
-                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .build()
-                    .also {
+                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build().also {
                         it.setAnalyzer(ctx.mainExecutor, ZxingAnalyzer(onBarcodeDetected))
                     }
 
@@ -125,10 +122,7 @@ fun CameraPreview(
 
                     // ✅ récupérer la Camera pour piloter le focus
                     val camera = cameraProvider.bindToLifecycle(
-                        lifecycleOwner,
-                        cameraSelector,
-                        preview,
-                        analyzer
+                        lifecycleOwner, cameraSelector, preview, analyzer
                     )
 
                     // --- Autofocus en continu ---
@@ -153,6 +147,5 @@ fun CameraPreview(
             }, ContextCompat.getMainExecutor(ctx))
 
             previewView
-        }
-    )
+        })
 }

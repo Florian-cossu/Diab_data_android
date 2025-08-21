@@ -14,16 +14,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.diabdata.R
-import com.diabdata.models.Appointment
+import com.diabdata.data.DataViewModel
 import com.diabdata.utils.SvgIcon
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
@@ -31,17 +34,18 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 @Composable
-fun UpcomingAppointmentsList(appointments: List<Appointment>) {
-    if (appointments.isEmpty()) return
+fun UpcomingAppointmentsList(
+    viewModel: DataViewModel
+) {
+    val upcomingAppointments by viewModel.upcomingAppointment.collectAsState()
+
+    if (upcomingAppointments.isEmpty()) return
 
     val context = LocalContext.current
 
     val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
     val primaryColor = MaterialTheme.colorScheme.primary
     val today = LocalDate.now()
-
-    val upcomingAppointments = appointments.filter { it.date >= today }
-        .sortedBy { it.date }
 
     Column(
         modifier = Modifier
@@ -64,25 +68,25 @@ fun UpcomingAppointmentsList(appointments: List<Appointment>) {
 
             val remainingText = when {
                 daysUntil == 0 -> context.getString(R.string.today)
-                daysUntil in 1..29 -> context.resources.getQuantityString(
+                daysUntil in 1..29 -> pluralStringResource(
                     R.plurals.in_days,
                     daysUntil,
                     daysUntil
                 )
 
-                yearsUntil == 0 && remainingMonths > 0 -> context.resources.getQuantityString(
+                yearsUntil == 0 && remainingMonths > 0 -> pluralStringResource(
                     R.plurals.in_months,
                     remainingMonths,
                     remainingMonths
                 )
 
-                yearsUntil > 0 && remainingMonths == 0 -> context.resources.getQuantityString(
+                yearsUntil > 0 && remainingMonths == 0 -> pluralStringResource(
                     R.plurals.in_years,
                     yearsUntil,
                     yearsUntil
                 )
 
-                yearsUntil > 0 && remainingMonths > 0 -> context.resources.getQuantityString(
+                yearsUntil > 0 && remainingMonths > 0 -> pluralStringResource(
                     R.plurals.in_years_and_months,
                     1,
                     yearsUntil,
@@ -128,7 +132,7 @@ fun UpcomingAppointmentsList(appointments: List<Appointment>) {
                             )
                         )
                         Text(
-                            text = context.resources.getString(
+                            text = stringResource(
                                 R.string.scheduled_on_date_text,
                                 appointment.date.format(formatter)
                             ),

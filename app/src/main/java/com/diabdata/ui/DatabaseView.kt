@@ -106,26 +106,19 @@ fun DatabaseEditionView(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 0.dp,
-                    bottom = 0.dp
+                    start = 16.dp, end = 16.dp, top = 0.dp, bottom = 0.dp
                 )
         ) {
             FilterChips(
-                types = AddableType.entries,
-                selectedTypes = selectedTypes,
-                onTypeToggle = { type ->
+                types = AddableType.entries, selectedTypes = selectedTypes, onTypeToggle = { type ->
                     selectedTypes = if (selectedTypes.contains(type)) selectedTypes - type
                     else selectedTypes + type
-                }
-            )
+                })
 
             Spacer(Modifier.height(8.dp))
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -157,23 +150,18 @@ fun DatabaseEditionView(
                             }
                             selectedEntries = emptySet()
                             selectionMode = false
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = bgColor,
-                            contentColor = textColor
-                        ),
-                        interactionSource = interactionSource
+                        }, colors = ButtonDefaults.buttonColors(
+                            containerColor = bgColor, contentColor = textColor
+                        ), interactionSource = interactionSource
                     ) {
                         BadgedBox(
                             badge = {
                                 Badge(containerColor = badgeColor) {
                                     Text(selectedEntries.size.toString(), color = badgeTextColor)
                                 }
-                            }
-                        ) {
+                            }) {
                             SvgIcon(
-                                resId = R.drawable.delete_icon_vector,
-                                color = textColor
+                                resId = R.drawable.delete_icon_vector, color = textColor
                             )
                         }
                         Spacer(modifier = Modifier.width(8.dp))
@@ -181,8 +169,7 @@ fun DatabaseEditionView(
                     }
                 }
 
-                if (!selectionMode && selectedEntries.isEmpty())
-                    Spacer(Modifier.width(8.dp))
+                if (!selectionMode && selectedEntries.isEmpty()) Spacer(Modifier.width(8.dp))
 
                 IconButton(
                     onClick = {
@@ -196,10 +183,8 @@ fun DatabaseEditionView(
                         .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
                 ) {
                     SvgIcon(
-                        resId = if (selectedEntries.size < allEntries.size)
-                            R.drawable.select_all_icon_vector
-                        else
-                            R.drawable.deselect_all_icon_vector,
+                        resId = if (selectedEntries.size < allEntries.size) R.drawable.select_all_icon_vector
+                        else R.drawable.deselect_all_icon_vector,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -210,8 +195,7 @@ fun DatabaseEditionView(
             LazyColumn {
                 items(
                     items = filteredEntries,
-                    key = { entry -> "${entry.type}-${entry.id}" }
-                ) { entry ->
+                    key = { entry -> "${entry.type}-${entry.id}" }) { entry ->
                     EntryCardSwipeM3(
                         entry = entry,
                         shape = getItemShape(filteredEntries.indexOf(entry), filteredEntries.size),
@@ -220,8 +204,8 @@ fun DatabaseEditionView(
                         onClick = {
                             if (selectionMode) {
                                 selectedEntries = toggleEntrySelection(selectedEntries, entry)
-                                if (selectionMode && selectedEntries.isEmpty())
-                                    selectionMode = false
+                                if (selectionMode && selectedEntries.isEmpty()) selectionMode =
+                                    false
                             }
                         },
                         onLongPress = {
@@ -231,8 +215,7 @@ fun DatabaseEditionView(
                         onDeleteFromDb = {
                             dataViewModel.deleteEntry(entry)
                         },
-                        onArchive = {}
-                    )
+                        onArchive = {})
                     Spacer(Modifier.height(4.dp))
                 }
             }
@@ -274,8 +257,7 @@ fun EntryCardSwipeM3(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.CenterStart
+                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart
                     ) {
                         SvgIcon(
                             resId = R.drawable.delete_icon_vector,
@@ -294,8 +276,7 @@ fun EntryCardSwipeM3(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.CenterEnd
+                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterEnd
                     ) {
                         SvgIcon(
                             resId = R.drawable.inbox_icon_vector,
@@ -313,8 +294,7 @@ fun EntryCardSwipeM3(
         Surface(
             shape = shape,
             tonalElevation = 4.dp,
-            color = if (selectionMode && isSelected)
-                MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+            color = if (selectionMode && isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
             else MaterialTheme.colorScheme.surface,
             modifier = Modifier
                 .fillMaxWidth()
@@ -323,41 +303,35 @@ fun EntryCardSwipeM3(
                     alpha = alphaAnim.value
                 }
                 .pointerInput(Unit) {
-                    detectHorizontalDragGestures(
-                        onHorizontalDrag = { _, dragAmount ->
-                            scope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
-                        },
-                        onDragEnd = {
-                            scope.launch {
-                                when {
-                                    offsetX.value > thresholdPx -> { // swipe droit
-                                        offsetX.animateTo(1000f, tween(200))
-                                        alphaAnim.animateTo(0f, tween(200))
-                                        onDeleteFromDb()
-                                    }
+                    detectHorizontalDragGestures(onHorizontalDrag = { _, dragAmount ->
+                        scope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
+                    }, onDragEnd = {
+                        scope.launch {
+                            when {
+                                offsetX.value > thresholdPx -> { // swipe droit
+                                    offsetX.animateTo(1000f, tween(200))
+                                    alphaAnim.animateTo(0f, tween(200))
+                                    onDeleteFromDb()
+                                }
 
-                                    offsetX.value < -thresholdPx -> { // swipe gauche
-                                        offsetX.animateTo(-1000f, tween(200))
-                                        alphaAnim.animateTo(0f, tween(200))
-                                        onArchive()
-                                    }
+                                offsetX.value < -thresholdPx -> { // swipe gauche
+                                    offsetX.animateTo(-1000f, tween(200))
+                                    alphaAnim.animateTo(0f, tween(200))
+                                    onArchive()
+                                }
 
-                                    else -> {
-                                        offsetX.animateTo(
-                                            0f,
-                                            spring(stiffness = Spring.StiffnessMedium)
-                                        )
-                                    }
+                                else -> {
+                                    offsetX.animateTo(
+                                        0f, spring(stiffness = Spring.StiffnessMedium)
+                                    )
                                 }
                             }
                         }
-                    )
+                    })
                 }
-                .combinedClickable(onClick = onClick, onLongClick = onLongPress)
-        ) {
+                .combinedClickable(onClick = onClick, onLongClick = onLongPress)) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(16.dp)
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(16.dp)
             ) {
                 SvgIcon(
                     resId = getIconForType(entry.type),
@@ -376,10 +350,7 @@ fun EntryCardSwipeM3(
 }
 
 data class DbEntry(
-    val id: Int,
-    val type: AddableType,
-    val title: String,
-    val subtitle: String
+    val id: Int, val type: AddableType, val title: String, val subtitle: String
 )
 
 @Composable
@@ -395,42 +366,27 @@ fun mergeEntries(
     return buildList {
         addAll(weights.map {
             DbEntry(
-                it.id,
-                AddableType.WEIGHT,
-                "${it.value} kg",
-                it.date.format(formatter)
+                it.id, AddableType.WEIGHT, "${it.value} kg", it.date.format(formatter)
             )
         })
         addAll(hba1cs.map {
             DbEntry(
-                it.id,
-                AddableType.HBA1C,
-                "${it.value} %",
-                it.date.format(formatter)
+                it.id, AddableType.HBA1C, "${it.value} %", it.date.format(formatter)
             )
         })
         addAll(appointments.map {
             DbEntry(
-                it.id,
-                AddableType.APPOINTMENT,
-                it.doctor,
-                it.date.format(formatter)
+                it.id, AddableType.APPOINTMENT, it.doctor, it.date.format(formatter)
             )
         })
         addAll(treatments.map {
             DbEntry(
-                it.id,
-                AddableType.TREATMENT,
-                it.name,
-                stringResource(R.string.addable_treatment)
+                it.id, AddableType.TREATMENT, it.name, stringResource(R.string.addable_treatment)
             )
         })
         addAll(diagnoses.map {
             DbEntry(
-                it.id,
-                AddableType.DIAGNOSIS,
-                it.diagnosis,
-                it.date.format(formatter)
+                it.id, AddableType.DIAGNOSIS, it.diagnosis, it.date.format(formatter)
             )
         })
     }
@@ -452,9 +408,7 @@ fun toggleEntrySelection(current: Set<DbEntry>, entry: DbEntry): Set<DbEntry> {
 
 @Composable
 fun FilterChips(
-    types: List<AddableType>,
-    selectedTypes: Set<AddableType>,
-    onTypeToggle: (AddableType) -> Unit
+    types: List<AddableType>, selectedTypes: Set<AddableType>, onTypeToggle: (AddableType) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -486,8 +440,7 @@ fun FilterChips(
                     labelColor = MaterialTheme.colorScheme.onSurface,
                     selectedLabelColor = MaterialTheme.colorScheme.primary,
                     selectedLeadingIconColor = MaterialTheme.colorScheme.primary
-                )
-            )
+                ))
         }
     }
 }

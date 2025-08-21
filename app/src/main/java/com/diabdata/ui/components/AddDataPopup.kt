@@ -105,16 +105,13 @@ fun AddDataPopup(
                     Spacer(Modifier.width(6.dp))
                     Text(
                         context.getString(
-                            R.string.add_data_popup_title,
-                            type.getDisplayName(context)
+                            R.string.add_data_popup_title, type.getDisplayName(context)
                         ).uppercase(), color = MaterialTheme.colorScheme.primary
                     )
                 }
 
                 DateSelector(
-                    initialDate = selectedDate,
-                    onDateSelected = { selectedDate = it }
-                )
+                    initialDate = selectedDate, onDateSelected = { selectedDate = it })
 
                 when (type) {
                     AddableType.APPOINTMENT -> {
@@ -124,8 +121,7 @@ fun AddDataPopup(
                             options = AppointmentType.entries,
                             selected = selectedAppointmentType,
                             displayName = { it.displayName(context) },
-                            onSelectedChange = { selectedAppointmentType = it }
-                        )
+                            onSelectedChange = { selectedAppointmentType = it })
                     }
 
                     AddableType.TREATMENT -> {
@@ -134,8 +130,7 @@ fun AddDataPopup(
                             options = TreatmentType.entries,
                             selected = selectedTreatmentType,
                             displayName = { it.displayName(context) },
-                            onSelectedChange = { selectedTreatmentType = it }
-                        )
+                            onSelectedChange = { selectedTreatmentType = it })
                     }
 
                     else -> {}
@@ -203,8 +198,7 @@ fun AddDataPopup(
                 )
 
                 Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier.fillMaxWidth()
+                    horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()
                 ) {
                     TextButton(onClick = onDismiss) { Text(context.getString(R.string.cancel_button_text)) }
                     Spacer(Modifier.width(8.dp))
@@ -224,77 +218,83 @@ fun AddDataPopup(
                         AddableType.APPOINTMENT -> field1.isNotBlank()
                     }
 
-                    Button(onClick = {
-                        val date = selectedDate ?: LocalDate.now()
+                    Button(
+                        onClick = {
+                            val date = selectedDate ?: LocalDate.now()
 
-                        when (type) {
-                            AddableType.WEIGHT -> {
-                                val weight = field1.replace(',', '.').toFloatOrNull()
-                                if (weight != null) {
-                                    dataViewModel.addWeight(
-                                        WeightEntry(
-                                            date = date,
-                                            value = weight
+                            when (type) {
+                                AddableType.WEIGHT -> {
+                                    val weight = field1.replace(',', '.').toFloatOrNull()
+                                    if (weight != null) {
+                                        dataViewModel.addWeight(
+                                            WeightEntry(
+                                                date = date, value = weight
+                                            )
+                                        )
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.add_data_popup_invalid_weight_field_message),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+
+                                AddableType.HBA1C -> {
+                                    val hba1c = field1.replace(',', '.').toFloatOrNull()
+                                    if (hba1c != null) {
+                                        dataViewModel.addHba1c(
+                                            HBA1CEntry(
+                                                date = date, value = hba1c
+                                            )
+                                        )
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.add_data_popup_invalid_HBA1C_field_message),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+
+                                AddableType.TREATMENT -> {
+                                    dataViewModel.addTreatment(
+                                        Treatment(
+                                            expirationDate = date,
+                                            name = field1,
+                                            type = selectedTreatmentType
                                         )
                                     )
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.add_data_popup_invalid_weight_field_message),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
                                 }
-                            }
-                            AddableType.HBA1C -> {
-                                val hba1c = field1.replace(',', '.').toFloatOrNull()
-                                if (hba1c != null) {
-                                    dataViewModel.addHba1c(HBA1CEntry(date = date, value = hba1c))
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.add_data_popup_invalid_HBA1C_field_message),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                            AddableType.TREATMENT -> {
-                                dataViewModel.addTreatment(
-                                    Treatment(
-                                        expirationDate = date,
-                                        name = field1,
-                                        type = selectedTreatmentType
-                                    )
-                                )
-                            }
-                            AddableType.DIAGNOSIS -> {
-                                if (field1.isBlank()) {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.add_data_popup_diagnosis_date_insertion_error),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-                                    dataViewModel.addDiagnosisDate(
-                                        DiagnosisDate(date = date, diagnosis = field1)
-                                    )
-                                }
-                            }
-                            AddableType.APPOINTMENT -> {
-                                dataViewModel.addAppointment(
-                                    Appointment(
-                                        date = date,
-                                        doctor = field1,
-                                        type = selectedAppointmentType,
-                                        notes = notes
-                                    )
-                                )
-                            }
-                        }
 
-                        onDismiss()
-                    },
-                        enabled = isValid,
-                        colors = ButtonDefaults.buttonColors()
+                                AddableType.DIAGNOSIS -> {
+                                    if (field1.isBlank()) {
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.add_data_popup_diagnosis_date_insertion_error),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        dataViewModel.addDiagnosisDate(
+                                            DiagnosisDate(date = date, diagnosis = field1)
+                                        )
+                                    }
+                                }
+
+                                AddableType.APPOINTMENT -> {
+                                    dataViewModel.addAppointment(
+                                        Appointment(
+                                            date = date,
+                                            doctor = field1,
+                                            type = selectedAppointmentType,
+                                            notes = notes
+                                        )
+                                    )
+                                }
+                            }
+
+                            onDismiss()
+                        }, enabled = isValid, colors = ButtonDefaults.buttonColors()
                     ) {
                         Text(context.getString(R.string.confirm_button_text))
                     }

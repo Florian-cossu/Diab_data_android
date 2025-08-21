@@ -5,9 +5,8 @@ import androidx.room.PrimaryKey
 import java.time.LocalDate
 
 @Entity(tableName = "treatments")
-data class Treatment (
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+data class Treatment(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val expirationDate: LocalDate,
     val name: String,
     val type: TreatmentType

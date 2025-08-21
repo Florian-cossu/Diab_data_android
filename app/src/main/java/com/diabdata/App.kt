@@ -34,8 +34,7 @@ import com.diabdata.utils.SvgIcon
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun App(
-    db: DiabDataDatabase,
-    dataViewModel: DataViewModel
+    db: DiabDataDatabase, dataViewModel: DataViewModel
 ) {
     val context = LocalContext.current.applicationContext
     var selectedTab by rememberSaveable { mutableStateOf("home") }
@@ -48,11 +47,15 @@ fun App(
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(
-                    icon = { Icon(Icons.Filled.Home, contentDescription = "Accueil") },
+                    icon = {
+                        Icon(
+                            Icons.Filled.Home,
+                            contentDescription = "Accueil"
+                        )
+                    },
                     label = { Text(stringResource(R.string.home_menu_title)) },
                     selected = selectedTab == "home",
-                    onClick = { selectedTab = "home" }
-                )
+                    onClick = { selectedTab = "home" })
                 NavigationBarItem(
                     icon = {
                         SvgIcon(
@@ -63,8 +66,7 @@ fun App(
                     },
                     label = { Text(stringResource(R.string.chart_menu_title)) },
                     selected = selectedTab == "charts",
-                    onClick = { selectedTab = "charts" }
-                )
+                    onClick = { selectedTab = "charts" })
                 NavigationBarItem(
                     icon = {
                         SvgIcon(
@@ -75,17 +77,19 @@ fun App(
                     },
                     label = { Text(stringResource(R.string.database_management_menu_title)) },
                     selected = selectedTab == "data",
-                    onClick = { selectedTab = "data" }
-                )
+                    onClick = { selectedTab = "data" })
                 NavigationBarItem(
-                    icon = { Icon(Icons.Filled.Settings, contentDescription = "Paramètres") },
+                    icon = {
+                        Icon(
+                            Icons.Filled.Settings,
+                            contentDescription = "Paramètres"
+                        )
+                    },
                     label = { Text(stringResource(R.string.settings_menu_title)) },
                     selected = selectedTab == "settings",
-                    onClick = { selectedTab = "settings" }
-                )
+                    onClick = { selectedTab = "settings" })
             }
-        }
-    ) { paddingValues ->
+        }) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()

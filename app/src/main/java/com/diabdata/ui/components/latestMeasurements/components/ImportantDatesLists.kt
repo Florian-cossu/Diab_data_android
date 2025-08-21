@@ -70,21 +70,15 @@ fun ImportantDatesList(
             val elapsedText = when {
                 years == 0L && remainingMonths == 0L -> context.getString(R.string.today)
                 years == 0L -> context.resources.getQuantityString(
-                    R.plurals.months,
-                    remainingMonths.toInt(),
-                    remainingMonths
+                    R.plurals.months, remainingMonths.toInt(), remainingMonths
                 )
 
                 remainingMonths == 0L -> context.resources.getQuantityString(
-                    R.plurals.years,
-                    years.toInt(),
-                    years
+                    R.plurals.years, years.toInt(), years
                 )
 
                 else -> context.resources.getQuantityString(
-                    R.plurals.years_and_months,
-                    years.toInt(),
-                    years, remainingMonths
+                    R.plurals.years_and_months, years.toInt(), years, remainingMonths
                 )
             }
 
@@ -114,14 +108,12 @@ fun ImportantDatesList(
                         Text(
                             text = diagnosis.diagnosis,
                             style = MaterialTheme.typography.titleMedium.copy(
-                                color = primaryColor,
-                                fontWeight = FontWeight.Bold
+                                color = primaryColor, fontWeight = FontWeight.Bold
                             )
                         )
                         Text(
                             text = context.resources.getString(
-                                R.string.diagnosed_on_text,
-                                diagnosis.date.format(formatter)
+                                R.string.diagnosed_on_text, diagnosis.date.format(formatter)
                             ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant

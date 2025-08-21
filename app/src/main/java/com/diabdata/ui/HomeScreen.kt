@@ -65,15 +65,13 @@ fun HomeScreen(
     val scrollState = rememberScrollState()
 
     val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
+        contract = ActivityResultContracts.RequestPermission(), onResult = { isGranted ->
             if (isGranted) {
                 showScanner = true
             } else {
                 Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
             }
-        }
-    )
+        })
 
     Scaffold { padding ->
         if (hasData) {
@@ -81,10 +79,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 0.dp,
-                        bottom = 0.dp
+                        start = 16.dp, end = 16.dp, top = 0.dp, bottom = 0.dp
                     )
                     .verticalScroll(scrollState)
             ) {
@@ -123,13 +118,11 @@ fun HomeScreen(
 
         if (showScanner) {
             DataMatrixScannerDialog(
-                onDismiss = { showScanner = false },
-                onResult = { info ->
+                onDismiss = { showScanner = false }, onResult = { info ->
                     scope.launch {
                         val entity = dataViewModel.getMedicationByGtin(
                             info.gtin.replace(
-                                regex = Regex("^0"),
-                                replacement = ""
+                                regex = Regex("^0"), replacement = ""
                             )
                         )
                         Log.d(
@@ -143,20 +136,16 @@ fun HomeScreen(
                             setSelectedType(AddableType.TREATMENT)
                         } else {
                             Toast.makeText(
-                                context,
-                                "Médicament inconnu pour GTIN ${
+                                context, "Médicament inconnu pour GTIN ${
                                     info.gtin.replace(
-                                        regex = Regex("^0"),
-                                        replacement = ""
+                                        regex = Regex("^0"), replacement = ""
                                     )
-                                }",
-                                Toast.LENGTH_SHORT
+                                }", Toast.LENGTH_SHORT
                             ).show()
                         }
                         showScanner = false
                     }
-                },
-                visible = showScanner
+                }, visible = showScanner
             )
         }
 
@@ -172,27 +161,22 @@ fun HomeScreen(
                 onDismiss = {
                     setSelectedType(null)
                     dataViewModel.prefilledTreatment = null
-                }
-            )
+                })
         }
 
 
         AddDataFab(
-            onSelect = setSelectedType,
-            onScanClick = {
+            onSelect = setSelectedType, onScanClick = {
                 permissionLauncher.launch(Manifest.permission.CAMERA)
-            }
-        )
+            })
     }
 }
 
 private fun mapToTreatment(info: MedicationInfo, entity: MedicationEntity): Treatment {
-    val expiration = info.expiration?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
-        ?: LocalDate.now()
+    val expiration =
+        info.expiration?.let { runCatching { LocalDate.parse(it) }.getOrNull() } ?: LocalDate.now()
 
     return Treatment(
-        expirationDate = expiration,
-        name = entity.fullName,
-        type = entity.treatmentType
+        expirationDate = expiration, name = entity.fullName, type = entity.treatmentType
     )
 }

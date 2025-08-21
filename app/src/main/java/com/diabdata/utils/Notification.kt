@@ -27,9 +27,7 @@ fun Context.showNotification(
     }
 
     val channel = NotificationChannel(
-        channelId,
-        notificationChannel,
-        NotificationManager.IMPORTANCE_DEFAULT
+        channelId, notificationChannel, NotificationManager.IMPORTANCE_DEFAULT
     ).apply {
         description = notificationDescription
     }
@@ -43,8 +41,7 @@ fun Context.showNotification(
 
     val builder = NotificationCompat.Builder(this, channelId)
         .setSmallIcon(if (iconResId != 0) iconResId else R.drawable.logo_icon_vector)
-        .setContentTitle(title)
-        .setContentText(content)
+        .setContentTitle(title).setContentText(content)
         .setStyle(NotificationCompat.BigTextStyle().bigText(content))
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 

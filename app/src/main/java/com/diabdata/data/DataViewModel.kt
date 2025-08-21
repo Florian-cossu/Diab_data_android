@@ -106,6 +106,11 @@ class DataViewModel(
         repository.getUpcomingAppointments()
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
+    // Expiration dates
+    val upcomingExpirationDates: StateFlow<List<Treatment>> =
+        repository.getUpcomingExpDates(LocalDate.now())
+            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
     // Insertion functions
     fun addWeight(weightEntry: WeightEntry) {
         viewModelScope.launch {
