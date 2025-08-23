@@ -12,9 +12,7 @@ import androidx.core.content.ContextCompat
 
 @Composable
 fun RequestNotificationPermission(
-    context: Context,
-    onPermissionGranted: () -> Unit = {},
-    onPermissionDenied: () -> Unit = {}
+    context: Context, onPermissionGranted: () -> Unit = {}, onPermissionDenied: () -> Unit = {}
 ) {
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -29,8 +27,7 @@ fun RequestNotificationPermission(
     LaunchedEffect(Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val permissionCheck = ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.POST_NOTIFICATIONS
+                context, Manifest.permission.POST_NOTIFICATIONS
             )
             if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
                 launcher.launch(Manifest.permission.POST_NOTIFICATIONS)

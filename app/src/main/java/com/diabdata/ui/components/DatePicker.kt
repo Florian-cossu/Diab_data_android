@@ -27,8 +27,7 @@ import java.util.Locale
 
 @Composable
 fun DateSelector(
-    initialDate: LocalDate = LocalDate.now(),
-    onDateSelected: (LocalDate) -> Unit
+    initialDate: LocalDate = LocalDate.now(), onDateSelected: (LocalDate) -> Unit
 ) {
     val context = LocalContext.current
     val themedContext = ContextThemeWrapper(context, R.style.Theme_DiabData)
@@ -40,16 +39,12 @@ fun DateSelector(
 
     fun openDatePicker() {
         DatePickerDialog(
-            themedContext,
-            { _: DatePicker, year: Int, month: Int, day: Int ->
+            themedContext, { _: DatePicker, year: Int, month: Int, day: Int ->
                 val newDate = LocalDate.of(year, month + 1, day)
                 selectedDate = newDate
                 dateText = TextFieldValue(newDate.format(formatter))
                 onDateSelected(newDate)
-            },
-            selectedDate.year,
-            selectedDate.monthValue - 1,
-            selectedDate.dayOfMonth
+            }, selectedDate.year, selectedDate.monthValue - 1, selectedDate.dayOfMonth
         ).show()
     }
 
@@ -71,8 +66,7 @@ fun DateSelector(
             Icon(
                 imageVector = Icons.Default.DateRange,
                 contentDescription = "Sélectionner une date",
-                modifier = Modifier.clickable { openDatePicker() }
-            )
+                modifier = Modifier.clickable { openDatePicker() })
         },
         modifier = Modifier
             .fillMaxWidth()

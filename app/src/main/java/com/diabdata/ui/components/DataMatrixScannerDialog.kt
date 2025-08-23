@@ -30,9 +30,7 @@ import com.diabdata.utils.parseGS1
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun DataMatrixScannerDialog(
-    visible: Boolean,
-    onDismiss: () -> Unit,
-    onResult: (MedicationInfo) -> Unit
+    visible: Boolean, onDismiss: () -> Unit, onResult: (MedicationInfo) -> Unit
 ) {
     if (!visible) return
 
@@ -54,16 +52,13 @@ fun DataMatrixScannerDialog(
                     width = 3.dp,
                     color = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(24.dp)
-                )
-        ) {
+                )) {
             CameraPreview(
-                modifier = Modifier.matchParentSize(),
-                onBarcodeDetected = { rawValue ->
+                modifier = Modifier.matchParentSize(), onBarcodeDetected = { rawValue ->
                     val parsed = parseGS1(rawValue)
                     onResult(parsed)
                     onDismiss()
-                }
-            )
+                })
         }
 
         Row(

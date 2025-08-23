@@ -6,8 +6,7 @@ import java.time.LocalDate
 
 @Entity(tableName = "appointments")
 data class Appointment(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val date: LocalDate,
     val doctor: String,
     val type: AppointmentType,

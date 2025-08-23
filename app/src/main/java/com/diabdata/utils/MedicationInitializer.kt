@@ -9,8 +9,7 @@ import java.io.InputStream
 import java.security.MessageDigest
 
 class MedicationInitializer(
-    private val context: Context,
-    private val db: DiabDataDatabase
+    private val context: Context, private val db: DiabDataDatabase
 ) {
 
     suspend fun initialize() {
@@ -31,8 +30,7 @@ class MedicationInitializer(
         val reader = inputStream.bufferedReader()
         val result = mutableListOf<MedicationEntity>()
 
-        reader.readLines()
-            .drop(1) // skip header
+        reader.readLines().drop(1) // skip header
             .forEach { line ->
                 val cols = line.split(",")
                 if (cols.size >= 4) {

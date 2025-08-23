@@ -1,10 +1,7 @@
 package com.diabdata.utils
 
 data class MedicationInfo(
-    val gtin: String,
-    val lot: String?,
-    val expiration: String?,
-    val serial: String?
+    val gtin: String, val lot: String?, val expiration: String?, val serial: String?
 )
 
 fun parseGS1(raw: String): MedicationInfo {

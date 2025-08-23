@@ -3,6 +3,7 @@ package com.diabdata.ui.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
@@ -27,9 +28,7 @@ fun <T> EnumDropdown(
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
-    ) {
+        expanded = expanded, onExpandedChange = { expanded = !expanded }) {
         OutlinedTextField(
             value = selected?.let { displayName(it) } ?: "",
             onValueChange = {},
@@ -39,23 +38,21 @@ fun <T> EnumDropdown(
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
             modifier = Modifier
-                .menuAnchor()
+                .menuAnchor(
+                    type = ExposedDropdownMenuAnchorType.PrimaryNotEditable,
+                    enabled = true
+                )
                 .fillMaxWidth(),
             shape = MaterialTheme.shapes.small
         )
 
         ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
+            expanded = expanded, onDismissRequest = { expanded = false }) {
             options.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(displayName(option)) },
-                    onClick = {
-                        onSelectedChange(option)
-                        expanded = false
-                    }
-                )
+                DropdownMenuItem(text = { Text(displayName(option)) }, onClick = {
+                    onSelectedChange(option)
+                    expanded = false
+                })
             }
         }
     }

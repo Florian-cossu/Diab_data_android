@@ -28,7 +28,7 @@ import com.diabdata.models.WeightEntry
         DiagnosisDate::class,
         MedicationEntity::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 
@@ -54,11 +54,6 @@ abstract class DiabDataDatabase : RoomDatabase() {
         }
         cursor.close()
         return tables
-    }
-
-    fun deleteEntry(id: Int, tableName: String): Int {
-        val db = openHelper.writableDatabase
-        return db.delete(tableName, "id = ?", arrayOf(id.toString()))
     }
 
     fun clearAllDataAndReset() {

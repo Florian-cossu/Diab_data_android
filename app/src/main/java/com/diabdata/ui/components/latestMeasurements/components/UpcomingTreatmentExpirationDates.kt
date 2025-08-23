@@ -14,15 +14,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.diabdata.R
-import com.diabdata.models.Treatment
+import com.diabdata.data.DataViewModel
 import com.diabdata.models.TreatmentType
 import com.diabdata.utils.SvgIcon
 import com.diabdata.utils.getItemShape
@@ -57,8 +60,9 @@ fun TreatmentType.iconRes(): Int = when (this) {
 
 @Composable
 fun UpcomingTreatmentExpirationDates(
-    treatments: List<Treatment>
+    viewModel: DataViewModel
 ) {
+    val treatments by viewModel.upcomingExpirationDates.collectAsState()
     if (treatments.isEmpty()) return
 
     val context = LocalContext.current
@@ -76,8 +80,7 @@ fun UpcomingTreatmentExpirationDates(
         }
     }
 
-    val cards = treatments.sortedBy { it.expirationDate }
-        .map { treatment ->
+    val cards = treatments.sortedBy { it.expirationDate }.map { treatment ->
             val daysUntil = ChronoUnit.DAYS.between(today, treatment.expirationDate).toInt()
             val yearsUntil = ChronoUnit.YEARS.between(today, treatment.expirationDate).toInt()
             val totalMonths = ChronoUnit.MONTHS.between(today, treatment.expirationDate).toInt()
@@ -85,29 +88,20 @@ fun UpcomingTreatmentExpirationDates(
 
             val remainingText = when {
                 daysUntil == 0 -> context.getString(R.string.today) // Aujourd’hui
-                daysUntil in 1..29 -> context.resources.getQuantityString(
-                    R.plurals.in_days,
-                    daysUntil,
-                    daysUntil
+                daysUntil in 1..29 -> pluralStringResource(
+                    R.plurals.in_days, daysUntil, daysUntil
                 )
 
-                yearsUntil == 0 && remainingMonths > 0 -> context.resources.getQuantityString(
-                    R.plurals.in_months,
-                    remainingMonths,
-                    remainingMonths
+                yearsUntil == 0 && remainingMonths > 0 -> pluralStringResource(
+                    R.plurals.in_months, remainingMonths, remainingMonths
                 )
 
-                yearsUntil > 0 && remainingMonths == 0 -> context.resources.getQuantityString(
-                    R.plurals.in_years,
-                    yearsUntil,
-                    yearsUntil
+                yearsUntil > 0 && remainingMonths == 0 -> pluralStringResource(
+                    R.plurals.in_years, yearsUntil, yearsUntil
                 )
 
-                yearsUntil > 0 && remainingMonths > 0 -> context.resources.getQuantityString(
-                    R.plurals.in_years_and_months,
-                    1,
-                    yearsUntil,
-                    remainingMonths
+                yearsUntil > 0 && remainingMonths > 0 -> pluralStringResource(
+                    R.plurals.in_years_and_months, 1, yearsUntil, remainingMonths
                 )
 
                 else -> context.getString(R.string.today) // fallback
@@ -118,9 +112,8 @@ fun UpcomingTreatmentExpirationDates(
 
             TreatmentCardData(
                 titleText = treatment.name.ifBlank { treatment.type.displayName(context) },
-                dateText = context.resources.getString(
-                    R.string.expires_on_text,
-                    treatment.expirationDate.format(formatter)
+                dateText = stringResource(
+                    R.string.expires_on_text, treatment.expirationDate.format(formatter)
                 ),
                 icon = treatment.type.iconRes(),
                 isExpiringSoon = treatment.expirationDate.isBefore(soonThreshold),
@@ -164,11 +157,8 @@ fun UpcomingTreatmentExpirationDates(
                         Text(
                             text = card.titleText,
                             style = MaterialTheme.typography.titleMedium.copy(
-                                color = if (card.isExpiringSoon)
-                                    MaterialTheme.colorScheme.error
-                                else
-                                    MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold
+                                color = if (card.isExpiringSoon) MaterialTheme.colorScheme.error
+                                else MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold
                             )
                         )
                         Text(
@@ -189,19 +179,15 @@ fun UpcomingTreatmentExpirationDates(
                         SvgIcon(
                             resId = card.untilDateIcon,
                             modifier = Modifier.size(15.dp),
-                            color = if (card.isExpiringSoon)
-                                MaterialTheme.colorScheme.error
-                            else
-                                MaterialTheme.colorScheme.onSurfaceVariant
+                            color = if (card.isExpiringSoon) MaterialTheme.colorScheme.error
+                            else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(Modifier.width(4.dp))
                         Text(
                             text = card.remainingText,
                             style = MaterialTheme.typography.bodySmall,
-                            color = if (card.isExpiringSoon)
-                                MaterialTheme.colorScheme.error
-                            else
-                                MaterialTheme.colorScheme.onSurfaceVariant
+                            color = if (card.isExpiringSoon) MaterialTheme.colorScheme.error
+                            else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }

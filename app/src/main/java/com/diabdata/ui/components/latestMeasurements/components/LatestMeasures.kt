@@ -15,6 +15,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -22,12 +24,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.diabdata.R
+import com.diabdata.data.DataViewModel
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.WeightEntry
-import com.diabdata.ui.components.latestMeasurements.MeasureSource
 import com.diabdata.utils.SvgIcon
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 data class MeasureCardData(
     val titleText: String,
@@ -39,66 +42,53 @@ data class MeasureCardData(
 @SuppressLint("DefaultLocale")
 @Composable
 fun LatestMeasures(
-    sources: List<MeasureSource<*>>
+    viewModel: DataViewModel
 ) {
-    if (sources.isEmpty()) return
-
     val primaryColor = MaterialTheme.colorScheme.primary
     val today = LocalDate.now()
     val oneYearAgo = today.minusYears(1)
 
-    val cards = sources.mapNotNull { source ->
-        val latestEntry = source.entries.maxByOrNull {
-            when (it) {
-                is WeightEntry -> it.date
-                is HBA1CEntry -> it.date
-                else -> LocalDate.MIN
-            }
-        } ?: return@mapNotNull null
+    val weightEntries by viewModel.recentWeights.collectAsState()
+    val hba1cEntries by viewModel.recentHba1c.collectAsState()
 
-        // Entrées de l'année passée pour la tendance
-        val lastYearEntries = source.entries.filter { entry ->
-            when (entry) {
-                is WeightEntry -> entry.date.isAfter(oneYearAgo)
-                is HBA1CEntry -> entry.date.isAfter(oneYearAgo)
-                else -> false
-            }
+    if (weightEntries.isEmpty() && hba1cEntries.isEmpty()) return
+
+    val cards = buildList {
+        // ---- Weight ----
+        weightEntries.maxByOrNull { it.date }?.let { latest ->
+            add(
+                MeasureCardData(
+                    titleText = String.format("%.2f kg", latest.value),
+                    dateText = stringResource(
+                        R.string.weight_on_date_text,
+                        latest.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    ),
+                    icon = R.drawable.weight_icon_vector,
+                    trendIcon = computeTrendIcon(
+                        entries = weightEntries,
+                        oneYearAgo = oneYearAgo,
+                        valueExtractor = { it.value })
+                )
+            )
         }
 
-        val trendIcon = if (lastYearEntries.size >= 2) {
-            val sortedEntries = lastYearEntries.sortedBy {
-                when (it) {
-                    is WeightEntry -> it.date
-                    is HBA1CEntry -> it.date
-                    else -> LocalDate.MIN
-                }
-            }
-            val firstValue = when (val first = sortedEntries.first()) {
-                is WeightEntry -> first.weightKg
-                is HBA1CEntry -> first.value
-                else -> 0.0
-            }
-            val lastValue = when (val last = sortedEntries.last()) {
-                is WeightEntry -> last.weightKg
-                is HBA1CEntry -> last.value
-                else -> 0.0
-            }
-
-            when {
-                lastValue.toDouble() > firstValue.toDouble() -> R.drawable.trending_up_icon_vector
-                lastValue.toDouble() < firstValue.toDouble() -> R.drawable.trending_down_icon_vector
-                else -> R.drawable.trending_flat_icon_vector
-            }
-        } else null
-
-        @Suppress("UNCHECKED_CAST")
-        val typedSource = source as MeasureSource<Any>
-        MeasureCardData(
-            titleText = typedSource.formatTitle(latestEntry),
-            dateText = typedSource.formatDate(latestEntry),
-            icon = typedSource.icon,
-            trendIcon = trendIcon
-        )
+        // ---- HbA1c ----
+        hba1cEntries.maxByOrNull { it.date }?.let { latest ->
+            add(
+                MeasureCardData(
+                    titleText = String.format("%.1f%%", latest.value),
+                    dateText = stringResource(
+                        R.string.hba1c_on_date_text,
+                        latest.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    ),
+                    icon = R.drawable.hba1c_icon_vector,
+                    trendIcon = computeTrendIcon(
+                        entries = hba1cEntries,
+                        oneYearAgo = oneYearAgo,
+                        valueExtractor = { it.value })
+                )
+            )
+        }
     }
 
     Column(
@@ -122,9 +112,7 @@ fun LatestMeasures(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     SvgIcon(
-                        resId = card.icon,
-                        modifier = Modifier.size(26.dp),
-                        color = primaryColor
+                        resId = card.icon, modifier = Modifier.size(26.dp), color = primaryColor
                     )
                     Spacer(Modifier.width(16.dp))
                     Column(
@@ -133,8 +121,7 @@ fun LatestMeasures(
                         Text(
                             text = card.titleText,
                             style = MaterialTheme.typography.titleMedium.copy(
-                                color = primaryColor,
-                                fontWeight = FontWeight.Bold
+                                color = primaryColor, fontWeight = FontWeight.Bold
                             )
                         )
                         Text(
@@ -143,7 +130,6 @@ fun LatestMeasures(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    // Icône de tendance si dispo
                     card.trendIcon?.let { iconRes ->
                         SvgIcon(
                             resId = iconRes,
@@ -157,5 +143,31 @@ fun LatestMeasures(
                 Spacer(Modifier.height(3.dp))
             }
         }
+    }
+}
+
+private fun <T> computeTrendIcon(
+    entries: List<T>,
+    oneYearAgo: LocalDate,
+    valueExtractor: (T) -> Number,
+    dateExtractor: (T) -> LocalDate = {
+        when (it) {
+            is WeightEntry -> it.date
+            is HBA1CEntry -> it.date
+            else -> LocalDate.MIN
+        }
+    }
+): Int? {
+    val lastYearEntries = entries.filter { dateExtractor(it).isAfter(oneYearAgo) }
+    if (lastYearEntries.size < 2) return null
+
+    val sorted = lastYearEntries.sortedBy { dateExtractor(it) }
+    val firstValue = valueExtractor(sorted.first()).toDouble()
+    val lastValue = valueExtractor(sorted.last()).toDouble()
+
+    return when {
+        lastValue > firstValue -> R.drawable.trending_up_icon_vector
+        lastValue < firstValue -> R.drawable.trending_down_icon_vector
+        else -> R.drawable.trending_flat_icon_vector
     }
 }
