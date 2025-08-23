@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.diabdata.R
 import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
 import com.diabdata.models.AppointmentType
@@ -14,13 +15,14 @@ import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
+import com.diabdata.models.TreatmentType
 import com.diabdata.models.WeightEntry
-import com.diabdata.ui.DbEntry
 import com.diabdata.utils.AppointmentTypeAdapter
 import com.diabdata.utils.LocalDateAdapter
 import com.diabdata.utils.MedicationInitializer
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -143,8 +145,8 @@ class DataViewModel(
     }
 
     // Deletion functions
-    fun deleteEntry(entry: DbEntry) = viewModelScope.launch {
-        when (entry.type) {
+    fun deleteEntry(entry: MixedDbEntry) = viewModelScope.launch {
+        when (entry.addableType) {
             AddableType.WEIGHT -> repository.deleteWeight(entry.id)
             AddableType.HBA1C -> repository.deleteHba1c(entry.id)
             AddableType.APPOINTMENT -> repository.deleteAppointment(entry.id)
@@ -159,6 +161,165 @@ class DataViewModel(
         }
     }
 
+    // Section for collecting full DB
+    sealed class MixedDbEntry {
+        abstract val id: Int
+        abstract val addableType: AddableType
+        abstract val date: LocalDate
+
+        abstract val icon: Int
+
+        data class AppointmentEntry(
+            override val id: Int,
+            override val date: LocalDate,
+            override val addableType: AddableType = AddableType.APPOINTMENT,
+            val doctor: String,
+            val type: AppointmentType,
+            val notes: String?,
+            override val icon: Int
+        ) : MixedDbEntry()
+
+        data class DiagnosisEntry(
+            override val id: Int,
+            override val date: LocalDate,
+            override val addableType: AddableType = AddableType.DIAGNOSIS,
+            val diagnosis: String,
+            override val icon: Int
+        ) : MixedDbEntry()
+
+        data class Hba1cEntry(
+            override val id: Int,
+            override val date: LocalDate,
+            override val addableType: AddableType = AddableType.HBA1C,
+            val value: Float,
+            override val icon: Int
+        ) : MixedDbEntry()
+
+        data class TreatmentEntry(
+            override val id: Int,
+            override val date: LocalDate,
+            override val addableType: AddableType = AddableType.TREATMENT,
+            val name: String,
+            val treatmentType: TreatmentType,
+            override val icon: Int
+        ) : MixedDbEntry()
+
+        data class WeightEntry(
+            override val id: Int,
+            override val date: LocalDate,
+            override val addableType: AddableType = AddableType.WEIGHT,
+            val value: Float,
+            override val icon: Int
+        ) : MixedDbEntry()
+    }
+
+    fun getIconForMixedEntry(
+        addableType: AddableType,
+        appointmentType: AppointmentType? = null,
+        treatmentType: TreatmentType? = null
+    ): Int {
+        return when (addableType) {
+            AddableType.WEIGHT -> R.drawable.weight_icon_vector
+            AddableType.HBA1C -> R.drawable.hba1c_icon_vector
+            AddableType.APPOINTMENT -> when (appointmentType) {
+                AppointmentType.ANNUAL_CHECKUP -> R.drawable.recurring_event_icon_vector
+                AppointmentType.APPOINTMENT -> R.drawable.stethoscope_icon_vector
+                null -> R.drawable.event_icon_vector
+            }
+
+            AddableType.TREATMENT -> when (treatmentType) {
+                TreatmentType.FAST_ACTING_INSULIN_CARTRIDGE -> R.drawable.fast_acting_insulin_cartridge_icon_vector
+                TreatmentType.FAST_ACTING_INSULIN_SYRINGE -> R.drawable.fast_acting_insulin_syringe_icon_vector
+                TreatmentType.FAST_ACTING_INSULIN_VIAL -> R.drawable.fast_acting_insulin_vial_icon_vector
+                TreatmentType.SLOW_ACTING_INSULIN_CARTRIDGE -> R.drawable.slow_acting_insulin_cartridge_icon_vector
+                TreatmentType.SLOW_ACTING_INSULIN_SYRINGE -> R.drawable.slow_acting_insulin_syringe_icon_vector
+                TreatmentType.SLOW_ACTING_INSULIN_VIAL -> R.drawable.slow_acting_insulin_vial_icon_vector
+                TreatmentType.GLUCAGON_SYRINGE -> R.drawable.syringe_icon_vector
+                TreatmentType.GLUCAGON_SPRAY -> R.drawable.nasal_spray_icon_vector
+                null -> R.drawable.medication_icon_vector
+            }
+
+            AddableType.DIAGNOSIS -> R.drawable.diagnosis_icon_vector
+        }
+    }
+
+
+    val allMixedEntries: Flow<List<MixedDbEntry>> = combine(
+        appointments,
+        diagnosis,
+        hba1cEntries,
+        treatments,
+        weights
+    ) { appointments, diagnosis, hba1c, treatments, weights ->
+        buildList<MixedDbEntry> {
+            appointments.forEach {
+                add(
+                    MixedDbEntry.AppointmentEntry(
+                        id = it.id,
+                        date = it.date,
+                        doctor = it.doctor,
+                        type = it.type,
+                        notes = it.notes,
+                        icon = getIconForMixedEntry(
+                            AddableType.APPOINTMENT,
+                            appointmentType = it.type
+                        )
+                    )
+                )
+            }
+
+            diagnosis.forEach {
+                add(
+                    MixedDbEntry.DiagnosisEntry(
+                        id = it.id,
+                        date = it.date,
+                        diagnosis = it.diagnosis,
+                        icon = getIconForMixedEntry(AddableType.DIAGNOSIS)
+                    )
+                )
+            }
+
+            hba1c.forEach {
+                add(
+                    MixedDbEntry.Hba1cEntry(
+                        id = it.id,
+                        date = it.date,
+                        value = it.value,
+                        icon = getIconForMixedEntry(AddableType.HBA1C)
+                    )
+                )
+            }
+
+            treatments.forEach {
+                add(
+                    MixedDbEntry.TreatmentEntry(
+                        id = it.id,
+                        date = it.expirationDate,
+                        name = it.name,
+                        treatmentType = it.type,
+                        icon = getIconForMixedEntry(AddableType.TREATMENT, treatmentType = it.type)
+                    )
+                )
+            }
+
+            weights.forEach {
+                add(
+                    MixedDbEntry.WeightEntry(
+                        id = it.id,
+                        date = it.date,
+                        value = it.value,
+                        icon = getIconForMixedEntry(AddableType.WEIGHT)
+                    )
+                )
+            }
+        }
+    }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
     // Section for scanned medication
     var prefilledTreatment: Treatment? by mutableStateOf(null)
     fun updatePrefilledTreatment(t: Treatment?) {
@@ -169,6 +330,7 @@ class DataViewModel(
         return repository.findMedicationByCode(gtin)
     }
 
+    // Section for data import/export
     fun exportDataAsJsonString(): String {
         val gson = GsonBuilder()
             .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
