@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -234,17 +235,16 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
             },
             title = { Text("Updates - 24/08/2025") },
             text = {
-                Column {
-                    Text("- Added changelogs")
-                    Text("- Cleaned up settings page code")
-                    Text("- Updated purge DB dialog")
+                LazyColumn {
+                    item { Text("• Added changelogs") }
+                    item { Text("• Cleaned up settings page code") }
+                    item { Text("• Updated purge DB dialog") }
                 }
             },
             confirmButton = {
                 TextButton(
-                    onClick = {
-                        showConfirmDialog = false
-                    }) {
+                    onClick = { showChangeLogDialog = false }
+                ) {
                     Text(confirmButtonText, color = MaterialTheme.colorScheme.primary)
                 }
             }
