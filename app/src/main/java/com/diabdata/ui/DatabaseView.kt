@@ -62,7 +62,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.diabdata.R
@@ -223,7 +225,7 @@ fun EntryCardSwipeM3(
     onArchive: () -> Unit,
     swipeThreshold: Dp = 100.dp
 ) {
-    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+    DateTimeFormatter.ofPattern("dd MMM yyyy")
     val scope = rememberCoroutineScope()
     val offsetX = remember { Animatable(0f) }
     val alphaAnim = remember { Animatable(1f) }
@@ -278,7 +280,6 @@ fun EntryCardSwipeM3(
             }
         }
 
-        // CARD CONTENT
         Surface(
             shape = shape,
             tonalElevation = 4.dp,
@@ -331,19 +332,59 @@ fun EntryCardSwipeM3(
                 )
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
-                    val title = when (entry) {
-                        is DataViewModel.MixedDbEntry.AppointmentEntry -> entry.doctor
-                        is DataViewModel.MixedDbEntry.DiagnosisEntry -> entry.diagnosis
-                        is DataViewModel.MixedDbEntry.Hba1cEntry -> "${entry.value} %"
-                        is DataViewModel.MixedDbEntry.TreatmentEntry -> entry.name
-                        is DataViewModel.MixedDbEntry.WeightEntry -> "${entry.value} kg"
-                    }
-                    val subtitle = entry.date.format(formatter)
-                    Text(title, fontWeight = FontWeight.Bold)
-                    Text(subtitle, style = MaterialTheme.typography.bodySmall)
+                    EntryContent(entry)
                 }
                 FlippableSelectionIcon(isSelected)
             }
+
+        }
+    }
+}
+
+@Composable
+private fun EntryContent(entry: DataViewModel.MixedDbEntry) {
+    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+
+    when (entry) {
+        is DataViewModel.MixedDbEntry.AppointmentEntry -> {
+            Text(entry.doctor, fontWeight = FontWeight.Bold)
+            Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
+            Text(
+                stringResource(entry.type.displayNameRes),
+                style = MaterialTheme.typography.bodySmall
+            )
+            entry.notes?.takeIf { it.isNotBlank() }?.let {
+                Text(
+                    it,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+
+        is DataViewModel.MixedDbEntry.DiagnosisEntry -> {
+            Text(entry.diagnosis, fontWeight = FontWeight.Bold)
+            Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
+        }
+
+        is DataViewModel.MixedDbEntry.Hba1cEntry -> {
+            Text("${entry.value} %", fontWeight = FontWeight.Bold)
+            Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
+        }
+
+        is DataViewModel.MixedDbEntry.TreatmentEntry -> {
+            Text(entry.name, fontWeight = FontWeight.Bold)
+            Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
+            Text(
+                stringResource(entry.treatmentType.displayNameRes),
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+
+        is DataViewModel.MixedDbEntry.WeightEntry -> {
+            Text("${entry.value} kg", fontWeight = FontWeight.Bold)
+            Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
         }
     }
 }
