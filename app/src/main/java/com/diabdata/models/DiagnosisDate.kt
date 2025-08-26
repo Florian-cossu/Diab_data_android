@@ -8,5 +8,7 @@ import java.time.LocalDate
 data class DiagnosisDate(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val date: LocalDate,
+    val createdAt: LocalDate,
+    val isArchived: Boolean,
     val diagnosis: String,
 )

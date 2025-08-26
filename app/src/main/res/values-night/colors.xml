@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="archived_fixed">#FFE24A</color>
+    <color name="archived_fixed_dim">#E3C600</color>
+    <color name="on_archived_fixed">#211B00</color>
+    <color name="on_archived_fixed_variant">#524600</color>
+
+    <color name="archived_primary">#FFE24A</color>
+    <color name="on_archived_primary">#524600</color>
+
+    <color name="archived_washed">#262220</color>
+</resources>

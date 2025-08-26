@@ -6,7 +6,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -58,6 +61,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     val versionCode = BuildConfig.VERSION_CODE
 
     var showConfirmDialog by remember { mutableStateOf(false) }
+    var showChangeLogDialog by remember { mutableStateOf(false) }
 
     val createFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/json"),
@@ -135,8 +139,6 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                // we start with padding start=16.dp, end=16.dp, top=0.dp, bottom=0.dp to mirror
-                // homescreen and then add another 20.dp just like latestMeasurements has
                 .padding(
                     start = 16.dp, end = 16.dp, top = 0.dp, bottom = 0.dp
                 )
@@ -144,77 +146,48 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 .verticalScroll(scrollState)
                 .padding(20.dp)
         ) {
-            Text(
-                text = stringResource(R.string.settings_page_data_heading),
-                style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
-                color = MaterialTheme.colorScheme.surfaceTint
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            Surface(
-                shape = RoundedCornerShape(16.dp),
-                color = Color.Transparent,
-                tonalElevation = 0.dp,
-                modifier = Modifier.fillMaxWidth()
+            SettingsSection(
+                title = stringResource(R.string.settings_page_data_heading)
             ) {
-                Column {
-                    SettingsButton(
-                        text = stringResource(R.string.settings_page_data_export_button_text),
-                        onClick = { createFileLauncher.launch(fileName) },
-                        shape = RoundedCornerShape(
-                            topStart = 16.dp, topEnd = 16.dp, bottomStart = 3.dp, bottomEnd = 3.dp
-                        ),
-                        icon = R.drawable.backup_db_icon_vector
-                    )
-                    Spacer(modifier = Modifier.height(3.dp))
-                    SettingsButton(
-                        text = stringResource(R.string.settings_page_data_import_button_text),
-                        onClick = {
-                            importFileLauncher.launch(arrayOf("application/json"))
-                        },
-                        shape = RoundedCornerShape(3.dp),
-                        icon = R.drawable.restore_db_icon_vector
-                    )
-                    Spacer(modifier = Modifier.height(3.dp))
-                    SettingsButton(
-                        text = stringResource(R.string.settings_page_data_purge_button_text),
-                        onClick = {
-                            showConfirmDialog = true
-                        },
-                        shape = RoundedCornerShape(
-                            topStart = 3.dp, topEnd = 3.dp, bottomStart = 16.dp, bottomEnd = 16.dp
-                        ),
-                        isDestructive = true,
-                        icon = R.drawable.purge_db_icon_vector
-                    )
-                }
+                SettingsButton(
+                    text = stringResource(R.string.settings_page_data_export_button_text),
+                    onClick = { createFileLauncher.launch(fileName) },
+                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                    icon = R.drawable.backup_db_icon_vector
+                )
+                SettingsButton(
+                    text = stringResource(R.string.settings_page_data_import_button_text),
+                    onClick = { importFileLauncher.launch(arrayOf("application/json")) },
+                    shape = RoundedCornerShape(3.dp),
+                    icon = R.drawable.restore_db_icon_vector
+                )
+                SettingsButton(
+                    text = stringResource(R.string.settings_page_data_purge_button_text),
+                    onClick = { showConfirmDialog = true },
+                    shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp),
+                    isDestructive = true,
+                    icon = R.drawable.purge_db_icon_vector
+                )
             }
 
             Spacer(Modifier.height(32.dp))
 
-            Text(
-                text = stringResource(R.string.settings_page_application_heading),
-                style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
-                color = MaterialTheme.colorScheme.surfaceTint
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            Column {
+            // Section Application
+            SettingsSection(
+                title = stringResource(R.string.settings_page_application_heading)
+            ) {
                 SettingsButton(
                     text = "Version $versionName (code: $versionCode)",
-                    onClick = { },
-                    shape = RoundedCornerShape(
-                        topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 16.dp
-                    ),
+                    onClick = {
+                        showChangeLogDialog = true
+                    },
+                    shape = RoundedCornerShape(16.dp),
                     icon = R.drawable.app_version_icon_vector
                 )
             }
         }
     }
 
-    // Dialog de confirmation
     if (showConfirmDialog) {
         val purgeDatabaseModalTitle = stringResource(R.string.database_data_purge_modal_title)
         val purgeDatabaseModalContents = stringResource(R.string.database_data_purge_modal_contents)
@@ -223,6 +196,13 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
 
         AlertDialog(
             onDismissRequest = { showConfirmDialog = false },
+            icon = {
+                SvgIcon(
+                    resId = R.drawable.purge_db_icon_vector,
+                    modifier = Modifier.size(48.dp),
+                    color = MaterialTheme.colorScheme.error
+                )
+            },
             title = { Text(purgeDatabaseModalTitle) },
             text = { Text(purgeDatabaseModalContents) },
             confirmButton = {
@@ -239,7 +219,65 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     onClick = { showConfirmDialog = false }) {
                     Text(cancelButtonText)
                 }
-            })
+            }
+        )
+    } else if (showChangeLogDialog) {
+        val confirmButtonText = stringResource(R.string.confirm_button_text)
+
+        AlertDialog(
+            onDismissRequest = { showChangeLogDialog = false },
+            icon = {
+                SvgIcon(
+                    resId = R.drawable.breaking_new_icon_vector,
+                    modifier = Modifier.size(48.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            },
+            title = { Text("Updates - 25/08/2025") },
+            text = {
+                LazyColumn {
+                    item { Text("- Added changelogs") }
+                    item { Text("- Cleaned up settings page code") }
+                    item { Text("- Updated purge DB dialog") }
+                    item { Text("- Added created at + archived columns for entries") }
+                    item { Text("- Updated swipeable cards to un/archive data") }
+                    item { Text("- Created custom material 3 ish color set for archived entries") }
+                    item { Text("- Added entry update feature in databaseEditionView") }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { showChangeLogDialog = false }
+                ) {
+                    Text(confirmButtonText, color = MaterialTheme.colorScheme.primary)
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun SettingsSection(
+    title: String,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
+        color = MaterialTheme.colorScheme.surfaceTint
+    )
+
+    Spacer(Modifier.height(8.dp))
+
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        tonalElevation = 0.dp,
+        color = Color.Transparent,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(verticalArrangement = spacedBy(3.dp)) {
+            content()
+        }
     }
 }
 

@@ -62,13 +62,17 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.ui.components.FlippableSelectionIcon
+import com.diabdata.ui.components.databaseView.EditEntryDialog
 import com.diabdata.utils.SvgIcon
 import com.diabdata.utils.getItemShape
 import kotlinx.coroutines.launch
@@ -83,10 +87,14 @@ fun DatabaseEditionView(
     var selectedTypes by remember { mutableStateOf(setOf<AddableType>()) }
     var selectionMode by remember { mutableStateOf(false) }
     var selectedEntries by remember { mutableStateOf(setOf<DataViewModel.MixedDbEntry>()) }
+    var selectedEntry by remember { mutableStateOf<DataViewModel.MixedDbEntry?>(null) }
 
     val mixedEntries by dataViewModel.allMixedEntries.collectAsState(emptyList())
-    val filteredEntries = if (selectedTypes.isEmpty()) mixedEntries
-    else mixedEntries.filter { it.addableType in selectedTypes }
+
+    val filteredEntries = remember(mixedEntries, selectedTypes) {
+        if (selectedTypes.isEmpty()) mixedEntries
+        else mixedEntries.filter { it.addableType in selectedTypes }
+    }
 
     Scaffold { padding ->
         Column(
@@ -105,7 +113,6 @@ fun DatabaseEditionView(
 
             Spacer(Modifier.height(8.dp))
 
-            // BOUTONS DE SUPPRESSION / SELECT ALL
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -194,6 +201,8 @@ fun DatabaseEditionView(
                             if (selectionMode) {
                                 selectedEntries = toggleEntrySelection(selectedEntries, entry)
                                 if (selectedEntries.isEmpty()) selectionMode = false
+                            } else if (selectedEntries.isEmpty()) {
+                                selectedEntry = entry
                             }
                         },
                         onLongPress = {
@@ -201,11 +210,32 @@ fun DatabaseEditionView(
                             selectedEntries = selectedEntries + entry
                         },
                         onDeleteFromDb = { dataViewModel.deleteEntry(entry) },
-                        onArchive = {}
+                        onArchive = {
+                            val archived = entry.isArchived
+                            dataViewModel.setArchived(
+                                type = entry.addableType,
+                                id = entry.id,
+                                archived = !archived
+                            )
+                        }
                     )
                     Spacer(Modifier.height(4.dp))
                 }
             }
+        }
+        val scope = rememberCoroutineScope()
+
+        selectedEntry?.let { entry ->
+            EditEntryDialog(
+                entry = entry,
+                onDismiss = { selectedEntry = null },
+                onSave = { updated ->
+                    scope.launch {
+                        dataViewModel.updateEntry(updated)
+                    }
+                    selectedEntry = null
+                }
+            )
         }
     }
 }
@@ -223,11 +253,29 @@ fun EntryCardSwipeM3(
     onArchive: () -> Unit,
     swipeThreshold: Dp = 100.dp
 ) {
-    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+    DateTimeFormatter.ofPattern("dd MMM yyyy")
     val scope = rememberCoroutineScope()
     val offsetX = remember { Animatable(0f) }
     val alphaAnim = remember { Animatable(1f) }
     val thresholdPx = with(LocalDensity.current) { swipeThreshold.toPx() }
+
+    var isArchivedState by remember { mutableStateOf(entry.isArchived) }
+
+    val archiveResId =
+        if (isArchivedState) R.drawable.unarchive_icon_vector else R.drawable.archive_icon_vector
+    val archivedCardBgColor = when {
+        selectionMode && isSelected -> {
+            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+        }
+
+        isArchivedState -> {
+            colorResource(id = R.color.archived_washed)
+        }
+
+        else -> {
+            MaterialTheme.colorScheme.surface
+        }
+    }
 
     Box(
         modifier = modifier
@@ -259,31 +307,29 @@ fun EntryCardSwipeM3(
             } else if (offsetX.value < 0) {
                 Surface(
                     shape = shape,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f + 0.8f * progress),
+                    color = colorResource(R.color.archived_primary).copy(alpha = 0.2f + 0.8f * progress),
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterEnd
                     ) {
                         SvgIcon(
-                            resId = R.drawable.inbox_icon_vector,
+                            resId = archiveResId,
                             modifier = Modifier
                                 .size(32.dp)
                                 .alpha(progress)
                                 .padding(end = 16.dp),
-                            color = MaterialTheme.colorScheme.onPrimary
+                            color = colorResource(R.color.on_archived_primary)
                         )
                     }
                 }
             }
         }
 
-        // CARD CONTENT
         Surface(
             shape = shape,
             tonalElevation = 4.dp,
-            color = if (selectionMode && isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-            else MaterialTheme.colorScheme.surface,
+            color = archivedCardBgColor,
             modifier = Modifier
                 .fillMaxWidth()
                 .graphicsLayer {
@@ -300,14 +346,21 @@ fun EntryCardSwipeM3(
                                     offsetX.animateTo(1000f, tween(200)); alphaAnim.animateTo(
                                         0f,
                                         tween(200)
-                                    ); onDeleteFromDb()
+                                    )
+                                    onDeleteFromDb()
                                 }
 
                                 offsetX.value < -thresholdPx -> {
-                                    offsetX.animateTo(-1000f, tween(200)); alphaAnim.animateTo(
+                                    isArchivedState = !isArchivedState
+                                    onArchive()
+                                    offsetX.animateTo(
                                         0f,
-                                        tween(200)
-                                    ); onArchive()
+                                        spring(stiffness = Spring.StiffnessMedium)
+                                    )
+                                    alphaAnim.animateTo(
+                                        1f,
+                                        spring(stiffness = Spring.StiffnessMedium)
+                                    )
                                 }
 
                                 else -> offsetX.animateTo(
@@ -324,26 +377,74 @@ fun EntryCardSwipeM3(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(16.dp)
             ) {
-                SvgIcon(
-                    resId = entry.icon,
-                    modifier = Modifier.size(24.dp),
-                    color = MaterialTheme.colorScheme.primary
-                )
+                var color = MaterialTheme.colorScheme.primary
+
+                if (isArchivedState) {
+                    color = colorResource(R.color.archived_primary)
+                }
+
+                Box(contentAlignment = Alignment.Center) {
+                    SvgIcon(
+                        resId = entry.icon,
+                        modifier = Modifier.size(24.dp),
+                        color = color
+                    )
+                }
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
-                    val title = when (entry) {
-                        is DataViewModel.MixedDbEntry.AppointmentEntry -> entry.doctor
-                        is DataViewModel.MixedDbEntry.DiagnosisEntry -> entry.diagnosis
-                        is DataViewModel.MixedDbEntry.Hba1cEntry -> "${entry.value} %"
-                        is DataViewModel.MixedDbEntry.TreatmentEntry -> entry.name
-                        is DataViewModel.MixedDbEntry.WeightEntry -> "${entry.value} kg"
-                    }
-                    val subtitle = entry.date.format(formatter)
-                    Text(title, fontWeight = FontWeight.Bold)
-                    Text(subtitle, style = MaterialTheme.typography.bodySmall)
+                    EntryContent(entry)
                 }
                 FlippableSelectionIcon(isSelected)
             }
+
+        }
+    }
+}
+
+@Composable
+private fun EntryContent(entry: DataViewModel.MixedDbEntry) {
+    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+
+    when (entry) {
+        is DataViewModel.MixedDbEntry.AppointmentEntry -> {
+            Text(entry.doctor, fontWeight = FontWeight.Bold)
+            Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
+            Text(
+                stringResource(entry.type.displayNameRes),
+                style = MaterialTheme.typography.bodySmall
+            )
+            entry.notes?.takeIf { it.isNotBlank() }?.let {
+                Text(
+                    it,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+
+        is DataViewModel.MixedDbEntry.DiagnosisEntry -> {
+            Text(entry.diagnosis, fontWeight = FontWeight.Bold)
+            Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
+        }
+
+        is DataViewModel.MixedDbEntry.Hba1cEntry -> {
+            Text("${entry.value} %", fontWeight = FontWeight.Bold)
+            Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
+        }
+
+        is DataViewModel.MixedDbEntry.TreatmentEntry -> {
+            Text(entry.name, fontWeight = FontWeight.Bold)
+            Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
+            Text(
+                stringResource(entry.treatmentType.displayNameRes),
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+
+        is DataViewModel.MixedDbEntry.WeightEntry -> {
+            Text("${entry.value} kg", fontWeight = FontWeight.Bold)
+            Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
         }
     }
 }

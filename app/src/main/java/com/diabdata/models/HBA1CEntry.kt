@@ -8,5 +8,7 @@ import java.time.LocalDate
 data class HBA1CEntry(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val date: LocalDate,
+    val createdAt: LocalDate,
+    val isArchived: Boolean,
     val value: Float,
 )

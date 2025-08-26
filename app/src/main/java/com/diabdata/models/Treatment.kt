@@ -9,5 +9,7 @@ data class Treatment(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val expirationDate: LocalDate,
     val name: String,
+    val createdAt: LocalDate,
+    val isArchived: Boolean,
     val type: TreatmentType
 )
