@@ -38,6 +38,7 @@
     <string name="data_import_error_text">Error while importing data</string>
     <string name="empty_file_error_text">The file is empty</string>
     <string name="confirm_button_text">Confirm</string>
+    <string name="update_button_text">Update</string>
     <string name="cancel_button_text">Cancel</string>
     <string name="delete_button_text">Delete</string>
     <plurals name="in_days">
@@ -84,6 +85,8 @@
     <string name="add_data_popup_weight_field_placeholder">Weight</string>
     <string name="add_data_popup_HBA1C_field_placeholder">HBA1C (%)</string>
     <string name="add_data_popup_medication_field_placeholder">Medication name</string>
+    <string name="add_data_popup_date_field_placeholder">Select a date</string>
+    <string name="add_data_popup_expiration_date_field_placeholder">Select expiration date</string>
     <string name="add_data_popup_doctor_field_placeholder">Doctor\'s name</string>
     <string name="add_data_popup_diagnosis_field_placeholder">Diagnosed ailment</string>
     <string name="add_data_popup_invalid_weight_field_message">Invalid weight</string>
@@ -92,10 +95,12 @@
     <string name="add_data_popup_invalid_weigth_kg_input_hint">Weight must be between 0 and 600( kg)</string>
     <string name="add_data_popup_invalid_HBA1C_input_hint">HBA1C must be between 0 and 15 (%)</string>
     <string name="add_data_popup_title">Add new %1$s</string>
+    <string name="update_data_popup_title">Update %1$s entry</string>
     <string name="homescreen_no_data_text">No data</string>
     <string name="add_data_popup_add">Add</string>
     <string name="add_data_popup_appointment_dropdown_placeholder">Appointment type</string>
     <string name="add_data_popup_medication_dropdown_placeholder">Medication type</string>
     <string name="data_matrix_scanner_hint">Scan your medication DataMatrix (small QR Code)</string>
     <string name="chart_menu_title">Graphs</string>
+    <string name="archive_button_text">Archive</string>
 </resources>

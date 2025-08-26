@@ -1,6 +1,5 @@
 package com.diabdata.ui.components
 
-import DateSelector
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -67,12 +66,15 @@ fun AddDataPopup(
 
     remember { AppointmentType.entries }
     remember { TreatmentType.entries }
+
     var selectedAppointmentType by remember { mutableStateOf(AppointmentType.APPOINTMENT) }
     var selectedTreatmentType by remember {
         mutableStateOf(
             prefilledTreatment?.type ?: TreatmentType.FAST_ACTING_INSULIN_VIAL
         )
     }
+
+    val today = LocalDate.now()
 
     var isError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -111,7 +113,10 @@ fun AddDataPopup(
                 }
 
                 DateSelector(
-                    initialDate = selectedDate, onDateSelected = { selectedDate = it })
+                    initialDate = selectedDate,
+                    onDateSelected = { selectedDate = it },
+                    isExpiryDate = (type == AddableType.TREATMENT)
+                )
 
                 when (type) {
                     AddableType.APPOINTMENT -> {
@@ -142,7 +147,7 @@ fun AddDataPopup(
                         field1 = it
                         when (type) {
                             AddableType.WEIGHT -> {
-                                val weight = it.replace(',', '.').toDoubleOrNull()
+                                val weight = it.replace(',', '.').toFloatOrNull()
                                 if (weight == null || weight < 0 || weight > 600) {
                                     isError = true
                                     errorMessage =
@@ -228,7 +233,10 @@ fun AddDataPopup(
                                     if (weight != null) {
                                         dataViewModel.addWeight(
                                             WeightEntry(
-                                                date = date, value = weight
+                                                date = date,
+                                                value = weight,
+                                                isArchived = false,
+                                                createdAt = today
                                             )
                                         )
                                     } else {
@@ -245,7 +253,10 @@ fun AddDataPopup(
                                     if (hba1c != null) {
                                         dataViewModel.addHba1c(
                                             HBA1CEntry(
-                                                date = date, value = hba1c
+                                                date = date,
+                                                value = hba1c,
+                                                isArchived = false,
+                                                createdAt = today
                                             )
                                         )
                                     } else {
@@ -262,7 +273,9 @@ fun AddDataPopup(
                                         Treatment(
                                             expirationDate = date,
                                             name = field1,
-                                            type = selectedTreatmentType
+                                            type = selectedTreatmentType,
+                                            isArchived = false,
+                                            createdAt = today
                                         )
                                     )
                                 }
@@ -276,7 +289,12 @@ fun AddDataPopup(
                                         ).show()
                                     } else {
                                         dataViewModel.addDiagnosisDate(
-                                            DiagnosisDate(date = date, diagnosis = field1)
+                                            DiagnosisDate(
+                                                date = date,
+                                                diagnosis = field1,
+                                                isArchived = false,
+                                                createdAt = today
+                                            ),
                                         )
                                     }
                                 }
@@ -287,7 +305,9 @@ fun AddDataPopup(
                                             date = date,
                                             doctor = field1,
                                             type = selectedAppointmentType,
-                                            notes = notes
+                                            notes = notes,
+                                            isArchived = false,
+                                            createdAt = today
                                         )
                                     )
                                 }

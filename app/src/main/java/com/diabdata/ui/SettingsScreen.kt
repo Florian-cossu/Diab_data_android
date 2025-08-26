@@ -233,12 +233,16 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     color = MaterialTheme.colorScheme.primary
                 )
             },
-            title = { Text("Updates - 24/08/2025") },
+            title = { Text("Updates - 25/08/2025") },
             text = {
                 LazyColumn {
-                    item { Text("• Added changelogs") }
-                    item { Text("• Cleaned up settings page code") }
-                    item { Text("• Updated purge DB dialog") }
+                    item { Text("- Added changelogs") }
+                    item { Text("- Cleaned up settings page code") }
+                    item { Text("- Updated purge DB dialog") }
+                    item { Text("- Added created at + archived columns for entries") }
+                    item { Text("- Updated swipeable cards to un/archive data") }
+                    item { Text("- Created custom material 3 ish color set for archived entries") }
+                    item { Text("- Added entry update feature in databaseEditionView") }
                 }
             },
             confirmButton = {

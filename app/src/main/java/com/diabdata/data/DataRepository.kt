@@ -31,6 +31,12 @@ class DataRepository(
     /** Insert a new weight entry */
     suspend fun insertWeight(weightEntry: WeightEntry) = weightDao.insert(weightEntry)
 
+    /** Update weight entry */
+    suspend fun updateWeight(weightEntry: WeightEntry) = weightDao.update(weightEntry)
+
+    /** Archive weight */
+    suspend fun setArchivedWeight(id: Int, archived: Boolean) = weightDao.setArchived(id, archived)
+
     /** Flow of all weight entries, sorted by date */
     fun getAllWeightsFlow(): Flow<List<WeightEntry>> = weightDao.getAllWeightsFlow()
 
@@ -50,6 +56,12 @@ class DataRepository(
     /** Insert a new HBA1C entry */
     suspend fun insertHba1c(hba1cEntry: HBA1CEntry) = hba1cDao.insert(hba1cEntry)
 
+    /** Update HBA1C */
+    suspend fun updateHBA1C(hba1cEntry: HBA1CEntry) = hba1cDao.update(hba1cEntry)
+
+    /** Archive HBA1C */
+    suspend fun setArchivedHBA1C(id: Int, archived: Boolean) = hba1cDao.setArchived(id, archived)
+
     /** Flow of all HBA1C entries */
     fun getAllHba1cFlow(): Flow<List<HBA1CEntry>> = hba1cDao.getAllHBA1CFlow()
 
@@ -68,8 +80,15 @@ class DataRepository(
     /** Insert a new appointment */
     suspend fun insertAppointment(appointment: Appointment) = appointmentDao.insert(appointment)
 
+    /** Update appointment */
+    suspend fun updateAppointment(appointment: Appointment) = appointmentDao.update(appointment)
+
     /** Flow of all appointments */
     fun getAllAppointmentsFlow(): Flow<List<Appointment>> = appointmentDao.getAllAppointmentsFlow()
+
+    /** Archive appointment */
+    suspend fun setArchivedAppointment(id: Int, archived: Boolean) =
+        appointmentDao.setArchived(id, archived)
 
     /** Flow of upcoming appointments starting today */
     fun getUpcomingAppointments(): Flow<List<Appointment>> {
@@ -85,6 +104,13 @@ class DataRepository(
     // ----------------
     /** Insert a new treatment */
     suspend fun insertTreatment(treatment: Treatment) = treatmentDao.insert(treatment)
+
+    /** Update treatment */
+    suspend fun updateTreatment(treatment: Treatment) = treatmentDao.update(treatment)
+
+    /** Archive treatment */
+    suspend fun setArchivedTreatment(id: Int, archived: Boolean) =
+        treatmentDao.setArchived(id, archived)
 
     /** Flow of all treatments */
     fun getAllTreatmentsFlow(): Flow<List<Treatment>> = treatmentDao.getAllTreatmentsFlow()
@@ -108,6 +134,14 @@ class DataRepository(
     // ----------------
     /** Insert a new diagnosis date */
     suspend fun insertDiagnosisDate(diagnosisDate: DiagnosisDate) = diagnosisDao.insert(diagnosisDate)
+
+    /** Update diagnosis date */
+    suspend fun updateDiagnosisDate(diagnosisDate: DiagnosisDate) =
+        diagnosisDao.update(diagnosisDate)
+
+    /** Archive appointment */
+    suspend fun setArchivedDiagnosisDate(id: Int, archived: Boolean) =
+        diagnosisDao.setArchived(id, archived)
 
     /** Flow of all diagnosis dates */
     fun getAllDiagnosisDatesFlow(): Flow<List<DiagnosisDate>> =

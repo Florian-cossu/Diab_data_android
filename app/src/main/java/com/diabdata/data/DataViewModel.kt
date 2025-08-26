@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.diabdata.R
+import com.diabdata.data.converters.toEntity
 import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
 import com.diabdata.models.AppointmentType
@@ -144,6 +145,19 @@ class DataViewModel(
         }
     }
 
+    // Archive function
+    fun setArchived(id: Int, archived: Boolean, type: AddableType) {
+        viewModelScope.launch {
+            when (type) {
+                AddableType.WEIGHT -> repository.setArchivedWeight(id, archived)
+                AddableType.HBA1C -> repository.setArchivedHBA1C(id, archived)
+                AddableType.APPOINTMENT -> repository.setArchivedAppointment(id, archived)
+                AddableType.TREATMENT -> repository.setArchivedTreatment(id, archived)
+                AddableType.DIAGNOSIS -> repository.setArchivedDiagnosisDate(id, archived)
+            }
+        }
+    }
+
     // Deletion functions
     fun deleteEntry(entry: MixedDbEntry) = viewModelScope.launch {
         when (entry.addableType) {
@@ -154,6 +168,18 @@ class DataViewModel(
             AddableType.DIAGNOSIS -> repository.deleteDiagnosis(entry.id)
         }
     }
+
+    // Update function
+    suspend fun updateEntry(entry: MixedDbEntry) {
+        when (entry.addableType) {
+            AddableType.WEIGHT -> repository.updateWeight(entry.toEntity() as WeightEntry)
+            AddableType.HBA1C -> repository.updateHBA1C(entry.toEntity() as HBA1CEntry)
+            AddableType.APPOINTMENT -> repository.updateAppointment(entry.toEntity() as Appointment)
+            AddableType.TREATMENT -> repository.updateTreatment(entry.toEntity() as Treatment)
+            AddableType.DIAGNOSIS -> repository.updateDiagnosisDate(entry.toEntity() as DiagnosisDate)
+        }
+    }
+
 
     fun clearDatabase() = viewModelScope.launch {
         withContext(Dispatchers.IO) {
@@ -168,6 +194,8 @@ class DataViewModel(
         abstract val date: LocalDate
 
         abstract val icon: Int
+        abstract val isArchived: Boolean
+        abstract val createdAt: LocalDate
 
         data class AppointmentEntry(
             override val id: Int,
@@ -176,7 +204,9 @@ class DataViewModel(
             val doctor: String,
             val type: AppointmentType,
             val notes: String?,
-            override val icon: Int
+            override val icon: Int,
+            override val isArchived: Boolean,
+            override val createdAt: LocalDate
         ) : MixedDbEntry()
 
         data class DiagnosisEntry(
@@ -184,7 +214,9 @@ class DataViewModel(
             override val date: LocalDate,
             override val addableType: AddableType = AddableType.DIAGNOSIS,
             val diagnosis: String,
-            override val icon: Int
+            override val icon: Int,
+            override val isArchived: Boolean,
+            override val createdAt: LocalDate
         ) : MixedDbEntry()
 
         data class Hba1cEntry(
@@ -192,7 +224,9 @@ class DataViewModel(
             override val date: LocalDate,
             override val addableType: AddableType = AddableType.HBA1C,
             val value: Float,
-            override val icon: Int
+            override val icon: Int,
+            override val isArchived: Boolean,
+            override val createdAt: LocalDate
         ) : MixedDbEntry()
 
         data class TreatmentEntry(
@@ -201,7 +235,9 @@ class DataViewModel(
             override val addableType: AddableType = AddableType.TREATMENT,
             val name: String,
             val treatmentType: TreatmentType,
-            override val icon: Int
+            override val icon: Int,
+            override val isArchived: Boolean,
+            override val createdAt: LocalDate
         ) : MixedDbEntry()
 
         data class WeightEntry(
@@ -209,7 +245,9 @@ class DataViewModel(
             override val date: LocalDate,
             override val addableType: AddableType = AddableType.WEIGHT,
             val value: Float,
-            override val icon: Int
+            override val icon: Int,
+            override val isArchived: Boolean,
+            override val createdAt: LocalDate
         ) : MixedDbEntry()
     }
 
@@ -263,7 +301,9 @@ class DataViewModel(
                         icon = getIconForMixedEntry(
                             AddableType.APPOINTMENT,
                             appointmentType = it.type
-                        )
+                        ),
+                        isArchived = it.isArchived,
+                        createdAt = it.createdAt
                     )
                 )
             }
@@ -274,7 +314,9 @@ class DataViewModel(
                         id = it.id,
                         date = it.date,
                         diagnosis = it.diagnosis,
-                        icon = getIconForMixedEntry(AddableType.DIAGNOSIS)
+                        icon = getIconForMixedEntry(AddableType.DIAGNOSIS),
+                        isArchived = it.isArchived,
+                        createdAt = it.createdAt
                     )
                 )
             }
@@ -285,7 +327,9 @@ class DataViewModel(
                         id = it.id,
                         date = it.date,
                         value = it.value,
-                        icon = getIconForMixedEntry(AddableType.HBA1C)
+                        icon = getIconForMixedEntry(AddableType.HBA1C),
+                        isArchived = it.isArchived,
+                        createdAt = it.createdAt
                     )
                 )
             }
@@ -297,7 +341,9 @@ class DataViewModel(
                         date = it.expirationDate,
                         name = it.name,
                         treatmentType = it.type,
-                        icon = getIconForMixedEntry(AddableType.TREATMENT, treatmentType = it.type)
+                        icon = getIconForMixedEntry(AddableType.TREATMENT, treatmentType = it.type),
+                        isArchived = it.isArchived,
+                        createdAt = it.createdAt
                     )
                 )
             }
@@ -308,7 +354,9 @@ class DataViewModel(
                         id = it.id,
                         date = it.date,
                         value = it.value,
-                        icon = getIconForMixedEntry(AddableType.WEIGHT)
+                        icon = getIconForMixedEntry(AddableType.WEIGHT),
+                        isArchived = it.isArchived,
+                        createdAt = it.createdAt
                     )
                 )
             }

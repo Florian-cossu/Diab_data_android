@@ -10,5 +10,7 @@ data class Appointment(
     val date: LocalDate,
     val doctor: String,
     val type: AppointmentType,
+    val createdAt: LocalDate,
+    val isArchived: Boolean,
     val notes: String?
 )

@@ -7,4 +7,14 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="archived_fixed">#FFE24A</color>
+    <color name="archived_fixed_dim">#E3C600</color>
+    <color name="on_archived_fixed">#211B00</color>
+    <color name="on_archived_fixed_variant">#524600</color>
+
+    <color name="archived_primary">#E3C600</color>
+    <color name="on_archived_primary">#393000</color>
+
+    <color name="archived_washed">#F4EDE1</color>
 </resources>

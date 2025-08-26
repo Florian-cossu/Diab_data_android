@@ -173,10 +173,15 @@ fun HomeScreen(
 }
 
 private fun mapToTreatment(info: MedicationInfo, entity: MedicationEntity): Treatment {
+    val today = LocalDate.now()
     val expiration =
         info.expiration?.let { runCatching { LocalDate.parse(it) }.getOrNull() } ?: LocalDate.now()
 
     return Treatment(
-        expirationDate = expiration, name = entity.fullName, type = entity.treatmentType
+        expirationDate = expiration,
+        name = entity.fullName,
+        type = entity.treatmentType,
+        isArchived = false,
+        createdAt = today
     )
 }
