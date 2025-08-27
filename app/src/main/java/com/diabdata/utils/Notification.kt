@@ -6,44 +6,49 @@ import android.content.Context
 import androidx.core.app.NotificationCompat
 import com.diabdata.R
 
-
 fun Context.showNotification(
     title: String,
-    notificationChannel: String?,
+    channelId: String = "diabdata_channel",
+    channelName: String? = null,
     content: String,
-    notificationDescription: String?,
-    iconName: String? = null
+    channelDescription: String? = null,
+    iconName: String? = null,
+    importance: NotificationImportance = NotificationImportance.DEFAULT
 ) {
-    val channelId = "diabdata_channel"
-    var notificationChannel = notificationChannel
-    var notificationDescription = notificationDescription
+    val safeChannelName = channelName ?: "DiabData Notifications"
+    val safeChannelDescription = channelDescription ?: ""
 
-    if (notificationChannel.isNullOrEmpty()) {
-        notificationChannel = "DiabData Notifications"
+    val (notifImportance, notifPriority) = when (importance) {
+        NotificationImportance.HIGH -> NotificationManager.IMPORTANCE_HIGH to NotificationCompat.PRIORITY_HIGH
+        NotificationImportance.LOW -> NotificationManager.IMPORTANCE_LOW to NotificationCompat.PRIORITY_LOW
+        NotificationImportance.MIN -> NotificationManager.IMPORTANCE_MIN to NotificationCompat.PRIORITY_MIN
+        else -> NotificationManager.IMPORTANCE_DEFAULT to NotificationCompat.PRIORITY_DEFAULT
     }
 
-    if (notificationDescription.isNullOrEmpty()) {
-        notificationDescription = ""
-    }
-
-    val channel = NotificationChannel(
-        channelId, notificationChannel, NotificationManager.IMPORTANCE_DEFAULT
-    ).apply {
-        description = notificationDescription
+    val channel = NotificationChannel(channelId, safeChannelName, notifImportance).apply {
+        description = safeChannelDescription
     }
 
     val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     manager.createNotificationChannel(channel)
 
+    // Icône de notif
     val iconResId = iconName?.let {
         resources.getIdentifier(it, "drawable", packageName)
     } ?: R.drawable.logo_icon_vector
 
+    // Construire la notif
     val builder = NotificationCompat.Builder(this, channelId)
         .setSmallIcon(if (iconResId != 0) iconResId else R.drawable.logo_icon_vector)
-        .setContentTitle(title).setContentText(content)
+        .setContentTitle(title)
+        .setContentText(content)
         .setStyle(NotificationCompat.BigTextStyle().bigText(content))
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        .setPriority(notifPriority)
 
+    // ID unique basé sur le temps
     manager.notify(System.currentTimeMillis().toInt(), builder.build())
+}
+
+enum class NotificationImportance {
+    MIN, LOW, DEFAULT, HIGH
 }

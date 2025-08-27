@@ -81,16 +81,14 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     context.showNotification(
                         title = successText,
                         content = uri.lastPathSegment.orEmpty(),
-                        notificationChannel = channelName,
-                        notificationDescription = ""
+                        channelName = channelName,
                     )
                 } catch (e: Exception) {
                     e.printStackTrace()
                     context.showNotification(
                         title = "$errorText : ${e.message}",
                         content = uri.lastPathSegment.orEmpty(),
-                        notificationChannel = channelName,
-                        notificationDescription = ""
+                        channelName = channelName,
                     )
                 }
             }
@@ -117,8 +115,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         context.showNotification(
                             title = successText,
                             content = uri.lastPathSegment.orEmpty(),
-                            notificationChannel = channelName,
-                            notificationDescription = ""
+                            channelName = channelName,
                         )
                     } else {
                         Toast.makeText(context, errorEmptyFile, Toast.LENGTH_LONG).show()
@@ -128,8 +125,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     context.showNotification(
                         title = "$errorText : ${e.message}",
                         content = uri.lastPathSegment.orEmpty(),
-                        notificationChannel = channelName,
-                        notificationDescription = ""
+                        channelName = channelName,
                     )
                 }
             }
@@ -233,16 +229,13 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     color = MaterialTheme.colorScheme.primary
                 )
             },
-            title = { Text("Updates - 25/08/2025") },
+            title = { Text("Updates - 27/08/2025") },
             text = {
                 LazyColumn {
-                    item { Text("- Added changelogs") }
-                    item { Text("- Cleaned up settings page code") }
-                    item { Text("- Updated purge DB dialog") }
-                    item { Text("- Added created at + archived columns for entries") }
-                    item { Text("- Updated swipeable cards to un/archive data") }
-                    item { Text("- Created custom material 3 ish color set for archived entries") }
-                    item { Text("- Added entry update feature in databaseEditionView") }
+                    item { Text("- Added GTIN database store check on app start (got emptied sometimes for unknown reasons)") }
+                    item { Text("- First iteration of graph page") }
+                    item { Text("- Updated notification util") }
+                    item { Text("- Fixed swipeable card bug where internal state was reset on swipe to archive") }
                 }
             },
             confirmButton = {
@@ -286,7 +279,7 @@ fun SettingsButton(
     text: String, onClick: () -> Unit, shape: Shape, isDestructive: Boolean = false, icon: Int = 0
 ) {
     Surface(
-        shape = shape, tonalElevation = 4.dp, // Tonal elevation sur le bouton
+        shape = shape, tonalElevation = 4.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
         TextButton(

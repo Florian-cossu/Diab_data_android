@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.diabdata.models.HBA1CEntry
+import com.diabdata.models.PlotPoint
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -23,7 +24,10 @@ interface HBA1CDao {
     @Query("UPDATE hba1c_entries SET isArchived = :archived WHERE id = :id")
     suspend fun setArchived(id: Int, archived: Boolean)
 
-    @Query("SELECT * FROM hba1c_entries ORDER BY date DESC")
+    @Query("SELECT value,date FROM hba1c_entries WHERE (date >= :minDate AND date <= :maxDate) AND isArchived = 0 ORDER BY date ASC ")
+    fun getHBA1CPlotData(minDate: LocalDate, maxDate: LocalDate): Flow<List<PlotPoint>>
+
+    @Query("SELECT * FROM hba1c_entries WHERE (isArchived = 0 OR isArchived = 1) ORDER BY date DESC")
     fun getAllHBA1CFlow(): Flow<List<HBA1CEntry>>
 
     @Query("SELECT * FROM hba1c_entries WHERE date >= :minDate AND isArchived = 0 ORDER BY date DESC")

@@ -22,9 +22,9 @@ interface TreatmentDao {
     @Query("UPDATE treatments SET isArchived = :archived WHERE id = :id")
     suspend fun setArchived(id: Int, archived: Boolean)
 
-    @Query("SELECT * FROM treatments ORDER BY expirationDate DESC")
+    @Query("SELECT * FROM treatments WHERE (isArchived = 0 OR isArchived = 1) ORDER BY expirationDate DESC")
     fun getAllTreatmentsFlow(): Flow<List<Treatment>>
 
     @Query("SELECT * FROM treatments WHERE expirationDate >= :today AND isArchived = 0 ORDER BY expirationDate ASC")
-    fun getUpcomingExpirationDatesFlow(today: LocalDate = LocalDate.now()): Flow<List<Treatment>>
+    fun getUpcomingExpirationDatesFlow(today: LocalDate): Flow<List<Treatment>>
 }

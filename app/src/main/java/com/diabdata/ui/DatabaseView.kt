@@ -39,7 +39,6 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +51,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -91,16 +91,15 @@ fun DatabaseEditionView(
 
     val mixedEntries by dataViewModel.allMixedEntries.collectAsState(emptyList())
 
-    val filteredEntries = remember(mixedEntries, selectedTypes) {
-        if (selectedTypes.isEmpty()) mixedEntries
-        else mixedEntries.filter { it.addableType in selectedTypes }
-    }
+    val filteredEntries =
+        mixedEntries.filter { it.addableType in selectedTypes || selectedTypes.isEmpty() }
 
     Scaffold { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
+                .padding(horizontal = 20.dp)
         ) {
             FilterChips(
                 types = AddableType.entries,
@@ -213,8 +212,7 @@ fun DatabaseEditionView(
                         onArchive = {
                             val archived = entry.isArchived
                             dataViewModel.setArchived(
-                                type = entry.addableType,
-                                id = entry.id,
+                                entry = entry,
                                 archived = !archived
                             )
                         }
@@ -253,28 +251,20 @@ fun EntryCardSwipeM3(
     onArchive: () -> Unit,
     swipeThreshold: Dp = 100.dp
 ) {
-    DateTimeFormatter.ofPattern("dd MMM yyyy")
     val scope = rememberCoroutineScope()
-    val offsetX = remember { Animatable(0f) }
-    val alphaAnim = remember { Animatable(1f) }
     val thresholdPx = with(LocalDensity.current) { swipeThreshold.toPx() }
 
-    var isArchivedState by remember { mutableStateOf(entry.isArchived) }
+    val dragOffset = remember { Animatable(0f) }
+
+    val currentOnDelete by rememberUpdatedState(onDeleteFromDb)
+    val currentOnArchive by rememberUpdatedState(onArchive)
 
     val archiveResId =
-        if (isArchivedState) R.drawable.unarchive_icon_vector else R.drawable.archive_icon_vector
+        if (entry.isArchived) R.drawable.unarchive_icon_vector else R.drawable.archive_icon_vector
     val archivedCardBgColor = when {
-        selectionMode && isSelected -> {
-            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-        }
-
-        isArchivedState -> {
-            colorResource(id = R.color.archived_washed)
-        }
-
-        else -> {
-            MaterialTheme.colorScheme.surface
-        }
+        selectionMode && isSelected -> MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+        entry.isArchived -> colorResource(R.color.archived_washed)
+        else -> MaterialTheme.colorScheme.surface
     }
 
     Box(
@@ -282,46 +272,40 @@ fun EntryCardSwipeM3(
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
     ) {
-        // BACKGROUND SWIPE
-        Box(modifier = Modifier.matchParentSize()) {
-            val progress = (abs(offsetX.value) / thresholdPx).coerceIn(0f, 1f)
-            if (offsetX.value > 0) {
-                Surface(
-                    shape = shape,
-                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.2f + 0.8f * progress),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart
-                    ) {
-                        SvgIcon(
-                            resId = R.drawable.delete_icon_vector,
-                            modifier = Modifier
-                                .size(32.dp)
-                                .alpha(progress)
-                                .padding(start = 16.dp),
-                            color = MaterialTheme.colorScheme.onError
-                        )
-                    }
+        val progress = (abs(dragOffset.value) / thresholdPx).coerceIn(0f, 1f)
+
+        if (dragOffset.value > 0f) {
+            Surface(
+                shape = shape,
+                color = MaterialTheme.colorScheme.error.copy(alpha = 0.2f + 0.8f * progress),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
+                    SvgIcon(
+                        resId = R.drawable.delete_icon_vector,
+                        modifier = Modifier
+                            .size(32.dp)
+                            .padding(start = 16.dp)
+                            .alpha(progress),
+                        color = MaterialTheme.colorScheme.onError
+                    )
                 }
-            } else if (offsetX.value < 0) {
-                Surface(
-                    shape = shape,
-                    color = colorResource(R.color.archived_primary).copy(alpha = 0.2f + 0.8f * progress),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterEnd
-                    ) {
-                        SvgIcon(
-                            resId = archiveResId,
-                            modifier = Modifier
-                                .size(32.dp)
-                                .alpha(progress)
-                                .padding(end = 16.dp),
-                            color = colorResource(R.color.on_archived_primary)
-                        )
-                    }
+            }
+        } else if (dragOffset.value < 0f) {
+            Surface(
+                shape = shape,
+                color = colorResource(R.color.archived_primary).copy(alpha = 0.2f + 0.8f * progress),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterEnd) {
+                    SvgIcon(
+                        resId = archiveResId,
+                        modifier = Modifier
+                            .size(32.dp)
+                            .padding(end = 16.dp)
+                            .alpha(progress),
+                        color = colorResource(R.color.on_archived_primary)
+                    )
                 }
             }
         }
@@ -333,43 +317,37 @@ fun EntryCardSwipeM3(
             modifier = Modifier
                 .fillMaxWidth()
                 .graphicsLayer {
-                    translationX = offsetX.value
-                    alpha = alphaAnim.value
+                    translationX = dragOffset.value
                 }
-                .pointerInput(Unit) {
-                    detectHorizontalDragGestures(onHorizontalDrag = { _, dragAmount ->
-                        scope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
-                    }, onDragEnd = {
-                        scope.launch {
-                            when {
-                                offsetX.value > thresholdPx -> {
-                                    offsetX.animateTo(1000f, tween(200)); alphaAnim.animateTo(
-                                        0f,
-                                        tween(200)
-                                    )
-                                    onDeleteFromDb()
-                                }
+                .pointerInput(entry.id) {
+                    detectHorizontalDragGestures(
+                        onHorizontalDrag = { _, delta ->
+                            scope.launch { dragOffset.snapTo(dragOffset.value + delta) }
+                        },
+                        onDragEnd = {
+                            scope.launch {
+                                when {
+                                    dragOffset.value > thresholdPx -> {
+                                        currentOnDelete()
+                                        dragOffset.animateTo(0f, tween(200))
+                                    }
 
-                                offsetX.value < -thresholdPx -> {
-                                    isArchivedState = !isArchivedState
-                                    onArchive()
-                                    offsetX.animateTo(
+                                    dragOffset.value < -thresholdPx -> {
+                                        currentOnArchive()
+                                        dragOffset.animateTo(
+                                            0f,
+                                            spring(stiffness = Spring.StiffnessMedium)
+                                        )
+                                    }
+
+                                    else -> dragOffset.animateTo(
                                         0f,
                                         spring(stiffness = Spring.StiffnessMedium)
                                     )
-                                    alphaAnim.animateTo(
-                                        1f,
-                                        spring(stiffness = Spring.StiffnessMedium)
-                                    )
                                 }
-
-                                else -> offsetX.animateTo(
-                                    0f,
-                                    spring(stiffness = Spring.StiffnessMedium)
-                                )
                             }
                         }
-                    })
+                    )
                 }
                 .combinedClickable(onClick = onClick, onLongClick = onLongPress)
         ) {
@@ -377,18 +355,11 @@ fun EntryCardSwipeM3(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(16.dp)
             ) {
-                var color = MaterialTheme.colorScheme.primary
-
-                if (isArchivedState) {
-                    color = colorResource(R.color.archived_primary)
-                }
+                val color = if (entry.isArchived) colorResource(R.color.archived_primary)
+                else MaterialTheme.colorScheme.primary
 
                 Box(contentAlignment = Alignment.Center) {
-                    SvgIcon(
-                        resId = entry.icon,
-                        modifier = Modifier.size(24.dp),
-                        color = color
-                    )
+                    SvgIcon(resId = entry.icon, modifier = Modifier.size(24.dp), color = color)
                 }
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
@@ -396,7 +367,6 @@ fun EntryCardSwipeM3(
                 }
                 FlippableSelectionIcon(isSelected)
             }
-
         }
     }
 }
@@ -464,8 +434,6 @@ fun FilterChips(
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
-    val defaultBackground = MaterialTheme.colorScheme.surfaceVariant
-    val selectedBackground = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
 
     Row(
         modifier = Modifier
@@ -475,22 +443,15 @@ fun FilterChips(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         types.forEach { type ->
-            val isSelected = selectedTypes.contains(type)
+            val isSelected = type in selectedTypes
+
             FilterChip(
                 selected = isSelected,
                 onClick = { onTypeToggle(type) },
-                label = { Text(type.getDisplayName(context).uppercase()) },
+                label = { Text(type.getDisplayName(context)) },
                 leadingIcon = if (isSelected) {
                     { Icon(Icons.Outlined.Check, contentDescription = null) }
-                } else null,
-                border = null,
-                colors = FilterChipDefaults.filterChipColors(
-                    containerColor = defaultBackground,
-                    selectedContainerColor = selectedBackground,
-                    labelColor = MaterialTheme.colorScheme.onSurface,
-                    selectedLabelColor = MaterialTheme.colorScheme.primary,
-                    selectedLeadingIconColor = MaterialTheme.colorScheme.primary
-                )
+                } else null
             )
         }
     }

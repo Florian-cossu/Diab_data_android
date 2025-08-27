@@ -10,6 +10,7 @@ import com.diabdata.models.Appointment
 import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.MedicationEntity
+import com.diabdata.models.PlotPoint
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
 import kotlinx.coroutines.flow.Flow
@@ -34,11 +35,12 @@ class DataRepository(
     /** Update weight entry */
     suspend fun updateWeight(weightEntry: WeightEntry) = weightDao.update(weightEntry)
 
-    /** Archive weight */
-    suspend fun setArchivedWeight(id: Int, archived: Boolean) = weightDao.setArchived(id, archived)
-
     /** Flow of all weight entries, sorted by date */
     fun getAllWeightsFlow(): Flow<List<WeightEntry>> = weightDao.getAllWeightsFlow()
+
+    /** Flow of weight points to plot in graph between min and max date */
+    fun getWeightPlotData(minDate: LocalDate, maxDate: LocalDate): Flow<List<PlotPoint>> =
+        weightDao.getWeightPlotData(minDate, maxDate)
 
     /** Flow of weight entries from the last year */
     fun getRecentWeightsFlow(): Flow<List<WeightEntry>> {
@@ -49,7 +51,6 @@ class DataRepository(
     /** Delete a weight record by Id**/
     suspend fun deleteWeight(id: Int) = weightDao.deleteById(id)
 
-
     // ----------------
     // HBA1C
     // ----------------
@@ -59,11 +60,12 @@ class DataRepository(
     /** Update HBA1C */
     suspend fun updateHBA1C(hba1cEntry: HBA1CEntry) = hba1cDao.update(hba1cEntry)
 
-    /** Archive HBA1C */
-    suspend fun setArchivedHBA1C(id: Int, archived: Boolean) = hba1cDao.setArchived(id, archived)
-
     /** Flow of all HBA1C entries */
     fun getAllHba1cFlow(): Flow<List<HBA1CEntry>> = hba1cDao.getAllHBA1CFlow()
+
+    /** Flow of weight points to plot in graph between min and max date */
+    fun getHba1cPlotData(minDate: LocalDate, maxDate: LocalDate): Flow<List<PlotPoint>> =
+        hba1cDao.getHBA1CPlotData(minDate, maxDate)
 
     /** Flow of HBA1C entries from the last year */
     fun getRecentHba1cFlow(): Flow<List<HBA1CEntry>> {
@@ -86,14 +88,9 @@ class DataRepository(
     /** Flow of all appointments */
     fun getAllAppointmentsFlow(): Flow<List<Appointment>> = appointmentDao.getAllAppointmentsFlow()
 
-    /** Archive appointment */
-    suspend fun setArchivedAppointment(id: Int, archived: Boolean) =
-        appointmentDao.setArchived(id, archived)
-
     /** Flow of upcoming appointments starting today */
     fun getUpcomingAppointments(): Flow<List<Appointment>> {
-        val today = LocalDate.now()
-        return appointmentDao.getUpcomingAppointmentsFlow(today)
+        return appointmentDao.getUpcomingAppointmentsFlow(LocalDate.now())
     }
 
     /** Delete an Appointment record by Id**/
@@ -108,16 +105,12 @@ class DataRepository(
     /** Update treatment */
     suspend fun updateTreatment(treatment: Treatment) = treatmentDao.update(treatment)
 
-    /** Archive treatment */
-    suspend fun setArchivedTreatment(id: Int, archived: Boolean) =
-        treatmentDao.setArchived(id, archived)
-
     /** Flow of all treatments */
     fun getAllTreatmentsFlow(): Flow<List<Treatment>> = treatmentDao.getAllTreatmentsFlow()
 
     /** Flow of upcoming treatments expiration dates */
     fun getUpcomingExpDates(date: LocalDate): Flow<List<Treatment>> =
-        treatmentDao.getUpcomingExpirationDatesFlow(date)
+        treatmentDao.getUpcomingExpirationDatesFlow(LocalDate.now())
 
     /** Delete a treatment record by Id**/
     suspend fun deleteTreatment(id: Int) = treatmentDao.deleteById(id)

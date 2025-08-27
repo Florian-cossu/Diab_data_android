@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
-    id("com.google.devtools.ksp") version "2.2.0-2.0.2"
+    id("com.google.devtools.ksp") version "2.2.10-2.0.2"
 }
 
 android {
@@ -17,7 +17,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = getVersionCode()
-        versionName = "2.9"
+        versionName = "3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -72,6 +72,11 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m2)
+    implementation(libs.vico.compose.m3)
+    implementation(libs.vico.multiplatform)
+    implementation(libs.vico.views)
 
     // Material
     implementation(libs.androidx.material3)
@@ -79,17 +84,37 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.material3)
 
+    // Foundation
     implementation(libs.androidx.foundation)
-    implementation(libs.places)
     implementation(libs.androidx.runtime)
     implementation(libs.androidx.animation.core)
     implementation(libs.ui.graphics)
     implementation(libs.androidx.animation)
     implementation(libs.androidx.runtime.saveable)
     implementation(libs.androidx.foundation.layout)
-    implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.core.i18n)
-    implementation(libs.androidx.compose.material3.material3)
+
+    //Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.common)
+
+    // Use ksp for annotation processing
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.gson)
+
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // ... scanner dependencies ...
+    implementation(libs.barcode.scanning)
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+
+    // ... ZXing dependencies ...
+    implementation(libs.zxing.core)
+    implementation(libs.zxing.android.embedded)
+
+    // Test dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -97,23 +122,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    //Room
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.common)
-    ksp(libs.androidx.room.compiler)
-    implementation(libs.gson)
-
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-
-    // Data Matrix scanner
-    implementation(libs.barcode.scanning)
-    implementation(libs.androidx.camera.core)
-    implementation(libs.androidx.camera.camera2)
-    implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.androidx.camera.view)
-
-    // ZXing
-    implementation(libs.zxing.core)
-    implementation(libs.zxing.android.embedded)
 }

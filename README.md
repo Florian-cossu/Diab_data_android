@@ -59,6 +59,7 @@ have everything in the same place and easier to find and update.
     <td><img src="resources/screenshots/data_matrix_scan_light.png" width="200"/></td>
     <td><img src="resources/screenshots/fab_menu_add_light.png" width="200"/></td>
     <td><img src="resources/screenshots/settings_screen_light.png" width="200"/></td>
+    <td><img src="resources/screenshots/graphs_screen_light.png" width="200"/></td>
   </tr>
 </table>
 

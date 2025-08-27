@@ -13,4 +13,7 @@ interface MedicationDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(medications: List<MedicationEntity>)
+
+    @Query("SELECT COUNT(*) FROM medications")
+    suspend fun countAll(): Int
 }
