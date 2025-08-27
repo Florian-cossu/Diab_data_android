@@ -35,7 +35,7 @@ import java.time.format.DateTimeFormatter
 data class MeasureCardData(
     val titleText: String,
     val dateText: String,
-    @DrawableRes val icon: Int,
+    @get:DrawableRes val icon: Int,
     val trendIcon: Int? = null
 )
 

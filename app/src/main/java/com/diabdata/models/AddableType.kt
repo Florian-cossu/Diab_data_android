@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 import com.diabdata.R
 
 enum class AddableType(
-    val tableName: String, @StringRes val displayNameRes: Int
+    val tableName: String, @param:StringRes val displayNameRes: Int
 ) {
     WEIGHT("weight_entries", R.string.addable_weight),
     HBA1C("hba1c_entries", R.string.addable_hba1c),
