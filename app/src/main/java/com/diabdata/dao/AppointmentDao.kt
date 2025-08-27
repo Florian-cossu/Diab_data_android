@@ -22,9 +22,9 @@ interface AppointmentDao {
     @Query("UPDATE appointments SET isArchived = :archived WHERE id = :id")
     suspend fun setArchived(id: Int, archived: Boolean)
 
-    @Query("SELECT * FROM appointments ORDER BY date DESC")
+    @Query("SELECT * FROM appointments WHERE (isArchived = 0 OR isArchived = 1) ORDER BY date DESC")
     fun getAllAppointmentsFlow(): Flow<List<Appointment>>
 
     @Query("SELECT * FROM appointments WHERE date >= :today AND isArchived = 0 ORDER BY date ASC")
-    fun getUpcomingAppointmentsFlow(today: LocalDate = LocalDate.now()): Flow<List<Appointment>>
+    fun getUpcomingAppointmentsFlow(today: LocalDate): Flow<List<Appointment>>
 }

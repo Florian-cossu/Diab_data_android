@@ -18,7 +18,9 @@ class MedicationInitializer(
         val currentHash = calculateHash(context.assets.open("medication_data.csv"))
         val savedHash = prefs.getString("csv_hash", null)
 
-        if (currentHash != savedHash) {
+        val isEmpty = db.medicationDao().countAll() == 0
+
+        if (isEmpty || currentHash != savedHash) {
             val medications = loadCsvFromAssets()
             db.medicationDao().insertAll(medications) // insertion en masse
             prefs.edit { putString("csv_hash", currentHash) }

@@ -28,6 +28,7 @@ import com.diabdata.data.DiabDataDatabase
 import com.diabdata.ui.DatabaseEditionView
 import com.diabdata.ui.HomeScreen
 import com.diabdata.ui.SettingsScreen
+import com.diabdata.ui.components.graphsViewer.GraphViewer
 import com.diabdata.utils.MedicationInitializer
 import com.diabdata.utils.SvgIcon
 
@@ -97,6 +98,7 @@ fun App(
         ) {
             when (selectedTab) {
                 "home" -> HomeScreen(dataViewModel = dataViewModel)
+                "charts" -> GraphViewer(viewModel = dataViewModel)
                 "data" -> DatabaseEditionView(dataViewModel = dataViewModel)
                 "settings" -> SettingsScreen(dataViewModel = dataViewModel)
             }

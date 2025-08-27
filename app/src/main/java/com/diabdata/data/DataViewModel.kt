@@ -15,6 +15,7 @@ import com.diabdata.models.AppointmentType
 import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.MedicationEntity
+import com.diabdata.models.PlotPoint
 import com.diabdata.models.Treatment
 import com.diabdata.models.TreatmentType
 import com.diabdata.models.WeightEntry
@@ -94,25 +95,32 @@ class DataViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DataAvailability.EMPTY)
 
-    // Get recent and upcoming data
+    // Get recent and upcoming data or plot data
+    // HBA1C
     val recentHba1c: StateFlow<List<HBA1CEntry>> =
         repository.getRecentHba1cFlow()
-            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun getHba1cPlotData(minDate: LocalDate, maxDate: LocalDate): Flow<List<PlotPoint>> =
+        repository.getHba1cPlotData(minDate, maxDate)
 
     // Weights
     val recentWeights: StateFlow<List<WeightEntry>> =
         repository.getRecentWeightsFlow()
-            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun getWeightPlotData(minDate: LocalDate, maxDate: LocalDate): Flow<List<PlotPoint>> =
+        repository.getWeightPlotData(minDate, maxDate)
 
     // Appointments
     val upcomingAppointment: StateFlow<List<Appointment>> =
         repository.getUpcomingAppointments()
-            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // Expiration dates
     val upcomingExpirationDates: StateFlow<List<Treatment>> =
         repository.getUpcomingExpDates(LocalDate.now())
-            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // Insertion functions
     fun addWeight(weightEntry: WeightEntry) {
@@ -146,14 +154,28 @@ class DataViewModel(
     }
 
     // Archive function
-    fun setArchived(id: Int, archived: Boolean, type: AddableType) {
+    fun setArchived(entry: MixedDbEntry, archived: Boolean) {
         viewModelScope.launch {
-            when (type) {
-                AddableType.WEIGHT -> repository.setArchivedWeight(id, archived)
-                AddableType.HBA1C -> repository.setArchivedHBA1C(id, archived)
-                AddableType.APPOINTMENT -> repository.setArchivedAppointment(id, archived)
-                AddableType.TREATMENT -> repository.setArchivedTreatment(id, archived)
-                AddableType.DIAGNOSIS -> repository.setArchivedDiagnosisDate(id, archived)
+            when (entry.addableType) {
+                AddableType.WEIGHT -> repository.updateWeight(
+                    (entry.toEntity() as WeightEntry).copy(isArchived = archived)
+                )
+
+                AddableType.HBA1C -> repository.updateHBA1C(
+                    (entry.toEntity() as HBA1CEntry).copy(isArchived = archived)
+                )
+
+                AddableType.APPOINTMENT -> repository.updateAppointment(
+                    (entry.toEntity() as Appointment).copy(isArchived = archived)
+                )
+
+                AddableType.TREATMENT -> repository.updateTreatment(
+                    (entry.toEntity() as Treatment).copy(isArchived = archived)
+                )
+
+                AddableType.DIAGNOSIS -> repository.updateDiagnosisDate(
+                    (entry.toEntity() as DiagnosisDate).copy(isArchived = archived)
+                )
             }
         }
     }

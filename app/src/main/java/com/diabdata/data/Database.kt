@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.diabdata.dao.AppointmentDao
 import com.diabdata.dao.DiagnosisDateDao
 import com.diabdata.dao.HBA1CDao
@@ -18,6 +19,10 @@ import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
+import com.diabdata.utils.MedicationInitializer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Database(
     entities = [
@@ -84,6 +89,21 @@ abstract class DiabDataDatabase : RoomDatabase() {
                     "diabdata_database"
                 )
                     .fallbackToDestructiveMigration(false)
+                    .addCallback(object : Callback() {
+                        override fun onOpen(db: SupportSQLiteDatabase) {
+                            super.onOpen(db)
+
+                            // Vérifie au lancement que la table medications n'est pas vide
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val database = getDatabase(context)
+                                val count = database.medicationDao().countAll()
+
+                                if (count == 0) {
+                                    MedicationInitializer(context, database).initialize()
+                                }
+                            }
+                        }
+                    })
                     .build()
                 INSTANCE = instance
                 instance

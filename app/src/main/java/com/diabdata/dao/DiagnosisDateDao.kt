@@ -21,6 +21,6 @@ interface DiagnosisDateDao {
     @Query("DELETE FROM diagnosis_date_entries WHERE id = :id")
     suspend fun deleteById(id: Int)
 
-    @Query("SELECT * FROM diagnosis_date_entries ORDER BY date DESC")
+    @Query("SELECT * FROM diagnosis_date_entries WHERE (isArchived = 0 OR isArchived = 1) ORDER BY date DESC")
     fun getAllDiagnosisDatesFlow(): Flow<List<DiagnosisDate>>
 }
