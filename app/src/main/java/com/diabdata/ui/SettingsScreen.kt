@@ -229,13 +229,10 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     color = MaterialTheme.colorScheme.primary
                 )
             },
-            title = { Text("Updates - 27/08/2025") },
+            title = { Text("Updates - 28/08/2025") },
             text = {
                 LazyColumn {
-                    item { Text("- Added GTIN database store check on app start (got emptied sometimes for unknown reasons)") }
-                    item { Text("- First iteration of graph page") }
-                    item { Text("- Updated notification util") }
-                    item { Text("- Fixed swipeable card bug where internal state was reset on swipe to archive") }
+                    item { Text("- Updated graph component") }
                 }
             },
             confirmButton = {
