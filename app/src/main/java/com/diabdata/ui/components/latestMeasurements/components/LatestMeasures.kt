@@ -19,6 +19,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,6 +35,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 data class MeasureCardData(
+    val textColor: Color,
     val titleText: String,
     val dateText: String,
     @get:DrawableRes val icon: Int,
@@ -58,6 +61,7 @@ fun LatestMeasures(
         weightEntries.maxByOrNull { it.date }?.let { latest ->
             add(
                 MeasureCardData(
+                    textColor = primaryColor,
                     titleText = String.format("%.2f kg", latest.value),
                     dateText = stringResource(
                         R.string.weight_on_date_text,
@@ -76,6 +80,11 @@ fun LatestMeasures(
         hba1cEntries.maxByOrNull { it.date }?.let { latest ->
             add(
                 MeasureCardData(
+                    textColor = when {
+                        latest.value in 7.0..9.0 -> colorResource(R.color.archived_primary)
+                        latest.value > 9.0 -> MaterialTheme.colorScheme.error
+                        else -> primaryColor
+                    },
                     titleText = String.format("%.1f%%", latest.value),
                     dateText = stringResource(
                         R.string.hba1c_on_date_text,
@@ -112,7 +121,7 @@ fun LatestMeasures(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     SvgIcon(
-                        resId = card.icon, modifier = Modifier.size(26.dp), color = primaryColor
+                        resId = card.icon, modifier = Modifier.size(26.dp), color = card.textColor
                     )
                     Spacer(Modifier.width(16.dp))
                     Column(
@@ -121,7 +130,7 @@ fun LatestMeasures(
                         Text(
                             text = card.titleText,
                             style = MaterialTheme.typography.titleMedium.copy(
-                                color = primaryColor, fontWeight = FontWeight.Bold
+                                color = card.textColor, fontWeight = FontWeight.Bold
                             )
                         )
                         Text(

@@ -103,4 +103,16 @@
     <string name="data_matrix_scanner_hint">Scannez la DataMatrix de votre traitement (petit QR Code)</string>
     <string name="chart_menu_title">Graphiques</string>
     <string name="archive_button_text">Archiver</string>
+    <string name="time_range_day">Journée</string>
+    <string name="time_range_week">Semaine</string>
+    <string name="time_range_month">Mois</string>
+    <string name="time_range_year">Année</string>
+    <string name="time_range_custom">Choisir</string>
+    <string name="regression_line_toggle_text">Ligne de regression</string>
+    <string name="settings_page_notifications_headings">Notifications de rappel</string>
+    <string name="settings_page_notifications_expiration_date">Expiration des traitements</string>
+    <string name="settings_page_notifications_appointment">Rendez-vous à venir</string>
+    <string name="add_data_popup_date_range_field_placeholder">Sélectionner une plage de date</string>
+    <string name="settings_page_notifications_expiration_date_confirmation_toast">Rappels des dates d\'expiration activés !</string>
+    <string name="settings_page_notifications_appointment_confirmation_toast">Rappels de rendez-vous activés !</string>
 </resources>

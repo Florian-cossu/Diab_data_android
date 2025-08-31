@@ -17,7 +17,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = getVersionCode()
-        versionName = "3.0"
+        versionName = "3.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -96,6 +96,7 @@ dependencies {
     //Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.common)
+    implementation(libs.androidx.ui.text)
 
     // Use ksp for annotation processing
     ksp(libs.androidx.room.compiler)

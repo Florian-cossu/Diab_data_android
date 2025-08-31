@@ -35,8 +35,8 @@ import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.TreatmentType
-import com.diabdata.ui.components.DateSelector
 import com.diabdata.ui.components.EnumDropdown
+import com.diabdata.ui.components.date_components.DateSelector
 import com.diabdata.ui.components.getPopupTitleIcon
 import com.diabdata.utils.SvgIcon
 

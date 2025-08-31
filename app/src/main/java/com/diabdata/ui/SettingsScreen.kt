@@ -1,5 +1,6 @@
 package com.diabdata.ui
 
+import android.content.Context
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -26,6 +27,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -41,6 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import com.diabdata.BuildConfig
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
@@ -62,6 +66,15 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
 
     var showConfirmDialog by remember { mutableStateOf(false) }
     var showChangeLogDialog by remember { mutableStateOf(false) }
+
+    val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+
+    var enableExpirationDateReminder by remember {
+        mutableStateOf(prefs.getBoolean("expiration_reminder", false))
+    }
+    var enableAppointmentReminder by remember {
+        mutableStateOf(prefs.getBoolean("appointment_reminder", false))
+    }
 
     val createFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/json"),
@@ -140,8 +153,10 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 )
                 .background(Color.Transparent)
                 .verticalScroll(scrollState)
-                .padding(20.dp)
+                .padding(20.dp),
+            verticalArrangement = spacedBy(32.dp)
         ) {
+            // Database section
             SettingsSection(
                 title = stringResource(R.string.settings_page_data_heading)
             ) {
@@ -166,7 +181,31 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 )
             }
 
-            Spacer(Modifier.height(32.dp))
+            // Notification section
+            SettingsSection(
+                title = stringResource(R.string.settings_page_notifications_headings)
+            ) {
+                SettingsToggle(
+                    text = stringResource(R.string.settings_page_notifications_expiration_date),
+                    checked = enableExpirationDateReminder,
+                    onCheckedChange = { isChecked ->
+                        enableExpirationDateReminder = isChecked
+                        prefs.edit { putBoolean("expiration_reminder", isChecked) }
+                    },
+                    icon = R.drawable.notification_active_icon_vector,
+                    toastText = stringResource(R.string.settings_page_notifications_expiration_date_confirmation_toast)
+                )
+                SettingsToggle(
+                    text = stringResource(R.string.settings_page_notifications_appointment),
+                    checked = enableAppointmentReminder,
+                    onCheckedChange = { isChecked ->
+                        enableAppointmentReminder = isChecked
+                        prefs.edit { putBoolean("appointment_reminder", isChecked) }
+                    },
+                    icon = R.drawable.notification_active_icon_vector,
+                    toastText = stringResource(R.string.settings_page_notifications_appointment_confirmation_toast)
+                )
+            }
 
             // Section Application
             SettingsSection(
@@ -229,10 +268,16 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     color = MaterialTheme.colorScheme.primary
                 )
             },
-            title = { Text("Updates - 28/08/2025") },
+            title = { Text("Updates - 30/08/2025") },
             text = {
                 LazyColumn {
-                    item { Text("- Updated graph component") }
+                    item { Text("- Homescreen") }
+                    item { Text("\t• Added conditional formatting for HBA1C") }
+                    item { Text("- Graph component") }
+                    item { Text("\t• Added date filtering options and dateRange picker") }
+                    item { Text("\t• Added show/hide trend line button") }
+                    item { Text("- Settings screen") }
+                    item { Text("\t• Added toggles to dis/enable notifications") }
                 }
             },
             confirmButton = {
@@ -251,22 +296,24 @@ fun SettingsSection(
     title: String,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
-        color = MaterialTheme.colorScheme.surfaceTint
-    )
+    Column {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
+            color = MaterialTheme.colorScheme.surfaceTint
+        )
 
-    Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(8.dp))
 
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        tonalElevation = 0.dp,
-        color = Color.Transparent,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(verticalArrangement = spacedBy(3.dp)) {
-            content()
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            tonalElevation = 0.dp,
+            color = Color.Transparent,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(verticalArrangement = spacedBy(3.dp)) {
+                content()
+            }
         }
     }
 }
@@ -281,7 +328,7 @@ fun SettingsButton(
     ) {
         TextButton(
             onClick = onClick, shape = shape, colors = ButtonDefaults.textButtonColors(
-                containerColor = Color.Transparent, // On laisse la Surface gérer le fond
+                containerColor = Color.Transparent,
                 contentColor = if (isDestructive) MaterialTheme.colorScheme.error
                 else MaterialTheme.colorScheme.onSurface
             ), modifier = Modifier.fillMaxWidth()
@@ -304,6 +351,60 @@ fun SettingsButton(
                     text, style = MaterialTheme.typography.titleMedium
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun SettingsToggle(
+    text: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    shape: Shape = RoundedCornerShape(0.dp),
+    icon: Int? = null,
+    toastText: String = ""
+) {
+    Surface(
+        shape = shape,
+        tonalElevation = 4.dp,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        val context = LocalContext.current
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 30.dp, top = 10.dp, end = 15.dp, bottom = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Switch(
+                checked = checked,
+                onCheckedChange = { isChecked ->
+                    onCheckedChange(isChecked)
+                    if (toastText.isNotBlank() && isChecked) {
+                        Toast.makeText(
+                            context,
+                            toastText,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                },
+                thumbContent = if (checked && icon != null) {
+                    {
+                        SvgIcon(
+                            resId = icon,
+                            contentDescription = null,
+                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                } else null,
+            )
         }
     }
 }

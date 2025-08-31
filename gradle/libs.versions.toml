@@ -25,6 +25,7 @@ animation = "1.9.0"
 runtimeSaveable = "1.9.0"
 foundationLayout = "1.9.0"
 vico = "2.1.3"
+uiText = "1.9.0"
 
 [libraries]
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
@@ -69,6 +70,7 @@ vico-compose-m2 = { group = "com.patrykandpatrick.vico", name = "compose-m2", ve
 vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
 vico-multiplatform = { group = "com.patrykandpatrick.vico", name = "multiplatform", version.ref = "vico" }
 vico-views = { group = "com.patrykandpatrick.vico", name = "views", version.ref = "vico" }
+androidx-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.ref = "uiText" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

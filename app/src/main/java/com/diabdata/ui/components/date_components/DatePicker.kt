@@ -1,4 +1,4 @@
-package com.diabdata.ui.components
+package com.diabdata.ui.components.date_components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth

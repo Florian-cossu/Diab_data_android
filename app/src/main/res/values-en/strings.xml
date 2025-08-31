@@ -103,4 +103,16 @@
     <string name="data_matrix_scanner_hint">Scan your medication DataMatrix (small QR Code)</string>
     <string name="chart_menu_title">Graphs</string>
     <string name="archive_button_text">Archive</string>
+    <string name="time_range_day">Day</string>
+    <string name="time_range_week">Week</string>
+    <string name="time_range_month">Month</string>
+    <string name="time_range_year">Year</string>
+    <string name="time_range_custom">Custom</string>
+    <string name="regression_line_toggle_text">Regression line</string>
+    <string name="settings_page_notifications_headings">Reminder notifications</string>
+    <string name="settings_page_notifications_expiration_date">Medication expiration</string>
+    <string name="settings_page_notifications_appointment">Upcoming appointment</string>
+    <string name="add_data_popup_date_range_field_placeholder">Select date range</string>
+    <string name="settings_page_notifications_expiration_date_confirmation_toast">Expiry dates reminders enabled!</string>
+    <string name="settings_page_notifications_appointment_confirmation_toast">Appointment reminders enabled!</string>
 </resources>
