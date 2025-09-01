@@ -19,7 +19,7 @@
     <string name="addable_diagnosis">Diagnosis date</string>
     <string name="important_dates_card_section_heading">Important dates</string>
     <string name="latest_measures_card_section_heading">Recent readings</string>
-    <string name="upcoming_appointment_card_section_heading">Upcoming appoitments</string>
+    <string name="upcoming_appointment_card_section_heading">Upcoming appointments</string>
     <string name="upcoming_expiration_dates_card_section_heading">My medication</string>
     <string name="home_menu_title">Home</string>
     <string name="database_management_menu_title">Data</string>
@@ -115,4 +115,12 @@
     <string name="add_data_popup_date_range_field_placeholder">Select date range</string>
     <string name="settings_page_notifications_expiration_date_confirmation_toast">Expiry dates reminders enabled!</string>
     <string name="settings_page_notifications_appointment_confirmation_toast">Appointment reminders enabled!</string>
+    <string name="appointment_reminder_notification_title">Appointment reminder</string>
+    <string name="appointment_reminder_notification_content">Your appointment %1$s on the %2$s is coming soon.</string>
+    <string name="medication_expiration_reminder_notification_title">Expiry date reminder</string>
+    <string name="medication_expiration_reminder_notification_content">Your medication %1$s will expire on the %2$s !</string>
+    <string name="appointment_reminder_notification_channel">Appointments reminders</string>
+    <string name="expiration_dates_reminder_notification_channel">Expiration date reminders</string>
+    <string name="settings_notification_toggle_next_reminder_date">Next reminder scheduled on %1$s</string>
+    <string name="upcoming_appointment_card_notes_header">Notes</string>
 </resources>

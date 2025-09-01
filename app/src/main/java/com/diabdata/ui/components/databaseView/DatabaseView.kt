@@ -1,4 +1,4 @@
-package com.diabdata.ui
+package com.diabdata.ui.components.databaseView
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -72,7 +72,6 @@ import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.ui.components.FlippableSelectionIcon
-import com.diabdata.ui.components.databaseView.EditEntryDialog
 import com.diabdata.utils.SvgIcon
 import com.diabdata.utils.getItemShape
 import kotlinx.coroutines.launch

@@ -53,7 +53,7 @@ fun AddDataFab(
             )
         },
         Triple(
-            stringResource(R.string.addable_diagnosis), R.drawable.diagnosis_icon_vector
+            stringResource(R.string.addable_diagnosis), R.drawable.important_date_add_icon_vector
         ) { onSelect(AddableType.DIAGNOSIS) },
         Triple(
             stringResource(R.string.addable_treatment), R.drawable.medication_add_icon_vector

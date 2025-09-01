@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -32,6 +33,7 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLa
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.component.shapeComponent
 import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
@@ -42,6 +44,9 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.Fill
+import com.patrykandpatrick.vico.core.common.Insets
+import com.patrykandpatrick.vico.core.common.Position
+import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import java.time.format.DateTimeFormatter
@@ -76,6 +81,9 @@ fun LineGraph(
 
     val dateFormatter = remember { DateTimeFormatter.ofPattern("dd/MM/yy", Locale.getDefault()) }
 
+    val pointLabelBackground =
+        MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp).copy(alpha = 0.80f).toArgb()
+
     val xValues = points.mapIndexed { index, _ -> index.toDouble() }
     val yValues = points.map { it.value.toDouble() }
 
@@ -97,6 +105,22 @@ fun LineGraph(
     val zoomState = rememberVicoZoomState(zoomEnabled = true, initialZoom = Zoom.x(-1.0))
     val scrollState = rememberVicoScrollState(scrollEnabled = true)
 
+    val pointValueLabel: TextComponent = rememberTextComponent(
+        color = Color(primaryColor),
+        textSize = 11.sp,
+        background = shapeComponent(
+            shape = CorneredShape.Pill,
+            fill = Fill(pointLabelBackground),
+        ),
+        padding = Insets(startDp = 6f, topDp = 4f, endDp = 6f, bottomDp = 4f),
+        margins = Insets(startDp = 0f, topDp = 8f, endDp = 0f, bottomDp = 0f)
+    )
+
+    val pointValueFormatter: CartesianValueFormatter =
+        CartesianValueFormatter { _, value, _ ->
+            "%.1f".format(Locale.getDefault(), value)
+        }
+
     val lines = mutableListOf(
         LineCartesianLayer.Line(
             fill = LineCartesianLayer.LineFill.single(Fill(primaryColor)),
@@ -110,14 +134,18 @@ fun LineGraph(
             ),
             pointConnector = LineCartesianLayer.PointConnector.cubic(0.5f),
             pointProvider = LineCartesianLayer.PointProvider.single(
-                LineCartesianLayer.Point(
+                point = LineCartesianLayer.Point(
                     component = shapeComponent(
                         shape = CorneredShape.Pill,
-                        fill = Fill(primaryColor)
+                        fill = Fill(primaryColor),
                     ),
-                    sizeDp = 8f
+                    sizeDp = 8f,
                 )
-            )
+            ),
+            dataLabel = pointValueLabel,
+            dataLabelPosition = Position.Vertical.Bottom,  // or Bottom if you prefer under the point
+            dataLabelValueFormatter = pointValueFormatter,
+            dataLabelRotationDegrees = 0f
         )
     )
 
@@ -161,7 +189,7 @@ fun LineGraph(
                         itemPlacer = HorizontalAxis.ItemPlacer.aligned()
                     ),
                 ),
-                modelProducer = modelProducer, // <— ici
+                modelProducer = modelProducer,
                 zoomState = zoomState,
                 scrollState = scrollState,
                 modifier = modifier

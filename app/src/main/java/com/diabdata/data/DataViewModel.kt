@@ -34,7 +34,7 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
 class DataViewModel(
-    private val repository: DataRepository,
+    val repository: DataRepository,
     application: Application
 ) : AndroidViewModel(application) {
     val appContext: Context = getApplication<Application>().applicationContext
@@ -299,7 +299,7 @@ class DataViewModel(
                 null -> R.drawable.medication_icon_vector
             }
 
-            AddableType.DIAGNOSIS -> R.drawable.diagnosis_icon_vector
+            AddableType.DIAGNOSIS -> R.drawable.important_date_icon_vector
         }
     }
 

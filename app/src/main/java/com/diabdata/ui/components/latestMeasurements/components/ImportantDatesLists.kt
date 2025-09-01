@@ -19,7 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,8 +39,6 @@ fun ImportantDatesList(
     val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
     val primaryColor = MaterialTheme.colorScheme.primary
     val today = LocalDate.now()
-
-    val context = LocalContext.current
 
     val availability by viewModel.dataAvailability.collectAsState()
     val showSection = availability.hasDiagnoses
@@ -68,16 +66,16 @@ fun ImportantDatesList(
             val remainingMonths = monthsTotal - years * 12
 
             val elapsedText = when {
-                years == 0L && remainingMonths == 0L -> context.getString(R.string.today)
-                years == 0L -> context.resources.getQuantityString(
+                years == 0L && remainingMonths == 0L -> stringResource(R.string.today)
+                years == 0L -> pluralStringResource(
                     R.plurals.months, remainingMonths.toInt(), remainingMonths
                 )
 
-                remainingMonths == 0L -> context.resources.getQuantityString(
+                remainingMonths == 0L -> pluralStringResource(
                     R.plurals.years, years.toInt(), years
                 )
 
-                else -> context.resources.getQuantityString(
+                else -> pluralStringResource(
                     R.plurals.years_and_months, years.toInt(), years, remainingMonths
                 )
             }
@@ -93,15 +91,14 @@ fun ImportantDatesList(
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Icône à gauche
+
                     SvgIcon(
-                        resId = R.drawable.diagnosis_icon_vector,
+                        resId = R.drawable.important_date_icon_vector,
                         modifier = Modifier.size(26.dp),
                         color = primaryColor
                     )
                     Spacer(Modifier.width(16.dp))
 
-                    // Texte principal
                     Column(
                         modifier = Modifier.weight(1f)
                     ) {
@@ -112,7 +109,7 @@ fun ImportantDatesList(
                             )
                         )
                         Text(
-                            text = context.resources.getString(
+                            text = stringResource(
                                 R.string.diagnosed_on_text, diagnosis.date.format(formatter)
                             ),
                             style = MaterialTheme.typography.bodySmall,
@@ -120,7 +117,6 @@ fun ImportantDatesList(
                         )
                     }
 
-                    // Temps écoulé à droite
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {

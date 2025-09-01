@@ -25,9 +25,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.diabdata.data.DataViewModel
 import com.diabdata.data.DiabDataDatabase
-import com.diabdata.ui.DatabaseEditionView
 import com.diabdata.ui.HomeScreen
 import com.diabdata.ui.SettingsScreen
+import com.diabdata.ui.components.databaseView.DatabaseEditionView
 import com.diabdata.ui.components.graphsViewer.GraphViewer
 import com.diabdata.utils.MedicationInitializer
 import com.diabdata.utils.SvgIcon

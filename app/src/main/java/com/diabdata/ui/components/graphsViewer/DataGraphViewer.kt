@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.ButtonGroupDefaults
@@ -48,6 +50,7 @@ fun GraphViewer(
     modifier: Modifier = Modifier,
     viewModel: DataViewModel = viewModel(),
 ) {
+    val scrollState = rememberScrollState()
     val options = listOf(
         stringResource(R.string.time_range_month),
         stringResource(R.string.time_range_year),
@@ -89,7 +92,8 @@ fun GraphViewer(
                 .padding(
                     start = 16.dp, end = 16.dp, top = 0.dp, bottom = 0.dp
                 )
-                .padding(20.dp),
+                .padding(20.dp)
+                .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(

@@ -32,7 +32,7 @@ fun LatestMeasurements(
         if (availability.hasDiagnoses) {
             ImportantDatesList(viewModel)
         }
-        if (availability.hasWeights && availability.hasHba1c) {
+        if (availability.hasWeights || availability.hasHba1c) {
             LatestMeasures(viewModel)
         }
         if (availability.hasAppointments) {

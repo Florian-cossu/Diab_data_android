@@ -39,8 +39,8 @@ import com.diabdata.models.AddableType
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.ui.components.AddDataFab
-import com.diabdata.ui.components.AddDataPopup
 import com.diabdata.ui.components.DataMatrixScannerDialog
+import com.diabdata.ui.components.addDataPopup.AddDataPopup
 import com.diabdata.ui.components.latestMeasurements.LatestMeasurements
 import com.diabdata.utils.MedicationInfo
 import com.diabdata.utils.SvgIcon
@@ -153,9 +153,6 @@ fun HomeScreen(
                 type = type,
                 dataViewModel = dataViewModel,
                 prefilledTreatment = dataViewModel.prefilledTreatment,
-                onSubmit = { data ->
-                    setSelectedType(null)
-                },
                 onDismiss = {
                     setSelectedType(null)
                     dataViewModel.prefilledTreatment = null

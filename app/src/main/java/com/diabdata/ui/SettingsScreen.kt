@@ -33,8 +33,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,12 +47,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.diabdata.BuildConfig
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.utils.SvgIcon
 import com.diabdata.utils.showNotification
+import com.diabdata.workers.scheduleAppointmentReminders
+import com.diabdata.workers.scheduleMedicationExpirationReminders
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Date
 import java.util.Locale
 
@@ -63,6 +75,8 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     val scrollState = rememberScrollState()
     val versionName = BuildConfig.VERSION_NAME
     val versionCode = BuildConfig.VERSION_CODE
+
+    val scope = rememberCoroutineScope()
 
     var showConfirmDialog by remember { mutableStateOf(false) }
     var showChangeLogDialog by remember { mutableStateOf(false) }
@@ -144,6 +158,38 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
             }
         })
 
+    val workManager = WorkManager.getInstance(context)
+
+// LiveData observables
+    val appointmentInfos by workManager.getWorkInfosByTagLiveData("appointments")
+        .observeAsState(initial = emptyList())
+    val treatmentInfos by workManager.getWorkInfosByTagLiveData("treatments")
+        .observeAsState(initial = emptyList())
+
+    val nextAppointmentReminder = remember(appointmentInfos) {
+        appointmentInfos
+            .filter { it.state == WorkInfo.State.ENQUEUED }
+            .mapNotNull { info ->
+                info.tags.firstOrNull { it.startsWith("appointments_") }
+                    ?.removePrefix("appointments_")
+                    ?.toLongOrNull()
+            }.minOfOrNull { epochMilli ->
+                Instant.ofEpochMilli(epochMilli).atZone(ZoneId.systemDefault()).toLocalDate()
+            }
+    }
+
+    val nextTreatmentReminder = remember(treatmentInfos) {
+        treatmentInfos
+            .filter { it.state == WorkInfo.State.ENQUEUED }
+            .mapNotNull { info ->
+                info.tags.firstOrNull { it.startsWith("treatments_") }
+                    ?.removePrefix("treatments_")
+                    ?.toLongOrNull()
+            }.minOfOrNull { epochMilli ->
+                Instant.ofEpochMilli(epochMilli).atZone(ZoneId.systemDefault()).toLocalDate()
+            }
+    }
+
     Scaffold { padding ->
         Column(
             modifier = Modifier
@@ -191,9 +237,21 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     onCheckedChange = { isChecked ->
                         enableExpirationDateReminder = isChecked
                         prefs.edit { putBoolean("expiration_reminder", isChecked) }
+                        val workManager = WorkManager.getInstance(context)
+                        if (isChecked) {
+                            scope.launch {
+                                scheduleMedicationExpirationReminders(
+                                    context,
+                                    dataViewModel
+                                )
+                            }
+                        } else {
+                            workManager.cancelAllWorkByTag("treatments")
+                        }
                     },
                     icon = R.drawable.notification_active_icon_vector,
-                    toastText = stringResource(R.string.settings_page_notifications_expiration_date_confirmation_toast)
+                    toastText = stringResource(R.string.settings_page_notifications_expiration_date_confirmation_toast),
+                    nextReminderDate = nextTreatmentReminder
                 )
                 SettingsToggle(
                     text = stringResource(R.string.settings_page_notifications_appointment),
@@ -201,9 +259,18 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     onCheckedChange = { isChecked ->
                         enableAppointmentReminder = isChecked
                         prefs.edit { putBoolean("appointment_reminder", isChecked) }
+                        val workManager = WorkManager.getInstance(context)
+                        if (isChecked) {
+                            scope.launch {
+                                scheduleAppointmentReminders(context, dataViewModel)
+                            }
+                        } else {
+                            workManager.cancelAllWorkByTag("appointments")
+                        }
                     },
                     icon = R.drawable.notification_active_icon_vector,
-                    toastText = stringResource(R.string.settings_page_notifications_appointment_confirmation_toast)
+                    toastText = stringResource(R.string.settings_page_notifications_appointment_confirmation_toast),
+                    nextReminderDate = nextAppointmentReminder
                 )
             }
 
@@ -268,16 +335,22 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     color = MaterialTheme.colorScheme.primary
                 )
             },
-            title = { Text("Updates - 30/08/2025") },
+            title = { Text("Updates - 01/09/2025") },
             text = {
                 LazyColumn {
                     item { Text("- Homescreen") }
                     item { Text("\t• Added conditional formatting for HBA1C") }
+                    item { Text("\t• Created custom icon sets for important dates and added them where relevant") }
+                    item { Text("\t• Fixed typo in latestMeasurements to display even if only one type of data is available") }
+                    item { Text("\t• Cleaned up and reorganised add data popup") }
                     item { Text("- Graph component") }
                     item { Text("\t• Added date filtering options and dateRange picker") }
                     item { Text("\t• Added show/hide trend line button") }
+                    item { Text("\t• Added point labels to see values") }
                     item { Text("- Settings screen") }
                     item { Text("\t• Added toggles to dis/enable notifications") }
+                    item { Text("\t• Added workers for notifications") }
+                    item { Text("\t• Display next reminder scheduled in toggle") }
                 }
             },
             confirmButton = {
@@ -362,7 +435,8 @@ fun SettingsToggle(
     onCheckedChange: (Boolean) -> Unit,
     shape: Shape = RoundedCornerShape(0.dp),
     icon: Int? = null,
-    toastText: String = ""
+    toastText: String = "",
+    nextReminderDate: LocalDate?,
 ) {
     Surface(
         shape = shape,
@@ -371,6 +445,14 @@ fun SettingsToggle(
     ) {
         val context = LocalContext.current
 
+        val displayText = if (nextReminderDate != null) stringResource(
+            R.string.settings_notification_toggle_next_reminder_date, nextReminderDate.format(
+                DateTimeFormatter.ofLocalizedDate(
+                    FormatStyle.MEDIUM
+                )
+            )
+        ) else ""
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -378,10 +460,19 @@ fun SettingsToggle(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.titleMedium
-            )
+            Column {
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                if (displayText.isNotBlank()) {
+                    Text(
+                        text = displayText,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
             Switch(
                 checked = checked,
                 onCheckedChange = { isChecked ->

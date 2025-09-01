@@ -81,8 +81,8 @@ fun LatestMeasures(
             add(
                 MeasureCardData(
                     textColor = when {
-                        latest.value in 7.0..9.0 -> colorResource(R.color.archived_primary)
-                        latest.value > 9.0 -> MaterialTheme.colorScheme.error
+                        latest.value in 7.5..8.5 -> colorResource(R.color.archived_primary)
+                        latest.value >= 8.6 -> MaterialTheme.colorScheme.error
                         else -> primaryColor
                     },
                     titleText = String.format("%.1f%%", latest.value),
