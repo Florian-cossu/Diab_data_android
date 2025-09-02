@@ -392,8 +392,8 @@ private fun EntryContent(entry: DataViewModel.MixedDbEntry) {
             }
         }
 
-        is DataViewModel.MixedDbEntry.DiagnosisEntry -> {
-            Text(entry.diagnosis, fontWeight = FontWeight.Bold)
+        is DataViewModel.MixedDbEntry.ImportantDateEntry -> {
+            Text(entry.importantDate, fontWeight = FontWeight.Bold)
             Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
         }
 

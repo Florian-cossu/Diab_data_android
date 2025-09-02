@@ -51,9 +51,10 @@ fun TreatmentPopup(
                 Treatment(
                     expirationDate = selectedDate,
                     name = name,
-                    type = selectedTreatmentType,
+                    createdAt = today,
                     isArchived = false,
-                    createdAt = today
+                    type = selectedTreatmentType,
+                    updatedAt = today
                 )
             )
             onDismiss()

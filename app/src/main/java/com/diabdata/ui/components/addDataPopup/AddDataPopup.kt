@@ -28,8 +28,8 @@ import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.models.Treatment
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.AppointmentPopup
-import com.diabdata.ui.components.addDataPopup.popupsByTypes.DiagnosisPopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.Hba1cPopup
+import com.diabdata.ui.components.addDataPopup.popupsByTypes.ImportantDatePopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.TreatmentPopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.WeightPopup
 import com.diabdata.utils.SvgIcon
@@ -47,7 +47,7 @@ fun AddDataPopup(
         AddableType.TREATMENT -> TreatmentPopup(onDismiss, dataViewModel, prefilledTreatment)
         AddableType.WEIGHT -> WeightPopup(onDismiss, dataViewModel)
         AddableType.HBA1C -> Hba1cPopup(onDismiss, dataViewModel)
-        AddableType.DIAGNOSIS -> DiagnosisPopup(onDismiss, dataViewModel)
+        AddableType.IMPORTANT_DATE -> ImportantDatePopup(onDismiss, dataViewModel)
     }
 }
 
@@ -109,5 +109,5 @@ fun getPopupTitleIcon(type: AddableType): Int = when (type) {
     AddableType.TREATMENT -> R.drawable.medication_add_icon_vector
     AddableType.WEIGHT -> R.drawable.weight_add_icon_vector
     AddableType.HBA1C -> R.drawable.hba1c_add_icon_vector
-    AddableType.DIAGNOSIS -> R.drawable.important_date_add_icon_vector
+    AddableType.IMPORTANT_DATE -> R.drawable.important_date_add_icon_vector
 }

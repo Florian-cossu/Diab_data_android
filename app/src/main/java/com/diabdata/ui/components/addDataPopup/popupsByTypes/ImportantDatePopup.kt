@@ -14,14 +14,14 @@ import androidx.compose.ui.res.stringResource
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
-import com.diabdata.models.DiagnosisDate
+import com.diabdata.models.ImportantDate
 import com.diabdata.ui.components.addDataPopup.BasePopupLayout
 import com.diabdata.ui.components.addDataPopup.getPopupTitleIcon
 import com.diabdata.ui.components.date_components.DateSelector
 import java.time.LocalDate
 
 @Composable
-fun DiagnosisPopup(
+fun ImportantDatePopup(
     onDismiss: () -> Unit,
     dataViewModel: DataViewModel
 ) {
@@ -34,17 +34,18 @@ fun DiagnosisPopup(
     BasePopupLayout(
         title = context.getString(
             R.string.add_data_popup_title,
-            AddableType.DIAGNOSIS.getDisplayName(context)
+            AddableType.IMPORTANT_DATE.getDisplayName(context)
         ),
-        icon = getPopupTitleIcon(AddableType.DIAGNOSIS),
+        icon = getPopupTitleIcon(AddableType.IMPORTANT_DATE),
         onDismiss = onDismiss,
         onConfirm = {
-            dataViewModel.addDiagnosisDate(
-                DiagnosisDate(
+            dataViewModel.addImportantDate(
+                ImportantDate(
                     date = selectedDate,
-                    diagnosis = diagnosis,
+                    createdAt = today,
                     isArchived = false,
-                    createdAt = today
+                    importantDate = diagnosis,
+                    updatedAt = today
                 )
             )
             onDismiss()
@@ -59,7 +60,7 @@ fun DiagnosisPopup(
         OutlinedTextField(
             value = diagnosis,
             onValueChange = { diagnosis = it },
-            label = { Text(stringResource(R.string.add_data_popup_diagnosis_field_placeholder)) },
+            label = { Text(stringResource(R.string.add_data_popup_important_date_field_placeholder)) },
             modifier = Modifier.fillMaxWidth()
         )
     }

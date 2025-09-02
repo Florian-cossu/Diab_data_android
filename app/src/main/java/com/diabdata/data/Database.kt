@@ -7,15 +7,15 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.diabdata.dao.AppointmentDao
-import com.diabdata.dao.DiagnosisDateDao
 import com.diabdata.dao.HBA1CDao
+import com.diabdata.dao.ImportantDateDao
 import com.diabdata.dao.MedicationDao
 import com.diabdata.dao.TreatmentDao
 import com.diabdata.dao.WeightDao
 import com.diabdata.data.converters.DateConverters
 import com.diabdata.models.Appointment
-import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
+import com.diabdata.models.ImportantDate
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
@@ -30,10 +30,10 @@ import kotlinx.coroutines.launch
         HBA1CEntry::class,
         Appointment::class,
         Treatment::class,
-        DiagnosisDate::class,
+        ImportantDate::class,
         MedicationEntity::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 
@@ -44,7 +44,7 @@ abstract class DiabDataDatabase : RoomDatabase() {
     abstract fun hba1cDao(): HBA1CDao
     abstract fun appointmentDao(): AppointmentDao
     abstract fun treatmentDao(): TreatmentDao
-    abstract fun diagnosisDao(): DiagnosisDateDao
+    abstract fun importantDateDao(): ImportantDateDao
     abstract fun medicationDao(): MedicationDao
 
     fun getAllTableNames(): List<String> {
@@ -93,7 +93,6 @@ abstract class DiabDataDatabase : RoomDatabase() {
                         override fun onOpen(db: SupportSQLiteDatabase) {
                             super.onOpen(db)
 
-                            // Vérifie au lancement que la table medications n'est pas vide
                             CoroutineScope(Dispatchers.IO).launch {
                                 val database = getDatabase(context)
                                 val count = database.medicationDao().countAll()

@@ -47,9 +47,10 @@ fun WeightPopup(
                 dataViewModel.addWeight(
                     WeightEntry(
                         date = selectedDate,
-                        value = value,
+                        createdAt = today,
                         isArchived = false,
-                        createdAt = today
+                        value = value,
+                        updatedAt = today
                     )
                 )
             }

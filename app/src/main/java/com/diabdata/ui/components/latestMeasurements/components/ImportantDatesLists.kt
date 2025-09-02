@@ -41,9 +41,9 @@ fun ImportantDatesList(
     val today = LocalDate.now()
 
     val availability by viewModel.dataAvailability.collectAsState()
-    val showSection = availability.hasDiagnoses
+    val showSection = availability.hasImportantDates
 
-    val diagnosisEntries by viewModel.diagnosis.collectAsState(initial = emptyList())
+    val diagnosisEntries by viewModel.importantDates.collectAsState(initial = emptyList())
 
     if (!showSection) return
 
@@ -103,14 +103,14 @@ fun ImportantDatesList(
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            text = diagnosis.diagnosis,
+                            text = diagnosis.importantDate,
                             style = MaterialTheme.typography.titleMedium.copy(
                                 color = primaryColor, fontWeight = FontWeight.Bold
                             )
                         )
                         Text(
                             text = stringResource(
-                                R.string.diagnosed_on_text, diagnosis.date.format(formatter)
+                                R.string.important_date_on_text, diagnosis.date.format(formatter)
                             ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant

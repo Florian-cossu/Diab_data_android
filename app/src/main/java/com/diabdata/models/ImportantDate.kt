@@ -4,11 +4,12 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.time.LocalDate
 
-@Entity(tableName = "diagnosis_date_entries")
-data class DiagnosisDate(
+@Entity(tableName = "important_date_entries")
+data class ImportantDate(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val date: LocalDate,
     val createdAt: LocalDate,
     val isArchived: Boolean,
-    val diagnosis: String,
+    val importantDate: String,
+    val updatedAt: LocalDate,
 )

@@ -39,6 +39,7 @@ import com.diabdata.ui.components.EnumDropdown
 import com.diabdata.ui.components.addDataPopup.getPopupTitleIcon
 import com.diabdata.ui.components.date_components.DateSelector
 import com.diabdata.utils.SvgIcon
+import java.time.LocalDate
 
 @Composable
 fun EditEntryDialog(
@@ -133,7 +134,8 @@ fun EditEntryDialog(
                                         entry.copy(
                                             date = date,
                                             doctor = doctor,
-                                            notes = notes
+                                            notes = notes,
+                                            updatedAt = LocalDate.now(),
                                         )
                                     )
                                 }
@@ -143,8 +145,8 @@ fun EditEntryDialog(
                         }
                     }
 
-                    is DataViewModel.MixedDbEntry.DiagnosisEntry -> {
-                        var diagnosis by remember { mutableStateOf(entry.diagnosis) }
+                    is DataViewModel.MixedDbEntry.ImportantDateEntry -> {
+                        var diagnosis by remember { mutableStateOf(entry.importantDate) }
                         var date by remember { mutableStateOf(entry.date) }
 
                         DateSelector(
@@ -155,7 +157,7 @@ fun EditEntryDialog(
                         OutlinedTextField(
                             value = diagnosis,
                             onValueChange = { diagnosis = it },
-                            label = { Text(stringResource(R.string.add_data_popup_diagnosis_field_placeholder)) },
+                            label = { Text(stringResource(R.string.add_data_popup_important_date_field_placeholder)) },
                             modifier = Modifier.fillMaxWidth(),
                             shape = MaterialTheme.shapes.small
                         )
@@ -176,7 +178,8 @@ fun EditEntryDialog(
                                     onSave(
                                         entry.copy(
                                             date = date,
-                                            diagnosis = diagnosis
+                                            importantDate = diagnosis,
+                                            updatedAt = LocalDate.now()
                                         )
                                     )
                                 },
@@ -245,7 +248,8 @@ fun EditEntryDialog(
                                     onSave(
                                         entry.copy(
                                             date = date,
-                                            value = value
+                                            value = value,
+                                            updatedAt = LocalDate.now()
                                         )
                                     )
                                 },
@@ -298,9 +302,10 @@ fun EditEntryDialog(
                                 onClick = {
                                     onSave(
                                         entry.copy(
+                                            date = date,
                                             name = name,
                                             treatmentType = treatmentType,
-                                            date = date
+                                            updatedAt = LocalDate.now()
                                         )
                                     )
                                 }
@@ -332,7 +337,7 @@ fun EditEntryDialog(
                                 if (parsed == null || parsed < 0 || parsed > 600) {
                                     isError = true
                                     errorMessage =
-                                        context.getString(R.string.add_data_popup_invalid_weigth_kg_input_hint)
+                                        context.getString(R.string.add_data_popup_invalid_weight_kg_input_hint)
                                 } else {
                                     isError = false
                                     errorMessage = null
@@ -367,7 +372,8 @@ fun EditEntryDialog(
                                     onSave(
                                         entry.copy(
                                             date = date,
-                                            value = value
+                                            value = value,
+                                            updatedAt = LocalDate.now()
                                         )
                                     )
                                 },

@@ -11,7 +11,7 @@ enum class AddableType(
     HBA1C("hba1c_entries", R.string.addable_hba1c),
     APPOINTMENT("appointments", R.string.addable_appointment),
     TREATMENT("treatments", R.string.addable_treatment),
-    DIAGNOSIS("diagnosis_date_entries", R.string.addable_diagnosis);
+    IMPORTANT_DATE("important_date_entries", R.string.addable_important_date);
 
     fun getDisplayName(context: Context): String =
         context.getString(displayNameRes)

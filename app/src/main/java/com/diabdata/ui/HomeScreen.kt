@@ -175,8 +175,9 @@ private fun mapToTreatment(info: MedicationInfo, entity: MedicationEntity): Trea
     return Treatment(
         expirationDate = expiration,
         name = entity.fullName,
-        type = entity.treatmentType,
+        createdAt = today,
         isArchived = false,
-        createdAt = today
+        type = entity.treatmentType,
+        updatedAt = LocalDate.now()
     )
 }

@@ -15,7 +15,7 @@
     <string name="addable_appointment">Rendez-vous</string>
     <string name="addable_treatment">Traitement</string>
     <string name="addable_treatment_scan">Scanner un code</string>
-    <string name="addable_diagnosis">Date de diagnostic</string>
+    <string name="addable_important_date">Date importante</string>
     <string name="important_dates_card_section_heading">Dates importantes</string>
     <string name="latest_measures_card_section_heading">Derniers relevés</string>
     <string name="upcoming_appointment_card_section_heading">Prochains rendez-vous</string>
@@ -76,7 +76,7 @@
     </plurals>
 
     <string name="today">Aujourd’hui</string>
-    <string name="diagnosed_on_text">Diagnostiqué le %1$s</string>
+    <string name="important_date_on_text">Le %1$s</string>
     <string name="expires_on_text">Expire le %1$s</string>
 
     <string name="scheduled_on_date_text">Programmé le %1$s</string>
@@ -88,11 +88,11 @@
     <string name="add_data_popup_date_field_placeholder">Sélectionner une date</string>
     <string name="add_data_popup_expiration_date_field_placeholder">Sélectionner la date d\'expiration</string>
     <string name="add_data_popup_doctor_field_placeholder">Nom du praticien</string>
-    <string name="add_data_popup_diagnosis_field_placeholder">Affection diagnostiquée</string>
+    <string name="add_data_popup_important_date_field_placeholder">Évènement</string>
     <string name="add_data_popup_invalid_weight_field_message">Valeur de poids invalide</string>
     <string name="add_data_popup_invalid_HBA1C_field_message">HBA1C invalide</string>
-    <string name="add_data_popup_diagnosis_date_insertion_error">Erreur lors de l\'ajout de la date de diagnostic</string>
-    <string name="add_data_popup_invalid_weigth_kg_input_hint">Le poids doit-être compris entre 0 et 600 (kg)</string>
+    <string name="add_data_popup_important_date_insertion_error">Erreur lors de l\'ajout de la date</string>
+    <string name="add_data_popup_invalid_weight_kg_input_hint">Le poids doit-être compris entre 0 et 600 (kg)</string>
     <string name="add_data_popup_invalid_HBA1C_input_hint">La HBA1C doit être comprise entre 0 et 15 (%)</string>
     <string name="add_data_popup_title">Ajouter %1$s</string>
     <string name="update_data_popup_title">Mise à jour de l\'entrée de %1$s</string>

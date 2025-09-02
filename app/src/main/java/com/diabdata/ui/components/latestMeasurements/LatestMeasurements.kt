@@ -29,7 +29,7 @@ fun LatestMeasurements(
     ) {
         val availability by viewModel.dataAvailability.collectAsState()
 
-        if (availability.hasDiagnoses) {
+        if (availability.hasImportantDates) {
             ImportantDatesList(viewModel)
         }
         if (availability.hasWeights || availability.hasHba1c) {

@@ -52,9 +52,10 @@ fun AppointmentPopup(
                     date = selectedDate,
                     doctor = doctor,
                     type = selectedAppointmentType,
-                    notes = notes,
+                    createdAt = today,
                     isArchived = false,
-                    createdAt = today
+                    notes = notes,
+                    updatedAt = today
                 )
             )
             onDismiss()

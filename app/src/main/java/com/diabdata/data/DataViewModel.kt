@@ -5,15 +5,17 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.WorkManager
 import com.diabdata.R
 import com.diabdata.data.converters.toEntity
 import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
 import com.diabdata.models.AppointmentType
-import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
+import com.diabdata.models.ImportantDate
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.PlotPoint
 import com.diabdata.models.Treatment
@@ -46,19 +48,19 @@ class DataViewModel(
     }
 
     // Load all data
-    val weights: StateFlow<List<WeightEntry>> = repository.getAllWeightsFlow()
+    val weights: StateFlow<List<WeightEntry>> = repository.getAllWeights()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val hba1cEntries: StateFlow<List<HBA1CEntry>> = repository.getAllHba1cFlow()
+    val hba1cEntries: StateFlow<List<HBA1CEntry>> = repository.getAllHba1c()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val appointments: StateFlow<List<Appointment>> = repository.getAllAppointmentsFlow()
+    val appointments: StateFlow<List<Appointment>> = repository.getAllAppointments()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val treatments: StateFlow<List<Treatment>> = repository.getAllTreatmentsFlow()
+    val treatments: StateFlow<List<Treatment>> = repository.getAllTreatments()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val diagnosis: StateFlow<List<DiagnosisDate>> = repository.getAllDiagnosisDatesFlow()
+    val importantDates: StateFlow<List<ImportantDate>> = repository.getAllImportantDates()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // Helpers to check if we have Data
@@ -67,7 +69,7 @@ class DataViewModel(
         val hasWeights: Boolean,
         val hasAppointments: Boolean,
         val hasTreatments: Boolean,
-        val hasDiagnoses: Boolean,
+        val hasImportantDates: Boolean,
         val hasHba1c: Boolean
     ) {
         companion object {
@@ -76,21 +78,21 @@ class DataViewModel(
                 hasWeights = false,
                 hasAppointments = false,
                 hasTreatments = false,
-                hasDiagnoses = false,
+                hasImportantDates = false,
                 hasHba1c = false
             )
         }
     }
 
     val dataAvailability: StateFlow<DataAvailability> = combine(
-        weights, hba1cEntries, appointments, treatments, diagnosis
+        weights, hba1cEntries, appointments, treatments, importantDates
     ) { w, h, a, t, d ->
         DataAvailability(
             hasAnyData = w.isNotEmpty() || h.isNotEmpty() || a.isNotEmpty() || t.isNotEmpty() || d.isNotEmpty(),
             hasWeights = w.isNotEmpty(),
             hasAppointments = a.isNotEmpty(),
             hasTreatments = t.isNotEmpty(),
-            hasDiagnoses = d.isNotEmpty(),
+            hasImportantDates = d.isNotEmpty(),
             hasHba1c = h.isNotEmpty()
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DataAvailability.EMPTY)
@@ -98,7 +100,7 @@ class DataViewModel(
     // Get recent and upcoming data or plot data
     // HBA1C
     val recentHba1c: StateFlow<List<HBA1CEntry>> =
-        repository.getRecentHba1cFlow()
+        repository.getRecentHba1c()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun getHba1cPlotData(minDate: LocalDate, maxDate: LocalDate): Flow<List<PlotPoint>> =
@@ -106,7 +108,7 @@ class DataViewModel(
 
     // Weights
     val recentWeights: StateFlow<List<WeightEntry>> =
-        repository.getRecentWeightsFlow()
+        repository.getRecentWeights()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun getWeightPlotData(minDate: LocalDate, maxDate: LocalDate): Flow<List<PlotPoint>> =
@@ -147,9 +149,9 @@ class DataViewModel(
         }
     }
 
-    fun addDiagnosisDate(diagnosisDate: DiagnosisDate) {
+    fun addImportantDate(importantDate: ImportantDate) {
         viewModelScope.launch {
-            repository.insertDiagnosisDate(diagnosisDate)
+            repository.insertImportantDate(importantDate)
         }
     }
 
@@ -158,23 +160,43 @@ class DataViewModel(
         viewModelScope.launch {
             when (entry.addableType) {
                 AddableType.WEIGHT -> repository.updateWeight(
-                    (entry.toEntity() as WeightEntry).copy(isArchived = archived)
+                    (entry.toEntity() as WeightEntry).copy(
+                        isArchived = archived,
+                        updatedAt = LocalDate.now()
+                    )
+
                 )
 
                 AddableType.HBA1C -> repository.updateHBA1C(
-                    (entry.toEntity() as HBA1CEntry).copy(isArchived = archived)
+                    (entry.toEntity() as HBA1CEntry).copy(
+                        isArchived = archived,
+                        updatedAt = LocalDate.now()
+                    )
+
                 )
 
                 AddableType.APPOINTMENT -> repository.updateAppointment(
-                    (entry.toEntity() as Appointment).copy(isArchived = archived)
+                    (entry.toEntity() as Appointment).copy(
+                        isArchived = archived,
+                        updatedAt = LocalDate.now()
+                    )
+
                 )
 
                 AddableType.TREATMENT -> repository.updateTreatment(
-                    (entry.toEntity() as Treatment).copy(isArchived = archived)
+                    (entry.toEntity() as Treatment).copy(
+                        isArchived = archived,
+                        updatedAt = LocalDate.now()
+                    )
+
                 )
 
-                AddableType.DIAGNOSIS -> repository.updateDiagnosisDate(
-                    (entry.toEntity() as DiagnosisDate).copy(isArchived = archived)
+                AddableType.IMPORTANT_DATE -> repository.updateImportantDate(
+                    (entry.toEntity() as ImportantDate).copy(
+                        isArchived = archived,
+                        updatedAt = LocalDate.now()
+                    )
+
                 )
             }
         }
@@ -187,7 +209,7 @@ class DataViewModel(
             AddableType.HBA1C -> repository.deleteHba1c(entry.id)
             AddableType.APPOINTMENT -> repository.deleteAppointment(entry.id)
             AddableType.TREATMENT -> repository.deleteTreatment(entry.id)
-            AddableType.DIAGNOSIS -> repository.deleteDiagnosis(entry.id)
+            AddableType.IMPORTANT_DATE -> repository.deleteImportantDate(entry.id)
         }
     }
 
@@ -198,14 +220,27 @@ class DataViewModel(
             AddableType.HBA1C -> repository.updateHBA1C(entry.toEntity() as HBA1CEntry)
             AddableType.APPOINTMENT -> repository.updateAppointment(entry.toEntity() as Appointment)
             AddableType.TREATMENT -> repository.updateTreatment(entry.toEntity() as Treatment)
-            AddableType.DIAGNOSIS -> repository.updateDiagnosisDate(entry.toEntity() as DiagnosisDate)
+            AddableType.IMPORTANT_DATE -> repository.updateImportantDate(entry.toEntity() as ImportantDate)
         }
     }
 
 
-    fun clearDatabase() = viewModelScope.launch {
+    fun clearDatabase(context: Context) = viewModelScope.launch {
+        val workManager = WorkManager.getInstance(context)
+        val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+
         withContext(Dispatchers.IO) {
             repository.clearAllDataAndReset()
+
+            // cancel all reminder workers
+            workManager.cancelAllWorkByTag("treatments")
+            workManager.cancelAllWorkByTag("appointments")
+
+            // Reset user's reminders preferences
+            prefs.edit {
+                putBoolean("appointment_reminder", false)
+                putBoolean("expiration_reminder", false)
+            }
         }
     }
 
@@ -219,6 +254,8 @@ class DataViewModel(
         abstract val isArchived: Boolean
         abstract val createdAt: LocalDate
 
+        abstract val updatedAt: LocalDate
+
         data class AppointmentEntry(
             override val id: Int,
             override val date: LocalDate,
@@ -228,17 +265,19 @@ class DataViewModel(
             val notes: String?,
             override val icon: Int,
             override val isArchived: Boolean,
-            override val createdAt: LocalDate
+            override val createdAt: LocalDate,
+            override val updatedAt: LocalDate
         ) : MixedDbEntry()
 
-        data class DiagnosisEntry(
+        data class ImportantDateEntry(
             override val id: Int,
             override val date: LocalDate,
-            override val addableType: AddableType = AddableType.DIAGNOSIS,
-            val diagnosis: String,
+            override val addableType: AddableType = AddableType.IMPORTANT_DATE,
+            val importantDate: String,
             override val icon: Int,
             override val isArchived: Boolean,
-            override val createdAt: LocalDate
+            override val createdAt: LocalDate,
+            override val updatedAt: LocalDate
         ) : MixedDbEntry()
 
         data class Hba1cEntry(
@@ -248,7 +287,8 @@ class DataViewModel(
             val value: Float,
             override val icon: Int,
             override val isArchived: Boolean,
-            override val createdAt: LocalDate
+            override val createdAt: LocalDate,
+            override val updatedAt: LocalDate
         ) : MixedDbEntry()
 
         data class TreatmentEntry(
@@ -259,7 +299,8 @@ class DataViewModel(
             val treatmentType: TreatmentType,
             override val icon: Int,
             override val isArchived: Boolean,
-            override val createdAt: LocalDate
+            override val createdAt: LocalDate,
+            override val updatedAt: LocalDate
         ) : MixedDbEntry()
 
         data class WeightEntry(
@@ -269,7 +310,8 @@ class DataViewModel(
             val value: Float,
             override val icon: Int,
             override val isArchived: Boolean,
-            override val createdAt: LocalDate
+            override val createdAt: LocalDate,
+            override val updatedAt: LocalDate
         ) : MixedDbEntry()
     }
 
@@ -299,14 +341,14 @@ class DataViewModel(
                 null -> R.drawable.medication_icon_vector
             }
 
-            AddableType.DIAGNOSIS -> R.drawable.important_date_icon_vector
+            AddableType.IMPORTANT_DATE -> R.drawable.important_date_icon_vector
         }
     }
 
 
     val allMixedEntries: Flow<List<MixedDbEntry>> = combine(
         appointments,
-        diagnosis,
+        importantDates,
         hba1cEntries,
         treatments,
         weights
@@ -325,20 +367,22 @@ class DataViewModel(
                             appointmentType = it.type
                         ),
                         isArchived = it.isArchived,
-                        createdAt = it.createdAt
+                        createdAt = it.createdAt,
+                        updatedAt = it.updatedAt
                     )
                 )
             }
 
             diagnosis.forEach {
                 add(
-                    MixedDbEntry.DiagnosisEntry(
+                    MixedDbEntry.ImportantDateEntry(
                         id = it.id,
                         date = it.date,
-                        diagnosis = it.diagnosis,
-                        icon = getIconForMixedEntry(AddableType.DIAGNOSIS),
+                        importantDate = it.importantDate,
+                        icon = getIconForMixedEntry(AddableType.IMPORTANT_DATE),
                         isArchived = it.isArchived,
-                        createdAt = it.createdAt
+                        createdAt = it.createdAt,
+                        updatedAt = it.updatedAt
                     )
                 )
             }
@@ -351,7 +395,8 @@ class DataViewModel(
                         value = it.value,
                         icon = getIconForMixedEntry(AddableType.HBA1C),
                         isArchived = it.isArchived,
-                        createdAt = it.createdAt
+                        createdAt = it.createdAt,
+                        updatedAt = it.updatedAt
                     )
                 )
             }
@@ -365,7 +410,8 @@ class DataViewModel(
                         treatmentType = it.type,
                         icon = getIconForMixedEntry(AddableType.TREATMENT, treatmentType = it.type),
                         isArchived = it.isArchived,
-                        createdAt = it.createdAt
+                        createdAt = it.createdAt,
+                        updatedAt = it.updatedAt
                     )
                 )
             }
@@ -378,7 +424,8 @@ class DataViewModel(
                         value = it.value,
                         icon = getIconForMixedEntry(AddableType.WEIGHT),
                         isArchived = it.isArchived,
-                        createdAt = it.createdAt
+                        createdAt = it.createdAt,
+                        updatedAt = it.updatedAt
                     )
                 )
             }
@@ -412,7 +459,7 @@ class DataViewModel(
             hba1c = hba1cEntries.value,
             appointments = appointments.value,
             treatments = treatments.value,
-            diagnosisDates = diagnosis.value
+            importantDates = importantDates.value
         )
 
         return gson.toJson(exportData)
@@ -428,19 +475,19 @@ class DataViewModel(
 
         viewModelScope.launch {
             importedData.weights.forEach { weight ->
-                repository.insertWeight(weight.copy(id = 0)) // Reset IDs to have them auto incremented by Room to prevent app crashes
+                repository.insertWeight(weight.copy()) // Reset IDs to have them auto incremented by Room to prevent app crashes
             }
             importedData.hba1c.forEach { hba1c ->
-                repository.insertHba1c(hba1c.copy(id = 0))
+                repository.insertHba1c(hba1c.copy())
             }
             importedData.appointments.forEach { appointment ->
-                repository.insertAppointment(appointment.copy(id = 0))
+                repository.insertAppointment(appointment.copy())
             }
             importedData.treatments.forEach { treatment ->
-                repository.insertTreatment(treatment.copy(id = 0))
+                repository.insertTreatment(treatment.copy())
             }
-            importedData.diagnosisDates.forEach { diagnosis ->
-                repository.insertDiagnosisDate(diagnosis.copy(id = 0))
+            importedData.importantDates.forEach { diagnosis ->
+                repository.insertImportantDate(diagnosis.copy())
             }
         }
     }

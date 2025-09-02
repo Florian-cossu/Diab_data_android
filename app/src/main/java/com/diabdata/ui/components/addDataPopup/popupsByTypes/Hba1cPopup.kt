@@ -47,9 +47,10 @@ fun Hba1cPopup(
                 dataViewModel.addHba1c(
                     HBA1CEntry(
                         date = selectedDate,
-                        value = value,
+                        createdAt = today,
                         isArchived = false,
-                        createdAt = today
+                        value = value,
+                        updatedAt = today
                     )
                 )
             }

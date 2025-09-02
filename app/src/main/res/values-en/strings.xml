@@ -16,7 +16,7 @@
     <string name="addable_appointment">Appointment</string>
     <string name="addable_treatment">Medication</string>
     <string name="addable_treatment_scan">Scan a code</string>
-    <string name="addable_diagnosis">Diagnosis date</string>
+    <string name="addable_important_date">Important date</string>
     <string name="important_dates_card_section_heading">Important dates</string>
     <string name="latest_measures_card_section_heading">Recent readings</string>
     <string name="upcoming_appointment_card_section_heading">Upcoming appointments</string>
@@ -77,7 +77,7 @@
     </plurals>
 
     <string name="today">Today</string>
-    <string name="diagnosed_on_text">Diagnosed on %1$s</string>
+    <string name="important_date_on_text">On %1$s</string>
     <string name="expires_on_text">Expires on %1$s</string>
     <string name="scheduled_on_date_text">Scheduled on %1$s</string>
     <string name="hba1c_on_date_text">HBA1C measured on %1$s</string>
@@ -88,11 +88,11 @@
     <string name="add_data_popup_date_field_placeholder">Select a date</string>
     <string name="add_data_popup_expiration_date_field_placeholder">Select expiration date</string>
     <string name="add_data_popup_doctor_field_placeholder">Doctor\'s name</string>
-    <string name="add_data_popup_diagnosis_field_placeholder">Diagnosed ailment</string>
+    <string name="add_data_popup_important_date_field_placeholder">Event</string>
     <string name="add_data_popup_invalid_weight_field_message">Invalid weight</string>
     <string name="add_data_popup_invalid_HBA1C_field_message">Invalid HBA1C</string>
-    <string name="add_data_popup_diagnosis_date_insertion_error">Error while adding diagnosis date</string>
-    <string name="add_data_popup_invalid_weigth_kg_input_hint">Weight must be between 0 and 600( kg)</string>
+    <string name="add_data_popup_important_date_insertion_error">Error while adding date</string>
+    <string name="add_data_popup_invalid_weight_kg_input_hint">Weight must be between 0 and 600( kg)</string>
     <string name="add_data_popup_invalid_HBA1C_input_hint">HBA1C must be between 0 and 15 (%)</string>
     <string name="add_data_popup_title">Add new %1$s</string>
     <string name="update_data_popup_title">Update %1$s entry</string>

@@ -2,8 +2,8 @@ package com.diabdata.data.converters
 
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.Appointment
-import com.diabdata.models.DiagnosisDate
 import com.diabdata.models.HBA1CEntry
+import com.diabdata.models.ImportantDate
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
 
@@ -14,41 +14,46 @@ fun DataViewModel.MixedDbEntry.toEntity(): Any = when (this) {
         date = date,
         doctor = doctor,
         type = type,
-        notes = notes,
+        createdAt = createdAt,
         isArchived = isArchived,
-        createdAt = createdAt
+        notes = notes,
+        updatedAt = updatedAt
     )
 
-    is DataViewModel.MixedDbEntry.DiagnosisEntry -> DiagnosisDate(
+    is DataViewModel.MixedDbEntry.ImportantDateEntry -> ImportantDate(
         id = id,
         date = date,
-        diagnosis = diagnosis,
+        createdAt = createdAt,
         isArchived = isArchived,
-        createdAt = createdAt
+        importantDate = importantDate,
+        updatedAt = updatedAt
     )
 
     is DataViewModel.MixedDbEntry.Hba1cEntry -> HBA1CEntry(
         id = id,
         date = date,
-        value = value,
+        createdAt = createdAt,
         isArchived = isArchived,
-        createdAt = createdAt
+        value = value,
+        updatedAt = updatedAt
     )
 
     is DataViewModel.MixedDbEntry.TreatmentEntry -> Treatment(
         id = id,
         expirationDate = date,
         name = name,
-        type = treatmentType,
+        createdAt = createdAt,
         isArchived = isArchived,
-        createdAt = createdAt
+        type = treatmentType,
+        updatedAt = updatedAt
     )
 
     is DataViewModel.MixedDbEntry.WeightEntry -> WeightEntry(
         id = id,
         date = date,
-        value = value,
+        createdAt = createdAt,
         isArchived = isArchived,
-        createdAt = createdAt
+        value = value,
+        updatedAt = updatedAt
     )
 }

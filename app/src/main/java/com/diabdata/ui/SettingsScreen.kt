@@ -310,7 +310,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
             confirmButton = {
                 TextButton(
                     onClick = {
-                        dataViewModel.clearDatabase()
+                        dataViewModel.clearDatabase(context)
                         showConfirmDialog = false
                     }) {
                     Text(confirmButtonText, color = MaterialTheme.colorScheme.error)
@@ -335,22 +335,15 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     color = MaterialTheme.colorScheme.primary
                 )
             },
-            title = { Text("Updates - 01/09/2025") },
+            title = { Text("Updates - 02/09/2025") },
             text = {
                 LazyColumn {
-                    item { Text("- Homescreen") }
-                    item { Text("\t• Added conditional formatting for HBA1C") }
-                    item { Text("\t• Created custom icon sets for important dates and added them where relevant") }
-                    item { Text("\t• Fixed typo in latestMeasurements to display even if only one type of data is available") }
-                    item { Text("\t• Cleaned up and reorganised add data popup") }
-                    item { Text("- Graph component") }
-                    item { Text("\t• Added date filtering options and dateRange picker") }
-                    item { Text("\t• Added show/hide trend line button") }
-                    item { Text("\t• Added point labels to see values") }
+                    item { Text("- Refacto") }
+                    item { Text("\t• Refactored Diagnosis and renamed it into important date") }
+                    item { Text("- Data") }
+                    item { Text("\t• Added new updated at Column") }
                     item { Text("- Settings screen") }
-                    item { Text("\t• Added toggles to dis/enable notifications") }
-                    item { Text("\t• Added workers for notifications") }
-                    item { Text("\t• Display next reminder scheduled in toggle") }
+                    item { Text("\t• Updated delete all data function to reset user preferences about reminders and to unregisters all reminder workers") }
                 }
             },
             confirmButton = {
