@@ -2,6 +2,7 @@ package com.diabdata.ui.components.addDataPopup.popupsByTypes
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -68,7 +69,8 @@ fun Hba1cPopup(
             onValueChange = { hba1cText = it },
             label = { Text(stringResource(R.string.add_data_popup_HBA1C_field_placeholder)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.small
         )
     }
 }

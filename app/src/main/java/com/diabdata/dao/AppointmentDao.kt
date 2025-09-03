@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.diabdata.models.Appointment
+import com.diabdata.models.classes.AppointmentSummary
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -27,4 +28,10 @@ interface AppointmentDao {
 
     @Query("SELECT * FROM appointments WHERE date >= :today AND isArchived = 0 ORDER BY date ASC")
     fun getUpcomingAppointmentsFlow(today: LocalDate): Flow<List<Appointment>>
+
+    @Query("SELECT date, doctor, type, notes FROM appointments WHERE (date >= :minDate AND date <= :maxDate) AND isArchived = 0 ORDER BY date ASC")
+    fun getAppointmentsInRange(
+        minDate: LocalDate,
+        maxDate: LocalDate
+    ): Flow<List<AppointmentSummary>>
 }

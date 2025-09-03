@@ -17,7 +17,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = getVersionCode()
-        versionName = "3.4"
+        versionName = "3.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -102,10 +102,14 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.compose.material3.material3)
+    implementation(libs.okhttp)
+
 
     // Use ksp for annotation processing
     ksp(libs.androidx.room.compiler)
     implementation(libs.gson)
+    implementation(libs.kotlinx.serialization.json)
+
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
@@ -128,4 +132,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // LLM
+    implementation(libs.tasks.genai)
 }

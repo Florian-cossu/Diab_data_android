@@ -10,9 +10,10 @@ import com.diabdata.models.Appointment
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.ImportantDate
 import com.diabdata.models.MedicationEntity
-import com.diabdata.models.PlotPoint
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
+import com.diabdata.models.classes.AppointmentSummary
+import com.diabdata.models.classes.PlotPoint
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -95,6 +96,13 @@ class DataRepository(
 
     /** Delete an Appointment record by Id**/
     suspend fun deleteAppointment(id: Int) = appointmentDao.deleteById(id)
+
+    /** Get list of appointments for summary **/
+    fun getAppointmentsInRange(
+        minDate: LocalDate,
+        maxDate: LocalDate
+    ): Flow<List<AppointmentSummary>> =
+        appointmentDao.getAppointmentsInRange(minDate, maxDate)
 
     // ----------------
     // Treatment

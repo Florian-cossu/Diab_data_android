@@ -1,6 +1,7 @@
 package com.diabdata.ui.components.addDataPopup.popupsByTypes
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -72,21 +73,23 @@ fun AppointmentPopup(
             options = AppointmentType.entries,
             selected = selectedAppointmentType,
             displayName = { it.displayName(context) },
-            onSelectedChange = { selectedAppointmentType = it }
+            onSelectedChange = { selectedAppointmentType = it },
         )
 
         OutlinedTextField(
             value = doctor,
             onValueChange = { doctor = it },
             label = { Text(stringResource(R.string.add_data_popup_doctor_field_placeholder)) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.small
         )
 
         OutlinedTextField(
             value = notes,
             onValueChange = { notes = it },
             label = { Text(stringResource(R.string.upcoming_appointment_card_notes_header)) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.small
         )
     }
 }

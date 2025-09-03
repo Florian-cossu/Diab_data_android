@@ -1,4 +1,4 @@
-package com.diabdata.models
+package com.diabdata.models.classes
 
 import java.time.LocalDate
 

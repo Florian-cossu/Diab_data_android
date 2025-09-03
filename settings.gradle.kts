@@ -16,7 +16,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://androidx.dev/maven2") } // Add this line
+        maven { url = uri("https://androidx.dev/maven2") }
     }
 }
 

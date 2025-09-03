@@ -1,6 +1,7 @@
 package com.diabdata.ui.components.addDataPopup.popupsByTypes
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -61,7 +62,8 @@ fun ImportantDatePopup(
             value = diagnosis,
             onValueChange = { diagnosis = it },
             label = { Text(stringResource(R.string.add_data_popup_important_date_field_placeholder)) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.small
         )
     }
 }

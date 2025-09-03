@@ -89,7 +89,10 @@ fun BasePopupLayout(
 
                 Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
                     TextButton(onClick = onDismiss) {
-                        Text(stringResource(R.string.cancel_button_text))
+                        Text(
+                            stringResource(R.string.cancel_button_text),
+                            color = MaterialTheme.colorScheme.error
+                        )
                     }
                     Spacer(Modifier.width(8.dp))
                     Button(
