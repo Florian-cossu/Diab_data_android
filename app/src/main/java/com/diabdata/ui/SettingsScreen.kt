@@ -343,6 +343,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     item { Text("\t• Refactored Homescreen components to include preview") }
                     item { Text("\t• Refactored homescreen cards to include icon in colored circle") }
                     item { Text("\t• Refactored Addable type enum to include icons and colors") }
+                    item { Text("\t• Rewrote add data popups to also allow updating existing data") }
                     item { Text("- Feature scrapping") }
                     item { Text("\t• Scrapped AI integrations") }
                 }

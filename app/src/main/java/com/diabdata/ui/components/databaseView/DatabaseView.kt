@@ -220,18 +220,13 @@ fun DatabaseEditionView(
                 }
             }
         }
-        val scope = rememberCoroutineScope()
+        rememberCoroutineScope()
 
         selectedEntry?.let { entry ->
             EditEntryDialog(
                 entry = entry,
                 onDismiss = { selectedEntry = null },
-                onSave = { updated ->
-                    scope.launch {
-                        dataViewModel.updateEntry(updated)
-                    }
-                    selectedEntry = null
-                }
+                dataViewModel = dataViewModel
             )
         }
     }

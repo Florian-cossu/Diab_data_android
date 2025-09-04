@@ -1,6 +1,8 @@
 package com.diabdata.ui.components.addDataPopup
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +20,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -63,7 +66,12 @@ fun BasePopupLayout(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.4f)),
+            .background(Color.Black.copy(alpha = 0.4f))
+            .clickable(
+                onClick = onDismiss,
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ),
         contentAlignment = Alignment.Center
     ) {
         Surface(
@@ -105,12 +113,4 @@ fun BasePopupLayout(
             }
         }
     }
-}
-
-fun getPopupTitleIcon(type: AddableType): Int = when (type) {
-    AddableType.APPOINTMENT -> R.drawable.event_add_icon_vector
-    AddableType.TREATMENT -> R.drawable.medication_add_icon_vector
-    AddableType.WEIGHT -> R.drawable.weight_add_icon_vector
-    AddableType.HBA1C -> R.drawable.hba1c_add_icon_vector
-    AddableType.IMPORTANT_DATE -> R.drawable.important_date_add_icon_vector
 }

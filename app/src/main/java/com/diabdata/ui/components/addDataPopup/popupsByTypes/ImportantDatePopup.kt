@@ -8,47 +8,60 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
+import com.diabdata.data.converters.toEntity
 import com.diabdata.models.AddableType
 import com.diabdata.models.ImportantDate
 import com.diabdata.ui.components.addDataPopup.BasePopupLayout
-import com.diabdata.ui.components.addDataPopup.getPopupTitleIcon
 import com.diabdata.ui.components.date_components.DateSelector
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @Composable
 fun ImportantDatePopup(
     onDismiss: () -> Unit,
-    dataViewModel: DataViewModel
+    dataViewModel: DataViewModel,
+    toUpdate: DataViewModel.MixedDbEntry.ImportantDateEntry? = null
 ) {
     val context = LocalContext.current
     val today = LocalDate.now()
+    val scope = rememberCoroutineScope()
 
-    var diagnosis by remember { mutableStateOf("") }
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var diagnosis by remember { mutableStateOf(toUpdate?.importantDate ?: "") }
+    var selectedDate by remember { mutableStateOf(toUpdate?.date ?: LocalDate.now()) }
 
     BasePopupLayout(
         title = context.getString(
-            R.string.add_data_popup_title,
+            if (toUpdate == null) R.string.add_data_popup_title else R.string.update_data_popup_title,
             AddableType.IMPORTANT_DATE.getDisplayName(context)
         ),
-        icon = getPopupTitleIcon(AddableType.IMPORTANT_DATE),
+        icon = AddableType.IMPORTANT_DATE.iconRes,
         onDismiss = onDismiss,
         onConfirm = {
-            dataViewModel.addImportantDate(
-                ImportantDate(
-                    date = selectedDate,
-                    createdAt = today,
-                    isArchived = false,
-                    importantDate = diagnosis,
-                    updatedAt = today
-                )
+            val entry = DataViewModel.MixedDbEntry.ImportantDateEntry(
+                id = toUpdate?.id ?: 0,
+                date = selectedDate,
+                createdAt = toUpdate?.createdAt ?: today,
+                isArchived = toUpdate?.isArchived ?: false,
+                importantDate = diagnosis,
+                updatedAt = today,
+                addableType = AddableType.IMPORTANT_DATE,
+                icon = AddableType.IMPORTANT_DATE.iconRes
             )
+
+            if (toUpdate == null) {
+                dataViewModel.addImportantDate(entry.toEntity() as ImportantDate)
+            } else {
+                scope.launch {
+                    dataViewModel.updateEntry(entry)
+                }
+            }
             onDismiss()
         },
         isConfirmEnabled = diagnosis.isNotBlank()

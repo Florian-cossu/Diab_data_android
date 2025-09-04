@@ -8,56 +8,72 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
+import com.diabdata.data.converters.toEntity
 import com.diabdata.models.AddableType
 import com.diabdata.models.Treatment
 import com.diabdata.models.TreatmentType
 import com.diabdata.ui.components.EnumDropdown
 import com.diabdata.ui.components.addDataPopup.BasePopupLayout
-import com.diabdata.ui.components.addDataPopup.getPopupTitleIcon
 import com.diabdata.ui.components.date_components.DateSelector
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @Composable
 fun TreatmentPopup(
     onDismiss: () -> Unit,
     dataViewModel: DataViewModel,
-    prefilled: Treatment? = null
+    prefilled: Treatment? = null,
+    toUpdate: DataViewModel.MixedDbEntry.TreatmentEntry? = null
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val today = LocalDate.now()
 
-    var name by remember { mutableStateOf(prefilled?.name ?: "") }
-    var selectedDate by remember { mutableStateOf(prefilled?.expirationDate ?: LocalDate.now()) }
+    var name by remember { mutableStateOf(toUpdate?.name ?: prefilled?.name ?: "") }
+    var selectedDate by remember {
+        mutableStateOf(
+            toUpdate?.date ?: prefilled?.expirationDate ?: LocalDate.now()
+        )
+    }
     var selectedTreatmentType by remember {
         mutableStateOf(
-            prefilled?.type ?: TreatmentType.FAST_ACTING_INSULIN_VIAL
+            toUpdate?.treatmentType ?: prefilled?.type ?: TreatmentType.FAST_ACTING_INSULIN_VIAL
         )
     }
 
     BasePopupLayout(
         title = context.getString(
-            R.string.add_data_popup_title,
+            if (toUpdate == null) R.string.add_data_popup_title else R.string.update_data_popup_title,
             AddableType.TREATMENT.getDisplayName(context)
         ),
-        icon = getPopupTitleIcon(AddableType.TREATMENT),
+        icon = AddableType.TREATMENT.iconRes,
         onDismiss = onDismiss,
         onConfirm = {
-            dataViewModel.addTreatment(
-                Treatment(
-                    expirationDate = selectedDate,
-                    name = name,
-                    createdAt = today,
-                    isArchived = false,
-                    type = selectedTreatmentType,
-                    updatedAt = today
-                )
+            val treatmentEntry = DataViewModel.MixedDbEntry.TreatmentEntry(
+                id = toUpdate?.id ?: 0,
+                date = selectedDate,
+                addableType = AddableType.TREATMENT,
+                name = name,
+                treatmentType = selectedTreatmentType,
+                icon = AddableType.TREATMENT.iconRes,
+                isArchived = toUpdate?.isArchived ?: false,
+                createdAt = toUpdate?.createdAt ?: today,
+                updatedAt = today
             )
+            if (toUpdate == null) {
+                dataViewModel.addTreatment(treatmentEntry.toEntity() as Treatment)
+            } else {
+                scope.launch {
+                    dataViewModel.updateEntry(treatmentEntry)
+                }
+            }
             onDismiss()
         },
         isConfirmEnabled = name.isNotBlank()

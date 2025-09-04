@@ -20,8 +20,6 @@ import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.models.TreatmentType
 import com.diabdata.models.WeightEntry
-import com.diabdata.models.classes.AppointmentSummary
-import com.diabdata.models.classes.HealthSummary
 import com.diabdata.models.classes.PlotPoint
 import com.diabdata.utils.AppointmentTypeAdapter
 import com.diabdata.utils.LocalDateAdapter
@@ -121,27 +119,10 @@ class DataViewModel(
         repository.getUpcomingAppointments()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    fun getAppointmentsInRange(
-        minDate: LocalDate,
-        maxDate: LocalDate
-    ): Flow<List<AppointmentSummary>> =
-        repository.getAppointmentsInRange(minDate, maxDate)
-
     // Expiration dates
     val upcomingExpirationDates: StateFlow<List<Treatment>> =
         repository.getUpcomingExpDates(LocalDate.now())
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    // Health summary
-    fun getHealthSummary(minDate: LocalDate, maxDate: LocalDate): Flow<HealthSummary> =
-        combine(
-            getWeightPlotData(minDate, maxDate),
-            getHba1cPlotData(minDate, maxDate),
-            getAppointmentsInRange(minDate, maxDate)
-        ) { weight, hba1c, appointments ->
-            HealthSummary(weight, hba1c, appointments)
-        }
-
 
     // Insertion functions
     fun addWeight(weightEntry: WeightEntry) {
@@ -242,7 +223,6 @@ class DataViewModel(
             AddableType.IMPORTANT_DATE -> repository.updateImportantDate(entry.toEntity() as ImportantDate)
         }
     }
-
 
     fun clearDatabase(context: Context) = viewModelScope.launch {
         val workManager = WorkManager.getInstance(context)
