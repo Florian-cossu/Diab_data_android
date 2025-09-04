@@ -31,27 +31,28 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
+import com.diabdata.models.AddableType
+import com.diabdata.models.Appointment
+import com.diabdata.models.AppointmentType
+import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.utils.SvgIcon
+import com.diabdata.utils.formatLocalDate
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 @Composable
-fun UpcomingAppointmentsList(
-    viewModel: DataViewModel
+fun UpcomingAppointmentsListContent(
+    upcomingAppointments: List<Appointment>
 ) {
-    val upcomingAppointments by viewModel.upcomingAppointment.collectAsState()
-
     if (upcomingAppointments.isEmpty()) return
 
     val context = LocalContext.current
-
-    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
     val primaryColor = MaterialTheme.colorScheme.primary
     val today = LocalDate.now()
 
@@ -115,20 +116,13 @@ fun UpcomingAppointmentsList(
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val iconResId = when (appointment.type.name) {
-                        "APPOINTMENT" -> R.drawable.stethoscope_icon_vector
-                        "ANNUAL_CHECKUP" -> R.drawable.recurring_event_icon_vector
-                        else -> R.drawable.event_icon_vector
-                    }
-
-                    SvgIcon(
-                        resId = iconResId,
-                        modifier = Modifier.size(26.dp),
-                        color = primaryColor
+                    ColoredIconCircle(
+                        iconRes = appointment.type.iconRes,
+                        baseColor = AddableType.APPOINTMENT.baseColor,
+                        size = 40.dp,
+                        iconSize = 25.dp
                     )
-
                     Spacer(Modifier.width(16.dp))
-
                     Column(
                         modifier = Modifier.weight(1f)
                     ) {
@@ -139,16 +133,16 @@ fun UpcomingAppointmentsList(
                                 fontWeight = FontWeight.Bold
                             )
                         )
-
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             if (!appointment.notes.isNullOrBlank()) {
                                 var showNotesDialog by remember { mutableStateOf(false) }
-
                                 IconButton(
-                                    onClick = { showNotesDialog = true },
+                                    onClick = {
+                                        showNotesDialog = true
+                                    },
                                     modifier = Modifier.size(22.dp),
                                     colors = IconButtonDefaults.iconButtonColors(
                                         containerColor = Color.Transparent,
@@ -185,28 +179,24 @@ fun UpcomingAppointmentsList(
                                             )
                                         },
                                         confirmButton = {
-                                            TextButton(onClick = { showNotesDialog = false }) {
-                                                Text(text = stringResource(R.string.confirm_button_text))
-                                            }
-                                        }
-                                    )
+                                            TextButton(onClick = {
+                                                showNotesDialog = false
+                                            }) { Text(text = stringResource(R.string.confirm_button_text)) }
+                                        })
                                 }
                             }
 
                             Text(
                                 text = stringResource(
                                     R.string.scheduled_on_date_text,
-                                    appointment.date.format(formatter)
+                                    formatLocalDate(appointment.date)
                                 ),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         SvgIcon(
                             resId = R.drawable.hourglass_icon_vector,
                             modifier = Modifier.size(15.dp),
@@ -214,17 +204,54 @@ fun UpcomingAppointmentsList(
                         )
                         Spacer(Modifier.width(4.dp))
                         Text(
-                            text = remainingText,
+                            text =
+                                remainingText,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
             }
-
             if (index != upcomingAppointments.size - 1) {
                 Spacer(modifier = Modifier.height(3.dp))
             }
         }
+    }
+}
+
+@Composable
+fun UpcomingAppointmentsList(viewModel: DataViewModel) {
+    val upcomingAppointments by viewModel.upcomingAppointment.collectAsState()
+    UpcomingAppointmentsListContent(upcomingAppointments)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewUpcomingAppointmentsList() {
+    val sampleAppointments = listOf(
+        Appointment(
+            doctor = "Dr. Dupont",
+            type = AppointmentType.APPOINTMENT,
+            date = LocalDate.now().plusDays(5),
+            notes = "Rappel vaccin",
+            id = 1,
+            createdAt = LocalDate.of(2015, 3, 1),
+            isArchived = false,
+            updatedAt = LocalDate.of(2015, 4, 2),
+        ),
+        Appointment(
+            doctor = "Dr. Martin",
+            type = AppointmentType.ANNUAL_CHECKUP,
+            date = LocalDate.now().plusMonths(2),
+            notes = null,
+            id = 2,
+            createdAt = LocalDate.of(2015, 3, 1),
+            isArchived = false,
+            updatedAt = LocalDate.of(2015, 4, 2),
+        )
+    )
+
+    MaterialTheme {
+        UpcomingAppointmentsListContent(upcomingAppointments = sampleAppointments)
     }
 }

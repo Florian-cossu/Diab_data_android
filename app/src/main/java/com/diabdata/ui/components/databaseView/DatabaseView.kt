@@ -71,6 +71,7 @@ import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
+import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.FlippableSelectionIcon
 import com.diabdata.utils.SvgIcon
 import com.diabdata.utils.getItemShape
@@ -184,7 +185,6 @@ fun DatabaseEditionView(
 
             Spacer(Modifier.height(8.dp))
 
-            // LISTE DES ENTRIES
             LazyColumn {
                 items(
                     items = filteredEntries,
@@ -358,7 +358,12 @@ fun EntryCardSwipeM3(
                 else MaterialTheme.colorScheme.primary
 
                 Box(contentAlignment = Alignment.Center) {
-                    SvgIcon(resId = entry.icon, modifier = Modifier.size(24.dp), color = color)
+                    ColoredIconCircle(
+                        iconRes = entry.icon,
+                        baseColor = if (entry.isArchived) color else entry.addableType.baseColor,
+                        size = 40.dp,
+                        iconSize = 25.dp
+                    )
                 }
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {

@@ -1,5 +1,6 @@
 package com.diabdata.ui.components.latestMeasurements.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,30 +23,37 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
+import com.diabdata.models.AddableType
+import com.diabdata.models.ImportantDate
+import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.utils.SvgIcon
+import com.diabdata.utils.formatLocalDate
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 @Composable
-fun ImportantDatesList(
-    viewModel: DataViewModel
-) {
-    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val today = LocalDate.now()
-
+fun ImportantDatesList(viewModel: DataViewModel) {
     val availability by viewModel.dataAvailability.collectAsState()
     val showSection = availability.hasImportantDates
 
     val diagnosisEntries by viewModel.importantDates.collectAsState(initial = emptyList())
 
-    if (!showSection) return
+    if (showSection) {
+        ImportantDatesListContent(diagnosisEntries)
+    }
+}
+
+@Composable
+fun ImportantDatesListContent(diagnosisEntries: List<ImportantDate>) {
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val today = LocalDate.now()
 
     Column(
         modifier = Modifier
@@ -68,15 +76,17 @@ fun ImportantDatesList(
             val elapsedText = when {
                 years == 0L && remainingMonths == 0L -> stringResource(R.string.today)
                 years == 0L -> pluralStringResource(
-                    R.plurals.months, remainingMonths.toInt(), remainingMonths
+                    R.plurals.months,
+                    remainingMonths.toInt(),
+                    remainingMonths
                 )
 
-                remainingMonths == 0L -> pluralStringResource(
-                    R.plurals.years, years.toInt(), years
-                )
-
+                remainingMonths == 0L -> pluralStringResource(R.plurals.years, years.toInt(), years)
                 else -> pluralStringResource(
-                    R.plurals.years_and_months, years.toInt(), years, remainingMonths
+                    R.plurals.years_and_months,
+                    years.toInt(),
+                    years,
+                    remainingMonths
                 )
             }
 
@@ -91,17 +101,16 @@ fun ImportantDatesList(
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
-                    SvgIcon(
-                        resId = R.drawable.important_date_icon_vector,
-                        modifier = Modifier.size(26.dp),
-                        color = primaryColor
+                    ColoredIconCircle(
+                        iconRes = AddableType.IMPORTANT_DATE.iconRes,
+                        baseColor = AddableType.IMPORTANT_DATE.baseColor,
+                        size = 40.dp,
+                        iconSize = 25.dp
                     )
+
                     Spacer(Modifier.width(16.dp))
 
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = diagnosis.importantDate,
                             style = MaterialTheme.typography.titleMedium.copy(
@@ -110,16 +119,15 @@ fun ImportantDatesList(
                         )
                         Text(
                             text = stringResource(
-                                R.string.important_date_on_text, diagnosis.date.format(formatter)
+                                R.string.important_date_on_text,
+                                formatLocalDate(diagnosis.date)
                             ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         SvgIcon(
                             resId = R.drawable.event_icon_vector,
                             modifier = Modifier.size(15.dp),
@@ -138,6 +146,39 @@ fun ImportantDatesList(
             if (index != diagnosisEntries.size - 1) {
                 Spacer(modifier = Modifier.height(3.dp))
             }
+        }
+    }
+}
+
+@Preview(
+    showBackground = true, locale = "en", showSystemUi = false,
+    wallpaper = Wallpapers.NONE,
+    uiMode = Configuration.UI_MODE_TYPE_NORMAL
+)
+@Composable
+fun ImportantDatesListPreview() {
+    val fakeData = listOf(
+        ImportantDate(
+            importantDate = "Diagnostic du diabète",
+            date = LocalDate.of(2015, 5, 12),
+            id = 1,
+            createdAt = LocalDate.of(2015, 3, 1),
+            isArchived = false,
+            updatedAt = LocalDate.of(2015, 4, 2),
+        ),
+        ImportantDate(
+            importantDate = "Pose de pompe à insuline",
+            date = LocalDate.of(2015, 5, 12),
+            id = 2,
+            createdAt = LocalDate.of(2015, 3, 1),
+            isArchived = false,
+            updatedAt = LocalDate.of(2015, 4, 2),
+        )
+    )
+
+    MaterialTheme {
+        Column {
+            ImportantDatesListContent(fakeData)
         }
     }
 }

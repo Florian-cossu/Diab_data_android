@@ -340,7 +340,9 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
             text = {
                 LazyColumn {
                     item { Text("- Refacto") }
-                    item { Text("\t• Refactored Diagnosis and renamed it into important date") }
+                    item { Text("\t• Refactored Homescreen components to include preview") }
+                    item { Text("\t• Refactored homescreen cards to include icon in colored circle") }
+                    item { Text("\t• Refactored Addable type enum to include icons and colors") }
                     item { Text("- Feature scrapping") }
                     item { Text("\t• Scrapped AI integrations") }
                 }
@@ -405,19 +407,12 @@ fun SettingsButton(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (icon == R.drawable.ai_gradient_icon_vector) {
-                    SvgIcon(
-                        resId = icon,
-                        modifier = Modifier.size(25.dp)
-                    )
-                } else {
-                    SvgIcon(
-                        resId = icon,
-                        modifier = Modifier.size(25.dp),
-                        color = if (isDestructive) MaterialTheme.colorScheme.error
-                        else MaterialTheme.colorScheme.onSurface
-                    )
-                }
+                SvgIcon(
+                    resId = icon,
+                    modifier = Modifier.size(25.dp),
+                    color = if (isDestructive) MaterialTheme.colorScheme.error
+                    else MaterialTheme.colorScheme.onSurface
+                )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text, style = MaterialTheme.typography.titleMedium
@@ -484,8 +479,8 @@ fun SettingsToggle(
                         ).show()
                     }
                 },
-                thumbContent = if (checked && icon != null) {
-                    {
+                thumbContent = {
+                    if (checked && icon != null) {
                         SvgIcon(
                             resId = icon,
                             contentDescription = null,
@@ -493,7 +488,8 @@ fun SettingsToggle(
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
-                } else null,
+                }
+
             )
         }
     }

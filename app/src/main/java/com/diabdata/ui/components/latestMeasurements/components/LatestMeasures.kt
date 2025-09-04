@@ -1,7 +1,5 @@
 package com.diabdata.ui.components.latestMeasurements.components
 
-import android.annotation.SuppressLint
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,60 +21,60 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
+import com.diabdata.models.AddableType
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.WeightEntry
+import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.utils.SvgIcon
+import com.diabdata.utils.formatLocalDate
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 data class MeasureCardData(
     val textColor: Color,
     val titleText: String,
     val dateText: String,
-    @get:DrawableRes val icon: Int,
+    val addableType: AddableType,
     val trendIcon: Int? = null
 )
 
-@SuppressLint("DefaultLocale")
 @Composable
-fun LatestMeasures(
-    viewModel: DataViewModel
+fun LatestMeasuresContent(
+    weightEntries: List<WeightEntry>,
+    hba1cEntries: List<HBA1CEntry>
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val today = LocalDate.now()
     val oneYearAgo = today.minusYears(1)
 
-    val weightEntries by viewModel.recentWeights.collectAsState()
-    val hba1cEntries by viewModel.recentHba1c.collectAsState()
-
     if (weightEntries.isEmpty() && hba1cEntries.isEmpty()) return
 
     val cards = buildList {
-        // ---- Weight ----
         weightEntries.maxByOrNull { it.date }?.let { latest ->
             add(
                 MeasureCardData(
                     textColor = primaryColor,
-                    titleText = String.format("%.2f kg", latest.value),
+                    titleText = String.format(Locale.getDefault(), "%.2f kg", latest.value),
                     dateText = stringResource(
                         R.string.weight_on_date_text,
-                        latest.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                        formatLocalDate(latest.date)
                     ),
-                    icon = R.drawable.weight_icon_vector,
+                    addableType = AddableType.WEIGHT,
                     trendIcon = computeTrendIcon(
                         entries = weightEntries,
                         oneYearAgo = oneYearAgo,
-                        valueExtractor = { it.value })
+                        valueExtractor = { it.value }
+                    )
                 )
             )
         }
 
-        // ---- HbA1c ----
         hba1cEntries.maxByOrNull { it.date }?.let { latest ->
             add(
                 MeasureCardData(
@@ -85,24 +83,23 @@ fun LatestMeasures(
                         latest.value >= 8.6 -> MaterialTheme.colorScheme.error
                         else -> primaryColor
                     },
-                    titleText = String.format("%.1f%%", latest.value),
+                    titleText = String.format(Locale.getDefault(), "%.1f%%", latest.value),
                     dateText = stringResource(
                         R.string.hba1c_on_date_text,
-                        latest.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                        formatLocalDate(latest.date)
                     ),
-                    icon = R.drawable.hba1c_icon_vector,
+                    addableType = AddableType.HBA1C,
                     trendIcon = computeTrendIcon(
                         entries = hba1cEntries,
                         oneYearAgo = oneYearAgo,
-                        valueExtractor = { it.value })
+                        valueExtractor = { it.value }
+                    )
                 )
             )
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Column(modifier = Modifier.fillMaxSize()) {
         Text(
             text = stringResource(R.string.latest_measures_card_section_heading),
             style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
@@ -120,17 +117,19 @@ fun LatestMeasures(
                     modifier = Modifier.padding(20.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    SvgIcon(
-                        resId = card.icon, modifier = Modifier.size(26.dp), color = card.textColor
+                    ColoredIconCircle(
+                        iconRes = card.addableType.iconRes,
+                        baseColor = if (card.textColor != primaryColor) card.textColor else card.addableType.baseColor,
+                        size = 40.dp,
+                        iconSize = 25.dp
                     )
                     Spacer(Modifier.width(16.dp))
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = card.titleText,
                             style = MaterialTheme.typography.titleMedium.copy(
-                                color = card.textColor, fontWeight = FontWeight.Bold
+                                color = card.textColor,
+                                fontWeight = FontWeight.Bold
                             )
                         )
                         Text(
@@ -148,10 +147,63 @@ fun LatestMeasures(
                     }
                 }
             }
-            if (index != cards.size - 1) {
-                Spacer(Modifier.height(3.dp))
-            }
+            if (index != cards.size - 1) Spacer(Modifier.height(3.dp))
         }
+    }
+}
+
+@Composable
+fun LatestMeasures(viewModel: DataViewModel) {
+    val weightEntries by viewModel.recentWeights.collectAsState()
+    val hba1cEntries by viewModel.recentHba1c.collectAsState()
+    LatestMeasuresContent(weightEntries, hba1cEntries)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewLatestMeasures() {
+    val sampleWeights = listOf(
+        WeightEntry(
+            date = LocalDate.now().minusDays(3),
+            value = 88.4f,
+            id = 1,
+            createdAt = LocalDate.of(2015, 3, 1),
+            isArchived = false,
+            updatedAt = LocalDate.of(2015, 4, 2),
+        ),
+        WeightEntry(
+            date = LocalDate.now().minusDays(10),
+            value = 83.7f,
+            id = 2,
+            createdAt = LocalDate.of(2015, 3, 1),
+            isArchived = false,
+            updatedAt = LocalDate.of(2015, 4, 2),
+        )
+    )
+    val sampleHba1c = listOf(
+        HBA1CEntry(
+            date = LocalDate.now().minusMonths(2),
+            value = 6.8f,
+            id = 3,
+            createdAt = LocalDate.of(2015, 3, 1),
+            isArchived = false,
+            updatedAt = LocalDate.of(2015, 4, 2),
+        ),
+        HBA1CEntry(
+            date = LocalDate.now().minusMonths(6),
+            value = 7.2f,
+            id = 4,
+            createdAt = LocalDate.of(2015, 3, 1),
+            isArchived = false,
+            updatedAt = LocalDate.of(2015, 4, 2),
+        )
+    )
+
+    MaterialTheme {
+        LatestMeasuresContent(
+            weightEntries = sampleWeights,
+            hba1cEntries = sampleHba1c
+        )
     }
 }
 
@@ -171,8 +223,8 @@ private fun <T> computeTrendIcon(
     if (lastYearEntries.size < 2) return null
 
     val sorted = lastYearEntries.sortedBy { dateExtractor(it) }
-    val firstValue = valueExtractor(sorted.first()).toDouble()
-    val lastValue = valueExtractor(sorted.last()).toDouble()
+    val firstValue = valueExtractor(sorted.first()).toFloat()
+    val lastValue = valueExtractor(sorted.last()).toFloat()
 
     return when {
         lastValue > firstValue -> R.drawable.trending_up_icon_vector
