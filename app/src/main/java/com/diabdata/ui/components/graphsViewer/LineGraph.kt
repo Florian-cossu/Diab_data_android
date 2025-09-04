@@ -1,5 +1,6 @@
 package com.diabdata.ui.components.graphsViewer
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
@@ -49,6 +52,7 @@ import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -116,7 +120,7 @@ fun LineGraph(
         margins = Insets(startDp = 0f, topDp = 8f, endDp = 0f, bottomDp = 0f)
     )
 
-    val pointValueFormatter: CartesianValueFormatter =
+    val pointValueFormatter =
         CartesianValueFormatter { _, value, _ ->
             "%.1f".format(Locale.getDefault(), value)
         }
@@ -199,4 +203,25 @@ fun LineGraph(
             )
         }
     }
+}
+
+@Preview(
+    showBackground = true,
+    wallpaper = Wallpapers.NONE,
+    uiMode = Configuration.UI_MODE_TYPE_NORMAL
+)
+@Composable
+fun ImportantDatesListPreview() {
+    val fakePoints: List<PlotPoint> =
+        listOf(
+            PlotPoint(value = 82.5f, date = LocalDate.of(2025, 4, 2)),
+            PlotPoint(value = 83f, date = LocalDate.of(2025, 5, 14)),
+            PlotPoint(value = 80f, date = LocalDate.of(2025, 6, 30)),
+            PlotPoint(value = 79.9f, date = LocalDate.of(2025, 7, 17))
+        )
+
+    LineGraph(
+        points = fakePoints,
+        label = "Poids"
+    )
 }

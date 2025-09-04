@@ -1,4 +1,4 @@
-package com.diabdata.ui
+package com.diabdata.ui.components.applicationSettings
 
 import android.content.Context
 import android.net.Uri

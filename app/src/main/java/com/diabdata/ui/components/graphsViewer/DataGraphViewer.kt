@@ -2,6 +2,7 @@ package com.diabdata.ui.components.graphsViewer
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -67,7 +68,7 @@ fun GraphViewer(
     val minDate = when (selectedIndex) {
         0 -> maxDate.minusMonths(1)
         1 -> maxDate.minusYears(1)
-        2 -> customDateRange?.first ?: maxDate.minusYears(5)
+        2 -> customDateRange?.first ?: maxDate.minusYears(2)
         else -> maxDate.minusYears(5)
     }
 
@@ -103,9 +104,10 @@ fun GraphViewer(
                     ToggleButton(
                         checked = selectedIndex == index,
                         onCheckedChange = { selectedIndex = index },
+                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
                         modifier = Modifier
                             .weight(0.8f)
-                            .height(48.dp)
+                            .height(40.dp)
                             .semantics { role = Role.RadioButton },
                         shapes =
                             when (index) {
@@ -133,7 +135,7 @@ fun GraphViewer(
                         ),
                         modifier = Modifier
                             .padding(start = 8.dp)
-                            .size(48.dp)
+                            .size(40.dp)
                             .aspectRatio(1f)
                     ) {
                         SvgIcon(
@@ -152,7 +154,7 @@ fun GraphViewer(
                     ),
                     modifier = Modifier
                         .padding(start = 8.dp)
-                        .size(48.dp)
+                        .size(40.dp)
                         .aspectRatio(1f)
                 ) {
                     SvgIcon(
