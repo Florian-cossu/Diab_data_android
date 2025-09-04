@@ -17,7 +17,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = getVersionCode()
-        versionName = "3.5"
+        versionName = "3.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -101,7 +101,6 @@ dependencies {
     implementation(libs.androidx.ui.text)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.runtime.livedata)
-    implementation(libs.androidx.compose.material3.material3)
     implementation(libs.okhttp)
 
 
@@ -132,7 +131,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    // LLM
-    implementation(libs.tasks.genai)
 }

@@ -34,16 +34,13 @@ import com.diabdata.models.AddableType
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AddDataFab(
-    onSelect: (AddableType) -> Unit, onScanClick: () -> Unit, onIaClick: () -> Unit,
+    onSelect: (AddableType) -> Unit, onScanClick: () -> Unit
 ) {
     var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
 
     BackHandler(fabMenuExpanded) { fabMenuExpanded = false }
 
     val fabItems = listOf(
-        Triple(stringResource(R.string.add_data_fab_ai_insights), R.drawable.ai_icon_vector) {
-            onIaClick()
-        },
         Triple(
             stringResource(R.string.addable_treatment_scan), R.drawable.data_matrix_icon_vector
         ) { onScanClick() },

@@ -123,37 +123,9 @@
     <string name="expiration_dates_reminder_notification_channel">Expiration date reminders</string>
     <string name="settings_notification_toggle_next_reminder_date">Next reminder scheduled on %1$s</string>
     <string name="upcoming_appointment_card_notes_header">Notes</string>
-    <string name="add_data_fab_ai_insights">AI insights</string>
-    <string name="add_data_fab_ai_insights_popup_title">Data insights</string>
     <string name="settings_page_ai_settings_headings">Gemini AI</string>
     <string name="settings_page_ai_settings_card_text_if_key">Gemini API key provided</string>
     <string name="settings_page_ai_api_key_popup_title">Provide a Gemini API Key</string>
-    <string name="ai_prompt_summary_system_prompt">You are a health assistant and an expert in diabetology.\nYour role is to analyze only the data provided by the patient.\n Do not provide any prescriptions or specific medical advice.\n  Focus exclusively on interpreting the data and identifying trends.</string>
-    <string name="ai_prompt_summary_text">
-        Here is the patient’s information:
-
-        Weight:
-        %1$s
-
-        HBA1C:
-        %2$s
-
-        Appointments:
-        %3$s
-
-        Analyze this data and provide only:
-        - A concise global summary (1–2 sentences maximum)
-        - Weight trends with variations and observations
-        - HBA1C trends with variations and observations
-        - (Optional) General health observations if apparent from the data
-
-        Respond only with sentences separated by a period.
-        Do not add greetings, generic phrases, numbering, or Markdown.
-    </string>
-    <string name="ai_local_llm_prompt" formatted="false">À partir des données suivantes, écris un résumé concis en français. \n- Ne donne que les informations présentes. \n- Ne crée pas d’informations supplémentaires. \n- Résume en phrases simples, une par donnée.\n\nPoids : \n%1$s\n\n HBA1C :\n %2$s\n \n Rendez-vous : \n %3$s</string>
-    <string name="ai_no_weight_data">No weight data available</string>
-    <string name="ai_no_hba1c_data">No HBA1C data available</string>
-    <string name="ai_no_appointments">No appointment were set up in this date range</string>
     <string name="settings_page_ai_api_key_popup_api_key_label">Gemini API key</string>
     <string name="settings_page_ai_settings_card_text_if_no_key">No Gemini API key provided</string>
 </resources>

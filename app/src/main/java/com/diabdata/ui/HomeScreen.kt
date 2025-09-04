@@ -41,7 +41,6 @@ import com.diabdata.models.Treatment
 import com.diabdata.ui.components.AddDataFab
 import com.diabdata.ui.components.DataMatrixScannerDialog
 import com.diabdata.ui.components.addDataPopup.AddDataPopup
-import com.diabdata.ui.components.addDataPopup.iaSummary.IaSummaryPopup
 import com.diabdata.ui.components.latestMeasurements.LatestMeasurements
 import com.diabdata.utils.MedicationInfo
 import com.diabdata.utils.SvgIcon
@@ -62,8 +61,6 @@ fun HomeScreen(
     val (selectedType, setSelectedType) = remember { mutableStateOf<AddableType?>(null) }
 
     var showScanner by remember { mutableStateOf(false) }
-
-    var showIaSummaryPopup by remember { mutableStateOf(false) }
 
     val scrollState = rememberScrollState()
 
@@ -150,13 +147,6 @@ fun HomeScreen(
             )
         }
 
-        if (showIaSummaryPopup) {
-            IaSummaryPopup(
-                onDismiss = { showIaSummaryPopup = false },
-                dataViewModel = dataViewModel
-            )
-        }
-
         selectedType?.let { type ->
             AddDataPopup(
                 type = type,
@@ -173,9 +163,6 @@ fun HomeScreen(
             onSelect = setSelectedType,
             onScanClick = {
                 permissionLauncher.launch(Manifest.permission.CAMERA)
-            },
-            onIaClick = {
-                showIaSummaryPopup = true
             }
         )
     }

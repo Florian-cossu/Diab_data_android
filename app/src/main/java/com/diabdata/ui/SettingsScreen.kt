@@ -25,7 +25,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -47,7 +46,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.core.content.edit
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
@@ -82,7 +80,6 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
 
     var showConfirmDialog by remember { mutableStateOf(false) }
     var showChangeLogDialog by remember { mutableStateOf(false) }
-    var showApiKeyDialog by remember { mutableStateOf(false) }
 
     val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
@@ -290,23 +287,6 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     icon = R.drawable.app_version_icon_vector
                 )
             }
-
-            SettingsSection(
-                title = stringResource(R.string.settings_page_ai_settings_headings)
-            ) {
-                val hasGeminiApiKey = !prefs.getString("ai_api_key", "").isNullOrBlank()
-
-                SettingsButton(
-                    text = if (hasGeminiApiKey) stringResource(R.string.settings_page_ai_settings_card_text_if_key) else stringResource(
-                        R.string.settings_page_ai_settings_card_text_if_no_key
-                    ),
-                    onClick = {
-                        showApiKeyDialog = true
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    icon = if (hasGeminiApiKey) R.drawable.ai_gradient_icon_vector else R.drawable.ai_icon_vector
-                )
-            }
         }
     }
 
@@ -356,16 +336,13 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     color = MaterialTheme.colorScheme.primary
                 )
             },
-            title = { Text("Updates - 02/09/2025") },
+            title = { Text("Updates - 04/09/2025") },
             text = {
                 LazyColumn {
                     item { Text("- Refacto") }
                     item { Text("\t• Refactored Diagnosis and renamed it into important date") }
-                    item { Text("- Data") }
-                    item { Text("\t• Added new updated at Column") }
-                    item { Text("- Settings screen") }
-                    item { Text("\t• Updated delete all data function to reset user preferences about reminders and to unregisters all reminder workers") }
-                    item { Text("\t• Updated added Gemini API key section + new AI button to get insights") }
+                    item { Text("- Feature scrapping") }
+                    item { Text("\t• Scrapped AI integrations") }
                 }
             },
             confirmButton = {
@@ -376,74 +353,6 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 }
             }
         )
-    }
-
-    if (showApiKeyDialog) {
-        var geminiApiKey: String = prefs.getString("ai_api_key", "").toString()
-
-        Dialog(onDismissRequest = { showApiKeyDialog = false }) {
-            Surface(
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 8.dp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                    verticalArrangement = spacedBy(8.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = spacedBy(6.dp)
-                    ) {
-                        SvgIcon(
-                            R.drawable.ai_icon_vector,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Text(
-                            stringResource(R.string.settings_page_ai_api_key_popup_title).uppercase(),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-
-                    OutlinedTextField(
-                        value = geminiApiKey,
-                        onValueChange = { geminiApiKey = it },
-                        label = { Text(stringResource(R.string.settings_page_ai_api_key_popup_api_key_label)) },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = MaterialTheme.shapes.small
-                    )
-
-                    Row(
-                        horizontalArrangement = Arrangement.End,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        TextButton(
-                            onClick = { showApiKeyDialog = false }
-                        ) {
-                            Text(
-                                stringResource(R.string.cancel_button_text),
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                        TextButton(onClick = {
-                            val prefs =
-                                context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-                            prefs.edit { putString("ai_api_key", geminiApiKey) }
-                            showApiKeyDialog = false
-                        }) {
-                            Text(stringResource(R.string.confirm_button_text))
-                        }
-                    }
-                }
-            }
-        }
-
     }
 }
 
