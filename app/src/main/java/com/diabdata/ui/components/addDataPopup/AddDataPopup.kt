@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.diabdata.R
@@ -66,7 +65,7 @@ fun BasePopupLayout(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.4f))
+            .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.95f))
             .clickable(
                 onClick = onDismiss,
                 indication = null,
@@ -76,10 +75,11 @@ fun BasePopupLayout(
     ) {
         Surface(
             shape = MaterialTheme.shapes.medium,
-            tonalElevation = 8.dp,
+            tonalElevation = 2.dp,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
+                .padding(24.dp),
+            color = MaterialTheme.colorScheme.surface
         ) {
             Column(
                 modifier = Modifier

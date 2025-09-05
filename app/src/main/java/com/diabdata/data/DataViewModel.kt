@@ -335,6 +335,8 @@ class DataViewModel(
                 TreatmentType.SLOW_ACTING_INSULIN_CARTRIDGE -> R.drawable.slow_acting_insulin_cartridge_icon_vector
                 TreatmentType.SLOW_ACTING_INSULIN_SYRINGE -> R.drawable.slow_acting_insulin_syringe_icon_vector
                 TreatmentType.SLOW_ACTING_INSULIN_VIAL -> R.drawable.slow_acting_insulin_vial_icon_vector
+                TreatmentType.B_KETONE_TEST_STRIP -> R.drawable.b_ketone_test_icon_vector
+                TreatmentType.BLOOD_GLUCOSE_TEST_STRIP -> R.drawable.glucose_test_icon_vector
                 TreatmentType.GLUCAGON_SYRINGE -> R.drawable.syringe_icon_vector
                 TreatmentType.GLUCAGON_SPRAY -> R.drawable.nasal_spray_icon_vector
                 null -> R.drawable.medication_icon_vector

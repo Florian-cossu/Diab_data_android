@@ -3,6 +3,8 @@
     <string name="app_name">Diab Data</string>
     <string name="annual_checkup">Annual Checkup</string>
     <string name="appointment">One-time appointment</string>
+    <string name="ketone_test_strip">Blood ketone test strips</string>
+    <string name="glucose_test_strip">Blood glucose test strips</string>
     <string name="fast_acting_insulin_cartridge">Fast acting insulin cartridge</string>
     <string name="fast_acting_insulin_syringe">Fast acting insulin pen</string>
     <string name="fast_acting_insulin_vial">Fast acting insulin vial</string>
@@ -79,6 +81,8 @@
     <string name="today">Today</string>
     <string name="important_date_on_text">On %1$s</string>
     <string name="expires_on_text">Expires on %1$s</string>
+
+    <string name="enum_dropdown_research_text">Search…</string>
     <string name="scheduled_on_date_text">Scheduled on %1$s</string>
     <string name="hba1c_on_date_text">HBA1C measured on %1$s</string>
     <string name="weight_on_date_text">Weighing performed on %1$s</string>
@@ -123,9 +127,4 @@
     <string name="expiration_dates_reminder_notification_channel">Expiration date reminders</string>
     <string name="settings_notification_toggle_next_reminder_date">Next reminder scheduled on %1$s</string>
     <string name="upcoming_appointment_card_notes_header">Notes</string>
-    <string name="settings_page_ai_settings_headings">Gemini AI</string>
-    <string name="settings_page_ai_settings_card_text_if_key">Gemini API key provided</string>
-    <string name="settings_page_ai_api_key_popup_title">Provide a Gemini API Key</string>
-    <string name="settings_page_ai_api_key_popup_api_key_label">Gemini API key</string>
-    <string name="settings_page_ai_settings_card_text_if_no_key">No Gemini API key provided</string>
 </resources>

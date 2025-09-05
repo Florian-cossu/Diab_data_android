@@ -24,6 +24,7 @@ fun LatestMeasurements(
     Column(
         modifier = Modifier
             .padding(20.dp)
+            .padding(bottom = 70.dp)
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(35.dp)
     ) {
@@ -40,6 +41,7 @@ fun LatestMeasurements(
         }
         if (availability.hasTreatments) {
             UpcomingTreatmentExpirationDates(viewModel)
+
         }
     }
 }

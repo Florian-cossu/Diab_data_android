@@ -32,14 +32,14 @@ class MedicationInitializer(
         val reader = inputStream.bufferedReader()
         val result = mutableListOf<MedicationEntity>()
 
-        reader.readLines().drop(1) // skip header
+        reader.readLines().drop(1)
             .forEach { line ->
                 val cols = line.split(",")
                 if (cols.size >= 4) {
                     result.add(
                         MedicationEntity(
                             cipGtin = cols[0].trim(),
-                            insulin = cols[1].trim(),
+                            brandName = cols[1].trim(),
                             treatmentType = TreatmentType.valueOf(cols[2].trim()),
                             fullName = cols[3].trim()
                         )

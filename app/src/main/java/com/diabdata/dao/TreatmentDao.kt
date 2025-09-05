@@ -25,6 +25,6 @@ interface TreatmentDao {
     @Query("SELECT * FROM treatments WHERE (isArchived = 0 OR isArchived = 1) ORDER BY expirationDate DESC")
     fun getAllTreatmentsFlow(): Flow<List<Treatment>>
 
-    @Query("SELECT * FROM treatments WHERE expirationDate >= :today AND isArchived = 0 ORDER BY expirationDate ASC")
+    @Query("SELECT * FROM treatments WHERE expirationDate >= :today AND isArchived = 0 ORDER BY type, expirationDate ASC")
     fun getUpcomingExpirationDatesFlow(today: LocalDate): Flow<List<Treatment>>
 }

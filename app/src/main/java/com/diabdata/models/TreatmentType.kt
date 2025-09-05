@@ -33,10 +33,22 @@ enum class TreatmentType(
         iconRes = R.drawable.slow_acting_insulin_vial_icon_vector
     ),
     GLUCAGON_SYRINGE(
-        displayNameRes = R.string.glucagon_syringe, iconRes = R.drawable.syringe_icon_vector
+        displayNameRes = R.string.glucagon_syringe,
+        iconRes = R.drawable.syringe_icon_vector
     ),
     GLUCAGON_SPRAY(
-        displayNameRes = R.string.glucagon_spray, iconRes = R.drawable.nasal_spray_icon_vector
+        displayNameRes = R.string.glucagon_spray,
+        iconRes = R.drawable.nasal_spray_icon_vector
+    ),
+
+    B_KETONE_TEST_STRIP(
+        displayNameRes = R.string.ketone_test_strip,
+        iconRes = R.drawable.b_ketone_test_icon_vector
+    ),
+
+    BLOOD_GLUCOSE_TEST_STRIP(
+        displayNameRes = R.string.glucose_test_strip,
+        iconRes = R.drawable.glucose_test_icon_vector
     );
 
     fun displayName(context: Context): String = context.getString(displayNameRes)

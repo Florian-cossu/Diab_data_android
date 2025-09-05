@@ -89,7 +89,8 @@ fun TreatmentPopup(
             options = TreatmentType.entries,
             selected = selectedTreatmentType,
             displayName = { it.displayName(context) },
-            onSelectedChange = { selectedTreatmentType = it }
+            onSelectedChange = { selectedTreatmentType = it },
+            iconRes = { it.iconRes }
         )
 
         OutlinedTextField(

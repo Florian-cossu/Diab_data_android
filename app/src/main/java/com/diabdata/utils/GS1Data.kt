@@ -19,7 +19,6 @@ fun parseGS1(raw: String): MedicationInfo {
     var lot: String? = null
     var serial: String? = null
 
-    // itérer sur tous les matches
     regex.findAll(cleaned).forEach { match ->
         when {
             match.groups[1] != null -> gtin = match.groups[1]?.value

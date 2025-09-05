@@ -45,7 +45,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
@@ -367,7 +366,7 @@ fun SettingsSection(
     Column {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
+            style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.surfaceTint
         )
 
@@ -391,7 +390,7 @@ fun SettingsButton(
     text: String, onClick: () -> Unit, shape: Shape, isDestructive: Boolean = false, icon: Int = 0
 ) {
     Surface(
-        shape = shape, tonalElevation = 4.dp,
+        shape = shape, tonalElevation = 2.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
         TextButton(
@@ -435,7 +434,7 @@ fun SettingsToggle(
 ) {
     Surface(
         shape = shape,
-        tonalElevation = 4.dp,
+        tonalElevation = 2.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
         val context = LocalContext.current

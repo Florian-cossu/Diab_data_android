@@ -174,13 +174,13 @@ fun LineGraph(
     Column {
         Text(
             text = label.uppercase(Locale.getDefault()),
-            style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
+            style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.surfaceTint
         )
         Spacer(Modifier.height(12.dp))
         Surface(
             shape = RoundedCornerShape(10.dp),
-            tonalElevation = 4.dp,
+            tonalElevation = 2.dp,
         ) {
             CartesianChartHost(
                 chart = rememberCartesianChart(

@@ -167,13 +167,13 @@ fun GraphViewer(
             LineGraph(
                 points = weightPoints,
                 label = stringResource(AddableType.WEIGHT.displayNameRes),
-                primaryColor = MaterialTheme.colorScheme.primary.toArgb(),
+                primaryColor = AddableType.WEIGHT.baseColor.toArgb(),
                 showTrendLine = showRegressionLine
             )
             LineGraph(
                 points = hba1cPoints,
                 label = stringResource(AddableType.HBA1C.displayNameRes),
-                primaryColor = MaterialTheme.colorScheme.tertiary.toArgb(),
+                primaryColor = AddableType.HBA1C.baseColor.toArgb(),
                 showTrendLine = showRegressionLine
             )
         }

@@ -82,6 +82,7 @@ fun AppointmentPopup(
             selected = selectedAppointmentType,
             displayName = { it.displayName(context) },
             onSelectedChange = { selectedAppointmentType = it },
+            iconRes = { it.iconRes }
         )
 
         OutlinedTextField(

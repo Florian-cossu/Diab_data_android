@@ -23,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
@@ -59,7 +58,7 @@ fun UpcomingTreatmentExpirationDatesContent(
     fun getUntilIconIdMap(isExpiringSoon: Boolean): Int =
         if (isExpiringSoon) R.drawable.warning_icon_vector else R.drawable.hourglass_icon_vector
 
-    val cards = treatments.sortedBy { it.expirationDate }.map { treatment ->
+    val cards = treatments.map { treatment ->
         val daysUntil = ChronoUnit.DAYS.between(today, treatment.expirationDate).toInt()
         val yearsUntil = ChronoUnit.YEARS.between(today, treatment.expirationDate).toInt()
         val totalMonths = ChronoUnit.MONTHS.between(today, treatment.expirationDate).toInt()
@@ -110,7 +109,7 @@ fun UpcomingTreatmentExpirationDatesContent(
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
             text = stringResource(R.string.upcoming_expiration_dates_card_section_heading),
-            style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
+            style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.surfaceTint
         )
         Spacer(Modifier.height(8.dp))
@@ -118,7 +117,7 @@ fun UpcomingTreatmentExpirationDatesContent(
         cards.forEachIndexed { index, card ->
             Surface(
                 shape = getItemShape(index, cards.size),
-                tonalElevation = 4.dp,
+                tonalElevation = 2.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(

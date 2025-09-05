@@ -306,7 +306,7 @@ fun EntryCardSwipeM3(
 
         Surface(
             shape = shape,
-            tonalElevation = 4.dp,
+            tonalElevation = 2.dp,
             color = archivedCardBgColor,
             modifier = Modifier
                 .fillMaxWidth()

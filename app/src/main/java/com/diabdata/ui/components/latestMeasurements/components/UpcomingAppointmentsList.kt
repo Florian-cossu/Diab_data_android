@@ -33,7 +33,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
@@ -63,7 +62,7 @@ fun UpcomingAppointmentsListContent(
     ) {
         Text(
             text = stringResource(R.string.upcoming_appointment_card_section_heading),
-            style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
+            style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.surfaceTint
         )
 
@@ -107,7 +106,7 @@ fun UpcomingAppointmentsListContent(
 
             Surface(
                 shape = getItemShape(index, upcomingAppointments.size),
-                tonalElevation = 4.dp,
+                tonalElevation = 2.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(

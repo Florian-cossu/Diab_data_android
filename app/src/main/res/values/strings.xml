@@ -2,6 +2,8 @@
     <string name="app_name">Diab Data</string>
     <string name="annual_checkup">Bilan annuel</string>
     <string name="appointment">RDV ponctuel</string>
+    <string name="ketone_test_strip">Bandelettes cétonémie</string>
+    <string name="glucose_test_strip">Bandelettes glycémie</string>
     <string name="fast_acting_insulin_cartridge">Insuline rapide cartouche</string>
     <string name="fast_acting_insulin_syringe">Insuline rapide stylo</string>
     <string name="fast_acting_insulin_vial">Insuline rapide flacon</string>
@@ -79,6 +81,7 @@
     <string name="important_date_on_text">Le %1$s</string>
     <string name="expires_on_text">Expire le %1$s</string>
 
+    <string name="enum_dropdown_research_text">Rechercher…</string>
     <string name="scheduled_on_date_text">Programmé le %1$s</string>
     <string name="hba1c_on_date_text">HBA1C mesurée le %1$s</string>
     <string name="weight_on_date_text">Pesée réalisée le %1$s</string>
@@ -123,9 +126,4 @@
     <string name="expiration_dates_reminder_notification_channel">Rappels de dates d’expiration</string>
     <string name="settings_notification_toggle_next_reminder_date">Prochain rappel prévu %1$s</string>
     <string name="upcoming_appointment_card_notes_header">Notes</string>
-    <string name="settings_page_ai_settings_headings">IA Gemini</string>
-    <string name="settings_page_ai_settings_card_text_if_key">Clé API Gemini enregistrée</string>
-    <string name="settings_page_ai_settings_card_text_if_no_key">Aucune clé API Gemini enregistrée</string>
-    <string name="settings_page_ai_api_key_popup_api_key_label">Clé API Gemini</string>
-    <string name="settings_page_ai_api_key_popup_title">Fournir une clé d’API Gemini</string>
 </resources>
