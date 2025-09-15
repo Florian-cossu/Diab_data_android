@@ -18,6 +18,7 @@ android {
         targetSdk = 36
         versionCode = getVersionCode()
         versionName = "3.7"
+        buildConfigField("String", "GTIN_FILE_VERSION", "\"1.2.0\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

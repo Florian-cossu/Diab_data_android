@@ -24,6 +24,8 @@
     <string name="upcoming_expiration_dates_card_section_heading">Mes traitements</string>
     <string name="home_menu_title">Accueil</string>
     <string name="database_management_menu_title">Données</string>
+    <string name="database_management_time_range_indicator">Du %1$s au %2$s</string>
+    <string name="devices_menu_title">Appareils</string>
     <string name="settings_menu_title">Paramètres</string>
     <string name="settings_page_data_heading">Données</string>
     <string name="settings_page_application_heading">Application</string>

@@ -43,6 +43,7 @@ import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.ui.components.date_components.DateRangeModal
 import com.diabdata.utils.SvgIcon
+import com.diabdata.utils.formatLocalDate
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -160,6 +161,18 @@ fun GraphViewer(
                     SvgIcon(
                         resId = R.drawable.trending_up_icon_vector,
                         color = if (showRegressionLine) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+
+            if (selectedIndex == 2) {
+                Row {
+                    Text(
+                        stringResource(
+                            R.string.database_management_time_range_indicator,
+                            formatLocalDate(minDate),
+                            formatLocalDate(maxDateAdjusted)
+                        )
                     )
                 }
             }

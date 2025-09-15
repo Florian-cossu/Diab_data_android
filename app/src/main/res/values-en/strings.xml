@@ -25,6 +25,8 @@
     <string name="upcoming_expiration_dates_card_section_heading">My medication</string>
     <string name="home_menu_title">Home</string>
     <string name="database_management_menu_title">Data</string>
+    <string name="database_management_time_range_indicator">From %1$s to %2$s</string>
+    <string name="devices_menu_title">Devices</string>
     <string name="settings_menu_title">Settings</string>
     <string name="settings_page_data_heading">Data</string>
     <string name="settings_page_application_heading">Application</string>

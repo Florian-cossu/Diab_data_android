@@ -79,6 +79,12 @@ fun App(
             screen = { DatabaseEditionView(dataViewModel) }
         ),
         BottomNavItem(
+            id = "devices",
+            label = R.string.devices_menu_title,
+            icon = NavIcon.Svg(R.drawable.devices_icon_vector),
+            screen = { }
+        ),
+        BottomNavItem(
             id = "settings",
             label = R.string.settings_menu_title,
             icon = NavIcon.Vector(Icons.Filled.Settings, "Paramètres"),

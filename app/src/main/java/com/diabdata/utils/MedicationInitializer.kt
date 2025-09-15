@@ -15,7 +15,7 @@ class MedicationInitializer(
     suspend fun initialize() {
         val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
-        val currentHash = calculateHash(context.assets.open("medication_data.csv"))
+        val currentHash = calculateHash(context.assets.open("medication_data_V.1.2.csv"))
         val savedHash = prefs.getString("csv_hash", null)
 
         val isEmpty = db.medicationDao().countAll() == 0
@@ -28,7 +28,7 @@ class MedicationInitializer(
     }
 
     private fun loadCsvFromAssets(): List<MedicationEntity> {
-        val inputStream = context.assets.open("medication_data.csv")
+        val inputStream = context.assets.open("medication_data_V.1.2.csv")
         val reader = inputStream.bufferedReader()
         val result = mutableListOf<MedicationEntity>()
 

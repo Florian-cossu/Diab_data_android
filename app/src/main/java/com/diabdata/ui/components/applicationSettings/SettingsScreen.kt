@@ -74,6 +74,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     val scrollState = rememberScrollState()
     val versionName = BuildConfig.VERSION_NAME
     val versionCode = BuildConfig.VERSION_CODE
+    val medicationsGtinFileversion = BuildConfig.GTIN_FILE_VERSION
 
     val scope = rememberCoroutineScope()
 
@@ -278,12 +279,18 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 title = stringResource(R.string.settings_page_application_heading)
             ) {
                 SettingsButton(
-                    text = "Version $versionName (code: $versionCode)",
+                    text = "Diabdata $versionName (code: $versionCode)",
                     onClick = {
                         showChangeLogDialog = true
                     },
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                     icon = R.drawable.app_version_icon_vector
+                )
+                SettingsButton(
+                    text = "Medication information file version $medicationsGtinFileversion",
+                    onClick = { },
+                    shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp),
+                    icon = R.drawable.medication_icon_vector
                 )
             }
         }
@@ -335,16 +342,13 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     color = MaterialTheme.colorScheme.primary
                 )
             },
-            title = { Text("Updates - 04/09/2025") },
+            title = { Text("Updates - 15/09/2025") },
             text = {
                 LazyColumn {
-                    item { Text("- Refacto") }
-                    item { Text("\t• Refactored Homescreen components to include preview") }
-                    item { Text("\t• Refactored homescreen cards to include icon in colored circle") }
-                    item { Text("\t• Refactored Addable type enum to include icons and colors") }
-                    item { Text("\t• Rewrote add data popups to also allow updating existing data") }
-                    item { Text("- Feature scrapping") }
-                    item { Text("\t• Scrapped AI integrations") }
+                    item { Text("- New section") }
+                    item { Text("\t• Added devices section in Navbar") }
+                    item { Text("- Settings page") }
+                    item { Text("\t• Added GTIN Csv version number in settings page") }
                 }
             },
             confirmButton = {
