@@ -349,6 +349,8 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     item { Text("\t• Added devices section in Navbar") }
                     item { Text("- Settings page") }
                     item { Text("\t• Added GTIN Csv version number in settings page") }
+                    item { Text("- Icons") }
+                    item { Text("\t• Added custom icon sets for upcoming device page") }
                 }
             },
             confirmButton = {

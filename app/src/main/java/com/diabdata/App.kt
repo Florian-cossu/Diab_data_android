@@ -29,6 +29,7 @@ import com.diabdata.data.DiabDataDatabase
 import com.diabdata.ui.HomeScreen
 import com.diabdata.ui.components.applicationSettings.SettingsScreen
 import com.diabdata.ui.components.databaseView.DatabaseEditionView
+import com.diabdata.ui.components.devices.DevicesScreen
 import com.diabdata.ui.components.graphsViewer.GraphViewer
 import com.diabdata.utils.MedicationInitializer
 import com.diabdata.utils.SvgIcon
@@ -82,7 +83,9 @@ fun App(
             id = "devices",
             label = R.string.devices_menu_title,
             icon = NavIcon.Svg(R.drawable.devices_icon_vector),
-            screen = { }
+            screen = {
+                DevicesScreen(dataViewModel)
+            }
         ),
         BottomNavItem(
             id = "settings",

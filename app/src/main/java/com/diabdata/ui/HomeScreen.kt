@@ -101,14 +101,14 @@ fun HomeScreen(
                         modifier = Modifier
                             .width((LocalWindowInfo.current.containerSize.width * 0.15f).dp)
                             .aspectRatio(1f),
-                        color = MaterialTheme.colorScheme.surfaceTint
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                     )
 
                     Text(
                         text = stringResource(R.string.homescreen_no_data_text),
                         modifier = Modifier.padding(top = 16.dp),
                         style = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
-                        color = MaterialTheme.colorScheme.surfaceTint
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                     )
                 }
             }
