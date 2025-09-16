@@ -5,7 +5,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
 import com.diabdata.R
-import com.diabdata.utils.darken
 
 enum class AddableType(
     val tableName: String,
@@ -45,8 +44,4 @@ enum class AddableType(
 
     fun getDisplayName(context: Context): String =
         context.getString(displayNameRes)
-
-    fun getColor(): Color = baseColor
-
-    fun getIconColor(): Color = baseColor.darken()
 }
