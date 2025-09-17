@@ -9,16 +9,22 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.diabdata.dao.AppointmentDao
 import com.diabdata.dao.HBA1CDao
 import com.diabdata.dao.ImportantDateDao
+import com.diabdata.dao.MedicalDeviceDao
+import com.diabdata.dao.MedicalDevicesInfoDao
 import com.diabdata.dao.MedicationDao
 import com.diabdata.dao.TreatmentDao
 import com.diabdata.dao.WeightDao
 import com.diabdata.data.converters.DateConverters
+import com.diabdata.data.migrations.ALL_MIGRATIONS
 import com.diabdata.models.Appointment
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.ImportantDate
+import com.diabdata.models.MedicalDeviceEntry
+import com.diabdata.models.MedicalDeviceInfoEntity
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
+import com.diabdata.utils.MedicalDevicesInitializer
 import com.diabdata.utils.MedicationInitializer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,9 +37,11 @@ import kotlinx.coroutines.launch
         Appointment::class,
         Treatment::class,
         ImportantDate::class,
-        MedicationEntity::class
+        MedicalDeviceEntry::class,
+        MedicationEntity::class,
+        MedicalDeviceInfoEntity::class
     ],
-    version = 8,
+    version = 14,
     exportSchema = false
 )
 
@@ -46,6 +54,8 @@ abstract class DiabDataDatabase : RoomDatabase() {
     abstract fun treatmentDao(): TreatmentDao
     abstract fun importantDateDao(): ImportantDateDao
     abstract fun medicationDao(): MedicationDao
+    abstract fun medicalDevicesDao(): MedicalDeviceDao
+    abstract fun medicalDevicesInfoDao(): MedicalDevicesInfoDao
 
     fun getAllTableNames(): List<String> {
         val db = openHelper.readableDatabase
@@ -64,7 +74,9 @@ abstract class DiabDataDatabase : RoomDatabase() {
     fun clearAllDataAndReset() {
         runInTransaction {
 
-            val tables = getAllTableNames().filter { it != "medications" }
+            val tables = getAllTableNames().filter {
+                it != "medications" && it != "medical_devices_infos"
+            }
 
             tables.forEach { table ->
 
@@ -89,16 +101,22 @@ abstract class DiabDataDatabase : RoomDatabase() {
                     "diabdata_database"
                 )
                     .fallbackToDestructiveMigration(false)
+                    .addMigrations(*ALL_MIGRATIONS)
                     .addCallback(object : Callback() {
                         override fun onOpen(db: SupportSQLiteDatabase) {
                             super.onOpen(db)
 
                             CoroutineScope(Dispatchers.IO).launch {
                                 val database = getDatabase(context)
-                                val count = database.medicationDao().countAll()
+                                val countMedicationInfo = database.medicationDao().countAll()
+                                val countDeviceInfo = database.medicalDevicesInfoDao().countAll()
 
-                                if (count == 0) {
+                                if (countMedicationInfo == 0) {
                                     MedicationInitializer(context, database).initialize()
+                                }
+
+                                if (countDeviceInfo == 0) {
+                                    MedicalDevicesInitializer(context, database).initialize()
                                 }
                             }
                         }

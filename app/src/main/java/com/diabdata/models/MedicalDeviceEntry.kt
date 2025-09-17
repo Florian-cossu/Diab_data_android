@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import java.time.LocalDate
 
 @Entity(tableName = "medical_devices")
-data class MedicalDevice(
+data class MedicalDeviceEntry(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val date: LocalDate,
     val batchNumber: String,

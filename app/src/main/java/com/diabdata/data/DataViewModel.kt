@@ -16,6 +16,7 @@ import com.diabdata.models.Appointment
 import com.diabdata.models.AppointmentType
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.ImportantDate
+import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.models.TreatmentType
@@ -23,7 +24,6 @@ import com.diabdata.models.WeightEntry
 import com.diabdata.models.classes.PlotPoint
 import com.diabdata.utils.AppointmentTypeAdapter
 import com.diabdata.utils.LocalDateAdapter
-import com.diabdata.utils.MedicationInitializer
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -41,12 +41,6 @@ class DataViewModel(
 ) : AndroidViewModel(application) {
     val appContext: Context = getApplication<Application>().applicationContext
 
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            MedicationInitializer(appContext, repository.database).initialize()
-        }
-    }
-
     // Load all data
     val weights: StateFlow<List<WeightEntry>> = repository.getAllWeights()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -63,6 +57,9 @@ class DataViewModel(
     val importantDates: StateFlow<List<ImportantDate>> = repository.getAllImportantDates()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val medicalDevices: StateFlow<List<MedicalDeviceEntry>> = repository.getAllDevices()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     // Helpers to check if we have Data
     data class DataAvailability(
         val hasAnyData: Boolean,
@@ -70,7 +67,8 @@ class DataViewModel(
         val hasAppointments: Boolean,
         val hasTreatments: Boolean,
         val hasImportantDates: Boolean,
-        val hasHba1c: Boolean
+        val hasHba1c: Boolean,
+        val hasDevices: Boolean
     ) {
         companion object {
             val EMPTY = DataAvailability(
@@ -79,23 +77,33 @@ class DataViewModel(
                 hasAppointments = false,
                 hasTreatments = false,
                 hasImportantDates = false,
-                hasHba1c = false
+                hasHba1c = false,
+                hasDevices = false
             )
         }
     }
 
-    val dataAvailability: StateFlow<DataAvailability> = combine(
-        weights, hba1cEntries, appointments, treatments, importantDates
-    ) { w, h, a, t, d ->
-        DataAvailability(
-            hasAnyData = w.isNotEmpty() || h.isNotEmpty() || a.isNotEmpty() || t.isNotEmpty() || d.isNotEmpty(),
-            hasWeights = w.isNotEmpty(),
-            hasAppointments = a.isNotEmpty(),
-            hasTreatments = t.isNotEmpty(),
-            hasImportantDates = d.isNotEmpty(),
-            hasHba1c = h.isNotEmpty()
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DataAvailability.EMPTY)
+    val part1 = combine(weights, hba1cEntries, appointments) { w, h, a ->
+        Triple(w, h, a)
+    }
+
+    val part2 = combine(treatments, importantDates, medicalDevices) { t, d, md ->
+        Triple(t, d, md)
+    }
+
+    val dataAvailability: StateFlow<DataAvailability> =
+        combine(part1, part2) { (w, h, a), (t, d, md) ->
+            DataAvailability(
+                hasAnyData = w.isNotEmpty() || h.isNotEmpty() || a.isNotEmpty() ||
+                        t.isNotEmpty() || d.isNotEmpty() || md.isNotEmpty(),
+                hasWeights = w.isNotEmpty(),
+                hasAppointments = a.isNotEmpty(),
+                hasTreatments = t.isNotEmpty(),
+                hasImportantDates = d.isNotEmpty(),
+                hasHba1c = h.isNotEmpty(),
+                hasDevices = md.isNotEmpty()
+            )
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DataAvailability.EMPTY)
 
     // Get recent and upcoming data or plot data
     // HBA1C

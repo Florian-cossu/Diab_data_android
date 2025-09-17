@@ -3,16 +3,17 @@ package com.diabdata.data
 import com.diabdata.dao.AppointmentDao
 import com.diabdata.dao.HBA1CDao
 import com.diabdata.dao.ImportantDateDao
+import com.diabdata.dao.MedicalDeviceDao
 import com.diabdata.dao.MedicationDao
 import com.diabdata.dao.TreatmentDao
 import com.diabdata.dao.WeightDao
 import com.diabdata.models.Appointment
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.ImportantDate
+import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
-import com.diabdata.models.classes.AppointmentSummary
 import com.diabdata.models.classes.PlotPoint
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
@@ -23,10 +24,10 @@ class DataRepository(
     private val appointmentDao: AppointmentDao,
     private val treatmentDao: TreatmentDao,
     private val importantDateDao: ImportantDateDao,
+    private val medicationDao: MedicationDao,
+    private val medicalDevicesDao: MedicalDeviceDao,
     val database: DiabDataDatabase,
 ) {
-    private val medicationDao: MedicationDao = database.medicationDao()
-
     // ----------------
     // Weight
     // ----------------
@@ -97,13 +98,6 @@ class DataRepository(
     /** Delete an Appointment record by Id**/
     suspend fun deleteAppointment(id: Int) = appointmentDao.deleteById(id)
 
-    /** Get list of appointments for summary **/
-    fun getAppointmentsInRange(
-        minDate: LocalDate,
-        maxDate: LocalDate
-    ): Flow<List<AppointmentSummary>> =
-        appointmentDao.getAppointmentsInRange(minDate, maxDate)
-
     // ----------------
     // Treatment
     // ----------------
@@ -151,6 +145,25 @@ class DataRepository(
 
     /** Delete a diagnosis date record by Id**/
     suspend fun deleteImportantDate(id: Int) = importantDateDao.deleteById(id)
+
+    // ----------------
+    // Medical Devices
+    // ----------------
+    /** Insert a new device */
+    suspend fun insertDevice(device: MedicalDeviceEntry) = medicalDevicesDao.insert(device)
+
+    /** Update device */
+    suspend fun updateDevice(device: MedicalDeviceEntry) = medicalDevicesDao.update(device)
+
+    /** Flow of all devices */
+    fun getAllDevices(): Flow<List<MedicalDeviceEntry>> = medicalDevicesDao.getAllMedicalDevices()
+
+    /** Flow of upcoming devices expiration dates */
+    fun getUpcomingDevicesExpDates(date: LocalDate): Flow<List<MedicalDeviceEntry>> =
+        medicalDevicesDao.getUpcomingExpirationDatesFlow(LocalDate.now(), date)
+
+    /** Delete a device record by Id**/
+    suspend fun deleteDevice(id: Int) = medicalDevicesDao.deleteById(id)
 
     // ----------------
     // Generic / Database Utilities

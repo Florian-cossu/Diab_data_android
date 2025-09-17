@@ -17,8 +17,9 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = getVersionCode()
-        versionName = "3.7"
-        buildConfigField("String", "GTIN_FILE_VERSION", "\"1.2.0\"")
+        versionName = "3.9"
+        buildConfigField("String", "MEDICATION_GTIN_FILE_VERSION", "\"1.2.0\"")
+        buildConfigField("String", "MEDICAL_DEVICES_GTIN_FILE_VERSION", "\"1.0.0\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

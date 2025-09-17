@@ -74,7 +74,8 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     val scrollState = rememberScrollState()
     val versionName = BuildConfig.VERSION_NAME
     val versionCode = BuildConfig.VERSION_CODE
-    val medicationsGtinFileversion = BuildConfig.GTIN_FILE_VERSION
+    val medicationsGtinFileversion = BuildConfig.MEDICATION_GTIN_FILE_VERSION
+    val medicalDeviceGtinFileVersion = BuildConfig.MEDICAL_DEVICES_GTIN_FILE_VERSION
 
     val scope = rememberCoroutineScope()
 
@@ -209,7 +210,12 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 SettingsButton(
                     text = stringResource(R.string.settings_page_data_export_button_text),
                     onClick = { createFileLauncher.launch(fileName) },
-                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                    shape = RoundedCornerShape(
+                        topStart = 16.dp,
+                        topEnd = 16.dp,
+                        bottomStart = 3.dp,
+                        bottomEnd = 3.dp
+                    ),
                     icon = R.drawable.backup_db_icon_vector
                 )
                 SettingsButton(
@@ -221,7 +227,12 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 SettingsButton(
                     text = stringResource(R.string.settings_page_data_purge_button_text),
                     onClick = { showConfirmDialog = true },
-                    shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp),
+                    shape = RoundedCornerShape(
+                        topStart = 3.dp,
+                        topEnd = 3.dp,
+                        bottomStart = 16.dp,
+                        bottomEnd = 16.dp
+                    ),
                     isDestructive = true,
                     icon = R.drawable.purge_db_icon_vector
                 )
@@ -283,14 +294,30 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     onClick = {
                         showChangeLogDialog = true
                     },
-                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                    shape = RoundedCornerShape(
+                        topStart = 16.dp,
+                        topEnd = 16.dp,
+                        bottomStart = 3.dp,
+                        bottomEnd = 3.dp
+                    ),
                     icon = R.drawable.app_version_icon_vector
                 )
                 SettingsButton(
                     text = "Medication information file version $medicationsGtinFileversion",
                     onClick = { },
-                    shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp),
-                    icon = R.drawable.medication_icon_vector
+                    shape = RoundedCornerShape(3.dp),
+                    icon = R.drawable.medication_info_icon_vector
+                )
+                SettingsButton(
+                    text = "Medical devices information file version $medicalDeviceGtinFileVersion",
+                    onClick = { },
+                    shape = RoundedCornerShape(
+                        topStart = 3.dp,
+                        topEnd = 3.dp,
+                        bottomStart = 16.dp,
+                        bottomEnd = 16.dp
+                    ),
+                    icon = R.drawable.medical_device_info_version_icon_vector
                 )
             }
         }
@@ -342,7 +369,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     color = MaterialTheme.colorScheme.primary
                 )
             },
-            title = { Text("Updates - 15/09/2025") },
+            title = { Text("Updates - 16/09/2025") },
             text = {
                 LazyColumn {
                     item { Text("- New section") }
@@ -351,6 +378,9 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     item { Text("\t• Added GTIN Csv version number in settings page") }
                     item { Text("- Icons") }
                     item { Text("\t• Added custom icon sets for upcoming device page") }
+                    item { Text("- Database management") }
+                    item { Text("\t• Added clean database migrations") }
+                    item { Text("\t• Added medical devices database") }
                 }
             },
             confirmButton = {
