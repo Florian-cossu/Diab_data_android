@@ -4,12 +4,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -25,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.utils.SvgIcon
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T> EnumDropdown(
     label: String,
@@ -62,6 +65,18 @@ fun <T> EnumDropdown(
                 if (isSearchable) {
                     query = newValue
                     expanded = true
+                }
+            },
+            leadingIcon = {
+                if (isSearchable) {
+                    IconButton(
+                        onClick = { query = "" },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Search,
+                            contentDescription = stringResource(R.string.enum_dropdown_research_text)
+                        )
+                    }
                 }
             },
             label = { Text(label) },

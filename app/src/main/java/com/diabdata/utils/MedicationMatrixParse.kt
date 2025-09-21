@@ -4,14 +4,14 @@ data class MedicationInfo(
     val gtin: String, val lot: String?, val expiration: String?, val serial: String?
 )
 
-fun parseGS1(raw: String): MedicationInfo {
+fun parseMedication(raw: String): MedicationInfo {
     val cleaned = raw.trim()
 
     val regex = Regex(
         "01(\\d{14})|" +                  // GTIN
                 "17(\\d{6})|" +                 // Expiration
-                "10(.*?)(?:01|17|21|\u001D|$)|" + // Lot : jusqu’au prochain AI, GS ou fin
-                "21(.*?)(?:01|17|10|\u001D|$)"    // Serial : idem
+                "10(.*?)" + generateDataMatrixDelimiters(listOf("10")) + // Batch
+                "21(.*?)" + generateDataMatrixDelimiters(listOf("21")) // Serial
     )
 
     var gtin: String? = null
@@ -56,4 +56,3 @@ fun parseGS1(raw: String): MedicationInfo {
 
     return MedicationInfo(gtin ?: "", lot, exp, serial)
 }
-

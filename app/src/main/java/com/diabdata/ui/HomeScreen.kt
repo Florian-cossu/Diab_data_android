@@ -40,6 +40,7 @@ import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.ui.components.AddDataFab
 import com.diabdata.ui.components.DataMatrixScannerDialog
+import com.diabdata.ui.components.ScannableTypes
 import com.diabdata.ui.components.addDataPopup.AddDataPopup
 import com.diabdata.ui.components.latestMeasurements.LatestMeasurements
 import com.diabdata.utils.MedicationInfo
@@ -116,7 +117,8 @@ fun HomeScreen(
 
         if (showScanner) {
             DataMatrixScannerDialog(
-                onDismiss = { showScanner = false }, onResult = { info ->
+                onDismiss = { showScanner = false },
+                onResult = { info ->
                     scope.launch {
                         val entity = dataViewModel.getMedicationByGtin(
                             info.gtin.replace(
@@ -143,7 +145,9 @@ fun HomeScreen(
                         }
                         showScanner = false
                     }
-                }, visible = showScanner
+                },
+                visible = showScanner,
+                scannedType = ScannableTypes.MEDICATION
             )
         }
 

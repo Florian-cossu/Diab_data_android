@@ -22,7 +22,7 @@ interface MedicalDeviceDao {
     @Query("SELECT * FROM medical_devices WHERE (isArchived = 0 OR isArchived = 1) ORDER BY date DESC")
     fun getAllMedicalDevices(): Flow<List<MedicalDeviceEntry>>
 
-    @Query("SELECT * FROM medical_devices WHERE :expirationDate >= :today AND isArchived = 0 ORDER BY type, date ASC")
+    @Query("SELECT * FROM medical_devices WHERE :expirationDate >= :today AND isArchived = 0 ORDER BY deviceType, date ASC")
     fun getUpcomingExpirationDatesFlow(
         today: LocalDate,
         expirationDate: LocalDate

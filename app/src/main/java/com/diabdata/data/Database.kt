@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
         MedicationEntity::class,
         MedicalDeviceInfoEntity::class
     ],
-    version = 14,
+    version = 16,
     exportSchema = false
 )
 

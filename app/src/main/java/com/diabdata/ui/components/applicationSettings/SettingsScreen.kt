@@ -369,18 +369,19 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     color = MaterialTheme.colorScheme.primary
                 )
             },
-            title = { Text("Updates - 16/09/2025") },
+            title = { Text("Updates - 19/09/2025") },
             text = {
                 LazyColumn {
-                    item { Text("- New section") }
+                    item { Text("- NEW SECTION") }
                     item { Text("\t• Added devices section in Navbar") }
                     item { Text("- Settings page") }
                     item { Text("\t• Added GTIN Csv version number in settings page") }
                     item { Text("- Icons") }
                     item { Text("\t• Added custom icon sets for upcoming device page") }
-                    item { Text("- Database management") }
+                    item { Text("- DATABASE MANAGEMENT") }
                     item { Text("\t• Added clean database migrations") }
                     item { Text("\t• Added medical devices database") }
+                    item { Text("\t• Added medical device insertion popup") }
                 }
             },
             confirmButton = {

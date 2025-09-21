@@ -25,12 +25,15 @@ import com.diabdata.R
 import com.diabdata.ui.components.latestMeasurements.CameraPreview
 import com.diabdata.utils.MedicationInfo
 import com.diabdata.utils.SvgIcon
-import com.diabdata.utils.parseGS1
+import com.diabdata.utils.parseMedication
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun DataMatrixScannerDialog(
-    visible: Boolean, onDismiss: () -> Unit, onResult: (MedicationInfo) -> Unit
+    visible: Boolean,
+    onDismiss: () -> Unit,
+    onResult: (MedicationInfo) -> Unit,
+    scannedType: ScannableTypes
 ) {
     if (!visible) return
 
@@ -54,10 +57,17 @@ fun DataMatrixScannerDialog(
                     shape = RoundedCornerShape(24.dp)
                 )) {
             CameraPreview(
-                modifier = Modifier.matchParentSize(), onBarcodeDetected = { rawValue ->
-                    val parsed = parseGS1(rawValue)
-                    onResult(parsed)
-                    onDismiss()
+                modifier = Modifier.matchParentSize(),
+                onBarcodeDetected = { rawValue ->
+                    when (scannedType) {
+                        ScannableTypes.MEDICATION -> {
+                            val parsed = parseMedication(rawValue)
+                            onResult(parsed)
+                            onDismiss()
+                        }
+
+                        ScannableTypes.DEVICE -> {}
+                    }
                 })
         }
 
@@ -80,4 +90,9 @@ fun DataMatrixScannerDialog(
             )
         }
     }
+}
+
+enum class ScannableTypes {
+    MEDICATION,
+    DEVICE;
 }

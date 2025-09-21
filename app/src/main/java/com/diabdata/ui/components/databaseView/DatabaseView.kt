@@ -415,6 +415,8 @@ private fun EntryContent(entry: DataViewModel.MixedDbEntry) {
             Text("${entry.value} kg", fontWeight = FontWeight.Bold)
             Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
         }
+
+        else -> {}
     }
 }
 

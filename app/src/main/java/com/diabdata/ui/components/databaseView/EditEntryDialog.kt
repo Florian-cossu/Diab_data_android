@@ -5,6 +5,7 @@ import com.diabdata.data.DataViewModel
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.AppointmentPopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.Hba1cPopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.ImportantDatePopup
+import com.diabdata.ui.components.addDataPopup.popupsByTypes.MedicalDevicePopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.TreatmentPopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.WeightPopup
 
@@ -49,6 +50,14 @@ fun EditEntryDialog(
 
         is DataViewModel.MixedDbEntry.ImportantDateEntry -> {
             ImportantDatePopup(
+                onDismiss = onDismiss,
+                dataViewModel = dataViewModel,
+                toUpdate = entry
+            )
+        }
+
+        is DataViewModel.MixedDbEntry.DeviceEntry -> {
+            MedicalDevicePopup(
                 onDismiss = onDismiss,
                 dataViewModel = dataViewModel,
                 toUpdate = entry

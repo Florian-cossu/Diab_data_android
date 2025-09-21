@@ -17,6 +17,7 @@ import com.diabdata.models.AppointmentType
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.ImportantDate
 import com.diabdata.models.MedicalDeviceEntry
+import com.diabdata.models.MedicalDeviceInfoType
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.models.TreatmentType
@@ -163,6 +164,12 @@ class DataViewModel(
         }
     }
 
+    fun insertDevice(device: MedicalDeviceEntry) {
+        viewModelScope.launch {
+            repository.insertDevice(device)
+        }
+    }
+
     // Archive function
     fun setArchived(entry: MixedDbEntry, archived: Boolean) {
         viewModelScope.launch {
@@ -206,6 +213,13 @@ class DataViewModel(
                     )
 
                 )
+
+                AddableType.DEVICE -> repository.updateDevice(
+                    (entry.toEntity() as MedicalDeviceEntry).copy(
+                        isArchived = archived,
+                        updatedAt = LocalDate.now()
+                    )
+                )
             }
         }
     }
@@ -218,6 +232,7 @@ class DataViewModel(
             AddableType.APPOINTMENT -> repository.deleteAppointment(entry.id)
             AddableType.TREATMENT -> repository.deleteTreatment(entry.id)
             AddableType.IMPORTANT_DATE -> repository.deleteImportantDate(entry.id)
+            AddableType.DEVICE -> repository.deleteDevice(entry.id)
         }
     }
 
@@ -229,6 +244,7 @@ class DataViewModel(
             AddableType.APPOINTMENT -> repository.updateAppointment(entry.toEntity() as Appointment)
             AddableType.TREATMENT -> repository.updateTreatment(entry.toEntity() as Treatment)
             AddableType.IMPORTANT_DATE -> repository.updateImportantDate(entry.toEntity() as ImportantDate)
+            AddableType.DEVICE -> repository.updateDevice(entry.toEntity() as MedicalDeviceEntry)
         }
     }
 
@@ -320,12 +336,32 @@ class DataViewModel(
             override val createdAt: LocalDate,
             override val updatedAt: LocalDate
         ) : MixedDbEntry()
+
+        data class DeviceEntry(
+            override val id: Int,
+            override val date: LocalDate,
+            override val addableType: AddableType = AddableType.DEVICE,
+            val name: String,
+            val deviceType: MedicalDeviceInfoType,
+            val batchNumber: String,
+            val serialNumber: String,
+            val manufacturer: String,
+            val lifeSpan: Int,
+            val isFaulty: Boolean,
+            val isReported: Boolean,
+            val isLifeSpanOver: Boolean,
+            override val icon: Int,
+            override val isArchived: Boolean,
+            override val createdAt: LocalDate,
+            override val updatedAt: LocalDate
+        ) : MixedDbEntry()
     }
 
     fun getIconForMixedEntry(
         addableType: AddableType,
         appointmentType: AppointmentType? = null,
-        treatmentType: TreatmentType? = null
+        treatmentType: TreatmentType? = null,
+        deviceType: MedicalDeviceInfoType? = null
     ): Int {
         return when (addableType) {
             AddableType.WEIGHT -> R.drawable.weight_icon_vector
@@ -351,6 +387,16 @@ class DataViewModel(
             }
 
             AddableType.IMPORTANT_DATE -> R.drawable.important_date_icon_vector
+
+            AddableType.DEVICE -> when (deviceType) {
+                MedicalDeviceInfoType.WIRELESS_PATCH -> R.drawable.wireless_patch_icon_vector
+                MedicalDeviceInfoType.WIRED_PATCH -> R.drawable.wired_patch_icon_vector
+                MedicalDeviceInfoType.CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_SENSOR -> R.drawable.continuous_glucose_monitoring_system_sensor
+                MedicalDeviceInfoType.CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_TRANSMITTER -> R.drawable.continuous_glucose_monitoring_system_transmitter
+                MedicalDeviceInfoType.WIRED_PUMP -> R.drawable.wired_pump_icon_vector
+                MedicalDeviceInfoType.WIRELESS_PATCH_REMOTE -> R.drawable.wireless_patch_remote_icon_vector
+                null -> R.drawable.devices_icon_vector
+            }
         }
     }
 

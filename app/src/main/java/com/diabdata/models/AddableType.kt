@@ -40,6 +40,12 @@ enum class AddableType(
         displayNameRes = R.string.addable_important_date,
         baseColor = Color(0xFFFCB227),
         iconRes = R.drawable.important_date_icon_vector
+    ),
+    DEVICE(
+        tableName = "medical_devices",
+        displayNameRes = R.string.addable_device,
+        baseColor = Color(0xFF4DB3EA),
+        iconRes = R.drawable.devices_icon_vector
     );
 
     fun getDisplayName(context: Context): String =

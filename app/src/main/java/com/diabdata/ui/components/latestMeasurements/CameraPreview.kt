@@ -120,7 +120,6 @@ fun CameraPreview(
                 try {
                     cameraProvider.unbindAll()
 
-                    // ✅ récupérer la Camera pour piloter le focus
                     val camera = cameraProvider.bindToLifecycle(
                         lifecycleOwner, cameraSelector, preview, analyzer
                     )

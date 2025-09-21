@@ -1,4 +1,4 @@
-package com.diabdata.ui.components
+package com.diabdata.ui.components.devices.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -32,7 +32,7 @@ import com.diabdata.models.AddableType
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AddDataFab(
+fun AddDeviceFab(
     onSelect: (AddableType) -> Unit, onScanClick: () -> Unit
 ) {
     var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -44,22 +44,7 @@ fun AddDataFab(
             stringResource(R.string.addable_treatment_scan), R.drawable.data_matrix_icon_vector
         ) { onScanClick() },
         Triple(
-            stringResource(R.string.addable_weight), R.drawable.weight_add_icon_vector
-        ) { onSelect(AddableType.WEIGHT) },
-        Triple(stringResource(R.string.addable_hba1c), R.drawable.hba1c_add_icon_vector) {
-            onSelect(
-                AddableType.HBA1C
-            )
-        },
-        Triple(
-            stringResource(R.string.addable_important_date),
-            R.drawable.important_date_add_icon_vector
-        ) { onSelect(AddableType.IMPORTANT_DATE) },
-        Triple(
-            stringResource(R.string.addable_treatment), R.drawable.medication_add_icon_vector
-        ) { onSelect(AddableType.TREATMENT) },
-        Triple(
-            stringResource(R.string.addable_appointment), R.drawable.event_add_icon_vector
+            stringResource(R.string.addable_device), R.drawable.medical_device_add_icon_vector
         ) { onSelect(AddableType.APPOINTMENT) })
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
