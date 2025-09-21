@@ -11,4 +11,5 @@ data class WeightEntry(
     val createdAt: LocalDate,
     val isArchived: Boolean,
     val value: Float,
+    val updatedAt: LocalDate,
 )

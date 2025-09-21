@@ -4,8 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.diabdata.models.PlotPoint
 import com.diabdata.models.WeightEntry
+import com.diabdata.models.classes.PlotPoint
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 

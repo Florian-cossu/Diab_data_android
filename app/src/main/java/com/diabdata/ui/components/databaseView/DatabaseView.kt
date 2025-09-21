@@ -1,4 +1,4 @@
-package com.diabdata.ui
+package com.diabdata.ui.components.databaseView
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -71,8 +71,8 @@ import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
+import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.FlippableSelectionIcon
-import com.diabdata.ui.components.databaseView.EditEntryDialog
 import com.diabdata.utils.SvgIcon
 import com.diabdata.utils.getItemShape
 import kotlinx.coroutines.launch
@@ -185,7 +185,6 @@ fun DatabaseEditionView(
 
             Spacer(Modifier.height(8.dp))
 
-            // LISTE DES ENTRIES
             LazyColumn {
                 items(
                     items = filteredEntries,
@@ -221,18 +220,13 @@ fun DatabaseEditionView(
                 }
             }
         }
-        val scope = rememberCoroutineScope()
+        rememberCoroutineScope()
 
         selectedEntry?.let { entry ->
             EditEntryDialog(
                 entry = entry,
                 onDismiss = { selectedEntry = null },
-                onSave = { updated ->
-                    scope.launch {
-                        dataViewModel.updateEntry(updated)
-                    }
-                    selectedEntry = null
-                }
+                dataViewModel = dataViewModel
             )
         }
     }
@@ -312,7 +306,7 @@ fun EntryCardSwipeM3(
 
         Surface(
             shape = shape,
-            tonalElevation = 4.dp,
+            tonalElevation = 2.dp,
             color = archivedCardBgColor,
             modifier = Modifier
                 .fillMaxWidth()
@@ -359,7 +353,12 @@ fun EntryCardSwipeM3(
                 else MaterialTheme.colorScheme.primary
 
                 Box(contentAlignment = Alignment.Center) {
-                    SvgIcon(resId = entry.icon, modifier = Modifier.size(24.dp), color = color)
+                    ColoredIconCircle(
+                        iconRes = entry.icon,
+                        baseColor = if (entry.isArchived) color else entry.addableType.baseColor,
+                        size = 40.dp,
+                        iconSize = 25.dp
+                    )
                 }
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
@@ -393,8 +392,8 @@ private fun EntryContent(entry: DataViewModel.MixedDbEntry) {
             }
         }
 
-        is DataViewModel.MixedDbEntry.DiagnosisEntry -> {
-            Text(entry.diagnosis, fontWeight = FontWeight.Bold)
+        is DataViewModel.MixedDbEntry.ImportantDateEntry -> {
+            Text(entry.importantDate, fontWeight = FontWeight.Bold)
             Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
         }
 
@@ -416,6 +415,8 @@ private fun EntryContent(entry: DataViewModel.MixedDbEntry) {
             Text("${entry.value} kg", fontWeight = FontWeight.Bold)
             Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
         }
+
+        else -> {}
     }
 }
 

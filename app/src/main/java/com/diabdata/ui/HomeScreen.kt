@@ -39,8 +39,9 @@ import com.diabdata.models.AddableType
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.ui.components.AddDataFab
-import com.diabdata.ui.components.AddDataPopup
 import com.diabdata.ui.components.DataMatrixScannerDialog
+import com.diabdata.ui.components.ScannableTypes
+import com.diabdata.ui.components.addDataPopup.AddDataPopup
 import com.diabdata.ui.components.latestMeasurements.LatestMeasurements
 import com.diabdata.utils.MedicationInfo
 import com.diabdata.utils.SvgIcon
@@ -101,14 +102,14 @@ fun HomeScreen(
                         modifier = Modifier
                             .width((LocalWindowInfo.current.containerSize.width * 0.15f).dp)
                             .aspectRatio(1f),
-                        color = MaterialTheme.colorScheme.surfaceTint
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                     )
 
                     Text(
                         text = stringResource(R.string.homescreen_no_data_text),
                         modifier = Modifier.padding(top = 16.dp),
                         style = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
-                        color = MaterialTheme.colorScheme.surfaceTint
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                     )
                 }
             }
@@ -116,7 +117,8 @@ fun HomeScreen(
 
         if (showScanner) {
             DataMatrixScannerDialog(
-                onDismiss = { showScanner = false }, onResult = { info ->
+                onDismiss = { showScanner = false },
+                onResult = { info ->
                     scope.launch {
                         val entity = dataViewModel.getMedicationByGtin(
                             info.gtin.replace(
@@ -143,19 +145,17 @@ fun HomeScreen(
                         }
                         showScanner = false
                     }
-                }, visible = showScanner
+                },
+                visible = showScanner,
+                scannedType = ScannableTypes.MEDICATION
             )
         }
-
 
         selectedType?.let { type ->
             AddDataPopup(
                 type = type,
                 dataViewModel = dataViewModel,
                 prefilledTreatment = dataViewModel.prefilledTreatment,
-                onSubmit = { data ->
-                    setSelectedType(null)
-                },
                 onDismiss = {
                     setSelectedType(null)
                     dataViewModel.prefilledTreatment = null
@@ -164,9 +164,11 @@ fun HomeScreen(
 
 
         AddDataFab(
-            onSelect = setSelectedType, onScanClick = {
+            onSelect = setSelectedType,
+            onScanClick = {
                 permissionLauncher.launch(Manifest.permission.CAMERA)
-            })
+            }
+        )
     }
 }
 
@@ -178,8 +180,9 @@ private fun mapToTreatment(info: MedicationInfo, entity: MedicationEntity): Trea
     return Treatment(
         expirationDate = expiration,
         name = entity.fullName,
-        type = entity.treatmentType,
+        createdAt = today,
         isArchived = false,
-        createdAt = today
+        type = entity.treatmentType,
+        updatedAt = LocalDate.now()
     )
 }

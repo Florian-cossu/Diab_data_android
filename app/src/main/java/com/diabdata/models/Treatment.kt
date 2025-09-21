@@ -11,5 +11,6 @@ data class Treatment(
     val name: String,
     val createdAt: LocalDate,
     val isArchived: Boolean,
-    val type: TreatmentType
+    val type: TreatmentType,
+    val updatedAt: LocalDate
 )

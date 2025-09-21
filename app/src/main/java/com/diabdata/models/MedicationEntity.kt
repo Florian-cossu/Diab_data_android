@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "medications")
 data class MedicationEntity(
     @PrimaryKey val cipGtin: String,
-    val insulin: String,
+    val brandName: String,
     val treatmentType: TreatmentType,
     val fullName: String
 )

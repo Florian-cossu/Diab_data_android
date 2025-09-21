@@ -1,5 +1,6 @@
-package com.diabdata.ui
+package com.diabdata.ui.components.applicationSettings
 
+import android.content.Context
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -26,12 +27,16 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,13 +45,23 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.diabdata.BuildConfig
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.utils.SvgIcon
 import com.diabdata.utils.showNotification
+import com.diabdata.workers.scheduleAppointmentReminders
+import com.diabdata.workers.scheduleMedicationExpirationReminders
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Date
 import java.util.Locale
 
@@ -59,9 +74,22 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     val scrollState = rememberScrollState()
     val versionName = BuildConfig.VERSION_NAME
     val versionCode = BuildConfig.VERSION_CODE
+    val medicationsGtinFileversion = BuildConfig.MEDICATION_GTIN_FILE_VERSION
+    val medicalDeviceGtinFileVersion = BuildConfig.MEDICAL_DEVICES_GTIN_FILE_VERSION
+
+    val scope = rememberCoroutineScope()
 
     var showConfirmDialog by remember { mutableStateOf(false) }
     var showChangeLogDialog by remember { mutableStateOf(false) }
+
+    val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+
+    var enableExpirationDateReminder by remember {
+        mutableStateOf(prefs.getBoolean("expiration_reminder", false))
+    }
+    var enableAppointmentReminder by remember {
+        mutableStateOf(prefs.getBoolean("appointment_reminder", false))
+    }
 
     val createFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/json"),
@@ -131,6 +159,38 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
             }
         })
 
+    val workManager = WorkManager.getInstance(context)
+
+// LiveData observables
+    val appointmentInfos by workManager.getWorkInfosByTagLiveData("appointments")
+        .observeAsState(initial = emptyList())
+    val treatmentInfos by workManager.getWorkInfosByTagLiveData("treatments")
+        .observeAsState(initial = emptyList())
+
+    val nextAppointmentReminder = remember(appointmentInfos) {
+        appointmentInfos
+            .filter { it.state == WorkInfo.State.ENQUEUED }
+            .mapNotNull { info ->
+                info.tags.firstOrNull { it.startsWith("appointments_") }
+                    ?.removePrefix("appointments_")
+                    ?.toLongOrNull()
+            }.minOfOrNull { epochMilli ->
+                Instant.ofEpochMilli(epochMilli).atZone(ZoneId.systemDefault()).toLocalDate()
+            }
+    }
+
+    val nextTreatmentReminder = remember(treatmentInfos) {
+        treatmentInfos
+            .filter { it.state == WorkInfo.State.ENQUEUED }
+            .mapNotNull { info ->
+                info.tags.firstOrNull { it.startsWith("treatments_") }
+                    ?.removePrefix("treatments_")
+                    ?.toLongOrNull()
+            }.minOfOrNull { epochMilli ->
+                Instant.ofEpochMilli(epochMilli).atZone(ZoneId.systemDefault()).toLocalDate()
+            }
+    }
+
     Scaffold { padding ->
         Column(
             modifier = Modifier
@@ -140,15 +200,22 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 )
                 .background(Color.Transparent)
                 .verticalScroll(scrollState)
-                .padding(20.dp)
+                .padding(20.dp),
+            verticalArrangement = spacedBy(32.dp)
         ) {
+            // Database section
             SettingsSection(
                 title = stringResource(R.string.settings_page_data_heading)
             ) {
                 SettingsButton(
                     text = stringResource(R.string.settings_page_data_export_button_text),
                     onClick = { createFileLauncher.launch(fileName) },
-                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                    shape = RoundedCornerShape(
+                        topStart = 16.dp,
+                        topEnd = 16.dp,
+                        bottomStart = 3.dp,
+                        bottomEnd = 3.dp
+                    ),
                     icon = R.drawable.backup_db_icon_vector
                 )
                 SettingsButton(
@@ -160,25 +227,97 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 SettingsButton(
                     text = stringResource(R.string.settings_page_data_purge_button_text),
                     onClick = { showConfirmDialog = true },
-                    shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp),
+                    shape = RoundedCornerShape(
+                        topStart = 3.dp,
+                        topEnd = 3.dp,
+                        bottomStart = 16.dp,
+                        bottomEnd = 16.dp
+                    ),
                     isDestructive = true,
                     icon = R.drawable.purge_db_icon_vector
                 )
             }
 
-            Spacer(Modifier.height(32.dp))
+            // Notification section
+            SettingsSection(
+                title = stringResource(R.string.settings_page_notifications_headings)
+            ) {
+                SettingsToggle(
+                    text = stringResource(R.string.settings_page_notifications_expiration_date),
+                    checked = enableExpirationDateReminder,
+                    onCheckedChange = { isChecked ->
+                        enableExpirationDateReminder = isChecked
+                        prefs.edit { putBoolean("expiration_reminder", isChecked) }
+                        val workManager = WorkManager.getInstance(context)
+                        if (isChecked) {
+                            scope.launch {
+                                scheduleMedicationExpirationReminders(
+                                    context,
+                                    dataViewModel
+                                )
+                            }
+                        } else {
+                            workManager.cancelAllWorkByTag("treatments")
+                        }
+                    },
+                    icon = R.drawable.notification_active_icon_vector,
+                    toastText = stringResource(R.string.settings_page_notifications_expiration_date_confirmation_toast),
+                    nextReminderDate = nextTreatmentReminder
+                )
+                SettingsToggle(
+                    text = stringResource(R.string.settings_page_notifications_appointment),
+                    checked = enableAppointmentReminder,
+                    onCheckedChange = { isChecked ->
+                        enableAppointmentReminder = isChecked
+                        prefs.edit { putBoolean("appointment_reminder", isChecked) }
+                        val workManager = WorkManager.getInstance(context)
+                        if (isChecked) {
+                            scope.launch {
+                                scheduleAppointmentReminders(context, dataViewModel)
+                            }
+                        } else {
+                            workManager.cancelAllWorkByTag("appointments")
+                        }
+                    },
+                    icon = R.drawable.notification_active_icon_vector,
+                    toastText = stringResource(R.string.settings_page_notifications_appointment_confirmation_toast),
+                    nextReminderDate = nextAppointmentReminder
+                )
+            }
 
             // Section Application
             SettingsSection(
                 title = stringResource(R.string.settings_page_application_heading)
             ) {
                 SettingsButton(
-                    text = "Version $versionName (code: $versionCode)",
+                    text = "Diabdata $versionName (code: $versionCode)",
                     onClick = {
                         showChangeLogDialog = true
                     },
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(
+                        topStart = 16.dp,
+                        topEnd = 16.dp,
+                        bottomStart = 3.dp,
+                        bottomEnd = 3.dp
+                    ),
                     icon = R.drawable.app_version_icon_vector
+                )
+                SettingsButton(
+                    text = "Medication information file version $medicationsGtinFileversion",
+                    onClick = { },
+                    shape = RoundedCornerShape(3.dp),
+                    icon = R.drawable.medication_info_icon_vector
+                )
+                SettingsButton(
+                    text = "Medical devices information file version $medicalDeviceGtinFileVersion",
+                    onClick = { },
+                    shape = RoundedCornerShape(
+                        topStart = 3.dp,
+                        topEnd = 3.dp,
+                        bottomStart = 16.dp,
+                        bottomEnd = 16.dp
+                    ),
+                    icon = R.drawable.medical_device_info_version_icon_vector
                 )
             }
         }
@@ -204,7 +343,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
             confirmButton = {
                 TextButton(
                     onClick = {
-                        dataViewModel.clearDatabase()
+                        dataViewModel.clearDatabase(context)
                         showConfirmDialog = false
                     }) {
                     Text(confirmButtonText, color = MaterialTheme.colorScheme.error)
@@ -217,7 +356,8 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 }
             }
         )
-    } else if (showChangeLogDialog) {
+    }
+    if (showChangeLogDialog) {
         val confirmButtonText = stringResource(R.string.confirm_button_text)
 
         AlertDialog(
@@ -229,13 +369,19 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     color = MaterialTheme.colorScheme.primary
                 )
             },
-            title = { Text("Updates - 27/08/2025") },
+            title = { Text("Updates - 19/09/2025") },
             text = {
                 LazyColumn {
-                    item { Text("- Added GTIN database store check on app start (got emptied sometimes for unknown reasons)") }
-                    item { Text("- First iteration of graph page") }
-                    item { Text("- Updated notification util") }
-                    item { Text("- Fixed swipeable card bug where internal state was reset on swipe to archive") }
+                    item { Text("- NEW SECTION") }
+                    item { Text("\t• Added devices section in Navbar") }
+                    item { Text("- Settings page") }
+                    item { Text("\t• Added GTIN Csv version number in settings page") }
+                    item { Text("- Icons") }
+                    item { Text("\t• Added custom icon sets for upcoming device page") }
+                    item { Text("- DATABASE MANAGEMENT") }
+                    item { Text("\t• Added clean database migrations") }
+                    item { Text("\t• Added medical devices database") }
+                    item { Text("\t• Added medical device insertion popup") }
                 }
             },
             confirmButton = {
@@ -254,22 +400,24 @@ fun SettingsSection(
     title: String,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
-        color = MaterialTheme.colorScheme.surfaceTint
-    )
+    Column {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.surfaceTint
+        )
 
-    Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(8.dp))
 
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        tonalElevation = 0.dp,
-        color = Color.Transparent,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(verticalArrangement = spacedBy(3.dp)) {
-            content()
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            tonalElevation = 0.dp,
+            color = Color.Transparent,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(verticalArrangement = spacedBy(3.dp)) {
+                content()
+            }
         }
     }
 }
@@ -279,12 +427,12 @@ fun SettingsButton(
     text: String, onClick: () -> Unit, shape: Shape, isDestructive: Boolean = false, icon: Int = 0
 ) {
     Surface(
-        shape = shape, tonalElevation = 4.dp,
+        shape = shape, tonalElevation = 2.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
         TextButton(
             onClick = onClick, shape = shape, colors = ButtonDefaults.textButtonColors(
-                containerColor = Color.Transparent, // On laisse la Surface gérer le fond
+                containerColor = Color.Transparent,
                 contentColor = if (isDestructive) MaterialTheme.colorScheme.error
                 else MaterialTheme.colorScheme.onSurface
             ), modifier = Modifier.fillMaxWidth()
@@ -307,6 +455,79 @@ fun SettingsButton(
                     text, style = MaterialTheme.typography.titleMedium
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun SettingsToggle(
+    text: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    shape: Shape = RoundedCornerShape(0.dp),
+    icon: Int? = null,
+    toastText: String = "",
+    nextReminderDate: LocalDate?,
+) {
+    Surface(
+        shape = shape,
+        tonalElevation = 2.dp,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        val context = LocalContext.current
+
+        val displayText = if (nextReminderDate != null) stringResource(
+            R.string.settings_notification_toggle_next_reminder_date, nextReminderDate.format(
+                DateTimeFormatter.ofLocalizedDate(
+                    FormatStyle.MEDIUM
+                )
+            )
+        ) else ""
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 30.dp, top = 10.dp, end = 15.dp, bottom = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                if (displayText.isNotBlank()) {
+                    Text(
+                        text = displayText,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            Switch(
+                checked = checked,
+                onCheckedChange = { isChecked ->
+                    onCheckedChange(isChecked)
+                    if (toastText.isNotBlank() && isChecked) {
+                        Toast.makeText(
+                            context,
+                            toastText,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                },
+                thumbContent = {
+                    if (checked && icon != null) {
+                        SvgIcon(
+                            resId = icon,
+                            contentDescription = null,
+                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+
+            )
         }
     }
 }

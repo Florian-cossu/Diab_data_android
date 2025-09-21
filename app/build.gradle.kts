@@ -17,7 +17,9 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = getVersionCode()
-        versionName = "3.0"
+        versionName = "3.9.2"
+        buildConfigField("String", "MEDICATION_GTIN_FILE_VERSION", "\"1.2.0\"")
+        buildConfigField("String", "MEDICAL_DEVICES_GTIN_FILE_VERSION", "\"1.0.0\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -77,6 +79,8 @@ dependencies {
     implementation(libs.vico.compose.m3)
     implementation(libs.vico.multiplatform)
     implementation(libs.vico.views)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.kotlinx.coroutines.guava)
 
     // Material
     implementation(libs.androidx.material3)
@@ -96,10 +100,17 @@ dependencies {
     //Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.common)
+    implementation(libs.androidx.ui.text)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.okhttp)
+
 
     // Use ksp for annotation processing
     ksp(libs.androidx.room.compiler)
     implementation(libs.gson)
+    implementation(libs.kotlinx.serialization.json)
+
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 

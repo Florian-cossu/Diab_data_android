@@ -3,7 +3,7 @@
 <!-- PROJECT SHIELDS -->
 
 [![Static Badge](https://img.shields.io/badge/CONTRIBUTORS-1-blue)](https://github.com/Florian-cossu/chat_mockup/graphs/contributors)
-[![Static Badge](https://img.shields.io/badge/VERSION-3.0-teal)](#)
+[![Static Badge](https://img.shields.io/badge/VERSION-3.3-teal)](#)
 [![Static Badge](https://img.shields.io/badge/OWNER-Florian%20Cossu-38bdf8)](https://github.com/Florian-cossu)
 
 <!-- PROJECT LOGO -->
@@ -55,11 +55,11 @@ have everything in the same place and easier to find and update.
   <tr>
     <td><img src="resources/screenshots/empty_homescreen_light.png" width="200"/></td>
     <td><img src="resources/screenshots/filled_homescreen_light.png" width="200"/></td>
-    <td><img src="resources/screenshots/database_view_screen_light.png" width="200"/></td>
-    <td><img src="resources/screenshots/data_matrix_scan_light.png" width="200"/></td>
     <td><img src="resources/screenshots/fab_menu_add_light.png" width="200"/></td>
-    <td><img src="resources/screenshots/settings_screen_light.png" width="200"/></td>
+    <td><img src="resources/screenshots/data_matrix_scan_light.png" width="200"/></td>
     <td><img src="resources/screenshots/graphs_screen_light.png" width="200"/></td>
+    <td><img src="resources/screenshots/database_view_screen_light.png" width="200"/></td>
+    <td><img src="resources/screenshots/settings_screen_light.png" width="200"/></td>
   </tr>
 </table>
 
@@ -71,6 +71,7 @@ This project is built using the following frameworks/libraries:
 
 [![Static Badge](https://img.shields.io/badge/Android%20Studio-3DDC84?logo=androidstudio&logoColor=white)](https://tailwindcss.com/)
 [![Static Badge](https://img.shields.io/badge/Google%20material%20font-4285F4?logo=googlefonts&logoColor=white)](https://fonts.google.com/icons?icon.size=24&icon.color=%235f6368&icon.query=date&icon.set=Material+Symbols&icon.style=Outlined)
+[![Static Badge](https://img.shields.io/badge/Vico-4285F4)](https://github.com/patrykandpatrick/vico)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

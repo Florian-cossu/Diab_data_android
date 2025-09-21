@@ -30,7 +30,6 @@ import androidx.compose.ui.res.stringResource
 import com.diabdata.R
 import com.diabdata.models.AddableType
 
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AddDataFab(
@@ -53,8 +52,9 @@ fun AddDataFab(
             )
         },
         Triple(
-            stringResource(R.string.addable_diagnosis), R.drawable.diagnosis_icon_vector
-        ) { onSelect(AddableType.DIAGNOSIS) },
+            stringResource(R.string.addable_important_date),
+            R.drawable.important_date_add_icon_vector
+        ) { onSelect(AddableType.IMPORTANT_DATE) },
         Triple(
             stringResource(R.string.addable_treatment), R.drawable.medication_add_icon_vector
         ) { onSelect(AddableType.TREATMENT) },
@@ -91,16 +91,19 @@ fun AddDataFab(
                 }
             }) {
             fabItems.forEach { (label, iconRes, action) ->
-                FloatingActionButtonMenuItem(onClick = {
-                    fabMenuExpanded = false
-                    action()
-                }, text = { Text(label) }, icon = {
-                    Icon(
-                        painter = painterResource(id = iconRes), contentDescription = null
-                    )
-                })
+                FloatingActionButtonMenuItem(
+                    onClick = {
+                        fabMenuExpanded = false
+                        action()
+                    },
+                    text = { Text(label) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = iconRes), contentDescription = null
+                        )
+                    }
+                )
             }
-
         }
     }
 }

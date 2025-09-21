@@ -11,4 +11,5 @@ data class HBA1CEntry(
     val createdAt: LocalDate,
     val isArchived: Boolean,
     val value: Float,
+    val updatedAt: LocalDate,
 )

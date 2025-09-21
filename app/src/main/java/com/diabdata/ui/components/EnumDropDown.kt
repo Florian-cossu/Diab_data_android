@@ -1,58 +1,130 @@
 package com.diabdata.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.diabdata.R
+import com.diabdata.utils.SvgIcon
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T> EnumDropdown(
     label: String,
     options: List<T>,
     selected: T?,
     displayName: (T) -> String,
+    iconRes: ((T) -> Int?)? = null,
     onSelectedChange: (T) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    var query by remember { mutableStateOf("") }
+
+    val isSearchable = options.size >= 5
+
+    LaunchedEffect(selected) {
+        if (isSearchable && selected != null) {
+            query = displayName(selected)
+        }
+    }
+
+    val filteredOptions = if (isSearchable) {
+        options.filter { displayName(it).contains(query, ignoreCase = true) }
+    } else {
+        options
+    }
 
     ExposedDropdownMenuBox(
-        expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
         OutlinedTextField(
-            value = selected?.let { displayName(it) } ?: "",
-            onValueChange = {},
-            label = { Text(label) },
-            readOnly = true,
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            value = if (isSearchable) query else selected?.let { displayName(it) } ?: "",
+            onValueChange = { newValue ->
+                if (isSearchable) {
+                    query = newValue
+                    expanded = true
+                }
             },
+            leadingIcon = {
+                if (isSearchable) {
+                    IconButton(
+                        onClick = { query = "" },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Search,
+                            contentDescription = stringResource(R.string.enum_dropdown_research_text)
+                        )
+                    }
+                }
+            },
+            label = { Text(label) },
+            placeholder = { if (isSearchable) Text(stringResource(R.string.enum_dropdown_research_text)) },
+            readOnly = !isSearchable,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .menuAnchor(
-                    type = ExposedDropdownMenuAnchorType.PrimaryNotEditable,
+                    type = if (isSearchable)
+                        ExposedDropdownMenuAnchorType.PrimaryEditable
+                    else
+                        ExposedDropdownMenuAnchorType.PrimaryNotEditable,
                     enabled = true
                 )
                 .fillMaxWidth(),
-            shape = MaterialTheme.shapes.small
+            shape = MaterialTheme.shapes.small,
+            singleLine = true
         )
 
         ExposedDropdownMenu(
-            expanded = expanded, onDismissRequest = { expanded = false }) {
-            options.forEach { option ->
-                DropdownMenuItem(text = { Text(displayName(option)) }, onClick = {
-                    onSelectedChange(option)
-                    expanded = false
-                })
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            filteredOptions.forEach { option ->
+                DropdownMenuItem(
+                    leadingIcon = {
+                        if (option == selected) {
+                            Icon(
+                                imageVector = Icons.Outlined.Check,
+                                contentDescription = null
+                            )
+                        } else {
+                            iconRes?.invoke(option)?.let { res ->
+                                SvgIcon(
+                                    resId = res,
+                                    modifier = Modifier.size(24.dp),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+                    },
+                    text = { Text(displayName(option)) },
+                    onClick = {
+                        onSelectedChange(option)
+                        query = displayName(option)
+                        expanded = false
+                    }
+                )
             }
         }
     }

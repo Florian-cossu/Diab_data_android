@@ -24,15 +24,16 @@ fun LatestMeasurements(
     Column(
         modifier = Modifier
             .padding(20.dp)
+            .padding(bottom = 70.dp)
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(35.dp)
     ) {
         val availability by viewModel.dataAvailability.collectAsState()
 
-        if (availability.hasDiagnoses) {
+        if (availability.hasImportantDates) {
             ImportantDatesList(viewModel)
         }
-        if (availability.hasWeights && availability.hasHba1c) {
+        if (availability.hasWeights || availability.hasHba1c) {
             LatestMeasures(viewModel)
         }
         if (availability.hasAppointments) {
@@ -40,6 +41,7 @@ fun LatestMeasurements(
         }
         if (availability.hasTreatments) {
             UpcomingTreatmentExpirationDates(viewModel)
+
         }
     }
 }
