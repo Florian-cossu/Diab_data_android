@@ -148,5 +148,7 @@
     <string name="expiration_dates_reminder_notification_channel">Expiration date reminders</string>
     <string name="settings_notification_toggle_next_reminder_date">Next reminder scheduled on %1$s</string>
     <string name="upcoming_appointment_card_notes_header">Notes</string>
-    <string name="current_devices_card_section_heading">Active devices</string>
+    <string name="current_consumable_devices_card_section_heading">Active peripherals</string>
+    <string name="current_non_consumable_devices_card_section_heading">My devices</string>
+    <string name="current_non_consumable_devices_card_replacement_warning_text">Replace today</string>
 </resources>

@@ -48,12 +48,26 @@ import java.time.temporal.ChronoUnit
 @Composable
 fun CurrentConsumableDevicesList(viewModel: DataViewModel) {
     val currentDevices by viewModel.currentConsumableDevices.collectAsState(initial = emptyList())
-    val showSection = currentDevices.isNotEmpty()
     val coroutineScope = rememberCoroutineScope()
+
+    val filteredDevices = currentDevices
+        .groupBy { it.deviceType }
+        .mapValues { (_, devices) ->
+            devices.sortedByDescending { it.date }
+        }
+        .flatMap { (_, devices) ->
+            val latest = devices.first()
+            val redundant = devices.drop(1).filterNot { old ->
+                old.lifeSpanEndDate.isEqual(latest.date)
+            }
+            listOf(latest) + redundant
+        }
+
+    val showSection = filteredDevices.isNotEmpty()
 
     if (showSection) {
         CurrentConsumableDevicesCards(
-            currentDevices,
+            filteredDevices,
             onMarkFaulty = { device ->
                 coroutineScope.launch {
                     viewModel.updateDevice(
@@ -96,7 +110,7 @@ fun CurrentConsumableDevicesCards(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            text = stringResource(R.string.current_devices_card_section_heading),
+            text = stringResource(R.string.current_consumable_devices_card_section_heading),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.surfaceTint
         )
@@ -106,13 +120,13 @@ fun CurrentConsumableDevicesCards(
             // Color animation for isFaulty device button
             val animatedContainerColor by animateColorAsState(
                 targetValue = if (card.device.isFaulty) {
-                    MaterialTheme.colorScheme.error
+                    card.textColor.darken()
                 } else {
                     card.textColor.copy(alpha = 0.2f)
                 },
                 animationSpec = tween(
-                    durationMillis = 500, // durée en ms
-                    easing = androidx.compose.animation.core.EaseInOut // easing
+                    durationMillis = 500,
+                    easing = androidx.compose.animation.core.EaseInOut
                 ),
                 label = "iconContainerColor"
             )
@@ -236,28 +250,40 @@ fun CurrentConsumableDevicesCards(
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = shortenedFormatLocalDate(card.date),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            // Progress bar
-                            val totalDays = card.lifeSpan
-                            val usedDays =
-                                ChronoUnit.DAYS.between(card.date, today).coerceAtLeast(0)
-                            val progress = (usedDays.toFloat() / totalDays).coerceIn(0f, 1f)
+                            if (card.lifeSpanEndDate.isEqual(today)) {
+                                SvgIcon(
+                                    resId = R.drawable.warning_icon_vector,
+                                    color = MedicalDeviceInfoType.WIRELESS_PATCH.baseColor,
+                                    modifier = Modifier.size(20.dp),
+                                )
+                                Text(
+                                    text = stringResource(R.string.current_non_consumable_devices_card_replacement_warning_text),
+                                    color = card.device.deviceType.baseColor,
+                                )
+                            } else {
+                                Text(
+                                    text = shortenedFormatLocalDate(card.date),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                // Progress bar
+                                val totalDays = card.lifeSpan
+                                val usedDays =
+                                    ChronoUnit.DAYS.between(card.date, today).coerceAtLeast(0)
+                                val progress = (usedDays.toFloat() / totalDays).coerceIn(0f, 1f)
 
-                            LinearProgressIndicator(
-                                progress = { progress },
-                                modifier = Modifier.weight(1f),
-                                color = if (card.isLifeSpanOver) MaterialTheme.colorScheme.error else card.textColor,
-                                trackColor = MaterialTheme.colorScheme.surfaceVariant
-                            )
-                            Text(
-                                text = shortenedFormatLocalDate(card.lifeSpanEndDate),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                                LinearProgressIndicator(
+                                    progress = { progress },
+                                    modifier = Modifier.weight(1f),
+                                    color = if (card.isLifeSpanOver) MaterialTheme.colorScheme.error else card.textColor,
+                                    trackColor = MaterialTheme.colorScheme.surfaceVariant
+                                )
+                                Text(
+                                    text = shortenedFormatLocalDate(card.lifeSpanEndDate),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
                 }
@@ -310,12 +336,43 @@ fun ConsumableDevicesListPreview() {
             isReported = false,
             isLifeSpanOver = false,
             updatedAt = LocalDate.of(2025, 9, 1)
+        ),
+        MedicalDeviceEntry(
+            id = 2,
+            date = LocalDate.of(2025, 9, 24),
+            lifeSpanEndDate = LocalDate.of(2025, 9, 24).plusDays(3),
+            name = "Omnipod Pod",
+            batchNumber = "567GGU",
+            serialNumber = "UTYFYZ38",
+            referenceNumber = "1R5TFG",
+            manufacturer = "Insulet",
+            deviceType = MedicalDeviceInfoType.WIRELESS_PATCH,
+            createdAt = LocalDate.of(2025, 9, 25),
+            isArchived = false,
+            lifeSpan = 3,
+            isFaulty = true,
+            isReported = false,
+            isLifeSpanOver = false,
+            updatedAt = LocalDate.of(2025, 9, 1)
         )
     )
 
+    val filteredFakeData = fakeData
+        .groupBy { it.deviceType }
+        .mapValues { (_, devices) ->
+            devices.sortedByDescending { it.date }
+        }
+        .flatMap { (_, devices) ->
+            val latest = devices.first()
+            val redundant = devices.drop(1).filterNot { old ->
+                old.lifeSpanEndDate.isEqual(latest.date)
+            }
+            listOf(latest) + redundant
+        }
+
     MaterialTheme {
         Column {
-            CurrentConsumableDevicesCards(fakeData)
+            CurrentConsumableDevicesCards(filteredFakeData)
         }
     }
 }

@@ -147,5 +147,7 @@
     <string name="expiration_dates_reminder_notification_channel">Rappels de dates d’expiration</string>
     <string name="settings_notification_toggle_next_reminder_date">Prochain rappel prévu %1$s</string>
     <string name="upcoming_appointment_card_notes_header">Notes</string>
-    <string name="current_devices_card_section_heading">Appareils actifs</string>
+    <string name="current_consumable_devices_card_section_heading">Pérphériques actifs</string>
+    <string name="current_non_consumable_devices_card_section_heading">Mes appareils</string>
+    <string name="current_non_consumable_devices_card_replacement_warning_text">Remplacer aujourd\'hui</string>
 </resources>

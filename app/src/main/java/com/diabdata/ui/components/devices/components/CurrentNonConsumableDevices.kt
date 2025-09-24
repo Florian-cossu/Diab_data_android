@@ -92,23 +92,22 @@ fun CurrentNonConsumableDevicesCards(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            text = stringResource(R.string.current_devices_card_section_heading),
+            text = stringResource(R.string.current_non_consumable_devices_card_section_heading),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.surfaceTint
         )
         Spacer(Modifier.height(8.dp))
 
         cards.forEachIndexed { index, card ->
-            // Color animation for isFaulty device button
             val animatedContainerColor by animateColorAsState(
                 targetValue = if (card.device.isFaulty) {
-                    MaterialTheme.colorScheme.error
+                    card.textColor.darken()
                 } else {
                     card.textColor.copy(alpha = 0.2f)
                 },
                 animationSpec = tween(
-                    durationMillis = 500, // durée en ms
-                    easing = androidx.compose.animation.core.EaseInOut // easing
+                    durationMillis = 500,
+                    easing = androidx.compose.animation.core.EaseInOut
                 ),
                 label = "iconContainerColor"
             )
