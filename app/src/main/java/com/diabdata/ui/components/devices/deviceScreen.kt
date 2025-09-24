@@ -7,16 +7,16 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -63,24 +63,30 @@ fun DevicesScreen(
     val scope = rememberCoroutineScope()
 
 
-    Scaffold { padding ->
+    Column(
+        modifier = Modifier
+            .padding(20.dp)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(35.dp)
+    ) {
         if (availability.hasDevices) {
             Column(
                 modifier = Modifier
-                    .padding(20.dp)
+                    .fillMaxSize()
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 70.dp)
-                    .fillMaxWidth()
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(35.dp)
             ) {
                 CurrentNonConsumableDevicesList(dataViewModel)
                 CurrentConsumableDevicesList(dataViewModel)
+                Spacer(modifier = Modifier.height(70.dp))
             }
         } else {
             Box(
                 modifier = Modifier
-                    .padding(padding)
+                    .padding(20.dp)
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 70.dp)
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
@@ -106,55 +112,56 @@ fun DevicesScreen(
             }
         }
 
-        AddDeviceFab(
-            onSelect = { showAddDevicePopup = true },
-            onScanClick = { showScanner = true }
+    }
+
+    AddDeviceFab(
+        onSelect = { showAddDevicePopup = true },
+        onScanClick = { showScanner = true }
+    )
+
+    if (showAddDevicePopup) {
+        AddDataPopup(
+            type = AddableType.DEVICE,
+            dataViewModel = dataViewModel,
+            onDismiss = {
+                showAddDevicePopup = false
+            },
+            prefilledMedicalDevice = prefilledDevice,
         )
+    }
 
-        if (showAddDevicePopup) {
-            AddDataPopup(
-                type = AddableType.DEVICE,
-                dataViewModel = dataViewModel,
-                onDismiss = {
-                    showAddDevicePopup = false
-                },
-                prefilledMedicalDevice = prefilledDevice,
-            )
-        }
+    if (showScanner) {
+        DataMatrixScannerDialog(
+            onDismiss = { showScanner = false },
+            onResult = { result ->
+                scope.launch {
+                    when (result) {
+                        is ScanResult.Device -> {
+                            val info = result.data
+                            val entity = dataViewModel.getMedicalDeviceByCode(info.gtin)
+                            Log.d("EXTRACTED-GTIN", info.gtin)
 
-        if (showScanner) {
-            DataMatrixScannerDialog(
-                onDismiss = { showScanner = false },
-                onResult = { result ->
-                    scope.launch {
-                        when (result) {
-                            is ScanResult.Device -> {
-                                val info = result.data
-                                val entity = dataViewModel.getMedicalDeviceByCode(info.gtin)
-                                Log.d("EXTRACTED-GTIN", info.gtin)
-
-                                if (entity != null) {
-                                    val device = generateMedicalDeviceEntry(result, entity)
-                                    prefilledDevice = device
-                                    showAddDevicePopup = true
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        "Appareil inconnu pour GTIN ${info.gtin}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
+                            if (entity != null) {
+                                val device = generateMedicalDeviceEntry(result, entity)
+                                prefilledDevice = device
+                                showAddDevicePopup = true
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Appareil inconnu pour GTIN ${info.gtin}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
-
-                            else -> Unit
                         }
-                        showScanner = false
+
+                        else -> Unit
                     }
-                },
-                visible = showScanner,
-                scannedType = ScannableTypes.DEVICE
-            )
-        }
+                    showScanner = false
+                }
+            },
+            visible = showScanner,
+            scannedType = ScannableTypes.DEVICE
+        )
     }
 }
 
