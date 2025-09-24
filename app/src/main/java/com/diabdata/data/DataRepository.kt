@@ -4,6 +4,7 @@ import com.diabdata.dao.AppointmentDao
 import com.diabdata.dao.HBA1CDao
 import com.diabdata.dao.ImportantDateDao
 import com.diabdata.dao.MedicalDeviceDao
+import com.diabdata.dao.MedicalDevicesInfoDao
 import com.diabdata.dao.MedicationDao
 import com.diabdata.dao.TreatmentDao
 import com.diabdata.dao.WeightDao
@@ -11,6 +12,7 @@ import com.diabdata.models.Appointment
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.ImportantDate
 import com.diabdata.models.MedicalDeviceEntry
+import com.diabdata.models.MedicalDeviceInfoEntity
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
@@ -26,6 +28,7 @@ class DataRepository(
     private val importantDateDao: ImportantDateDao,
     private val medicationDao: MedicationDao,
     private val medicalDevicesDao: MedicalDeviceDao,
+    private val medicalDeviceInfo: MedicalDevicesInfoDao,
     val database: DiabDataDatabase,
 ) {
     // ----------------
@@ -158,9 +161,28 @@ class DataRepository(
     /** Flow of all devices */
     fun getAllDevices(): Flow<List<MedicalDeviceEntry>> = medicalDevicesDao.getAllMedicalDevices()
 
+    /** Flow of current medical devices */
+    fun getAllCurrentConsumableDevices(): Flow<List<MedicalDeviceEntry>> =
+        medicalDevicesDao.getAllCurrentConsumableMedicalDevices(today = LocalDate.now())
+
+    /** Flow of all non-consumable devices */
+    fun getAllNonConsumableDevices(): Flow<List<MedicalDeviceEntry>> =
+        medicalDevicesDao.getAllNonConsumableDevices()
+
+    /** Flow of all consumable devices */
+    fun getAllConsumableDevices(): Flow<List<MedicalDeviceEntry>> =
+        medicalDevicesDao.getAllConsumableDevices()
+
     /** Flow of upcoming devices expiration dates */
     fun getUpcomingDevicesExpDates(date: LocalDate): Flow<List<MedicalDeviceEntry>> =
         medicalDevicesDao.getUpcomingExpirationDatesFlow(LocalDate.now(), date)
+
+    // ----------------
+    // Medical device
+    // ----------------
+    /** Find a medical device by its code (GTIN or CIP) */
+    suspend fun findMedicalDeviceByCode(code: String): MedicalDeviceInfoEntity? =
+        medicalDeviceInfo.findByCode(code)
 
     /** Delete a device record by Id**/
     suspend fun deleteDevice(id: Int) = medicalDevicesDao.deleteById(id)

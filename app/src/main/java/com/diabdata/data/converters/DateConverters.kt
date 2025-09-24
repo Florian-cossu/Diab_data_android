@@ -15,6 +15,7 @@ class DateConverters {
 
     @TypeConverter
     fun toLocalDate(dateString: String?): LocalDate? {
-        return dateString?.let { LocalDate.parse(it, formatter) }
+        return if (dateString.isNullOrBlank()) LocalDate.now()
+        else LocalDate.parse(dateString, formatter)
     }
 }

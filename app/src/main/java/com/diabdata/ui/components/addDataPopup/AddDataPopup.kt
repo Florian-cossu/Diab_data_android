@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
+import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.Treatment
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.AppointmentPopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.Hba1cPopup
@@ -52,7 +53,7 @@ fun AddDataPopup(
     dataViewModel: DataViewModel,
     onDismiss: () -> Unit,
     prefilledTreatment: Treatment? = null,
-    prefilledMedicalDevice: DataViewModel.MixedDbEntry.DeviceEntry? = null
+    prefilledMedicalDevice: MedicalDeviceEntry? = null
 ) {
     when (type) {
         AddableType.APPOINTMENT -> AppointmentPopup(onDismiss, dataViewModel)

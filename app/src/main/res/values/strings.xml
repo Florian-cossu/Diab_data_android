@@ -99,6 +99,8 @@
     <string name="add_data_popup_medication_field_placeholder">Nom du traitement</string>
     <string name="add_data_popup_date_field_placeholder">Sélectionner une date</string>
     <string name="add_data_popup_expiration_date_field_placeholder">Sélectionner la date d’expiration</string>
+    <string name="add_data_popup_start_date_field_placeholder">Date de pose</string>
+    <string name="add_data_popup_end_date_field_placeholder">Date de retrait prévue</string>
     <string name="add_data_popup_doctor_field_placeholder">Nom du praticien</string>
     <string name="add_data_popup_important_date_field_placeholder">Évènement</string>
     <string name="add_data_popup_invalid_weight_field_message">Valeur de poids invalide</string>
@@ -109,6 +111,7 @@
     <string name="add_data_popup_device_name_field_label">Nom de l\'appareil</string>
     <string name="add_data_popup_device_batch_number_field_label">Numéro de lot</string>
     <string name="add_data_popup_device_serial_number_field_label">Numéro de série</string>
+    <string name="add_data_popup_device_life_span_field_label">Durée de vie de l\'appareil</string>
     <string name="add_data_popup_device_manufacturer_field_label">Fabricant</string>
     <string name="add_data_popup_device_is_faulty_toggle_label">Appareil défectueux</string>
     <string name="add_data_popup_device_is_faulty_toggle_display_text">Cocher si un problème avec l\'appareil est survenu</string>
@@ -144,4 +147,7 @@
     <string name="expiration_dates_reminder_notification_channel">Rappels de dates d’expiration</string>
     <string name="settings_notification_toggle_next_reminder_date">Prochain rappel prévu %1$s</string>
     <string name="upcoming_appointment_card_notes_header">Notes</string>
+    <string name="current_consumable_devices_card_section_heading">Pérphériques actifs</string>
+    <string name="current_non_consumable_devices_card_section_heading">Mes appareils</string>
+    <string name="current_non_consumable_devices_card_replacement_warning_text">Remplacer aujourd\'hui</string>
 </resources>

@@ -67,7 +67,7 @@ fun ImportantDatePopup(
         isConfirmEnabled = diagnosis.isNotBlank()
     ) {
         DateSelector(
-            initialDate = selectedDate,
+            date = selectedDate,
             onDateSelected = { selectedDate = it }
         )
 

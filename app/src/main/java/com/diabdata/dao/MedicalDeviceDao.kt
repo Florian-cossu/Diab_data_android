@@ -22,10 +22,18 @@ interface MedicalDeviceDao {
     @Query("SELECT * FROM medical_devices WHERE (isArchived = 0 OR isArchived = 1) ORDER BY date DESC")
     fun getAllMedicalDevices(): Flow<List<MedicalDeviceEntry>>
 
+    @Query("SELECT * FROM medical_devices WHERE (isArchived = 0 OR isArchived = 1) AND (deviceType != 'WIRELESS_PATCH_REMOTE' OR deviceType != 'WIRED_PUMP') ORDER BY date DESC")
+    fun getAllConsumableDevices(): Flow<List<MedicalDeviceEntry>>
+
+    @Query("SELECT * FROM medical_devices WHERE (isArchived = 0 OR isArchived = 1) AND (deviceType = 'WIRELESS_PATCH_REMOTE' OR deviceType = 'WIRED_PUMP') ORDER BY date DESC")
+    fun getAllNonConsumableDevices(): Flow<List<MedicalDeviceEntry>>
+
+    @Query("SELECT * FROM medical_devices WHERE (isArchived = 0 OR isArchived = 1) AND (lifeSpanEndDate >= :today) AND (deviceType != 'WIRELESS_PATCH_REMOTE' AND deviceType != 'WIRED_PUMP')")
+    fun getAllCurrentConsumableMedicalDevices(today: LocalDate): Flow<List<MedicalDeviceEntry>>
+
     @Query("SELECT * FROM medical_devices WHERE :expirationDate >= :today AND isArchived = 0 ORDER BY deviceType, date ASC")
     fun getUpcomingExpirationDatesFlow(
         today: LocalDate,
         expirationDate: LocalDate
     ): Flow<List<MedicalDeviceEntry>>
-
 }

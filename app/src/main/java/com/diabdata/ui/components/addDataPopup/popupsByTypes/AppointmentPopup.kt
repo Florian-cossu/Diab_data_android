@@ -74,7 +74,7 @@ fun AppointmentPopup(
         },
         isConfirmEnabled = doctor.isNotBlank()
     ) {
-        DateSelector(initialDate = selectedDate, onDateSelected = { selectedDate = it })
+        DateSelector(date = selectedDate, onDateSelected = { selectedDate = it })
 
         EnumDropdown(
             label = context.getString(R.string.add_data_popup_appointment_dropdown_placeholder),

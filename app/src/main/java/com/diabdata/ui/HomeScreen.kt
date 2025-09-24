@@ -40,6 +40,7 @@ import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.ui.components.AddDataFab
 import com.diabdata.ui.components.DataMatrixScannerDialog
+import com.diabdata.ui.components.ScanResult
 import com.diabdata.ui.components.ScannableTypes
 import com.diabdata.ui.components.addDataPopup.AddDataPopup
 import com.diabdata.ui.components.latestMeasurements.LatestMeasurements
@@ -118,30 +119,29 @@ fun HomeScreen(
         if (showScanner) {
             DataMatrixScannerDialog(
                 onDismiss = { showScanner = false },
-                onResult = { info ->
+                onResult = { result ->
                     scope.launch {
-                        val entity = dataViewModel.getMedicationByGtin(
-                            info.gtin.replace(
-                                regex = Regex("^0"), replacement = ""
-                            )
-                        )
-                        Log.d(
-                            "EXTRACTED-GTIN",
-                            info.gtin.replace(regex = Regex("^0"), replacement = "")
-                        )
-                        if (entity != null) {
-                            val treatment = mapToTreatment(info, entity)
-                            Log.d("EXTRACTED-DATA", "$entity")
-                            dataViewModel.updatePrefilledTreatment(treatment)
-                            setSelectedType(AddableType.TREATMENT)
-                        } else {
-                            Toast.makeText(
-                                context, "Médicament inconnu pour GTIN ${
-                                    info.gtin.replace(
-                                        regex = Regex("^0"), replacement = ""
-                                    )
-                                }", Toast.LENGTH_SHORT
-                            ).show()
+                        when (result) {
+                            is ScanResult.Medication -> {
+                                val info = result.data
+                                val entity = dataViewModel.getMedicationByGtin(
+                                    info.gtin.replace(regex = Regex("^0"), replacement = "")
+                                )
+                                Log.d("EXTRACTED-GTIN", info.gtin)
+                                if (entity != null) {
+                                    val treatment = mapToTreatment(info, entity)
+                                    dataViewModel.updatePrefilledTreatment(treatment)
+                                    setSelectedType(AddableType.TREATMENT)
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Médicament inconnu pour GTIN ${info.gtin}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+
+                            else -> null
                         }
                         showScanner = false
                     }

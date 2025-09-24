@@ -8,7 +8,6 @@ import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
 
-// Fonction d'extension pour convertir n'importe quel MixedDbEntry
 fun DataViewModel.MixedDbEntry.toEntity(): Any = when (this) {
     is DataViewModel.MixedDbEntry.AppointmentEntry -> Appointment(
         id = id,
@@ -61,9 +60,11 @@ fun DataViewModel.MixedDbEntry.toEntity(): Any = when (this) {
     is DataViewModel.MixedDbEntry.DeviceEntry -> MedicalDeviceEntry(
         id = id,
         date = date,
+        lifeSpanEndDate = lifeSpanEndDate,
         name = name,
         batchNumber = batchNumber,
         serialNumber = serialNumber,
+        referenceNumber = referenceNumber,
         manufacturer = manufacturer,
         deviceType = deviceType,
         createdAt = createdAt,

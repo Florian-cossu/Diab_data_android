@@ -73,7 +73,7 @@ fun Hba1cPopup(
         isConfirmEnabled = isValid
     ) {
         DateSelector(
-            initialDate = selectedDate,
+            date = selectedDate,
             onDateSelected = { selectedDate = it }
         )
 

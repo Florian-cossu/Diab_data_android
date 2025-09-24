@@ -23,8 +23,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.ui.components.latestMeasurements.CameraPreview
+import com.diabdata.utils.MedicalDeviceInfo
 import com.diabdata.utils.MedicationInfo
 import com.diabdata.utils.SvgIcon
+import com.diabdata.utils.parseMedicalDevice
 import com.diabdata.utils.parseMedication
 
 @RequiresApi(Build.VERSION_CODES.P)
@@ -32,7 +34,7 @@ import com.diabdata.utils.parseMedication
 fun DataMatrixScannerDialog(
     visible: Boolean,
     onDismiss: () -> Unit,
-    onResult: (MedicationInfo) -> Unit,
+    onResult: (ScanResult) -> Unit,
     scannedType: ScannableTypes
 ) {
     if (!visible) return
@@ -62,11 +64,15 @@ fun DataMatrixScannerDialog(
                     when (scannedType) {
                         ScannableTypes.MEDICATION -> {
                             val parsed = parseMedication(rawValue)
-                            onResult(parsed)
+                            onResult(ScanResult.Medication(parsed))
                             onDismiss()
                         }
 
-                        ScannableTypes.DEVICE -> {}
+                        ScannableTypes.DEVICE -> {
+                            val parsed = parseMedicalDevice(rawValue)
+                            onResult(ScanResult.Device(parsed))
+                            onDismiss()
+                        }
                     }
                 })
         }
@@ -95,4 +101,26 @@ fun DataMatrixScannerDialog(
 enum class ScannableTypes {
     MEDICATION,
     DEVICE;
+}
+
+sealed class ScanResult {
+    data class Medication(val data: MedicationInfo) : ScanResult()
+    data class Device(val data: MedicalDeviceInfo) : ScanResult()
+}
+
+fun ScanResult.toEntity(): Any = when (this) {
+    is ScanResult.Medication -> MedicationInfo(
+        gtin = data.gtin,
+        lot = data.lot,
+        expiration = data.expiration,
+        serial = data.serial
+    )
+
+    is ScanResult.Device -> MedicalDeviceInfo(
+        gtin = data.gtin,
+        lot = data.lot,
+        expiration = data.expiration,
+        serialNumber = data.serialNumber,
+        referenceNumber = data.referenceNumber
+    )
 }

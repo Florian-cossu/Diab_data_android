@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,26 +33,30 @@ import java.util.Locale
 
 @Composable
 fun DateSelector(
-    initialDate: LocalDate = LocalDate.now(),
+    date: LocalDate,
     onDateSelected: (LocalDate) -> Unit,
-    isExpiryDate: Boolean = false
+    isExpiryDate: Boolean = false,
+    isStartDate: Boolean = false,
+    isEndDate: Boolean = false
 ) {
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
 
-    var selectedDate by remember { mutableStateOf(initialDate) }
-    var dateText by remember { mutableStateOf(TextFieldValue(selectedDate.format(formatter))) }
+    var dateText by remember { mutableStateOf(TextFieldValue(date.format(formatter))) }
     var showModal by remember { mutableStateOf(false) }
 
-    fun openDatePicker() {
-        showModal = true
+    LaunchedEffect(date) {
+        // Sync externe -> interne
+        dateText = TextFieldValue(date.format(formatter))
     }
 
     val labelText = if (isExpiryDate)
         stringResource(R.string.add_data_popup_expiration_date_field_placeholder)
+    else if (isStartDate)
+        stringResource(R.string.add_data_popup_start_date_field_placeholder)
+    else if (isEndDate)
+        stringResource(R.string.add_data_popup_end_date_field_placeholder)
     else
         stringResource(R.string.add_data_popup_date_field_placeholder)
-
-
 
     OutlinedTextField(
         value = dateText,
@@ -59,7 +64,6 @@ fun DateSelector(
             dateText = newValue
             try {
                 val parsedDate = LocalDate.parse(newValue.text, formatter)
-                selectedDate = parsedDate
                 onDateSelected(parsedDate)
             } catch (_: DateTimeParseException) {
             }
@@ -70,16 +74,16 @@ fun DateSelector(
             Icon(
                 imageVector = Icons.Default.DateRange,
                 contentDescription = labelText,
-                modifier = Modifier.clickable { openDatePicker() })
+                modifier = Modifier.clickable { showModal = true }
+            )
         },
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
-            .clickable { openDatePicker() },
+            .clickable { showModal = true },
         shape = MaterialTheme.shapes.small
     )
 
-    // Affiche le DatePickerModal si showModal = true
     if (showModal) {
         DatePickerModal(
             onDateSelected = { millis ->
@@ -87,16 +91,14 @@ fun DateSelector(
                     val newDate = Instant.ofEpochMilli(it)
                         .atZone(ZoneId.systemDefault())
                         .toLocalDate()
-                    selectedDate = newDate
-                    dateText = TextFieldValue(newDate.format(formatter))
                     onDateSelected(newDate)
                 }
+                showModal = false
             },
             onDismiss = { showModal = false }
         )
     }
 }
-
 
 @Composable
 fun DatePickerModal(
