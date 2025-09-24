@@ -17,6 +17,7 @@ import com.diabdata.models.AppointmentType
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.ImportantDate
 import com.diabdata.models.MedicalDeviceEntry
+import com.diabdata.models.MedicalDeviceInfoEntity
 import com.diabdata.models.MedicalDeviceInfoType
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
@@ -40,8 +41,6 @@ class DataViewModel(
     val repository: DataRepository,
     application: Application
 ) : AndroidViewModel(application) {
-    val appContext: Context = getApplication<Application>().applicationContext
-
     // Load all data
     val weights: StateFlow<List<WeightEntry>> = repository.getAllWeights()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -131,6 +130,19 @@ class DataViewModel(
     // Expiration dates
     val upcomingExpirationDates: StateFlow<List<Treatment>> =
         repository.getUpcomingExpDates(LocalDate.now())
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    // Current devices
+    val currentConsumableDevices: StateFlow<List<MedicalDeviceEntry>> =
+        repository.getAllCurrentConsumableDevices()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val nonConsumableDevices: StateFlow<List<MedicalDeviceEntry>> =
+        repository.getAllNonConsumableDevices()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val consumableDevices: StateFlow<List<MedicalDeviceEntry>> =
+        repository.getAllConsumableDevices()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // Insertion functions
@@ -248,6 +260,8 @@ class DataViewModel(
         }
     }
 
+    suspend fun updateDevice(device: MedicalDeviceEntry) = repository.updateDevice(device)
+
     fun clearDatabase(context: Context) = viewModelScope.launch {
         val workManager = WorkManager.getInstance(context)
         val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
@@ -340,11 +354,13 @@ class DataViewModel(
         data class DeviceEntry(
             override val id: Int,
             override val date: LocalDate,
+            val lifeSpanEndDate: LocalDate,
             override val addableType: AddableType = AddableType.DEVICE,
             val name: String,
             val deviceType: MedicalDeviceInfoType,
             val batchNumber: String,
             val serialNumber: String,
+            val referenceNumber: String,
             val manufacturer: String,
             val lifeSpan: Int,
             val isFaulty: Boolean,
@@ -400,16 +416,18 @@ class DataViewModel(
         }
     }
 
+    // val part1 = combine(weights, hba1cEntries, appointments) { w, h, a ->
+    //        Triple(w, h, a)
+    //    }
+
+
 
     val allMixedEntries: Flow<List<MixedDbEntry>> = combine(
-        appointments,
-        importantDates,
-        hba1cEntries,
-        treatments,
-        weights
-    ) { appointments, diagnosis, hba1c, treatments, weights ->
+        part1,
+        part2
+    ) { (w, h, a), (t, d, md) ->
         buildList<MixedDbEntry> {
-            appointments.forEach {
+            a.forEach {
                 add(
                     MixedDbEntry.AppointmentEntry(
                         id = it.id,
@@ -428,7 +446,7 @@ class DataViewModel(
                 )
             }
 
-            diagnosis.forEach {
+            d.forEach {
                 add(
                     MixedDbEntry.ImportantDateEntry(
                         id = it.id,
@@ -442,7 +460,7 @@ class DataViewModel(
                 )
             }
 
-            hba1c.forEach {
+            h.forEach {
                 add(
                     MixedDbEntry.Hba1cEntry(
                         id = it.id,
@@ -456,7 +474,7 @@ class DataViewModel(
                 )
             }
 
-            treatments.forEach {
+            t.forEach {
                 add(
                     MixedDbEntry.TreatmentEntry(
                         id = it.id,
@@ -471,7 +489,7 @@ class DataViewModel(
                 )
             }
 
-            weights.forEach {
+            w.forEach {
                 add(
                     MixedDbEntry.WeightEntry(
                         id = it.id,
@@ -481,6 +499,31 @@ class DataViewModel(
                         isArchived = it.isArchived,
                         createdAt = it.createdAt,
                         updatedAt = it.updatedAt
+                    )
+                )
+            }
+
+            md.forEach {
+                add(
+                    MixedDbEntry.DeviceEntry(
+                        id = it.id,
+                        date = it.date,
+                        lifeSpanEndDate = it.lifeSpanEndDate,
+                        addableType = AddableType.DEVICE,
+                        name = it.name,
+                        deviceType = it.deviceType,
+                        batchNumber = it.batchNumber,
+                        serialNumber = it.serialNumber ?: "",
+                        referenceNumber = it.referenceNumber ?: "",
+                        manufacturer = it.manufacturer ?: "",
+                        lifeSpan = it.lifeSpan,
+                        isFaulty = it.isFaulty,
+                        isReported = it.isReported,
+                        isLifeSpanOver = it.isLifeSpanOver,
+                        icon = getIconForMixedEntry(AddableType.DEVICE, deviceType = it.deviceType),
+                        isArchived = it.isArchived,
+                        createdAt = it.createdAt,
+                        updatedAt = it.updatedAt,
                     )
                 )
             }
@@ -502,6 +545,17 @@ class DataViewModel(
         return repository.findMedicationByCode(gtin)
     }
 
+    // Section for scanned medical device
+    var prefilledMedicalDevice: MedicalDeviceEntry? by mutableStateOf(null)
+
+    fun updatePrefilledMedicalDevice(m: MedicalDeviceEntry?) {
+        prefilledMedicalDevice = m
+    }
+
+    suspend fun getMedicalDeviceByCode(code: String): MedicalDeviceInfoEntity? {
+        return repository.findMedicalDeviceByCode(code)
+    }
+
     // Section for data import/export
     fun exportDataAsJsonString(): String {
         val gson = GsonBuilder()
@@ -514,7 +568,8 @@ class DataViewModel(
             hba1c = hba1cEntries.value,
             appointments = appointments.value,
             treatments = treatments.value,
-            importantDates = importantDates.value
+            importantDates = importantDates.value,
+            devices = medicalDevices.value
         )
 
         return gson.toJson(exportData)
@@ -543,6 +598,9 @@ class DataViewModel(
             }
             importedData.importantDates.forEach { diagnosis ->
                 repository.insertImportantDate(diagnosis.copy())
+            }
+            importedData.devices.forEach { device ->
+                repository.insertDevice(device.copy())
             }
         }
     }

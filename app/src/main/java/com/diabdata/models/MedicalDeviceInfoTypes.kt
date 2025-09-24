@@ -32,7 +32,7 @@ enum class MedicalDeviceInfoType(
     CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_SENSOR(
         displayNameRes = R.string.device_type_cgm_sensor,
         iconRes = R.drawable.continuous_glucose_monitoring_system_sensor,
-        baseColor = Color(0xFFF55128),
+        baseColor = Color(0xFFFA7450),
     ),
     CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_TRANSMITTER(
         displayNameRes = R.string.device_type_cgm_transmitter,

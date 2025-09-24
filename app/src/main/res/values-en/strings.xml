@@ -100,6 +100,8 @@
     <string name="add_data_popup_medication_field_placeholder">Medication name</string>
     <string name="add_data_popup_date_field_placeholder">Select a date</string>
     <string name="add_data_popup_expiration_date_field_placeholder">Select expiration date</string>
+    <string name="add_data_popup_start_date_field_placeholder">Installation date</string>
+    <string name="add_data_popup_end_date_field_placeholder">Expected removal date</string>
     <string name="add_data_popup_doctor_field_placeholder">Doctor\'s name</string>
     <string name="add_data_popup_important_date_field_placeholder">Event</string>
     <string name="add_data_popup_invalid_weight_field_message">Invalid weight</string>
@@ -111,6 +113,7 @@
     <string name="add_data_popup_device_name_field_label">Device\'s name</string>
     <string name="add_data_popup_device_batch_number_field_label">Batch number</string>
     <string name="add_data_popup_device_serial_number_field_label">Serial number</string>
+    <string name="add_data_popup_device_life_span_field_label">Device\'s life span</string>
     <string name="add_data_popup_device_manufacturer_field_label">Manufacturer</string>
     <string name="add_data_popup_device_is_faulty_toggle_label">Defective device</string>
     <string name="add_data_popup_device_is_faulty_toggle_display_text">Check if a problem with the device occured</string>
@@ -145,4 +148,5 @@
     <string name="expiration_dates_reminder_notification_channel">Expiration date reminders</string>
     <string name="settings_notification_toggle_next_reminder_date">Next reminder scheduled on %1$s</string>
     <string name="upcoming_appointment_card_notes_header">Notes</string>
+    <string name="current_devices_card_section_heading">Active devices</string>
 </resources>

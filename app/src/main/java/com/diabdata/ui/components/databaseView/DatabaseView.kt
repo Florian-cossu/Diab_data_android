@@ -19,6 +19,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -74,6 +75,7 @@ import com.diabdata.models.AddableType
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.FlippableSelectionIcon
 import com.diabdata.utils.SvgIcon
+import com.diabdata.utils.darken
 import com.diabdata.utils.getItemShape
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
@@ -376,7 +378,11 @@ private fun EntryContent(entry: DataViewModel.MixedDbEntry) {
 
     when (entry) {
         is DataViewModel.MixedDbEntry.AppointmentEntry -> {
-            Text(entry.doctor, fontWeight = FontWeight.Bold)
+            Text(
+                entry.doctor,
+                fontWeight = FontWeight.Bold,
+                color = entry.addableType.baseColor.darken()
+            )
             Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
             Text(
                 stringResource(entry.type.displayNameRes),
@@ -393,17 +399,29 @@ private fun EntryContent(entry: DataViewModel.MixedDbEntry) {
         }
 
         is DataViewModel.MixedDbEntry.ImportantDateEntry -> {
-            Text(entry.importantDate, fontWeight = FontWeight.Bold)
+            Text(
+                entry.importantDate,
+                fontWeight = FontWeight.Bold,
+                color = entry.addableType.baseColor.darken()
+            )
             Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
         }
 
         is DataViewModel.MixedDbEntry.Hba1cEntry -> {
-            Text("${entry.value} %", fontWeight = FontWeight.Bold)
+            Text(
+                "${entry.value} %",
+                fontWeight = FontWeight.Bold,
+                color = entry.addableType.baseColor.darken()
+            )
             Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
         }
 
         is DataViewModel.MixedDbEntry.TreatmentEntry -> {
-            Text(entry.name, fontWeight = FontWeight.Bold)
+            Text(
+                entry.name,
+                fontWeight = FontWeight.Bold,
+                color = entry.addableType.baseColor.darken()
+            )
             Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
             Text(
                 stringResource(entry.treatmentType.displayNameRes),
@@ -412,11 +430,68 @@ private fun EntryContent(entry: DataViewModel.MixedDbEntry) {
         }
 
         is DataViewModel.MixedDbEntry.WeightEntry -> {
-            Text("${entry.value} kg", fontWeight = FontWeight.Bold)
+            Text(
+                "${entry.value} kg",
+                fontWeight = FontWeight.Bold,
+                color = entry.addableType.baseColor.darken()
+            )
             Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall)
         }
 
-        else -> {}
+        is DataViewModel.MixedDbEntry.DeviceEntry -> {
+            val numbersWithIcons = listOfNotNull(
+                entry.batchNumber.takeIf { it.isNotBlank() }?.let {
+                    R.drawable.lot_icon_vector to it
+                },
+                entry.referenceNumber.takeIf { it.isNotBlank() }?.let {
+                    R.drawable.ref_icon_vector to it
+                },
+                entry.serialNumber.takeIf { it.isNotBlank() }?.let {
+                    R.drawable.sn_icon_vector to it
+                }
+            )
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    entry.name,
+                    fontWeight = FontWeight.Bold,
+                    color = entry.addableType.baseColor.darken()
+                )
+
+                if (numbersWithIcons.isNotEmpty()) {
+                    FlowRow(
+                        modifier = Modifier.weight(1f),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        numbersWithIcons.forEach { (iconRes, number) ->
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                SvgIcon(
+                                    resId = iconRes,
+                                    modifier = Modifier.size(16.dp),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = number,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Text(
+                    entry.date.format(formatter),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
     }
 }
 

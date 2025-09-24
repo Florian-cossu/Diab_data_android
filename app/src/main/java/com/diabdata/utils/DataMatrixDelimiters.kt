@@ -4,9 +4,10 @@ fun generateDataMatrixDelimiters(excludedDelimiters: List<String> = emptyList())
     val delimiters = listOf(
         "01", // GTIN/CIP
         "10", // BATCH NUMBER
+        "11", // FABRICATION DATE
         "17", // EXPIRATION DATE
         "21", // SERIAL NUMBER
-        "\u001D",
+        "\u001D", // DATA MATRIX DELIMITER CHARACTER
         "$"
     )
 

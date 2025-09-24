@@ -8,9 +8,11 @@ import java.time.LocalDate
 data class MedicalDeviceEntry(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val date: LocalDate,
+    val lifeSpanEndDate: LocalDate,
     val name: String,
     val batchNumber: String,
     val serialNumber: String?,
+    val referenceNumber: String?,
     val manufacturer: String?,
     val deviceType: MedicalDeviceInfoType,
     val createdAt: LocalDate,

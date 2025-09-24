@@ -13,6 +13,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -39,7 +40,7 @@ import java.time.LocalDate
 fun MedicalDevicePopup(
     onDismiss: () -> Unit,
     dataViewModel: DataViewModel,
-    prefilled: DataViewModel.MixedDbEntry.DeviceEntry? = null,
+    prefilled: MedicalDeviceEntry? = null,
     toUpdate: DataViewModel.MixedDbEntry.DeviceEntry? = null
 ) {
     val context = LocalContext.current
@@ -62,17 +63,29 @@ fun MedicalDevicePopup(
             prefilled?.batchNumber ?: toUpdate?.batchNumber ?: ""
         )
     }
-    var selectedDate by remember {
+    var referenceNumber by remember {
         mutableStateOf(
-            toUpdate?.date ?: prefilled?.date ?: today
+            prefilled?.referenceNumber ?: toUpdate?.referenceNumber ?: ""
         )
     }
+    var selectedDate by remember {
+        mutableStateOf(
+            prefilled?.date ?: toUpdate?.date ?: today
+        )
+    }
+
     var selectedDeviceType by remember {
         mutableStateOf(
             toUpdate?.deviceType ?: prefilled?.deviceType ?: MedicalDeviceInfoType.WIRED_PATCH
         )
     }
-    var lifeSpan by remember { mutableStateOf(prefilled?.lifeSpan ?: toUpdate?.lifeSpan ?: 0) }
+    var lifeSpan by remember { mutableIntStateOf(prefilled?.lifeSpan ?: toUpdate?.lifeSpan ?: 3) }
+    var lifeSpanEndDate by remember {
+        mutableStateOf(
+            prefilled?.lifeSpanEndDate ?: toUpdate?.lifeSpanEndDate
+            ?: today.plusDays(lifeSpan.toLong())
+        )
+    }
     var isFaulty by remember { mutableStateOf(prefilled?.isFaulty ?: toUpdate?.isFaulty ?: false) }
     var isReported by remember {
         mutableStateOf(
@@ -98,6 +111,7 @@ fun MedicalDevicePopup(
             val deviceEntry = DataViewModel.MixedDbEntry.DeviceEntry(
                 id = toUpdate?.id ?: 0,
                 date = selectedDate,
+                lifeSpanEndDate = lifeSpanEndDate,
                 addableType = AddableType.DEVICE,
                 name = name,
                 deviceType = selectedDeviceType,
@@ -107,6 +121,7 @@ fun MedicalDevicePopup(
                 updatedAt = today,
                 batchNumber = batchNumber,
                 serialNumber = serialNumber,
+                referenceNumber = referenceNumber,
                 manufacturer = manufacturer,
                 lifeSpan = lifeSpan,
                 isFaulty = isFaulty,
@@ -124,10 +139,33 @@ fun MedicalDevicePopup(
         },
         isConfirmEnabled = isValid
     ) {
-        DateSelector(
-            initialDate = selectedDate,
-            onDateSelected = { selectedDate = it },
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp) // optionnel, un petit espace entre les colonnes
+        ) {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                DateSelector(
+                    date = selectedDate,
+                    onDateSelected = {
+                        selectedDate = it
+                        lifeSpanEndDate = it.plusDays(lifeSpan.toLong())
+                    },
+                    isStartDate = true
+                )
+            }
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                DateSelector(
+                    date = lifeSpanEndDate,
+                    onDateSelected = { lifeSpanEndDate = it },
+                    isEndDate = true
+                )
+            }
+        }
 
         EnumDropdown(
             label = context.getString(R.string.add_data_popup_device_dropdown_placeholder),
@@ -172,8 +210,11 @@ fun MedicalDevicePopup(
 
         OutlinedTextField(
             value = lifeSpan.toString(),
-            onValueChange = { lifeSpan = it.toIntOrNull() ?: 0 },
-            label = { Text(stringResource(R.string.add_data_popup_device_manufacturer_field_label)) },
+            onValueChange = {
+                lifeSpan = it.toIntOrNull() ?: 0
+                lifeSpanEndDate = selectedDate.plusDays(lifeSpan.toLong())
+            },
+            label = { Text(stringResource(R.string.add_data_popup_device_life_span_field_label)) },
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.small
         )
