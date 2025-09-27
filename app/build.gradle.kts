@@ -81,6 +81,7 @@ dependencies {
     implementation(libs.vico.views)
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.kotlinx.coroutines.guava)
+    implementation(libs.androidx.navigation.compose)
 
     // Material
     implementation(libs.androidx.material3)
