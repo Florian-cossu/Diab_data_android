@@ -2,12 +2,12 @@ package com.diabdata
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -17,13 +17,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.diabdata.data.DataViewModel
 import com.diabdata.data.DiabDataDatabase
 import com.diabdata.ui.HomeScreen
@@ -42,20 +43,16 @@ sealed interface NavIcon {
 }
 
 data class BottomNavItem(
-    val id: String,
-    val label: Int,
-    val icon: NavIcon,
-    val screen: @Composable () -> Unit
+    val route: String, val label: Int, val selectedIcon: NavIcon, val unselectedIcon: NavIcon
 )
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun App(
-    db: DiabDataDatabase,
-    dataViewModel: DataViewModel
+    db: DiabDataDatabase, dataViewModel: DataViewModel
 ) {
     val context = LocalContext.current.applicationContext
-    var selectedTab by rememberSaveable { mutableStateOf("home") }
+    val navController = rememberNavController()
 
     LaunchedEffect(Unit) {
         MedicationInitializer(context, db).initialize()
@@ -64,75 +61,104 @@ fun App(
 
     val items = listOf(
         BottomNavItem(
-            id = "home",
+            route = "home",
             label = R.string.home_menu_title,
-            icon = NavIcon.Vector(Icons.Filled.Home, "Accueil"),
-            screen = { HomeScreen(dataViewModel) }
-        ),
-        BottomNavItem(
-            id = "charts",
+            unselectedIcon = NavIcon.Svg(R.drawable.home_icon_vector),
+            selectedIcon = NavIcon.Svg(R.drawable.home_filled_icon_vector)
+        ), BottomNavItem(
+            route = "charts",
             label = R.string.chart_menu_title,
-            icon = NavIcon.Svg(R.drawable.chart_filled_icon_vector),
-            screen = { GraphViewer(viewModel = dataViewModel) }
-        ),
-        BottomNavItem(
-            id = "data",
+            unselectedIcon = NavIcon.Svg(R.drawable.chart_icon_vector),
+            selectedIcon = NavIcon.Svg(R.drawable.chart_filled_icon_vector)
+        ), BottomNavItem(
+            route = "data",
             label = R.string.database_management_menu_title,
-            icon = NavIcon.Svg(R.drawable.database_filled_icon_vector),
-            screen = { DatabaseEditionView(dataViewModel) }
-        ),
-        BottomNavItem(
-            id = "devices",
+            unselectedIcon = NavIcon.Svg(R.drawable.database_icon_vector),
+            selectedIcon = NavIcon.Svg(R.drawable.database_filled_icon_vector)
+        ), BottomNavItem(
+            route = "devices",
             label = R.string.devices_menu_title,
-            icon = NavIcon.Svg(R.drawable.devices_icon_vector),
-            screen = {
-                DevicesScreen(dataViewModel)
-            }
-        ),
-        BottomNavItem(
-            id = "settings",
+            unselectedIcon = NavIcon.Svg(R.drawable.devices_icon_vector),
+            selectedIcon = NavIcon.Svg(R.drawable.devices_filled_icon_vector)
+        ), BottomNavItem(
+            route = "settings",
             label = R.string.settings_menu_title,
-            icon = NavIcon.Vector(Icons.Filled.Settings, "Paramètres"),
-            screen = { SettingsScreen(dataViewModel) }
+            unselectedIcon = NavIcon.Svg(R.drawable.settings_icon_vector),
+            selectedIcon = NavIcon.Svg(R.drawable.settings_filled_icon_vector)
         )
     )
 
     Scaffold(
         bottomBar = {
             NavigationBar {
+                val currentBackStack by navController.currentBackStackEntryAsState()
+                val currentDestination = currentBackStack?.destination
+
                 items.forEach { item ->
-                    val isSelected = item.id == selectedTab
+                    val selected = currentDestination?.route == item.route
+
                     NavigationBarItem(
                         icon = {
-                            when (val icon = item.icon) {
+                            val icon = if (selected) item.selectedIcon else item.unselectedIcon
+
+                            when (icon) {
                                 is NavIcon.Vector -> Icon(
                                     icon.imageVector,
                                     icon.contentDescription,
-                                    tint = if (isSelected) MaterialTheme.colorScheme.primary
+                                    tint = if (selected) MaterialTheme.colorScheme.primary
                                     else MaterialTheme.colorScheme.onSurfaceVariant
                                 )
 
                                 is NavIcon.Svg -> SvgIcon(
                                     resId = icon.resId,
-                                    color = if (isSelected) MaterialTheme.colorScheme.primary
+                                    color = if (selected) MaterialTheme.colorScheme.primary
                                     else MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         },
                         label = { Text(stringResource(item.label)) },
-                        selected = isSelected,
-                        onClick = { selectedTab = item.id }
-                    )
+                        selected = selected,
+                        onClick = {
+                            navController.navigate(item.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        })
                 }
             }
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            items.firstOrNull { it.id == selectedTab }?.screen?.invoke()
+        }) { paddingValues ->
+        NavHost(
+            navController = navController,
+            startDestination = "home",
+            modifier = Modifier.padding(paddingValues),
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(300)) + fadeIn(
+                    animationSpec = tween(300)
+                )
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween(300)) + fadeOut(
+                    animationSpec = tween(300)
+                )
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(300)) + fadeIn(
+                    animationSpec = tween(300)
+                )
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(300)) + fadeOut(
+                    animationSpec = tween(300)
+                )
+            }) {
+            composable("home") { HomeScreen(dataViewModel) }
+            composable("charts") { GraphViewer(viewModel = dataViewModel) }
+            composable("data") { DatabaseEditionView(dataViewModel) }
+            composable("devices") { DevicesScreen(dataViewModel) }
+            composable("settings") { SettingsScreen(dataViewModel) }
         }
     }
 }

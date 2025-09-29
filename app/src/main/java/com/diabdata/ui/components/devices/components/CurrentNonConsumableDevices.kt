@@ -220,6 +220,7 @@ fun CurrentNonConsumableDevicesCards(
 
                             FaultyToggleButton(
                                 isFaulty = card.device.isFaulty,
+                                isReported = card.device.isReported,
                                 onClick = { onMarkFaulty(card.device) },
                                 animatedContainerColor = animatedContainerColor,
                                 animatedIconColor = animatedIconColor,

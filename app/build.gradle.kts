@@ -81,6 +81,8 @@ dependencies {
     implementation(libs.vico.views)
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.kotlinx.coroutines.guava)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.accompanist.navigation.animation)
 
     // Material
     implementation(libs.androidx.material3)
@@ -105,6 +107,7 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.okhttp)
     implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui)
 
 
     // Use ksp for annotation processing

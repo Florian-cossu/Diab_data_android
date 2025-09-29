@@ -150,4 +150,9 @@
     <string name="current_consumable_devices_card_section_heading">Pérphériques actifs</string>
     <string name="current_non_consumable_devices_card_section_heading">Mes appareils</string>
     <string name="current_non_consumable_devices_card_replacement_warning_text">Remplacer aujourd\'hui</string>
+    <string name="device_screen_overview_tab">Aperçu</string>
+    <string name="device_screen_no_faulty_devices_tab">Aucun appareil défectueux</string>
+    <string name="device_screen_faulty_devices_tab">Appareils défectueux</string>
+    <string name="device_screen_faulty_devices_tab_faulty_heading">Défectueux</string>
+    <string name="device_screen_faulty_devices_tab_reported_heading">Signalés</string>
 </resources>

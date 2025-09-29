@@ -151,4 +151,9 @@
     <string name="current_consumable_devices_card_section_heading">Active peripherals</string>
     <string name="current_non_consumable_devices_card_section_heading">My devices</string>
     <string name="current_non_consumable_devices_card_replacement_warning_text">Replace today</string>
+    <string name="device_screen_overview_tab">Overview</string>
+    <string name="device_screen_no_faulty_devices_tab">No faulty devices</string>
+    <string name="device_screen_faulty_devices_tab">Faulty devices</string>
+    <string name="device_screen_faulty_devices_tab_faulty_heading">Faulty</string>
+    <string name="device_screen_faulty_devices_tab_reported_heading">Reported</string>
 </resources>
