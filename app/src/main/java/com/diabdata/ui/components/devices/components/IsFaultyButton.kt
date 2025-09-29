@@ -25,6 +25,8 @@ data class ButtonSize(val circle: Int, val icon: Int)
 @Composable
 fun FaultyToggleButton(
     isFaulty: Boolean,
+    isReported: Boolean,
+    type: ButtonType = ButtonType.FAULTY,
     onClick: () -> Unit,
     animatedContainerColor: Color,
     animatedIconColor: Color,
@@ -47,7 +49,7 @@ fun FaultyToggleButton(
         },
         shapes = IconButtonDefaults.shapes(
             shape = MaterialShapes.Square.toShape(),
-            pressedShape = MaterialShapes.Cookie12Sided.toShape()
+            pressedShape = MaterialShapes.Circle.toShape()
         ),
         modifier = modifier
             .size(sizing.circle.dp),
@@ -57,11 +59,25 @@ fun FaultyToggleButton(
         ),
     ) {
         SvgIcon(
-            resId = if (isFaulty)
-                R.drawable.information_filled_icon_vector
-            else R.drawable.information_icon_vector,
+            resId = when (type) {
+                ButtonType.FAULTY -> if (isFaulty) {
+                    R.drawable.information_filled_icon_vector
+                } else {
+                    R.drawable.information_icon_vector
+                }
+
+                ButtonType.REPORT -> if (isReported) {
+                    R.drawable.megaphone_filled_icon_vector
+                } else {
+                    R.drawable.megaphone_icon_vector
+                }
+            },
             modifier = Modifier.size(sizing.icon.dp),
             color = animatedIconColor
         )
     }
+}
+
+enum class ButtonType() {
+    FAULTY, REPORT
 }

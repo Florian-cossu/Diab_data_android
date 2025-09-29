@@ -31,6 +31,12 @@ interface MedicalDeviceDao {
     @Query("SELECT * FROM medical_devices WHERE (isArchived = 0 OR isArchived = 1) AND (lifeSpanEndDate >= :today) AND (deviceType != 'WIRELESS_PATCH_REMOTE' AND deviceType != 'WIRED_PUMP')")
     fun getAllCurrentConsumableMedicalDevices(today: LocalDate): Flow<List<MedicalDeviceEntry>>
 
+    @Query("SELECT * FROM medical_devices WHERE isFaulty=1 AND isReported=0")
+    fun getAllFaultyUnreportedMedicalDevices(): Flow<List<MedicalDeviceEntry>>
+
+    @Query("SELECT * FROM medical_devices WHERE isFaulty=1 AND isReported=1")
+    fun getAllFaultyReportedMedicalDevices(): Flow<List<MedicalDeviceEntry>>
+
     @Query("SELECT * FROM medical_devices WHERE :expirationDate >= :today AND isArchived = 0 ORDER BY deviceType, date ASC")
     fun getUpcomingExpirationDatesFlow(
         today: LocalDate,

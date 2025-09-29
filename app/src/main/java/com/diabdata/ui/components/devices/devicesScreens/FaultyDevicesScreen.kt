@@ -1,6 +1,7 @@
-package com.diabdata.ui.components.devices.components
+package com.diabdata.ui.components.devices.devicesScreens
 
-import android.content.res.Configuration
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -10,12 +11,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,7 +28,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
@@ -37,63 +35,153 @@ import com.diabdata.models.AddableType
 import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.MedicalDeviceInfoType
 import com.diabdata.ui.components.ColoredIconCircle
+import com.diabdata.ui.components.devices.components.ButtonType
+import com.diabdata.ui.components.devices.components.FaultyToggleButton
+import com.diabdata.ui.components.devices.components.MedicalDeviceCardData
 import com.diabdata.utils.SvgIcon
 import com.diabdata.utils.darken
 import com.diabdata.utils.getItemShape
 import com.diabdata.utils.shortenedFormatLocalDate
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun CurrentConsumableDevicesList(viewModel: DataViewModel) {
-    val currentDevices by viewModel.currentConsumableDevices.collectAsState(initial = emptyList())
+fun FaultyDevices(
+    dataViewModel: DataViewModel
+) {
+    val faultyDevices by dataViewModel.faultyDevices.collectAsState(initial = emptyList())
+    val reportedFaultyDevices by dataViewModel.reportedFaultyDevices.collectAsState(initial = emptyList())
     val coroutineScope = rememberCoroutineScope()
 
-    val filteredDevices = currentDevices
-        .groupBy { it.deviceType }
-        .mapValues { (_, devices) ->
-            devices.sortedByDescending { it.date }
-        }
-        .flatMap { (_, devices) ->
-            val latest = devices.first()
-            val redundant = devices.drop(1).filterNot { old ->
-                old.lifeSpanEndDate.isEqual(latest.date)
+    FaultyDevicesScreen(
+        faultyDevices = faultyDevices,
+        reportedFaultyDevices = reportedFaultyDevices,
+        onMarkAsReported = { device ->
+            coroutineScope.launch {
+                dataViewModel.updateDevice(device.copy(isReported = !device.isReported))
             }
-            listOf(latest) + redundant
+        },
+        onMarkAsFaulty = { device ->
+            coroutineScope.launch {
+                dataViewModel.updateDevice(device.copy(isFaulty = !device.isFaulty))
+            }
         }
+    )
+}
 
-    val showSection = filteredDevices.isNotEmpty()
 
-    if (showSection) {
-        CurrentConsumableDevicesCards(
-            filteredDevices,
-            onMarkFaulty = { device ->
-                coroutineScope.launch {
-                    viewModel.updateDevice(
-                        device.copy(
-                            isFaulty = !device.isFaulty
-                        )
+@Composable
+fun FaultyDevicesScreen(
+    faultyDevices: List<MedicalDeviceEntry>,
+    reportedFaultyDevices: List<MedicalDeviceEntry>,
+    onMarkAsReported: (MedicalDeviceEntry) -> Unit,
+    onMarkAsFaulty: (MedicalDeviceEntry) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp)
+    ) {
+        if (faultyDevices.isEmpty() && reportedFaultyDevices.isEmpty()) {
+            Text(
+                text = stringResource(R.string.device_screen_no_faulty_devices_tab),
+                style = MaterialTheme.typography.bodyLarge
+            )
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (faultyDevices.isNotEmpty()) {
+                    Text(
+                        text = stringResource(R.string.device_screen_faulty_devices_tab_faulty_heading),
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = MaterialTheme.colorScheme.surfaceTint
+                    )
+
+                    DisplayCard(
+                        items = faultyDevices,
+                        onMarkFaulty = onMarkAsFaulty,
+                        onMarkAsReported = onMarkAsReported
                     )
                 }
-            },
-        )
+
+                if (reportedFaultyDevices.isNotEmpty()) {
+                    Text(
+                        text = stringResource(R.string.device_screen_faulty_devices_tab_reported_heading),
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = MaterialTheme.colorScheme.surfaceTint
+                    )
+                    DisplayCard(
+                        items = reportedFaultyDevices,
+                        onMarkFaulty = onMarkAsFaulty,
+                        onMarkAsReported = onMarkAsReported
+                    )
+                }
+            }
+        }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FaultyDevicesScreenPreview() {
+    val sampleDevices = listOf(
+        MedicalDeviceEntry(
+            date = LocalDate.now(),
+            lifeSpanEndDate = LocalDate.now().plusDays(10),
+            name = "Pompe à insuline",
+            batchNumber = "1234A",
+            serialNumber = "SN001",
+            manufacturer = "Acme",
+            deviceType = MedicalDeviceInfoType.WIRED_PUMP,
+            createdAt = LocalDate.now(),
+            isArchived = false,
+            lifeSpan = 365,
+            isFaulty = true,
+            isReported = false,
+            isLifeSpanOver = false,
+            updatedAt = LocalDate.now(),
+            referenceNumber = "REF001"
+        ),
+        MedicalDeviceEntry(
+            date = LocalDate.now(),
+            lifeSpanEndDate = LocalDate.now().plusDays(5),
+            name = "Quickserter",
+            batchNumber = "5678B",
+            serialNumber = "SN002",
+            manufacturer = "Acme",
+            deviceType = MedicalDeviceInfoType.WIRED_PATCH,
+            createdAt = LocalDate.now(),
+            isArchived = false,
+            lifeSpan = 365,
+            isFaulty = false,
+            isReported = true,
+            isLifeSpanOver = false,
+            updatedAt = LocalDate.now(),
+            referenceNumber = "REF002"
+        )
+    )
+
+    FaultyDevicesScreen(
+        faultyDevices = sampleDevices,
+        reportedFaultyDevices = sampleDevices.filter { it.isReported },
+        onMarkAsReported = {},
+        onMarkAsFaulty = {}
+    )
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun CurrentConsumableDevicesCards(
-    devices: List<MedicalDeviceEntry>,
+fun DisplayCard(
+    items: List<MedicalDeviceEntry>,
     onMarkFaulty: (MedicalDeviceEntry) -> Unit = {},
+    onMarkAsReported: (MedicalDeviceEntry) -> Unit = {}
 ) {
-    val primaryColor = MaterialTheme.colorScheme.primary
-
-    if (devices.isEmpty()) return
-
-    val today = LocalDate.now()
-
-    val cards = devices.map { device ->
+    val cards = items.map { device ->
         MedicalDeviceCardData(
             device = device,
             titleText = device.name.ifEmpty { device.deviceType.displayName(LocalContext.current) },
@@ -108,21 +196,31 @@ fun CurrentConsumableDevicesCards(
         )
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            text = stringResource(R.string.current_consumable_devices_card_section_heading),
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.surfaceTint
-        )
-        Spacer(Modifier.height(8.dp))
+    val primaryColor = MaterialTheme.colorScheme.primary
 
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(3.dp)
+    ) {
         cards.forEachIndexed { index, card ->
-            // Color animation for isFaulty device button
             val animatedContainerColor by animateColorAsState(
                 targetValue = if (card.device.isFaulty) {
-                    card.textColor.darken()
+                    MaterialTheme.colorScheme.error
                 } else {
                     card.textColor.copy(alpha = 0.2f)
+                },
+                animationSpec = tween(
+                    durationMillis = 500,
+                    easing = androidx.compose.animation.core.EaseInOut
+                ),
+                label = "iconContainerColor"
+            )
+
+            val animatedReportedContainerColor by animateColorAsState(
+                targetValue = if (card.device.isReported) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                 },
                 animationSpec = tween(
                     durationMillis = 500,
@@ -136,6 +234,19 @@ fun CurrentConsumableDevicesCards(
                     MaterialTheme.colorScheme.onError
                 } else {
                     card.textColor.darken()
+                },
+                animationSpec = tween(
+                    durationMillis = 500,
+                    easing = androidx.compose.animation.core.EaseInOut
+                ),
+                label = "iconContentColor"
+            )
+
+            val animatedReportIconColor by animateColorAsState(
+                targetValue = if (card.device.isReported) {
+                    MaterialTheme.colorScheme.onError
+                } else {
+                    MaterialTheme.colorScheme.onSurface.darken()
                 },
                 animationSpec = tween(
                     durationMillis = 500,
@@ -173,8 +284,7 @@ fun CurrentConsumableDevicesCards(
                         )
                         Row(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 4.dp),
+                                .fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
@@ -237,143 +347,41 @@ fun CurrentConsumableDevicesCards(
                                     }
                                 }
                             }
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            ) {
+                                FaultyToggleButton(
+                                    isFaulty = card.device.isFaulty,
+                                    isReported = card.device.isReported,
+                                    onClick = { onMarkFaulty(card.device) },
+                                    animatedContainerColor = animatedContainerColor,
+                                    animatedIconColor = animatedIconColor,
+                                )
 
-                            FaultyToggleButton(
-                                isFaulty = card.device.isFaulty,
-                                isReported = card.device.isReported,
-                                onClick = { onMarkFaulty(card.device) },
-                                animatedContainerColor = animatedContainerColor,
-                                animatedIconColor = animatedIconColor
-                            )
+                                FaultyToggleButton(
+                                    isFaulty = card.device.isFaulty,
+                                    isReported = card.device.isReported,
+                                    type = ButtonType.REPORT,
+                                    onClick = { onMarkAsReported(card.device) },
+                                    animatedContainerColor = animatedReportedContainerColor,
+                                    animatedIconColor = animatedReportIconColor,
+                                )
+                            }
                         }
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if (card.lifeSpanEndDate.isEqual(today)) {
-                                SvgIcon(
-                                    resId = R.drawable.warning_icon_vector,
-                                    color = MedicalDeviceInfoType.WIRELESS_PATCH.baseColor,
-                                    modifier = Modifier.size(20.dp),
-                                )
-                                Text(
-                                    text = stringResource(R.string.current_non_consumable_devices_card_replacement_warning_text),
-                                    color = card.device.deviceType.baseColor,
-                                )
-                            } else {
-                                Text(
-                                    text = shortenedFormatLocalDate(card.date),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                // Progress bar
-                                val totalDays = card.lifeSpan
-                                val usedDays =
-                                    ChronoUnit.DAYS.between(card.date, today).coerceAtLeast(0)
-                                val progress = (usedDays.toFloat() / totalDays).coerceIn(0f, 1f)
-
-                                LinearProgressIndicator(
-                                    progress = { progress },
-                                    modifier = Modifier.weight(1f),
-                                    color = if (card.isLifeSpanOver) MaterialTheme.colorScheme.error else card.textColor,
-                                    trackColor = MaterialTheme.colorScheme.surfaceVariant
-                                )
-                                Text(
-                                    text = shortenedFormatLocalDate(card.lifeSpanEndDate),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
+                            Text(
+                                text = shortenedFormatLocalDate(card.date),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     }
                 }
             }
-            if (index != cards.size - 1) Spacer(Modifier.height(3.dp))
-        }
-    }
-}
-
-@Preview(
-    showBackground = true, locale = "en", showSystemUi = false,
-    wallpaper = Wallpapers.NONE,
-    uiMode = Configuration.UI_MODE_TYPE_NORMAL
-)
-@Composable
-fun ConsumableDevicesListPreview() {
-    val fakeData = listOf(
-        MedicalDeviceEntry(
-            id = 1,
-            date = LocalDate.of(2025, 9, 1),
-            lifeSpanEndDate = LocalDate.of(2025, 9, 1).plusDays(90),
-            name = "Dexcom G6 Transmitter",
-            batchNumber = "D378HP",
-            serialNumber = "IUVYZBE678",
-            referenceNumber = "UTIUFYEGI",
-            manufacturer = "Dexcom",
-            deviceType = MedicalDeviceInfoType.CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_TRANSMITTER,
-            createdAt = LocalDate.of(2025, 9, 1),
-            isArchived = false,
-            lifeSpan = 90,
-            isFaulty = false,
-            isReported = false,
-            isLifeSpanOver = false,
-            updatedAt = LocalDate.of(2025, 9, 1)
-        ),
-        MedicalDeviceEntry(
-            id = 2,
-            date = LocalDate.of(2025, 9, 21),
-            lifeSpanEndDate = LocalDate.of(2025, 9, 21).plusDays(3),
-            name = "Omnipod Pod",
-            batchNumber = "567GGU",
-            serialNumber = "UTYFYZ38",
-            referenceNumber = "1R5TFG",
-            manufacturer = "Insulet",
-            deviceType = MedicalDeviceInfoType.WIRELESS_PATCH,
-            createdAt = LocalDate.of(2025, 9, 25),
-            isArchived = false,
-            lifeSpan = 3,
-            isFaulty = false,
-            isReported = false,
-            isLifeSpanOver = false,
-            updatedAt = LocalDate.of(2025, 9, 1)
-        ),
-        MedicalDeviceEntry(
-            id = 2,
-            date = LocalDate.of(2025, 9, 24),
-            lifeSpanEndDate = LocalDate.of(2025, 9, 24).plusDays(3),
-            name = "Omnipod Pod",
-            batchNumber = "567GGU",
-            serialNumber = "UTYFYZ38",
-            referenceNumber = "1R5TFG",
-            manufacturer = "Insulet",
-            deviceType = MedicalDeviceInfoType.WIRELESS_PATCH,
-            createdAt = LocalDate.of(2025, 9, 25),
-            isArchived = false,
-            lifeSpan = 3,
-            isFaulty = true,
-            isReported = false,
-            isLifeSpanOver = false,
-            updatedAt = LocalDate.of(2025, 9, 1)
-        )
-    )
-
-    val filteredFakeData = fakeData
-        .groupBy { it.deviceType }
-        .mapValues { (_, devices) ->
-            devices.sortedByDescending { it.date }
-        }
-        .flatMap { (_, devices) ->
-            val latest = devices.first()
-            val redundant = devices.drop(1).filterNot { old ->
-                old.lifeSpanEndDate.isEqual(latest.date)
-            }
-            listOf(latest) + redundant
-        }
-
-    MaterialTheme {
-        Column {
-            CurrentConsumableDevicesCards(filteredFakeData)
         }
     }
 }

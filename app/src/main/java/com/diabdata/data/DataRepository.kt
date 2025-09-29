@@ -173,6 +173,14 @@ class DataRepository(
     fun getAllConsumableDevices(): Flow<List<MedicalDeviceEntry>> =
         medicalDevicesDao.getAllConsumableDevices()
 
+    /** Flow of all unreported faulty devices **/
+    fun getAllUnreportedFaultyDevices(): Flow<List<MedicalDeviceEntry>> =
+        medicalDevicesDao.getAllFaultyUnreportedMedicalDevices()
+
+    /** Flow of all reported faulty devices **/
+    fun getAllReportedFaultyDevices(): Flow<List<MedicalDeviceEntry>> =
+        medicalDevicesDao.getAllFaultyReportedMedicalDevices()
+
     /** Flow of upcoming devices expiration dates */
     fun getUpcomingDevicesExpDates(date: LocalDate): Flow<List<MedicalDeviceEntry>> =
         medicalDevicesDao.getUpcomingExpirationDatesFlow(LocalDate.now(), date)

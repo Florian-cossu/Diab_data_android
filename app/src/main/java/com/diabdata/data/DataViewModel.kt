@@ -145,6 +145,14 @@ class DataViewModel(
         repository.getAllConsumableDevices()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val faultyDevices: StateFlow<List<MedicalDeviceEntry>> =
+        repository.getAllUnreportedFaultyDevices()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val reportedFaultyDevices: StateFlow<List<MedicalDeviceEntry>> =
+        repository.getAllReportedFaultyDevices()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     // Insertion functions
     fun addWeight(weightEntry: WeightEntry) {
         viewModelScope.launch {

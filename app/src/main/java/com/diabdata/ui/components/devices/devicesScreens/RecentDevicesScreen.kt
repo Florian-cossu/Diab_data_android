@@ -1,4 +1,4 @@
-package com.diabdata.ui.components.devices
+package com.diabdata.ui.components.devices.devicesScreens
 
 import android.os.Build
 import android.util.Log
@@ -50,7 +50,7 @@ import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun DevicesScreen(
+fun RecentDevicesScreen(
     dataViewModel: DataViewModel
 ) {
     val availability by dataViewModel.dataAvailability.collectAsState()
@@ -66,6 +66,7 @@ fun DevicesScreen(
     Column(
         modifier = Modifier
             .padding(20.dp)
+            .padding(top = 16.dp)
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(35.dp)
     ) {
@@ -87,8 +88,7 @@ fun DevicesScreen(
                     .padding(20.dp)
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 70.dp)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
+                    .fillMaxSize(), contentAlignment = Alignment.Center
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -114,10 +114,7 @@ fun DevicesScreen(
 
     }
 
-    AddDeviceFab(
-        onSelect = { showAddDevicePopup = true },
-        onScanClick = { showScanner = true }
-    )
+    AddDeviceFab(onSelect = { showAddDevicePopup = true }, onScanClick = { showScanner = true })
 
     if (showAddDevicePopup) {
         AddDataPopup(
@@ -132,8 +129,7 @@ fun DevicesScreen(
 
     if (showScanner) {
         DataMatrixScannerDialog(
-            onDismiss = { showScanner = false },
-            onResult = { result ->
+            onDismiss = { showScanner = false }, onResult = { result ->
                 scope.launch {
                     when (result) {
                         is ScanResult.Device -> {
@@ -158,16 +154,13 @@ fun DevicesScreen(
                     }
                     showScanner = false
                 }
-            },
-            visible = showScanner,
-            scannedType = ScannableTypes.DEVICE
+            }, visible = showScanner, scannedType = ScannableTypes.DEVICE
         )
     }
 }
 
 fun generateMedicalDeviceEntry(
-    scanResult: ScanResult.Device,
-    medicalDeviceInfo: MedicalDeviceInfoEntity
+    scanResult: ScanResult.Device, medicalDeviceInfo: MedicalDeviceInfoEntity
 ): MedicalDeviceEntry {
     val today = LocalDate.now()
 
