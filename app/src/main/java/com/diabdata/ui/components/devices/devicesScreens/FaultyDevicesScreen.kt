@@ -92,34 +92,41 @@ fun FaultyDevicesScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(top = 6.dp),
+                verticalArrangement = Arrangement.spacedBy(35.dp)
             ) {
                 if (faultyDevices.isNotEmpty()) {
-                    Text(
-                        text = stringResource(R.string.device_screen_faulty_devices_tab_faulty_heading),
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = MaterialTheme.colorScheme.surfaceTint
-                    )
-
-                    DisplayCard(
-                        items = faultyDevices,
-                        onMarkFaulty = onMarkAsFaulty,
-                        onMarkAsReported = onMarkAsReported
-                    )
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.device_screen_faulty_devices_tab_faulty_heading),
+                            style = MaterialTheme.typography.headlineLarge,
+                            color = MaterialTheme.colorScheme.surfaceTint
+                        )
+                        DisplayCard(
+                            items = faultyDevices,
+                            onMarkFaulty = onMarkAsFaulty,
+                            onMarkAsReported = onMarkAsReported
+                        )
+                    }
                 }
 
                 if (reportedFaultyDevices.isNotEmpty()) {
-                    Text(
-                        text = stringResource(R.string.device_screen_faulty_devices_tab_reported_heading),
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = MaterialTheme.colorScheme.surfaceTint
-                    )
-                    DisplayCard(
-                        items = reportedFaultyDevices,
-                        onMarkFaulty = onMarkAsFaulty,
-                        onMarkAsReported = onMarkAsReported
-                    )
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.device_screen_faulty_devices_tab_reported_heading),
+                            style = MaterialTheme.typography.headlineLarge,
+                            color = MaterialTheme.colorScheme.surfaceTint
+                        )
+                        DisplayCard(
+                            items = reportedFaultyDevices,
+                            onMarkFaulty = onMarkAsFaulty,
+                            onMarkAsReported = onMarkAsReported
+                        )
+                    }
                 }
             }
         }
@@ -205,22 +212,9 @@ fun DisplayCard(
         cards.forEachIndexed { index, card ->
             val animatedContainerColor by animateColorAsState(
                 targetValue = if (card.device.isFaulty) {
-                    MaterialTheme.colorScheme.error
+                    card.textColor.darken()
                 } else {
                     card.textColor.copy(alpha = 0.2f)
-                },
-                animationSpec = tween(
-                    durationMillis = 500,
-                    easing = androidx.compose.animation.core.EaseInOut
-                ),
-                label = "iconContainerColor"
-            )
-
-            val animatedReportedContainerColor by animateColorAsState(
-                targetValue = if (card.device.isReported) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                 },
                 animationSpec = tween(
                     durationMillis = 500,
@@ -234,19 +228,6 @@ fun DisplayCard(
                     MaterialTheme.colorScheme.onError
                 } else {
                     card.textColor.darken()
-                },
-                animationSpec = tween(
-                    durationMillis = 500,
-                    easing = androidx.compose.animation.core.EaseInOut
-                ),
-                label = "iconContentColor"
-            )
-
-            val animatedReportIconColor by animateColorAsState(
-                targetValue = if (card.device.isReported) {
-                    MaterialTheme.colorScheme.onError
-                } else {
-                    MaterialTheme.colorScheme.onSurface.darken()
                 },
                 animationSpec = tween(
                     durationMillis = 500,
@@ -363,8 +344,8 @@ fun DisplayCard(
                                     isReported = card.device.isReported,
                                     type = ButtonType.REPORT,
                                     onClick = { onMarkAsReported(card.device) },
-                                    animatedContainerColor = animatedReportedContainerColor,
-                                    animatedIconColor = animatedReportIconColor,
+                                    animatedContainerColor = animatedContainerColor,
+                                    animatedIconColor = animatedIconColor,
                                 )
                             }
                         }
