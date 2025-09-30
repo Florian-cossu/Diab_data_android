@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -369,24 +371,36 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     color = MaterialTheme.colorScheme.primary
                 )
             },
-            title = { Text("Updates - 24/09/2025") },
+            title = { Text("Updates - 30/09/2025") },
             text = {
                 LazyColumn {
-                    item { Text("- NEW SECTION") }
-                    item { Text("\t• Added devices section in Navbar") }
-                    item { Text("\t• Added currently active consumable medical devices component") }
-                    item { Text("\t• Added non consumble medical devices list component") }
-                    item { Text("- Settings page") }
-                    item { Text("\t• Added GTIN Csv version number in settings page") }
-                    item { Text("- Icons") }
-                    item { Text("\t• Added custom icon sets for upcoming device page") }
-                    item { Text("- DATABASE MANAGEMENT") }
-                    item { Text("\t• Added clean database migrations") }
-                    item { Text("\t• Added medical devices database") }
-                    item { Text("\t• Added medical device insertion popup") }
-                    item { Text("\t• Added medical device scan popup") }
-                    item { Text("\t• Added medical device to the flow feeding the database view page") }
-
+                    changelogSection(
+                        "- NEW SECTION",
+                        listOf(
+                            "Added devices section in Navbar",
+                            "Added currently active consumable medical devices component",
+                            "Added non consumable medical devices list component",
+                            "Added tab navigation on device page to list reported and faulty devices"
+                        )
+                    )
+                    changelogSection(
+                        "- SETTINGS PAGE",
+                        listOf("Added GTIN Csv version number in settings page")
+                    )
+                    changelogSection(
+                        "- ICONS",
+                        listOf("Added custom icon sets for upcoming device page")
+                    )
+                    changelogSection(
+                        "- DATABASE MANAGEMENT",
+                        listOf(
+                            "Added clean database migrations",
+                            "Added medical devices database",
+                            "Added medical device insertion popup",
+                            "Added medical device scan popup",
+                            "Added medical device to the flow feeding the database view page"
+                        )
+                    )
                 }
             },
             confirmButton = {
@@ -535,4 +549,19 @@ fun SettingsToggle(
             )
         }
     }
+}
+
+fun LazyListScope.changelogSection(title: String, contents: List<String>) {
+    item {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+    }
+    item { Spacer(Modifier.height(4.dp)) }
+    items(contents) { line ->
+        Text("\t• $line")
+    }
+    item { Spacer(Modifier.height(8.dp)) }
 }
