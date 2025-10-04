@@ -16,6 +16,7 @@ import com.diabdata.models.MedicalDeviceInfoEntity
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.models.WeightEntry
+import com.diabdata.models.classes.FaultyBatchCount
 import com.diabdata.models.classes.PlotPoint
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
@@ -180,6 +181,11 @@ class DataRepository(
     /** Flow of all reported faulty devices **/
     fun getAllReportedFaultyDevices(): Flow<List<MedicalDeviceEntry>> =
         medicalDevicesDao.getAllFaultyReportedMedicalDevices()
+
+    /** Flow of all faulty batch numbers **/
+    fun getAllFaultyBatchNumbers(): Flow<List<FaultyBatchCount>> =
+        medicalDevicesDao.getFaultyBatchNumbersCounts()
+
 
     /** Flow of upcoming devices expiration dates */
     fun getUpcomingDevicesExpDates(date: LocalDate): Flow<List<MedicalDeviceEntry>> =

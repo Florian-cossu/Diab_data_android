@@ -41,7 +41,7 @@
     <string name="settings_page_data_import_button_text">Import data</string>
     <string name="settings_page_data_purge_button_text">Empty database</string>
     <string name="database_data_purge_modal_title">Comfirm delete</string>
-    <string name="database_data_purge_modal_contents">Are you sure you want to completely empty the database? This action cannot be undone.</string>
+    <string name="database_data_purge_modal_contents">Are you sure you want to completely empty the database? This action cannot be undone. You can save your current data using the \"Export data\" button before confirming.</string>
     <string name="notification_channel_name_data">Data Management</string>
     <string name="data_export_success_text">Data exported successfully</string>
     <string name="data_export_error_text">Error while exporting data</string>
@@ -72,14 +72,19 @@
         <item quantity="other">In %d years and %d months</item>
     </plurals>
 
-    <plurals name="years">
+    <plurals name="plurals_years">
         <item quantity="one">%d year</item>
         <item quantity="other">%d years</item>
     </plurals>
 
-    <plurals name="months">
+    <plurals name="plurals_months">
         <item quantity="one">%d month</item>
         <item quantity="other">%d months</item>
+    </plurals>
+
+    <plurals name="plurals_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
     </plurals>
 
     <plurals name="years_and_months">
@@ -156,4 +161,7 @@
     <string name="device_screen_faulty_devices_tab">Faulty devices</string>
     <string name="device_screen_faulty_devices_tab_faulty_heading">Faulty</string>
     <string name="device_screen_faulty_devices_tab_reported_heading">Reported</string>
+    <string name="device_screen_get_faulty_devices_button_text">To report list</string>
+    <string name="device_screen_faulty_devices_batch_table_header">Batch number</string>
+    <string name="device_screen_faulty_devices_count_table_header">Total</string>
 </resources>

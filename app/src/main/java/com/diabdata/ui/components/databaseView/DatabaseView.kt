@@ -74,7 +74,7 @@ import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.FlippableSelectionIcon
-import com.diabdata.utils.SvgIcon
+import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.darken
 import com.diabdata.utils.getItemShape
 import kotlinx.coroutines.launch
@@ -486,10 +486,33 @@ private fun EntryContent(entry: DataViewModel.MixedDbEntry) {
                     }
                 }
 
-                Text(
-                    entry.date.format(formatter),
-                    style = MaterialTheme.typography.bodySmall
-                )
+                Row(
+                    modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        entry.date.format(formatter),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+
+                    if (entry.isFaulty) {
+                        SvgIcon(
+                            resId = R.drawable.faulty_medical_device_icon_vector,
+                            modifier = Modifier.size(12.dp),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+
+                    if (entry.isReported) {
+                        SvgIcon(
+                            resId = R.drawable.megaphone_filled_icon_vector,
+                            modifier = Modifier.size(12.dp),
+                            color = entry.addableType.baseColor.darken()
+                        )
+                    }
+                }
+
             }
         }
     }

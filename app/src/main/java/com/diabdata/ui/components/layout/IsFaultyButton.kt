@@ -1,4 +1,4 @@
-package com.diabdata.ui.components.devices.components
+package com.diabdata.ui.components.layout
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.diabdata.R
-import com.diabdata.utils.SvgIcon
 import kotlinx.coroutines.delay
 
 data class ButtonSize(val circle: Int, val icon: Int)
@@ -24,13 +23,14 @@ data class ButtonSize(val circle: Int, val icon: Int)
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FaultyToggleButton(
+    modifier: Modifier = Modifier,
     isFaulty: Boolean,
     isReported: Boolean,
     type: ButtonType = ButtonType.FAULTY,
     onClick: () -> Unit,
     animatedContainerColor: Color,
     animatedIconColor: Color,
-    modifier: Modifier = Modifier,
+
     sizing: ButtonSize = ButtonSize(30, 20)
 ) {
     var clicked by remember { mutableStateOf(false) }

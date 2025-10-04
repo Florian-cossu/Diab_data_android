@@ -3,12 +3,14 @@ package com.diabdata.ui.components.devices.devicesScreens
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,10 +38,12 @@ import com.diabdata.models.AddableType
 import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.MedicalDeviceInfoType
 import com.diabdata.ui.components.ColoredIconCircle
-import com.diabdata.ui.components.devices.components.ButtonType
-import com.diabdata.ui.components.devices.components.FaultyToggleButton
 import com.diabdata.ui.components.devices.components.MedicalDeviceCardData
-import com.diabdata.utils.SvgIcon
+import com.diabdata.ui.components.layout.ButtonType
+import com.diabdata.ui.components.layout.DataTable
+import com.diabdata.ui.components.layout.DataTableDecoration
+import com.diabdata.ui.components.layout.FaultyToggleButton
+import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.darken
 import com.diabdata.utils.getItemShape
 import com.diabdata.utils.shortenedFormatLocalDate
@@ -51,12 +56,12 @@ fun FaultyDevices(
     dataViewModel: DataViewModel
 ) {
     val faultyDevices by dataViewModel.faultyDevices.collectAsState(initial = emptyList())
-    val reportedFaultyDevices by dataViewModel.reportedFaultyDevices.collectAsState(initial = emptyList())
+    val faultyCountsByBatches by dataViewModel.faultyBatchNumbersTableData.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
     FaultyDevicesScreen(
         faultyDevices = faultyDevices,
-        reportedFaultyDevices = reportedFaultyDevices,
+        faultyCountsByBatchNumbers = faultyCountsByBatches,
         onMarkAsReported = { device ->
             coroutineScope.launch {
                 dataViewModel.updateDevice(device.copy(isReported = !device.isReported))
@@ -71,61 +76,81 @@ fun FaultyDevices(
 }
 
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FaultyDevicesScreen(
     faultyDevices: List<MedicalDeviceEntry>,
-    reportedFaultyDevices: List<MedicalDeviceEntry>,
+    faultyCountsByBatchNumbers: List<List<String>>,
     onMarkAsReported: (MedicalDeviceEntry) -> Unit,
     onMarkAsFaulty: (MedicalDeviceEntry) -> Unit,
 ) {
-    Column(
+    Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .padding(32.dp)
-    ) {
-        if (faultyDevices.isEmpty() && reportedFaultyDevices.isEmpty()) {
-            Text(
-                text = stringResource(R.string.device_screen_no_faulty_devices_tab),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 6.dp),
-                verticalArrangement = Arrangement.spacedBy(35.dp)
-            ) {
-                if (faultyDevices.isNotEmpty()) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.device_screen_faulty_devices_tab_faulty_heading),
-                            style = MaterialTheme.typography.headlineLarge,
-                            color = MaterialTheme.colorScheme.surfaceTint
-                        )
-                        DisplayCard(
-                            items = faultyDevices,
-                            onMarkFaulty = onMarkAsFaulty,
-                            onMarkAsReported = onMarkAsReported
-                        )
+            .padding(0.dp),
+        contentWindowInsets = WindowInsets(
+            left = 0.dp,
+            top = 36.dp,
+            right = 0.dp,
+            bottom = 0.dp
+        )
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+        ) {
+            if (faultyDevices.isEmpty() && faultyCountsByBatchNumbers.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.device_screen_no_faulty_devices_tab),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 6.dp)
+                        .padding(horizontal = 32.dp),
+                    verticalArrangement = Arrangement.spacedBy(35.dp)
+                ) {
+                    if (faultyDevices.isNotEmpty()) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.device_screen_faulty_devices_tab_faulty_heading),
+                                style = MaterialTheme.typography.headlineLarge,
+                                color = MaterialTheme.colorScheme.surfaceTint
+                            )
+                            DisplayCard(
+                                items = faultyDevices,
+                                onMarkFaulty = onMarkAsFaulty,
+                                onMarkAsReported = onMarkAsReported
+                            )
+                        }
                     }
-                }
 
-                if (reportedFaultyDevices.isNotEmpty()) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.device_screen_faulty_devices_tab_reported_heading),
-                            style = MaterialTheme.typography.headlineLarge,
-                            color = MaterialTheme.colorScheme.surfaceTint
-                        )
-                        DisplayCard(
-                            items = reportedFaultyDevices,
-                            onMarkFaulty = onMarkAsFaulty,
-                            onMarkAsReported = onMarkAsReported
-                        )
+                    if (faultyCountsByBatchNumbers.isNotEmpty()) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.device_screen_faulty_devices_tab_reported_heading),
+                                style = MaterialTheme.typography.headlineLarge,
+                                color = MaterialTheme.colorScheme.surfaceTint
+                            )
+                            DataTable(
+                                headerColor = MaterialTheme.colorScheme.primary,
+                                headers = listOf(
+                                    stringResource(R.string.device_screen_faulty_devices_batch_table_header),
+                                    stringResource(R.string.device_screen_faulty_devices_count_table_header)
+                                ),
+                                data = faultyCountsByBatchNumbers,
+                                decoration = DataTableDecoration.build {
+                                    alternateRowBackground(true)
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -172,10 +197,14 @@ fun FaultyDevicesScreenPreview() {
             referenceNumber = "REF002"
         )
     )
+    val faultyCounts = listOf(
+        listOf("1234A", "2"),
+        listOf("5678B", "1")
+    )
 
     FaultyDevicesScreen(
         faultyDevices = sampleDevices,
-        reportedFaultyDevices = sampleDevices.filter { it.isReported },
+        faultyCountsByBatchNumbers = faultyCounts,
         onMarkAsReported = {},
         onMarkAsFaulty = {}
     )
@@ -218,7 +247,7 @@ fun DisplayCard(
                 },
                 animationSpec = tween(
                     durationMillis = 500,
-                    easing = androidx.compose.animation.core.EaseInOut
+                    easing = EaseInOut
                 ),
                 label = "iconContainerColor"
             )
@@ -231,7 +260,7 @@ fun DisplayCard(
                 },
                 animationSpec = tween(
                     durationMillis = 500,
-                    easing = androidx.compose.animation.core.EaseInOut
+                    easing = EaseInOut
                 ),
                 label = "iconContentColor"
             )

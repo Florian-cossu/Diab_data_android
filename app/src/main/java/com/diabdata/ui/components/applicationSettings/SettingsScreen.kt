@@ -53,7 +53,7 @@ import androidx.work.WorkManager
 import com.diabdata.BuildConfig
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
-import com.diabdata.utils.SvgIcon
+import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.showNotification
 import com.diabdata.workers.scheduleAppointmentReminders
 import com.diabdata.workers.scheduleMedicationExpirationReminders
@@ -385,7 +385,10 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     )
                     changelogSection(
                         "- SETTINGS PAGE",
-                        listOf("Added GTIN Csv version number in settings page")
+                        listOf(
+                            "Added GTIN Csv version number in settings page",
+                            "Updated clear database popup text"
+                        )
                     )
                     changelogSection(
                         "- ICONS",
@@ -400,6 +403,10 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                             "Added medical device scan popup",
                             "Added medical device to the flow feeding the database view page"
                         )
+                    )
+                    changelogSection(
+                        "- DATAMATRIX PARSER",
+                        listOf("Reworked datamatrix parser to be more robust")
                     )
                 }
             },

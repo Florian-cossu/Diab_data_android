@@ -43,7 +43,7 @@ import com.diabdata.ui.components.addDataPopup.popupsByTypes.ImportantDatePopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.MedicalDevicePopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.TreatmentPopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.WeightPopup
-import com.diabdata.utils.SvgIcon
+import com.diabdata.ui.components.layout.SvgIcon
 
 
 @OptIn(ExperimentalMaterial3Api::class)

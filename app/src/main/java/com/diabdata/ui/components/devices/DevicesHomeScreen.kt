@@ -31,7 +31,7 @@ import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.ui.components.devices.devicesScreens.FaultyDevices
 import com.diabdata.ui.components.devices.devicesScreens.RecentDevicesScreen
-import com.diabdata.utils.SvgIcon
+import com.diabdata.ui.components.layout.SvgIcon
 
 enum class DeviceDestination(
     @param:StringRes val labelRes: Int,

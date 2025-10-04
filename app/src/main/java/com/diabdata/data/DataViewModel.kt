@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -152,6 +153,16 @@ class DataViewModel(
     val reportedFaultyDevices: StateFlow<List<MedicalDeviceEntry>> =
         repository.getAllReportedFaultyDevices()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val faultyBatchNumbersTableData: StateFlow<List<List<String>>> =
+        repository.getAllFaultyBatchNumbers()
+            .map { list ->
+                list.map { entry ->
+                    listOf(entry.batchNumber, entry.count.toString())
+                }
+            }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
 
     // Insertion functions
     fun addWeight(weightEntry: WeightEntry) {

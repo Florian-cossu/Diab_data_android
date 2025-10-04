@@ -44,8 +44,8 @@ import com.diabdata.ui.components.ScanResult
 import com.diabdata.ui.components.ScannableTypes
 import com.diabdata.ui.components.addDataPopup.AddDataPopup
 import com.diabdata.ui.components.latestMeasurements.LatestMeasurements
+import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.MedicationInfo
-import com.diabdata.utils.SvgIcon
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 

@@ -108,6 +108,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.material3)
 
 
     // Use ksp for annotation processing

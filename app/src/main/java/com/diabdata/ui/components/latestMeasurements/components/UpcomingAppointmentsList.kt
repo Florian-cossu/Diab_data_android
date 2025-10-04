@@ -39,7 +39,7 @@ import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
 import com.diabdata.models.AppointmentType
 import com.diabdata.ui.components.ColoredIconCircle
-import com.diabdata.utils.SvgIcon
+import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.formatLocalDate
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate

@@ -32,7 +32,7 @@ import com.diabdata.models.MedicalDeviceInfoType
 import com.diabdata.ui.components.EnumDropdown
 import com.diabdata.ui.components.addDataPopup.BasePopupLayout
 import com.diabdata.ui.components.date_components.DateSelector
-import com.diabdata.utils.SvgIcon
+import com.diabdata.ui.components.layout.SvgIcon
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 

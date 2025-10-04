@@ -37,7 +37,8 @@ import com.diabdata.models.AddableType
 import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.MedicalDeviceInfoType
 import com.diabdata.ui.components.ColoredIconCircle
-import com.diabdata.utils.SvgIcon
+import com.diabdata.ui.components.layout.FaultyToggleButton
+import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.darken
 import com.diabdata.utils.getItemShape
 import com.diabdata.utils.shortenedFormatLocalDate
