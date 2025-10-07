@@ -10,7 +10,6 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
-import androidx.glance.LocalContext
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.cornerRadius
@@ -20,10 +19,12 @@ import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
+import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
-import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
+import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -32,6 +33,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.diabdata.glanceWidget.proto.WidgetState
 import com.diabdata.models.AddableType
+import com.diabdata.utils.toShortenedFormatLocalDate
 import java.util.concurrent.TimeUnit
 
 class GlanceWidgetReceiver : GlanceAppWidgetReceiver() {
@@ -91,98 +93,129 @@ class GlanceWidget : GlanceAppWidget() {
         val devices = state.devicesList
         val appointment = state.nextAppointment
 
-        Column(
+        Row(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .padding(8.dp)
-                .background(GlanceTheme.colors.surface)
-                .cornerRadius(16.dp)
-        ) {
-            Text(
-                text = "Équipements",
-                style = TextStyle(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    color = GlanceTheme.colors.onSurface
-                ),
-            )
-            if (devices.isEmpty()) {
-                Text(
-                    text = "Aucun équipement actif",
-                    style = TextStyle(fontSize = 12.sp)
+                .padding(
+                    horizontal = 10.dp,
+                    vertical = 6.dp
                 )
-            } else {
-                devices.forEach {
-                    Text(
-                        text = "${it.name} (${it.type}) - ${it.lifespanProgression}%",
-                        style = TextStyle(
-                            fontSize = 12.sp,
-                            color = GlanceTheme.colors.onSurface
-                        ),
-                    )
+                .background(GlanceTheme.colors.surface)
+                .cornerRadius(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (appointment.date.isNotEmpty()) {
+                val typeEnum = getAppointmentTypeOrNull(appointment.type)
+                typeEnum?.let {
+                    Column(
+                        modifier = GlanceModifier.defaultWeight(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        val baseBgColor = AddableType.APPOINTMENT.baseColor.copy(alpha = 0.2f)
+
+                        Text(
+                            text = appointment.doctor,
+                            style = TextStyle(
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = AddableType.APPOINTMENT.baseColor.toColorProvider(
+                                    ColorVariant.CIRCLE_ICON_ICON
+                                )
+                            ),
+                            maxLines = 1,
+                        )
+
+                        Spacer(modifier = GlanceModifier.height(4.dp))
+
+                        Image(
+                            provider = ImageProvider(it.iconRes),
+                            contentDescription = it.displayName(context),
+                            modifier = GlanceModifier
+                                .size(40.dp)
+                                .background(baseBgColor)
+                                .padding(8.dp)
+                                .cornerRadius(100.dp),
+                            colorFilter = ColorFilter.tint(
+                                AddableType.APPOINTMENT.baseColor.toColorProvider(
+                                    ColorVariant.CIRCLE_ICON_ICON
+                                )
+                            )
+                        )
+
+                        Spacer(modifier = GlanceModifier.height(4.dp))
+
+                        Text(
+                            text = appointment.date.toShortenedFormatLocalDate(),
+                            style = TextStyle(
+                                fontSize = 10.sp,
+                                color = GlanceTheme.colors.onSurface
+                            ),
+                            maxLines = 1,
+                        )
+                    }
                 }
             }
 
-            Column(
-                modifier = GlanceModifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-            ) {
+            devices.forEach { device ->
+                Spacer(modifier = GlanceModifier.width(8.dp))
+
+                val deviceTypeEnum = getDeviceTypeOrNull(device.type)
+                deviceTypeEnum?.let {
+                    Column(
+                        modifier = GlanceModifier.defaultWeight(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        val baseBgColor = it.baseColor.copy(alpha = 0.2f)
+
+                        Text(
+                            text = device.name,
+                            style = TextStyle(
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = it.baseColor.toColorProvider(ColorVariant.CIRCLE_ICON_ICON)
+                            ),
+                            maxLines = 1,
+                        )
+
+                        Spacer(modifier = GlanceModifier.height(4.dp))
+
+                        Image(
+                            provider = ImageProvider(it.iconRes),
+                            contentDescription = it.displayName(context),
+                            modifier = GlanceModifier
+                                .size(40.dp)
+                                .background(baseBgColor)
+                                .padding(8.dp)
+                                .cornerRadius(100.dp),
+                            colorFilter = ColorFilter.tint(
+                                it.baseColor.toColorProvider(ColorVariant.CIRCLE_ICON_ICON)
+                            )
+                        )
+
+                        Spacer(modifier = GlanceModifier.height(4.dp))
+
+                        Text(
+                            text = "${device.lifespanProgression}%",
+                            style = TextStyle(
+                                fontSize = 10.sp,
+                                color = GlanceTheme.colors.onSurface
+                            ),
+                            maxLines = 1
+                        )
+                    }
+                }
+            }
+
+            if (appointment.date.isEmpty() && devices.isEmpty()) {
                 Text(
-                    text = "Prochain RDV",
+                    text = "Aucun rendez-vous ou équipement",
+                    modifier = GlanceModifier.defaultWeight(),
                     style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
+                        fontSize = 12.sp,
                         color = GlanceTheme.colors.onSurface
                     )
                 )
-
-                if (appointment.date.isNotEmpty()) {
-                    val typeEnum = getAppointmentTypeOrNull(appointment.type)
-
-                    val baseBgColor = AddableType.APPOINTMENT.baseColor.copy(alpha = 0.2f)
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalAlignment = Alignment.Start,
-                        modifier = GlanceModifier.padding(top = 4.dp)
-                    ) {
-                        typeEnum?.let {
-                            Image(
-                                provider = ImageProvider(it.iconRes),
-                                contentDescription = it.displayName(LocalContext.current),
-                                modifier = GlanceModifier
-                                    .size(40.dp)
-                                    .background(baseBgColor)
-                                    .padding(8.dp)
-                                    .cornerRadius(100.dp),
-                                colorFilter = ColorFilter.tint(
-                                    AddableType.APPOINTMENT.baseColor.toColorProvider(
-                                        ColorVariant.CIRCLE_ICON_ICON
-                                    )
-                                )
-                            )
-                        }
-
-                        Text(
-                            text = "${appointment.date} avec ${appointment.doctor}",
-                            style = TextStyle(
-                                fontSize = 12.sp,
-                                color = GlanceTheme.colors.onSurface
-                            ),
-                        )
-                    }
-                } else {
-                    Text(
-                        text = "Aucun rendez-vous prévu",
-                        style = TextStyle(
-                            fontSize = 12.sp,
-                            color = GlanceTheme.colors.onSurface
-                        ),
-                    )
-                }
             }
-
         }
     }
 }

@@ -19,12 +19,26 @@ fun formatLocalDate(
     return date.format(formatter)
 }
 
+fun String.toFormatLocalDate(
+    locale: Locale = Locale.getDefault()
+): String {
+    val date = LocalDate.parse(this)
+    return formatLocalDate(date, locale = locale)
+}
+
 fun shortenedFormatLocalDate(
     date: LocalDate,
     locale: Locale = Locale.getDefault()
 ): String {
     val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale)
     return date.format(formatter)
+}
+
+fun String.toShortenedFormatLocalDate(
+    locale: Locale = Locale.getDefault()
+): String {
+    val date = LocalDate.parse(this)
+    return shortenedFormatLocalDate(date, locale)
 }
 
 @Composable

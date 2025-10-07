@@ -4,11 +4,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.glance.color.ColorProvider
 import androidx.glance.unit.ColorProvider
 import com.diabdata.models.AppointmentType
+import com.diabdata.models.MedicalDeviceInfoType
 import com.diabdata.utils.darken
 
 fun getAppointmentTypeOrNull(typeName: String?): AppointmentType? {
     return typeName?.let {
         runCatching { AppointmentType.valueOf(it) }.getOrNull()
+    }
+}
+
+fun getDeviceTypeOrNull(typeName: String?): MedicalDeviceInfoType? {
+    return typeName?.let {
+        runCatching { MedicalDeviceInfoType.valueOf(it) }.getOrNull()
     }
 }
 

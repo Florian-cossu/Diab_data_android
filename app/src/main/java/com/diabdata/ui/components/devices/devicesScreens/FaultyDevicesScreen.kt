@@ -6,16 +6,19 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,10 +31,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
@@ -101,10 +106,33 @@ fun FaultyDevicesScreen(
                 .padding(innerPadding),
         ) {
             if (faultyDevices.isEmpty() && faultyCountsByBatchNumbers.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.device_screen_no_faulty_devices_tab),
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                Box(
+                    modifier = Modifier
+                        .padding(20.dp)
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 70.dp)
+                        .fillMaxSize(), contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.wrapContentWidth()
+                    ) {
+                        SvgIcon(
+                            resId = (R.drawable.no_devices_icon_vector),
+                            modifier = Modifier
+                                .width((LocalWindowInfo.current.containerSize.width * 0.15f).dp)
+                                .aspectRatio(1f),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                        )
+
+                        Text(
+                            text = stringResource(R.string.homescreen_no_data_text),
+                            modifier = Modifier.padding(top = 16.dp),
+                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                        )
+                    }
+                }
             } else {
                 Column(
                     modifier = Modifier
