@@ -435,12 +435,6 @@ class DataViewModel(
         }
     }
 
-    // val part1 = combine(weights, hba1cEntries, appointments) { w, h, a ->
-    //        Triple(w, h, a)
-    //    }
-
-
-
     val allMixedEntries: Flow<List<MixedDbEntry>> = combine(
         part1,
         part2

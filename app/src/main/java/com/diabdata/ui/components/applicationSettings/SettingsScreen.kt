@@ -371,7 +371,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     color = MaterialTheme.colorScheme.primary
                 )
             },
-            title = { Text("Updates - 30/09/2025") },
+            title = { Text("Updates - 07/10/2025") },
             text = {
                 LazyColumn {
                     changelogSection(
@@ -407,6 +407,10 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     changelogSection(
                         "- DATAMATRIX PARSER",
                         listOf("Reworked datamatrix parser to be more robust")
+                    )
+                    changelogSection(
+                        "- WIDGET IMPLEMENTATION",
+                        listOf("Started working on wiget implementation")
                     )
                 }
             },

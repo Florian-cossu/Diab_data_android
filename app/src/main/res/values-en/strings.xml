@@ -164,4 +164,5 @@
     <string name="device_screen_get_faulty_devices_button_text">To report list</string>
     <string name="device_screen_faulty_devices_batch_table_header">Batch number</string>
     <string name="device_screen_faulty_devices_count_table_header">Total</string>
+    <string name="glance_widget_description">Overview of devices and upcoming appointments</string>
 </resources>

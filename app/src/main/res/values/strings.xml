@@ -163,4 +163,5 @@
     <string name="device_screen_get_faulty_devices_button_text">Liste à signaler</string>
     <string name="device_screen_faulty_devices_batch_table_header">Numéro de lot</string>
     <string name="device_screen_faulty_devices_count_table_header">Total</string>
+    <string name="glance_widget_description">Aperçu des périphériques et des rendez-vous à venir</string>
 </resources>
