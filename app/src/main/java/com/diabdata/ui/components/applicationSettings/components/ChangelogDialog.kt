@@ -68,7 +68,6 @@ fun ChangelogDialog(onDismiss: () -> Unit) {
                     .padding(24.dp)
                     .fillMaxWidth(),
             ) {
-                // Header
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     SvgIcon(
                         resId = R.drawable.breaking_new_icon_vector,
@@ -77,7 +76,7 @@ fun ChangelogDialog(onDismiss: () -> Unit) {
                     )
                     Spacer(Modifier.width(12.dp))
                     Text(
-                        text = "Updates - 07/10/2025",
+                        text = "Updates - 11/10/2025",
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -85,7 +84,6 @@ fun ChangelogDialog(onDismiss: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Étape 3: Contenu scrollable avec hauteur contrainte
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -127,13 +125,15 @@ fun ChangelogDialog(onDismiss: () -> Unit) {
                     )
                     changelogSection(
                         "- WIDGET IMPLEMENTATION",
-                        listOf("Started working on wiget implementation")
+                        listOf(
+                            "Finished Glance widget implementation",
+                            "Finished preview of widget for launcher"
+                        )
                     )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Footer
                 Row(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth()
