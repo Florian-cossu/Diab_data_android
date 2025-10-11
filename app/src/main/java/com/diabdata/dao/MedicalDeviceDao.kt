@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.diabdata.models.MedicalDeviceEntry
+import com.diabdata.models.classes.FaultyBatchCount
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -28,7 +29,7 @@ interface MedicalDeviceDao {
     @Query("SELECT * FROM medical_devices WHERE (isArchived = 0 OR isArchived = 1) AND (deviceType = 'WIRELESS_PATCH_REMOTE' OR deviceType = 'WIRED_PUMP') ORDER BY date DESC")
     fun getAllNonConsumableDevices(): Flow<List<MedicalDeviceEntry>>
 
-    @Query("SELECT * FROM medical_devices WHERE (isArchived = 0 OR isArchived = 1) AND (lifeSpanEndDate >= :today) AND (deviceType != 'WIRELESS_PATCH_REMOTE' AND deviceType != 'WIRED_PUMP')")
+    @Query("SELECT * FROM medical_devices WHERE (isArchived = 0 OR isArchived = 1) AND (lifeSpanEndDate >= :today AND isFaulty = 0) AND (deviceType != 'WIRELESS_PATCH_REMOTE' AND deviceType != 'WIRED_PUMP')")
     fun getAllCurrentConsumableMedicalDevices(today: LocalDate): Flow<List<MedicalDeviceEntry>>
 
     @Query("SELECT * FROM medical_devices WHERE isFaulty=1 AND isReported=0")
@@ -36,6 +37,19 @@ interface MedicalDeviceDao {
 
     @Query("SELECT * FROM medical_devices WHERE isFaulty=1 AND isReported=1")
     fun getAllFaultyReportedMedicalDevices(): Flow<List<MedicalDeviceEntry>>
+
+    @Query(
+        """
+    SELECT COUNT(*) AS count, batchNumber 
+    FROM medical_devices 
+    WHERE isFaulty = 1 AND isReported = 1 
+    GROUP BY batchNumber 
+    ORDER BY count DESC
+"""
+    )
+    fun getFaultyBatchNumbersCounts(): Flow<List<FaultyBatchCount>>
+
+
 
     @Query("SELECT * FROM medical_devices WHERE :expirationDate >= :today AND isArchived = 0 ORDER BY deviceType, date ASC")
     fun getUpcomingExpirationDatesFlow(

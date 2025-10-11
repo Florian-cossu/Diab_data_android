@@ -17,4 +17,77 @@
     <color name="on_archived_primary">#393000</color>
 
     <color name="archived_washed">#F4EDE1</color>
+
+    <!-- WEIGHT -->
+    <color name="addable_type_weight_color">#4CAF50</color>
+    <color name="addable_type_weight_color_darkened">#377B38</color>
+    <color name="addable_type_weight_color_lightened">#334CAF50</color>
+
+    <!-- HBA1C -->
+    <color name="addable_type_hba1c_color">#4DB3EA</color>
+    <color name="addable_type_hba1c_color_darkened">#367E9F</color>
+    <color name="addable_type_hba1c_color_lightened">#334DB3EA</color>
+
+    <!-- APPOINTMENT -->
+    <color name="addable_type_appointment_color">#F637C5</color>
+    <color name="addable_type_appointment_color_darkened">#AC2789</color>
+    <color name="addable_type_appointment_color_lightened">#33F637C5</color>
+
+    <!-- TREATMENT -->
+    <color name="addable_type_treatment_color">#4ADCC4</color>
+    <color name="addable_type_treatment_color_darkened">#349A8A</color>
+    <color name="addable_type_treatment_color_lightened">#334ADCC4</color>
+
+    <!-- IMPORTANT DATE -->
+    <color name="addable_type_important_date_color">#FCB227</color>
+    <color name="addable_type_important_date_color_darkened">#B17D1B</color>
+    <color name="addable_type_important_date_color_lightened">#33FCB227</color>
+
+    <!-- DEVICE -->
+    <color name="addable_type_device_color">#4DB3EA</color>
+    <color name="addable_type_device_color_darkened">#367E9F</color>
+    <color name="addable_type_device_color_lightened">#334DB3EA</color>
+
+    <!-- ========== DEVICE TYPES COLORS ========== -->
+
+    <!-- WIRELESS PATCH -->
+    <color name="device_type_wireless_patch_color">#DEA32D</color>
+    <color name="device_type_wireless_patch_color_darkened">#9B7220</color>
+    <color name="device_type_wireless_patch_color_lightened">#33DEA32D</color>
+
+    <!-- WIRED PATCH -->
+    <color name="device_type_wired_patch_color">#BEDE2D</color>
+    <color name="device_type_wired_patch_color_darkened">#859B20</color>
+    <color name="device_type_wired_patch_color_lightened">#33BEDE2D</color>
+
+    <!-- CGM SENSOR -->
+    <color name="device_type_continuous_glucose_monitoring_system_sensor_color">#FA7450</color>
+    <color name="device_type_continuous_glucose_monitoring_system_sensor_color_darkened">#AF5038
+    </color>
+    <color name="device_type_continuous_glucose_monitoring_system_sensor_color_lightened">
+        #33FA7450
+    </color>
+
+    <!-- CGM TRANSMITTER -->
+    <color name="device_type_continuous_glucose_monitoring_system_transmitter_color">#458DEA</color>
+    <color name="device_type_continuous_glucose_monitoring_system_transmitter_color_darkened">
+        #305F9F
+    </color>
+    <color name="device_type_continuous_glucose_monitoring_system_transmitter_color_lightened">
+        #33458DEA
+    </color>
+
+    <!-- WIRELESS PATCH REMOTE -->
+    <color name="device_type_wireless_patch_remote_color">#2DDE7D</color>
+    <color name="device_type_wireless_patch_remote_color_darkened">#1F9B57</color>
+    <color name="device_type_wireless_patch_remote_color_lightened">#332DDE7D</color>
+
+    <!-- WIRED PUMP -->
+    <color name="device_type_wired_pump_color">#62DE2D</color>
+    <color name="device_type_wired_pump_color_darkened">#439B1F</color>
+    <color name="device_type_wired_pump_color_lightened">#3362DE2D</color>
+
+    <color name="widget_preview_text_color">#000</color>
+    <color name="widget_preview_surface_color">#FFFFFF</color>
+    <color name="widget_preview_error_container">#BA1A1A</color>
 </resources>

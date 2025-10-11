@@ -44,7 +44,7 @@ import com.diabdata.ui.components.addDataPopup.AddDataPopup
 import com.diabdata.ui.components.devices.components.AddDeviceFab
 import com.diabdata.ui.components.devices.components.CurrentConsumableDevicesList
 import com.diabdata.ui.components.devices.components.CurrentNonConsumableDevicesList
-import com.diabdata.utils.SvgIcon
+import com.diabdata.ui.components.layout.SvgIcon
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 

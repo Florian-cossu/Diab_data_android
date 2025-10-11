@@ -6,31 +6,17 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -40,10 +26,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -53,17 +37,18 @@ import androidx.work.WorkManager
 import com.diabdata.BuildConfig
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
-import com.diabdata.utils.SvgIcon
+import com.diabdata.ui.components.applicationSettings.components.ChangelogDialog
+import com.diabdata.ui.components.applicationSettings.components.SettingsButton
+import com.diabdata.ui.components.applicationSettings.components.SettingsSection
+import com.diabdata.ui.components.applicationSettings.components.SettingsToggle
+import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.showNotification
 import com.diabdata.workers.scheduleAppointmentReminders
 import com.diabdata.workers.scheduleMedicationExpirationReminders
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.Date
 import java.util.Locale
 
@@ -360,208 +345,6 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
         )
     }
     if (showChangeLogDialog) {
-        val confirmButtonText = stringResource(R.string.confirm_button_text)
-
-        AlertDialog(
-            onDismissRequest = { showChangeLogDialog = false },
-            icon = {
-                SvgIcon(
-                    resId = R.drawable.breaking_new_icon_vector,
-                    modifier = Modifier.size(48.dp),
-                    color = MaterialTheme.colorScheme.primary
-                )
-            },
-            title = { Text("Updates - 30/09/2025") },
-            text = {
-                LazyColumn {
-                    changelogSection(
-                        "- NEW SECTION",
-                        listOf(
-                            "Added devices section in Navbar",
-                            "Added currently active consumable medical devices component",
-                            "Added non consumable medical devices list component",
-                            "Added tab navigation on device page to list reported and faulty devices"
-                        )
-                    )
-                    changelogSection(
-                        "- SETTINGS PAGE",
-                        listOf("Added GTIN Csv version number in settings page")
-                    )
-                    changelogSection(
-                        "- ICONS",
-                        listOf("Added custom icon sets for upcoming device page")
-                    )
-                    changelogSection(
-                        "- DATABASE MANAGEMENT",
-                        listOf(
-                            "Added clean database migrations",
-                            "Added medical devices database",
-                            "Added medical device insertion popup",
-                            "Added medical device scan popup",
-                            "Added medical device to the flow feeding the database view page"
-                        )
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = { showChangeLogDialog = false }
-                ) {
-                    Text(confirmButtonText, color = MaterialTheme.colorScheme.primary)
-                }
-            }
-        )
+        ChangelogDialog(onDismiss = { showChangeLogDialog = false })
     }
-}
-
-@Composable
-fun SettingsSection(
-    title: String,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Column {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.surfaceTint
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        Surface(
-            shape = RoundedCornerShape(16.dp),
-            tonalElevation = 0.dp,
-            color = Color.Transparent,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(verticalArrangement = spacedBy(3.dp)) {
-                content()
-            }
-        }
-    }
-}
-
-@Composable
-fun SettingsButton(
-    text: String, onClick: () -> Unit, shape: Shape, isDestructive: Boolean = false, icon: Int = 0
-) {
-    Surface(
-        shape = shape, tonalElevation = 2.dp,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        TextButton(
-            onClick = onClick, shape = shape, colors = ButtonDefaults.textButtonColors(
-                containerColor = Color.Transparent,
-                contentColor = if (isDestructive) MaterialTheme.colorScheme.error
-                else MaterialTheme.colorScheme.onSurface
-            ), modifier = Modifier.fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 15.dp, top = 10.dp, end = 10.dp, bottom = 10.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                SvgIcon(
-                    resId = icon,
-                    modifier = Modifier.size(25.dp),
-                    color = if (isDestructive) MaterialTheme.colorScheme.error
-                    else MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text, style = MaterialTheme.typography.titleMedium
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun SettingsToggle(
-    text: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    shape: Shape = RoundedCornerShape(0.dp),
-    icon: Int? = null,
-    toastText: String = "",
-    nextReminderDate: LocalDate?,
-) {
-    Surface(
-        shape = shape,
-        tonalElevation = 2.dp,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        val context = LocalContext.current
-
-        val displayText = if (nextReminderDate != null) stringResource(
-            R.string.settings_notification_toggle_next_reminder_date, nextReminderDate.format(
-                DateTimeFormatter.ofLocalizedDate(
-                    FormatStyle.MEDIUM
-                )
-            )
-        ) else ""
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 30.dp, top = 10.dp, end = 15.dp, bottom = 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                if (displayText.isNotBlank()) {
-                    Text(
-                        text = displayText,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-            Switch(
-                checked = checked,
-                onCheckedChange = { isChecked ->
-                    onCheckedChange(isChecked)
-                    if (toastText.isNotBlank() && isChecked) {
-                        Toast.makeText(
-                            context,
-                            toastText,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                },
-                thumbContent = {
-                    if (checked && icon != null) {
-                        SvgIcon(
-                            resId = icon,
-                            contentDescription = null,
-                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-
-            )
-        }
-    }
-}
-
-fun LazyListScope.changelogSection(title: String, contents: List<String>) {
-    item {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-    }
-    item { Spacer(Modifier.height(4.dp)) }
-    items(contents) { line ->
-        Text("\t• $line")
-    }
-    item { Spacer(Modifier.height(8.dp)) }
 }

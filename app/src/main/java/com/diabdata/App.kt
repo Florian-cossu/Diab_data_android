@@ -32,9 +32,9 @@ import com.diabdata.ui.components.applicationSettings.SettingsScreen
 import com.diabdata.ui.components.databaseView.DatabaseEditionView
 import com.diabdata.ui.components.devices.DevicesScreen
 import com.diabdata.ui.components.graphsViewer.GraphViewer
+import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.MedicalDevicesInitializer
 import com.diabdata.utils.MedicationInitializer
-import com.diabdata.utils.SvgIcon
 
 
 sealed interface NavIcon {

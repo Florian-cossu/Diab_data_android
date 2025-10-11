@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,11 +38,11 @@ import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
 import com.diabdata.models.AppointmentType
 import com.diabdata.ui.components.ColoredIconCircle
-import com.diabdata.utils.SvgIcon
+import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.formatLocalDate
+import com.diabdata.utils.getDaysLeftString
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 @Composable
 fun UpcomingAppointmentsListContent(
@@ -53,7 +52,7 @@ fun UpcomingAppointmentsListContent(
 
     val context = LocalContext.current
     val primaryColor = MaterialTheme.colorScheme.primary
-    val today = LocalDate.now()
+    LocalDate.now()
 
     Column(
         modifier = Modifier
@@ -69,40 +68,7 @@ fun UpcomingAppointmentsListContent(
         Spacer(Modifier.height(8.dp))
 
         upcomingAppointments.forEachIndexed { index, appointment ->
-            val daysUntil = ChronoUnit.DAYS.between(today, appointment.date).toInt()
-            val yearsUntil = ChronoUnit.YEARS.between(today, appointment.date).toInt()
-            val totalMonths = ChronoUnit.MONTHS.between(today, appointment.date).toInt()
-            val remainingMonths = totalMonths - yearsUntil * 12
-
-            val remainingText = when {
-                daysUntil == 0 -> context.getString(R.string.today)
-                daysUntil in 1..29 -> pluralStringResource(
-                    R.plurals.in_days,
-                    daysUntil,
-                    daysUntil
-                )
-
-                yearsUntil == 0 && remainingMonths > 0 -> pluralStringResource(
-                    R.plurals.in_months,
-                    remainingMonths,
-                    remainingMonths
-                )
-
-                yearsUntil > 0 && remainingMonths == 0 -> pluralStringResource(
-                    R.plurals.in_years,
-                    yearsUntil,
-                    yearsUntil
-                )
-
-                yearsUntil > 0 && remainingMonths > 0 -> pluralStringResource(
-                    R.plurals.in_years_and_months,
-                    1,
-                    yearsUntil,
-                    remainingMonths
-                )
-
-                else -> context.getString(R.string.today)
-            }
+            val remainingText = getDaysLeftString(context, appointment.date)
 
             Surface(
                 shape = getItemShape(index, upcomingAppointments.size),

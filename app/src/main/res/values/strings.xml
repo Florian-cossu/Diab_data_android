@@ -40,19 +40,20 @@
     <string name="settings_page_data_import_button_text">Importer les données</string>
     <string name="settings_page_data_purge_button_text">Vider la base de données</string>
     <string name="database_data_purge_modal_title">Confirmer la suppression</string>
-    <string name="database_data_purge_modal_contents">Êtes-vous sûr de vouloir vider complètement la base de données ? Cette action est irréversible.</string>
+    <string name="database_data_purge_modal_contents">Êtes-vous sûr de vouloir vider complètement la base de données ? Cette action est irréversible. Vous pouvez sauvegarder une copie des données actuelles via le bouton \"Exporter les données\" avant de confirmer.</string>
     <string name="notification_channel_name_data">Gestion de données</string>
     <string name="data_export_success_text">Données exportées avec succès.</string>
-    <string name="data_export_error_text">Erreur lors de l’export des données.</string>
+    <string name="data_export_error_text">Erreur lors de l\’export des données.</string>
     <string name="data_import_success_text">Données importées avec succès.</string>
-    <string name="data_import_error_text">Erreur lors de l’import des données.</string>
+    <string name="data_import_error_text">Erreur lors de l\’import des données.</string>
     <string name="empty_file_error_text">Le fichier est vide</string>
     <string name="confirm_button_text">Confirmer</string>
     <string name="update_button_text">Mettre à jour</string>
     <string name="cancel_button_text">Annuler</string>
     <string name="delete_button_text">Supprimer</string>
     <plurals name="in_days">
-        <item quantity="one">Dans %d jour</item>
+        <item quantity="zero">Aujourd\'hui</item>
+        <item quantity="one">Demain</item>
         <item quantity="other">Dans %d jours</item>
     </plurals>
 
@@ -71,14 +72,19 @@
         <item quantity="other">Dans %d ans et %d mois</item>
     </plurals>
 
-    <plurals name="years">
+    <plurals name="plurals_years">
         <item quantity="one">%d an</item>
         <item quantity="other">%d ans</item>
     </plurals>
 
-    <plurals name="months">
+    <plurals name="plurals_months">
         <item quantity="one">%d mois</item>
         <item quantity="other">%d mois</item>
+    </plurals>
+
+    <plurals name="plurals_days">
+        <item quantity="one">%d jour</item>
+        <item quantity="other">%d jours</item>
     </plurals>
 
     <plurals name="years_and_months">
@@ -86,7 +92,7 @@
         <item quantity="other">%d ans et %d mois</item>
     </plurals>
 
-    <string name="today">Aujourd’hui</string>
+    <string name="today">Aujourd\’hui</string>
     <string name="important_date_on_text">Le %1$s</string>
     <string name="expires_on_text">Expire le %1$s</string>
 
@@ -98,14 +104,14 @@
     <string name="add_data_popup_HBA1C_field_placeholder">HBA1C (%)</string>
     <string name="add_data_popup_medication_field_placeholder">Nom du traitement</string>
     <string name="add_data_popup_date_field_placeholder">Sélectionner une date</string>
-    <string name="add_data_popup_expiration_date_field_placeholder">Sélectionner la date d’expiration</string>
+    <string name="add_data_popup_expiration_date_field_placeholder">Sélectionner la date d\’expiration</string>
     <string name="add_data_popup_start_date_field_placeholder">Date de pose</string>
     <string name="add_data_popup_end_date_field_placeholder">Date de retrait prévue</string>
     <string name="add_data_popup_doctor_field_placeholder">Nom du praticien</string>
     <string name="add_data_popup_important_date_field_placeholder">Évènement</string>
     <string name="add_data_popup_invalid_weight_field_message">Valeur de poids invalide</string>
     <string name="add_data_popup_invalid_HBA1C_field_message">HBA1C invalide</string>
-    <string name="add_data_popup_important_date_insertion_error">Erreur lors de l’ajout de la date</string>
+    <string name="add_data_popup_important_date_insertion_error">Erreur lors de l\’ajout de la date</string>
     <string name="add_data_popup_invalid_weight_kg_input_hint">Le poids doit-être compris entre 0 et 600 (kg)</string>
     <string name="add_data_popup_invalid_HBA1C_input_hint">La HBA1C doit être comprise entre 0 et 15 (%)</string>
     <string name="add_data_popup_device_name_field_label">Nom de l\'appareil</string>
@@ -118,7 +124,7 @@
     <string name="add_data_popup_device_is_reported_toggle_label">Problème signalé</string>
     <string name="add_data_popup_device_is_reported_toggle_display_text">Cocher si le problème avec l\'appareil a été signalé</string>
     <string name="add_data_popup_title">Ajouter %1$s</string>
-    <string name="update_data_popup_title">Mise à jour de l’entrée de %1$s</string>
+    <string name="update_data_popup_title">Mise à jour de l\’entrée de %1$s</string>
     <string name="homescreen_no_data_text">Aucune données</string>
     <string name="add_data_popup_add">Ajouter</string>
     <string name="add_data_popup_appointment_dropdown_placeholder">Type de RDV</string>
@@ -137,11 +143,11 @@
     <string name="settings_page_notifications_expiration_date">Expiration des traitements</string>
     <string name="settings_page_notifications_appointment">Rendez-vous à venir</string>
     <string name="add_data_popup_date_range_field_placeholder">Sélectionner une plage de date</string>
-    <string name="settings_page_notifications_expiration_date_confirmation_toast">Rappels des dates d’expiration activés !</string>
+    <string name="settings_page_notifications_expiration_date_confirmation_toast">Rappels des dates d\’expiration activés !</string>
     <string name="settings_page_notifications_appointment_confirmation_toast">Rappels de rendez-vous activés !</string>
     <string name="appointment_reminder_notification_title">Rappel de rendez-vous</string>
     <string name="appointment_reminder_notification_content">Votre rendez-vous %1$s du %2$s approche.</string>
-    <string name="medication_expiration_reminder_notification_title">Rappel de date d’expiration</string>
+    <string name="medication_expiration_reminder_notification_title">Rappel de date d\’expiration</string>
     <string name="medication_expiration_reminder_notification_content">Votre traitement %1$s arrivera à expiration le %2$s !</string>
     <string name="appointment_reminder_notification_channel">Rappels de rendez-vous</string>
     <string name="expiration_dates_reminder_notification_channel">Rappels de dates d’expiration</string>
@@ -155,4 +161,9 @@
     <string name="device_screen_faulty_devices_tab">Appareils défectueux</string>
     <string name="device_screen_faulty_devices_tab_faulty_heading">Défectueux</string>
     <string name="device_screen_faulty_devices_tab_reported_heading">Signalés</string>
+    <string name="device_screen_get_faulty_devices_button_text">Liste à signaler</string>
+    <string name="device_screen_faulty_devices_batch_table_header">Numéro de lot</string>
+    <string name="device_screen_faulty_devices_count_table_header">Total</string>
+    <string name="glance_widget_description">Aperçu des périphériques et des rendez-vous à venir</string>
+    <string name="glance_widget_no_data_text">Aucune données à afficher</string>
 </resources>

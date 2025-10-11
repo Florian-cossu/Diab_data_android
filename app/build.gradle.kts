@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
     id("com.google.devtools.ksp") version "2.2.10-2.0.2"
+    id("com.google.protobuf") version "0.9.5"
 }
 
 android {
@@ -17,7 +18,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = getVersionCode()
-        versionName = "3.9.9"
+        versionName = "4.1.0"
         buildConfigField("String", "MEDICATION_GTIN_FILE_VERSION", "\"1.2.0\"")
         buildConfigField("String", "MEDICAL_DEVICES_GTIN_FILE_VERSION", "\"1.0.2\"")
 
@@ -33,10 +34,12 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
@@ -45,10 +48,19 @@ android {
             )
         }
     }
+
     buildFeatures {
         compose = true
         buildConfig = true
     }
+
+    sourceSets {
+        getByName("main") {
+            java.srcDir("build/generated/source/proto/main/java")
+            assets.srcDir("src/main/proto")
+        }
+    }
+
     buildToolsVersion = "36.0.0"
 }
 
@@ -108,7 +120,15 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.material3)
 
+    // Widget
+    implementation(libs.androidx.glance)
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
+    implementation(libs.androidx.datastore)
+    implementation(libs.protobuf.javalite)
+    implementation(libs.androidx.lifecycle.process)
 
     // Use ksp for annotation processing
     ksp(libs.androidx.room.compiler)
@@ -137,4 +157,20 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:4.27.1"
+    }
+
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                create("java") {
+                    option("lite")
+                }
+            }
+        }
+    }
 }

@@ -31,7 +31,7 @@ import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.models.ImportantDate
 import com.diabdata.ui.components.ColoredIconCircle
-import com.diabdata.utils.SvgIcon
+import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.formatLocalDate
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
@@ -75,12 +75,16 @@ fun ImportantDatesListContent(diagnosisEntries: List<ImportantDate>) {
             val elapsedText = when {
                 years == 0L && remainingMonths == 0L -> stringResource(R.string.today)
                 years == 0L -> pluralStringResource(
-                    R.plurals.months,
+                    R.plurals.plurals_months,
                     remainingMonths.toInt(),
                     remainingMonths
                 )
 
-                remainingMonths == 0L -> pluralStringResource(R.plurals.years, years.toInt(), years)
+                remainingMonths == 0L -> pluralStringResource(
+                    R.plurals.plurals_years,
+                    years.toInt(),
+                    years
+                )
                 else -> pluralStringResource(
                     R.plurals.years_and_months,
                     years.toInt(),

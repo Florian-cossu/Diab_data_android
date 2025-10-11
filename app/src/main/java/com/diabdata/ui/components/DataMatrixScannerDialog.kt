@@ -23,9 +23,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.ui.components.latestMeasurements.CameraPreview
+import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.MedicalDeviceInfo
 import com.diabdata.utils.MedicationInfo
-import com.diabdata.utils.SvgIcon
 import com.diabdata.utils.parseMedicalDevice
 import com.diabdata.utils.parseMedication
 

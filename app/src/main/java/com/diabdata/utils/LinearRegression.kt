@@ -1,4 +1,4 @@
-package com.diabdata.ui.components.graphsViewer
+package com.diabdata.utils
 
 fun linearRegression(x: List<Double>, y: List<Double>): (Double) -> Double {
     val n = x.size

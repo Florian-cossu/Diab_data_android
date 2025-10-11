@@ -1,4 +1,4 @@
-package com.diabdata.ui.components.graphsViewer
+package com.diabdata.ui.components.layout
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
 import com.diabdata.R
 import com.diabdata.models.classes.PlotPoint
+import com.diabdata.utils.linearRegression
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart

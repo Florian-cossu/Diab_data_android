@@ -1,14 +1,19 @@
 package com.diabdata.ui.components.graphsViewer
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -20,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
@@ -30,21 +36,27 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.ui.components.date_components.DateRangeModal
-import com.diabdata.utils.SvgIcon
+import com.diabdata.ui.components.layout.LineGraph
+import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.formatLocalDate
+import com.diabdata.utils.periodCountToString
 import java.time.LocalDate
+import java.time.Period
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -77,6 +89,8 @@ fun GraphViewer(
         2 -> customDateRange?.second ?: maxDate
         else -> maxDate
     }
+
+    val period: Period = Period.between(minDate, maxDateAdjusted)
 
     val weightPoints by viewModel
         .getWeightPlotData(minDate, maxDateAdjusted)
@@ -166,29 +180,70 @@ fun GraphViewer(
             }
 
             if (selectedIndex == 2) {
-                Row {
-                    Text(
-                        stringResource(
-                            R.string.database_management_time_range_indicator,
-                            formatLocalDate(minDate),
-                            formatLocalDate(maxDateAdjusted)
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                    tonalElevation = 2.dp,
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                    ) {
+                        Text(
+                            "${
+                                stringResource(
+                                    R.string.database_management_time_range_indicator,
+                                    formatLocalDate(minDate),
+                                    formatLocalDate(maxDateAdjusted)
+                                )
+                            } (${periodCountToString(period)})",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
-                    )
+                    }
                 }
             }
 
-            LineGraph(
-                points = weightPoints,
-                label = stringResource(AddableType.WEIGHT.displayNameRes),
-                primaryColor = AddableType.WEIGHT.baseColor.toArgb(),
-                showTrendLine = showRegressionLine
-            )
-            LineGraph(
-                points = hba1cPoints,
-                label = stringResource(AddableType.HBA1C.displayNameRes),
-                primaryColor = AddableType.HBA1C.baseColor.toArgb(),
-                showTrendLine = showRegressionLine
-            )
+            if (weightPoints.isNotEmpty() && hba1cPoints.isNotEmpty()) {
+                LineGraph(
+                    points = weightPoints,
+                    label = stringResource(AddableType.WEIGHT.displayNameRes),
+                    primaryColor = AddableType.WEIGHT.baseColor.toArgb(),
+                    showTrendLine = showRegressionLine
+                )
+                LineGraph(
+                    points = hba1cPoints,
+                    label = stringResource(AddableType.HBA1C.displayNameRes),
+                    primaryColor = AddableType.HBA1C.baseColor.toArgb(),
+                    showTrendLine = showRegressionLine
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.wrapContentWidth()
+                    ) {
+                        SvgIcon(
+                            resId = (R.drawable.inbox_icon_vector),
+                            modifier = Modifier
+                                .width((LocalWindowInfo.current.containerSize.width * 0.15f).dp)
+                                .aspectRatio(1f),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                        )
+
+                        Text(
+                            text = stringResource(R.string.homescreen_no_data_text),
+                            modifier = Modifier.padding(top = 16.dp),
+                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                        )
+                    }
+                }
+            }
         }
     }
 
