@@ -57,6 +57,11 @@ fun Color.toColorProvider(variant: ColorVariant): ColorProvider {
     }
 }
 
+fun Int.intToColorProvider(): ColorProvider {
+    val composeColor = Color(this)
+    return ColorProvider(day = composeColor, night = composeColor)
+}
+
 enum class ColorVariant {
     DEFAULT, CIRCLE_ICON_ICON, CIRCLE_ICON_BACKGROUND
 }

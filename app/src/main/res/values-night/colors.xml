@@ -9,4 +9,8 @@
     <color name="on_archived_primary">#524600</color>
 
     <color name="archived_washed">#262220</color>
+
+    <color name="widget_preview_text_color">#FFF</color>
+    <color name="widget_preview_surface_color">#161616</color>
+    <color name="widget_preview_error_container">#FFB4AB</color>
 </resources>

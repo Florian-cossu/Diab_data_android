@@ -1,5 +1,6 @@
 package com.diabdata.utils
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -8,6 +9,7 @@ import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 fun formatLocalDate(
@@ -85,4 +87,45 @@ fun periodInPeriodToString(period: Period): String {
 
         else -> stringResource(R.string.today)
     }
+}
+
+fun getDaysLeftString(context: Context, endDate: LocalDate): String {
+    val today = LocalDate.now()
+
+    val daysUntil = ChronoUnit.DAYS.between(today, endDate).toInt()
+    val yearsUntil = ChronoUnit.YEARS.between(today, endDate).toInt()
+    val totalMonths = ChronoUnit.MONTHS.between(today, endDate).toInt()
+    val remainingMonths = totalMonths - yearsUntil * 12
+
+    val remainingText = when {
+        daysUntil == 0 -> context.getString(R.string.today)
+        daysUntil in 1..29 -> context.resources.getQuantityString(
+            R.plurals.in_days,
+            daysUntil,
+            daysUntil
+        )
+
+        yearsUntil == 0 && remainingMonths > 0 -> context.resources.getQuantityString(
+            R.plurals.in_months,
+            remainingMonths,
+            remainingMonths
+        )
+
+        yearsUntil > 0 && remainingMonths == 0 -> context.resources.getQuantityString(
+            R.plurals.in_years,
+            yearsUntil,
+            yearsUntil
+        )
+
+        yearsUntil > 0 && remainingMonths > 0 -> context.resources.getQuantityString(
+            R.plurals.in_years_and_months,
+            1,
+            yearsUntil,
+            remainingMonths
+        )
+
+        else -> context.getString(R.string.today)
+    }
+
+    return remainingText
 }

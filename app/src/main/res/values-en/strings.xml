@@ -53,7 +53,8 @@
     <string name="cancel_button_text">Cancel</string>
     <string name="delete_button_text">Delete</string>
     <plurals name="in_days">
-        <item quantity="one">In %d day</item>
+        <item quantity="zero">Today</item>
+        <item quantity="one">Tomorow</item>
         <item quantity="other">In %d days</item>
     </plurals>
 
@@ -165,4 +166,5 @@
     <string name="device_screen_faulty_devices_batch_table_header">Batch number</string>
     <string name="device_screen_faulty_devices_count_table_header">Total</string>
     <string name="glance_widget_description">Overview of devices and upcoming appointments</string>
+    <string name="glance_widget_no_data_text">No data to display</string>
 </resources>

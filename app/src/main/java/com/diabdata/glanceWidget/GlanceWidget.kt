@@ -1,6 +1,7 @@
 package com.diabdata.glanceWidget
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,9 +32,12 @@ import androidx.glance.text.TextStyle
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.diabdata.R
 import com.diabdata.glanceWidget.proto.WidgetState
 import com.diabdata.models.AddableType
+import com.diabdata.utils.getDaysLeftString
 import com.diabdata.utils.toShortenedFormatLocalDate
+import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
 class GlanceWidgetReceiver : GlanceAppWidgetReceiver() {
@@ -55,9 +59,12 @@ class GlanceWidgetReceiver : GlanceAppWidgetReceiver() {
 
     private fun enqueueWidgetUpdateWorker(context: Context) {
         val workManager = WorkManager.getInstance(context)
+
         val workRequest = PeriodicWorkRequestBuilder<GlanceWidgetWorker>(
             30, TimeUnit.MINUTES
-        ).build()
+        )
+            .setInitialDelay(1, timeUnit = TimeUnit.MINUTES)
+            .build()
 
         workManager.enqueueUniquePeriodicWork(
             "glance_widget_update",
@@ -90,7 +97,16 @@ class GlanceWidget : GlanceAppWidget() {
     @Composable
     private fun WidgetContent(context: Context) {
         val state = currentState<WidgetState>()
-        val devices = state.devicesList
+
+        state.devicesList.forEach {
+            Log.i(
+                "GlanceWidget",
+                "Device: ${it.name}, daysLeft=${it.daysLeft}, lifespanProgression=${it.lifespanProgression}"
+            )
+        }
+
+
+        val devices = state.devicesList.sortedBy { it.type }
         val appointment = state.nextAppointment
 
         Row(
@@ -109,7 +125,7 @@ class GlanceWidget : GlanceAppWidget() {
                 typeEnum?.let {
                     Column(
                         modifier = GlanceModifier.defaultWeight(),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         val baseBgColor = AddableType.APPOINTMENT.baseColor.copy(alpha = 0.2f)
 
@@ -147,7 +163,8 @@ class GlanceWidget : GlanceAppWidget() {
                         Text(
                             text = appointment.date.toShortenedFormatLocalDate(),
                             style = TextStyle(
-                                fontSize = 10.sp,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
                                 color = GlanceTheme.colors.onSurface
                             ),
                             maxLines = 1,
@@ -194,21 +211,45 @@ class GlanceWidget : GlanceAppWidget() {
 
                         Spacer(modifier = GlanceModifier.height(4.dp))
 
-                        Text(
-                            text = "${device.lifespanProgression}%",
-                            style = TextStyle(
-                                fontSize = 10.sp,
-                                color = GlanceTheme.colors.onSurface
-                            ),
-                            maxLines = 1
-                        )
+                        val endDate = LocalDate.parse(device.lifeSpanEndDate)
+
+                        val timeLeftString = getDaysLeftString(context, endDate)
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (device.daysLeft == 0) {
+                                Image(
+                                    provider = ImageProvider(R.drawable.warning_icon_vector),
+                                    contentDescription = "Warning",
+                                    modifier = GlanceModifier
+                                        .size(16.dp)
+                                        .padding(end = 4.dp),
+                                    colorFilter = ColorFilter.tint(
+                                        GlanceTheme.colors.error
+                                    )
+                                )
+
+                                Spacer(modifier = GlanceModifier.width(2.dp))
+                            }
+
+                            Text(
+                                text = timeLeftString,
+                                style = TextStyle(
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = GlanceTheme.colors.onSurface
+                                ),
+                                maxLines = 1
+                            )
+                        }
                     }
                 }
             }
 
             if (appointment.date.isEmpty() && devices.isEmpty()) {
                 Text(
-                    text = "Aucun rendez-vous ou équipement",
+                    text = context.getString(R.string.glance_widget_no_data_text),
                     modifier = GlanceModifier.defaultWeight(),
                     style = TextStyle(
                         fontSize = 12.sp,

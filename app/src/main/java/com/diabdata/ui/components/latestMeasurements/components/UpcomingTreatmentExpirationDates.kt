@@ -18,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +30,7 @@ import com.diabdata.models.TreatmentType
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.formatLocalDate
+import com.diabdata.utils.getDaysLeftString
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -59,35 +59,8 @@ fun UpcomingTreatmentExpirationDatesContent(
         if (isExpiringSoon) R.drawable.warning_icon_vector else R.drawable.hourglass_icon_vector
 
     val cards = treatments.map { treatment ->
+        val remainingText = getDaysLeftString(context, treatment.expirationDate)
         val daysUntil = ChronoUnit.DAYS.between(today, treatment.expirationDate).toInt()
-        val yearsUntil = ChronoUnit.YEARS.between(today, treatment.expirationDate).toInt()
-        val totalMonths = ChronoUnit.MONTHS.between(today, treatment.expirationDate).toInt()
-        val remainingMonths = totalMonths - yearsUntil * 12
-
-        val remainingText = when {
-            daysUntil == 0 -> context.getString(R.string.today)
-            daysUntil in 1..29 -> pluralStringResource(R.plurals.in_days, daysUntil, daysUntil)
-            yearsUntil == 0 && remainingMonths > 0 -> pluralStringResource(
-                R.plurals.in_months,
-                remainingMonths,
-                remainingMonths
-            )
-
-            yearsUntil > 0 && remainingMonths == 0 -> pluralStringResource(
-                R.plurals.in_years,
-                yearsUntil,
-                yearsUntil
-            )
-
-            yearsUntil > 0 && remainingMonths > 0 -> pluralStringResource(
-                R.plurals.in_years_and_months,
-                1,
-                yearsUntil,
-                remainingMonths
-            )
-
-            else -> context.getString(R.string.today)
-        }
 
         val isExpiringSoon = daysUntil in 0..29
         val untilDateIcon = getUntilIconIdMap(isExpiringSoon)

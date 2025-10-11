@@ -1,17 +1,15 @@
 package com.diabdata
 
 import android.app.Application
-import androidx.glance.appwidget.updateAll
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import com.diabdata.data.DataRepository
 import com.diabdata.data.DataViewModel
 import com.diabdata.data.DiabDataDatabase
-import com.diabdata.glanceWidget.GlanceWidget
-import com.diabdata.glanceWidget.getLifeSpanProgress
-import com.diabdata.glanceWidget.proto.WidgetAppointment
-import com.diabdata.glanceWidget.proto.WidgetDevice
-import com.diabdata.glanceWidget.widgetDataStore
+import com.diabdata.glanceWidget.GlanceWidgetWorker
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -32,6 +30,7 @@ class DiabDataApp : Application() {
             medicalDeviceInfo = db.medicalDevicesInfoDao(),
             database = db
         )
+
         val vm = DataViewModel(repo, this)
 
         ProcessLifecycleOwner.get().lifecycleScope.launch {
@@ -40,34 +39,19 @@ class DiabDataApp : Application() {
                 vm.upcomingAppointment
             ) { devices, appointments ->
                 devices to appointments.firstOrNull()
-            }.distinctUntilChanged().collect { (devices, appointment) ->
-                widgetDataStore.updateData { current ->
-                    current.toBuilder()
-                        .clearDevices()
-                        .addAllDevices(
-                            devices.map {
-                                WidgetDevice.newBuilder()
-                                    .setName(it.name)
-                                    .setType(it.deviceType.toString())
-                                    .setLifespanProgression(
-                                        getLifeSpanProgress(it.date, it.lifeSpanEndDate)
-                                    )
-                                    .build()
-                            }
-                        )
-                        .apply {
-                            if (appointment != null) {
-                                nextAppointment = WidgetAppointment.newBuilder()
-                                    .setDate(appointment.date.toString())
-                                    .setDoctor(appointment.doctor)
-                                    .setType(appointment.type.toString())
-                                    .build()
-                            }
-                        }
+            }
+                .distinctUntilChanged()
+                .collect {
+                    val workRequest = OneTimeWorkRequestBuilder<GlanceWidgetWorker>()
+                        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                         .build()
-                }
 
-                GlanceWidget().updateAll(this@DiabDataApp)
+                    val workManager = androidx.work.WorkManager.getInstance(this@DiabDataApp)
+                    workManager.enqueueUniqueWork(
+                        "glance_widget_update_once",
+                        ExistingWorkPolicy.REPLACE,
+                        workRequest
+                    )
             }
         }
     }

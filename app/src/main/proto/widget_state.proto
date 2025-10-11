@@ -6,7 +6,9 @@ option java_multiple_files = true;
 message WidgetDevice {
   string name = 1;
   string type = 2;
-  int32 lifespanProgression = 3;
+  int32 daysLeft = 3;
+  int32 lifespanProgression = 4;
+  string lifeSpanEndDate = 5;
 }
 
 message WidgetAppointment {
@@ -19,4 +21,5 @@ message WidgetAppointment {
 message WidgetState {
   WidgetAppointment next_appointment = 1;
   repeated WidgetDevice devices = 2;
+  int64 last_updated = 3;
 }
