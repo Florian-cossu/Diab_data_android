@@ -48,6 +48,11 @@ enum class MedicalDeviceInfoType(
         displayNameRes = R.string.device_type_wired_pump,
         iconRes = R.drawable.wired_pump_icon_vector,
         baseColor = Color(0xFF62DE2D),
+    ),
+    UNKNOWN(
+        displayNameRes = R.string.unknown_device,
+        iconRes = R.drawable.no_devices_icon_vector,
+        baseColor = Color(0xFF62DE2D),
     );
 
     fun displayName(context: Context): String =

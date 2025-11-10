@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
-    id("com.google.devtools.ksp") version "2.2.10-2.0.2"
+    id("com.google.devtools.ksp") version "2.2.20-2.0.4"
     id("com.google.protobuf") version "0.9.5"
 }
 
@@ -82,47 +82,49 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+
+    // BOM
     implementation(platform(libs.androidx.compose.bom))
+
+    // Compose UI
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.ui.text)
+
+    // Vico
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m2)
     implementation(libs.vico.compose.m3)
     implementation(libs.vico.multiplatform)
     implementation(libs.vico.views)
+
+    // Coroutines
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.kotlinx.coroutines.guava)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.accompanist.navigation.animation)
 
-    // Material
-    implementation(libs.androidx.material3)
+    // Material - CHOOSE ONLY ONE
+    // implementation(libs.androidx.material3)           // Stable version
+    // Or expressive alpha version :
+    implementation(libs.material3.expressive)      // Unstable expressive version
     implementation(libs.material)
     implementation(libs.androidx.material.icons.extended)
-    implementation(libs.material3)
 
-    // Foundation
     implementation(libs.androidx.foundation)
-    implementation(libs.androidx.runtime)
-    implementation(libs.androidx.animation.core)
-    implementation(libs.ui.graphics)
-    implementation(libs.androidx.animation)
-    implementation(libs.androidx.runtime.saveable)
     implementation(libs.androidx.foundation.layout)
+    implementation(libs.androidx.runtime)
+    implementation(libs.androidx.runtime.saveable)
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.animation.core)
+    implementation(libs.androidx.animation)
 
-    //Room
+    // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.common)
-    implementation(libs.androidx.ui.text)
     implementation(libs.androidx.work.runtime.ktx)
-    implementation(libs.androidx.runtime.livedata)
-    implementation(libs.okhttp)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.material3)
 
-    // Widget
+    // Widgets
     implementation(libs.androidx.glance)
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
@@ -130,30 +132,26 @@ dependencies {
     implementation(libs.protobuf.javalite)
     implementation(libs.androidx.lifecycle.process)
 
-    // Use ksp for annotation processing
+    // Annotation processing
     ksp(libs.androidx.room.compiler)
     implementation(libs.gson)
-    implementation(libs.kotlinx.serialization.json)
-
-
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
-    // ... scanner dependencies ...
-    implementation(libs.barcode.scanning)
+    // Camera
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
 
-    // ... ZXing dependencies ...
+    // ZXing
     implementation(libs.zxing.core)
     implementation(libs.zxing.android.embedded)
 
-    // Test dependencies
+    // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(platform(libs.androidx.compose.bom))  // BOM aussi pour les tests
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

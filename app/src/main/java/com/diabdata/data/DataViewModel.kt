@@ -430,7 +430,7 @@ class DataViewModel(
                 MedicalDeviceInfoType.CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_TRANSMITTER -> R.drawable.continuous_glucose_monitoring_system_transmitter
                 MedicalDeviceInfoType.WIRED_PUMP -> R.drawable.wired_pump_icon_vector
                 MedicalDeviceInfoType.WIRELESS_PATCH_REMOTE -> R.drawable.wireless_patch_remote_icon_vector
-                null -> R.drawable.devices_icon_vector
+                else -> R.drawable.devices_icon_vector
             }
         }
     }

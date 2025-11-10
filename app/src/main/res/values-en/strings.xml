@@ -158,6 +158,7 @@
     <string name="current_non_consumable_devices_card_section_heading">My devices</string>
     <string name="current_non_consumable_devices_card_replacement_warning_text">Replace today</string>
     <string name="device_screen_overview_tab">Overview</string>
+    <string name="unknown_device">Unknown device</string>
     <string name="device_screen_no_faulty_devices_tab">No faulty devices</string>
     <string name="device_screen_faulty_devices_tab">Faulty devices</string>
     <string name="device_screen_faulty_devices_tab_faulty_heading">Faulty</string>
@@ -167,4 +168,5 @@
     <string name="device_screen_faulty_devices_count_table_header">Total</string>
     <string name="glance_widget_description">Overview of devices and upcoming appointments</string>
     <string name="glance_widget_no_data_text">No data to display</string>
+    <string name="wear_expiring_devices_complication_name">To replace soon</string>
 </resources>
