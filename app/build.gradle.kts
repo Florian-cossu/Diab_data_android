@@ -18,7 +18,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = getVersionCode()
-        versionName = "4.1.0"
+        versionName = "4.1.1"
         buildConfigField("String", "MEDICATION_GTIN_FILE_VERSION", "\"1.2.0\"")
         buildConfigField("String", "MEDICAL_DEVICES_GTIN_FILE_VERSION", "\"1.0.2\"")
 
@@ -94,10 +94,10 @@ dependencies {
 
     // Vico
     implementation(libs.vico.compose)
-    implementation(libs.vico.compose.m2)
+    // implementation(libs.vico.compose.m2)
     implementation(libs.vico.compose.m3)
-    implementation(libs.vico.multiplatform)
-    implementation(libs.vico.views)
+    // implementation(libs.vico.multiplatform)
+    // implementation(libs.vico.views)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.play.services)
@@ -131,6 +131,9 @@ dependencies {
     implementation(libs.androidx.datastore)
     implementation(libs.protobuf.javalite)
     implementation(libs.androidx.lifecycle.process)
+
+    // Wear OS complication
+    implementation(libs.androidx.watchface.complications.data.source)
 
     // Annotation processing
     ksp(libs.androidx.room.compiler)

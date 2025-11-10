@@ -41,6 +41,29 @@
                 android:resource="@xml/glance_widget_info" />
         </receiver>
 
+        <service
+            android:name=".wearOsComplications.MedicalDeviceComplicationService"
+            android:exported="true"
+            android:label="@string/wear_expiring_devices_complication_name"
+            android:icon="@drawable/medical_device_info_version_icon_vector"
+            android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
+            <intent-filter>
+                <action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.support.wearable.complications.SUPPORTED_TYPES"
+                android:value="SHORT_TEXT" />
+            <meta-data
+                android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
+                android:value="300" />
+
+            <meta-data
+                android:name="android.support.wearable.complications.PROVIDER_CONFIG_ACTION"
+                android:value="MY_CONFIG_ACTION" />
+
+        </service>
+
     </application>
 
 </manifest>
