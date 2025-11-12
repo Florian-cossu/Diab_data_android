@@ -134,6 +134,7 @@ dependencies {
 
     // Wear OS complication
     implementation(libs.androidx.watchface.complications.data.source)
+    implementation(libs.play.services.wearable)
 
     // Annotation processing
     ksp(libs.androidx.room.compiler)

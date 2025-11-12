@@ -23,3 +23,4 @@ dependencyResolutionManagement {
 rootProject.name = "Diab Data"
 include(":app")
 include(":shared")
+include(":wear")
