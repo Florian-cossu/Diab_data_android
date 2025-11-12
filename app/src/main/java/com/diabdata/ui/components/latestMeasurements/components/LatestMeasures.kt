@@ -34,6 +34,7 @@ import com.diabdata.utils.formatLocalDate
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
 import java.util.Locale
+import com.diabdata.shared.R as shared
 
 data class MeasureCardData(
     val textColor: Color,
@@ -226,8 +227,8 @@ private fun <T> computeTrendIcon(
     val lastValue = valueExtractor(sorted.last()).toFloat()
 
     return when {
-        lastValue > firstValue -> R.drawable.trending_up_icon_vector
-        lastValue < firstValue -> R.drawable.trending_down_icon_vector
-        else -> R.drawable.trending_flat_icon_vector
+        lastValue > firstValue -> shared.drawable.trending_up_icon_vector
+        lastValue < firstValue -> shared.drawable.trending_down_icon_vector
+        else -> shared.drawable.trending_flat_icon_vector
     }
 }

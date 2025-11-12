@@ -28,6 +28,7 @@ import com.diabdata.utils.MedicalDeviceInfo
 import com.diabdata.utils.MedicationInfo
 import com.diabdata.utils.parseMedicalDevice
 import com.diabdata.utils.parseMedication
+import com.diabdata.shared.R as shared
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -84,7 +85,7 @@ fun DataMatrixScannerDialog(
                 .offset(y = scanSize / 2 + 16.dp) // sous le carré
         ) {
             SvgIcon(
-                resId = R.drawable.lightbulb_icon_vector,
+                resId = shared.drawable.lightbulb_icon_vector,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(20.dp)
             )

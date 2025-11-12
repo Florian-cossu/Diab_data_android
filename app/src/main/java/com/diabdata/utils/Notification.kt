@@ -4,7 +4,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import androidx.core.app.NotificationCompat
-import com.diabdata.R
+import com.diabdata.shared.R as shared
 
 fun Context.showNotification(
     title: String,
@@ -35,11 +35,11 @@ fun Context.showNotification(
     // Icône de notif
     val iconResId = iconName?.let {
         resources.getIdentifier(it, "drawable", packageName)
-    } ?: R.drawable.logo_icon_vector
+    } ?: shared.drawable.logo_icon_vector
 
     // Construire la notif
     val builder = NotificationCompat.Builder(this, channelId)
-        .setSmallIcon(if (iconResId != 0) iconResId else R.drawable.logo_icon_vector)
+        .setSmallIcon(if (iconResId != 0) iconResId else shared.drawable.logo_icon_vector)
         .setContentTitle(title)
         .setContentText(content)
         .setStyle(NotificationCompat.BigTextStyle().bigText(content))

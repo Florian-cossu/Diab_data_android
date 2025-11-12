@@ -45,6 +45,7 @@ import com.diabdata.utils.shortenedFormatLocalDate
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import com.diabdata.shared.R as shared
 
 @Composable
 fun CurrentConsumableDevicesList(viewModel: DataViewModel) {
@@ -192,7 +193,7 @@ fun CurrentConsumableDevicesCards(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         SvgIcon(
-                                            resId = R.drawable.lot_icon_vector,
+                                            resId = shared.drawable.lot_icon_vector,
                                             modifier = Modifier.size(20.dp),
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -209,7 +210,7 @@ fun CurrentConsumableDevicesCards(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         SvgIcon(
-                                            resId = R.drawable.ref_icon_vector,
+                                            resId = shared.drawable.ref_icon_vector,
                                             modifier = Modifier.size(20.dp),
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -226,7 +227,7 @@ fun CurrentConsumableDevicesCards(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         SvgIcon(
-                                            resId = R.drawable.sn_icon_vector,
+                                            resId = shared.drawable.sn_icon_vector,
                                             modifier = Modifier.size(20.dp),
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -254,7 +255,7 @@ fun CurrentConsumableDevicesCards(
                         ) {
                             if (card.lifeSpanEndDate.isEqual(today)) {
                                 SvgIcon(
-                                    resId = R.drawable.warning_icon_vector,
+                                    resId = shared.drawable.warning_icon_vector,
                                     color = MedicalDeviceInfoType.WIRELESS_PATCH.baseColor,
                                     modifier = Modifier.size(20.dp),
                                 )

@@ -80,6 +80,7 @@ import com.diabdata.utils.getItemShape
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
+import com.diabdata.shared.R as shared
 
 @Composable
 fun DatabaseEditionView(
@@ -156,7 +157,7 @@ fun DatabaseEditionView(
                                 }
                             }
                         ) {
-                            SvgIcon(resId = R.drawable.delete_icon_vector, color = textColor)
+                            SvgIcon(resId = shared.drawable.delete_icon_vector, color = textColor)
                         }
                         Spacer(Modifier.width(8.dp))
                         Text(context.getString(R.string.delete_button_text))
@@ -178,8 +179,8 @@ fun DatabaseEditionView(
                 ) {
                     SvgIcon(
                         resId = if (selectedEntries.size < filteredEntries.size)
-                            R.drawable.select_all_icon_vector
-                        else R.drawable.deselect_all_icon_vector,
+                            shared.drawable.select_all_icon_vector
+                        else shared.drawable.deselect_all_icon_vector,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -256,7 +257,7 @@ fun EntryCardSwipeM3(
     val currentOnArchive by rememberUpdatedState(onArchive)
 
     val archiveResId =
-        if (entry.isArchived) R.drawable.unarchive_icon_vector else R.drawable.archive_icon_vector
+        if (entry.isArchived) shared.drawable.unarchive_icon_vector else shared.drawable.archive_icon_vector
     val archivedCardBgColor = when {
         selectionMode && isSelected -> MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
         entry.isArchived -> colorResource(R.color.archived_washed)
@@ -278,7 +279,7 @@ fun EntryCardSwipeM3(
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
                     SvgIcon(
-                        resId = R.drawable.delete_icon_vector,
+                        resId = shared.drawable.delete_icon_vector,
                         modifier = Modifier
                             .size(32.dp)
                             .padding(start = 16.dp)
@@ -441,13 +442,13 @@ private fun EntryContent(entry: DataViewModel.MixedDbEntry) {
         is DataViewModel.MixedDbEntry.DeviceEntry -> {
             val numbersWithIcons = listOfNotNull(
                 entry.batchNumber.takeIf { it.isNotBlank() }?.let {
-                    R.drawable.lot_icon_vector to it
+                    shared.drawable.lot_icon_vector to it
                 },
                 entry.referenceNumber.takeIf { it.isNotBlank() }?.let {
-                    R.drawable.ref_icon_vector to it
+                    shared.drawable.ref_icon_vector to it
                 },
                 entry.serialNumber.takeIf { it.isNotBlank() }?.let {
-                    R.drawable.sn_icon_vector to it
+                    shared.drawable.sn_icon_vector to it
                 }
             )
 
@@ -498,7 +499,7 @@ private fun EntryContent(entry: DataViewModel.MixedDbEntry) {
 
                     if (entry.isFaulty) {
                         SvgIcon(
-                            resId = R.drawable.faulty_medical_device_icon_vector,
+                            resId = shared.drawable.faulty_medical_device_icon_vector,
                             modifier = Modifier.size(12.dp),
                             color = MaterialTheme.colorScheme.error
                         )
@@ -506,7 +507,7 @@ private fun EntryContent(entry: DataViewModel.MixedDbEntry) {
 
                     if (entry.isReported) {
                         SvgIcon(
-                            resId = R.drawable.megaphone_filled_icon_vector,
+                            resId = shared.drawable.megaphone_filled_icon_vector,
                             modifier = Modifier.size(12.dp),
                             color = entry.addableType.baseColor.darken()
                         )

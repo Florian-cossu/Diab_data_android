@@ -36,6 +36,7 @@ import com.diabdata.utils.formatLocalDate
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import com.diabdata.shared.R as shared
 
 @Composable
 fun ImportantDatesList(viewModel: DataViewModel) {
@@ -132,7 +133,7 @@ fun ImportantDatesListContent(diagnosisEntries: List<ImportantDate>) {
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         SvgIcon(
-                            resId = R.drawable.event_icon_vector,
+                            resId = shared.drawable.event_icon_vector,
                             modifier = Modifier.size(15.dp),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

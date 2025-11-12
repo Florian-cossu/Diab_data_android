@@ -43,6 +43,7 @@ import com.diabdata.utils.formatLocalDate
 import com.diabdata.utils.getDaysLeftString
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
+import com.diabdata.shared.R as shared
 
 @Composable
 fun UpcomingAppointmentsListContent(
@@ -115,7 +116,7 @@ fun UpcomingAppointmentsListContent(
                                     )
                                 ) {
                                     SvgIcon(
-                                        resId = R.drawable.note_icon_vector,
+                                        resId = shared.drawable.note_icon_vector,
                                         modifier = Modifier.size(18.dp),
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -126,7 +127,7 @@ fun UpcomingAppointmentsListContent(
                                         onDismissRequest = { showNotesDialog = false },
                                         icon = {
                                             SvgIcon(
-                                                resId = R.drawable.note_icon_vector,
+                                                resId = shared.drawable.note_icon_vector,
                                                 modifier = Modifier.size(48.dp),
                                                 color = MaterialTheme.colorScheme.primary
                                             )
@@ -163,7 +164,7 @@ fun UpcomingAppointmentsListContent(
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         SvgIcon(
-                            resId = R.drawable.hourglass_icon_vector,
+                            resId = shared.drawable.hourglass_icon_vector,
                             modifier = Modifier.size(15.dp),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

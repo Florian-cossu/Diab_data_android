@@ -48,6 +48,7 @@ import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.MedicationInfo
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import com.diabdata.shared.R as shared
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -99,7 +100,7 @@ fun HomeScreen(
                     modifier = Modifier.wrapContentWidth()
                 ) {
                     SvgIcon(
-                        resId = (R.drawable.inbox_icon_vector),
+                        resId = (shared.drawable.inbox_icon_vector),
                         modifier = Modifier
                             .width((LocalWindowInfo.current.containerSize.width * 0.15f).dp)
                             .aspectRatio(1f),

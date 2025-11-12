@@ -39,6 +39,7 @@ import com.diabdata.utils.getDaysLeftString
 import com.diabdata.utils.toShortenedFormatLocalDate
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
+import com.diabdata.shared.R as shared
 
 class GlanceWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = GlanceWidget()
@@ -220,7 +221,7 @@ class GlanceWidget : GlanceAppWidget() {
                         ) {
                             if (device.daysLeft == 0) {
                                 Image(
-                                    provider = ImageProvider(R.drawable.warning_icon_vector),
+                                    provider = ImageProvider(shared.drawable.warning_icon_vector),
                                     contentDescription = "Warning",
                                     modifier = GlanceModifier
                                         .size(16.dp)

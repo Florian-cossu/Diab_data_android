@@ -54,6 +54,7 @@ import com.diabdata.utils.getItemShape
 import com.diabdata.utils.shortenedFormatLocalDate
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import com.diabdata.shared.R as shared
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -118,7 +119,7 @@ fun FaultyDevicesScreen(
                         modifier = Modifier.wrapContentWidth()
                     ) {
                         SvgIcon(
-                            resId = (R.drawable.no_devices_icon_vector),
+                            resId = (shared.drawable.no_devices_icon_vector),
                             modifier = Modifier
                                 .width((LocalWindowInfo.current.containerSize.width * 0.15f).dp)
                                 .aspectRatio(1f),
@@ -339,7 +340,7 @@ fun DisplayCard(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         SvgIcon(
-                                            resId = R.drawable.lot_icon_vector,
+                                            resId = shared.drawable.lot_icon_vector,
                                             modifier = Modifier.size(20.dp),
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -356,7 +357,7 @@ fun DisplayCard(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         SvgIcon(
-                                            resId = R.drawable.ref_icon_vector,
+                                            resId = shared.drawable.ref_icon_vector,
                                             modifier = Modifier.size(20.dp),
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -373,7 +374,7 @@ fun DisplayCard(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         SvgIcon(
-                                            resId = R.drawable.sn_icon_vector,
+                                            resId = shared.drawable.sn_icon_vector,
                                             modifier = Modifier.size(20.dp),
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )

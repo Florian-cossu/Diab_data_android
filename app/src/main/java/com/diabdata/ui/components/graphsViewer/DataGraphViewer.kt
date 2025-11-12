@@ -57,6 +57,7 @@ import com.diabdata.utils.formatLocalDate
 import com.diabdata.utils.periodCountToString
 import java.time.LocalDate
 import java.time.Period
+import com.diabdata.shared.R as shared
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -154,7 +155,7 @@ fun GraphViewer(
                             .aspectRatio(1f)
                     ) {
                         SvgIcon(
-                            resId = R.drawable.date_range_icon_vector,
+                            resId = shared.drawable.date_range_icon_vector,
                             color = MaterialTheme.colorScheme.onTertiaryContainer
                         )
                     }
@@ -173,7 +174,7 @@ fun GraphViewer(
                         .aspectRatio(1f)
                 ) {
                     SvgIcon(
-                        resId = R.drawable.trending_up_icon_vector,
+                        resId = shared.drawable.trending_up_icon_vector,
                         color = if (showRegressionLine) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
                     )
                 }
@@ -228,7 +229,7 @@ fun GraphViewer(
                         modifier = Modifier.wrapContentWidth()
                     ) {
                         SvgIcon(
-                            resId = (R.drawable.inbox_icon_vector),
+                            resId = (shared.drawable.inbox_icon_vector),
                             modifier = Modifier
                                 .width((LocalWindowInfo.current.containerSize.width * 0.15f).dp)
                                 .aspectRatio(1f),

@@ -15,8 +15,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import kotlinx.coroutines.delay
+import com.diabdata.shared.R as shared
 
 data class ButtonSize(val circle: Int, val icon: Int)
 
@@ -61,15 +61,15 @@ fun FaultyToggleButton(
         SvgIcon(
             resId = when (type) {
                 ButtonType.FAULTY -> if (isFaulty) {
-                    R.drawable.information_filled_icon_vector
+                    shared.drawable.information_filled_icon_vector
                 } else {
-                    R.drawable.information_icon_vector
+                    shared.drawable.information_icon_vector
                 }
 
                 ButtonType.REPORT -> if (isReported) {
-                    R.drawable.megaphone_filled_icon_vector
+                    shared.drawable.megaphone_filled_icon_vector
                 } else {
-                    R.drawable.megaphone_icon_vector
+                    shared.drawable.megaphone_icon_vector
                 }
             },
             modifier = Modifier.size(sizing.icon.dp),

@@ -35,6 +35,7 @@ import com.diabdata.ui.components.date_components.DateSelector
 import com.diabdata.ui.components.layout.SvgIcon
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import com.diabdata.shared.R as shared
 
 @Composable
 fun MedicalDevicePopup(
@@ -224,7 +225,7 @@ fun MedicalDevicePopup(
             displayText = context.getString(R.string.add_data_popup_device_is_faulty_toggle_display_text),
             checked = isFaulty,
             onCheckedChange = { isFaulty = it },
-            icon = R.drawable.faulty_medical_device_icon_vector,
+            icon = shared.drawable.faulty_medical_device_icon_vector,
             isDestructive = true
         )
 
@@ -233,7 +234,7 @@ fun MedicalDevicePopup(
             displayText = context.getString(R.string.add_data_popup_device_is_reported_toggle_display_text),
             checked = isReported,
             onCheckedChange = { isReported = it },
-            icon = R.drawable.report_icon_vector,
+            icon = shared.drawable.report_icon_vector,
         )
     }
 }

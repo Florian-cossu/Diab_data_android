@@ -47,6 +47,7 @@ import com.diabdata.ui.components.devices.components.CurrentNonConsumableDevices
 import com.diabdata.ui.components.layout.SvgIcon
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import com.diabdata.shared.R as shared
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -95,7 +96,7 @@ fun RecentDevicesScreen(
                     modifier = Modifier.wrapContentWidth()
                 ) {
                     SvgIcon(
-                        resId = (R.drawable.no_devices_icon_vector),
+                        resId = (shared.drawable.no_devices_icon_vector),
                         modifier = Modifier
                             .width((LocalWindowInfo.current.containerSize.width * 0.15f).dp)
                             .aspectRatio(1f),

@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
+import com.diabdata.shared.R as shared
 
 data class QuickAction(
     val icon: Int,
@@ -69,18 +69,18 @@ fun QuickActionButtons(
 fun QuickActionButtonsPreview() {
     val actions = listOf(
         QuickAction(
-            icon = R.drawable.settings_icon_vector,
-            filledIcon = R.drawable.settings_filled_icon_vector,
+            icon = shared.drawable.settings_icon_vector,
+            filledIcon = shared.drawable.settings_filled_icon_vector,
             label = "Settings"
         ),
         QuickAction(
-            icon = R.drawable.faulty_medical_device_icon_vector,
-            filledIcon = R.drawable.faulty_medical_device_filled_icon_vector,
+            icon = shared.drawable.faulty_medical_device_icon_vector,
+            filledIcon = shared.drawable.faulty_medical_device_filled_icon_vector,
             label = "Faulty devices"
         ),
         QuickAction(
-            icon = R.drawable.information_icon_vector,
-            filledIcon = R.drawable.information_filled_icon_vector,
+            icon = shared.drawable.information_icon_vector,
+            filledIcon = shared.drawable.information_filled_icon_vector,
             label = "Information"
         )
     )

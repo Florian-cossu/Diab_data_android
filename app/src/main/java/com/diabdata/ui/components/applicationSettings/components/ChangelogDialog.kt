@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.ui.components.layout.SvgIcon
+import com.diabdata.shared.R as shared
 
 @Composable
 fun ChangelogDialog(onDismiss: () -> Unit) {
@@ -70,7 +71,7 @@ fun ChangelogDialog(onDismiss: () -> Unit) {
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     SvgIcon(
-                        resId = R.drawable.breaking_new_icon_vector,
+                        resId = shared.drawable.breaking_new_icon_vector,
                         modifier = Modifier.size(32.dp),
                         color = MaterialTheme.colorScheme.primary
                     )

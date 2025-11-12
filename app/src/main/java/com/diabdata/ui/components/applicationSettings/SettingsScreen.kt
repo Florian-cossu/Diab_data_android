@@ -51,6 +51,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
+import com.diabdata.shared.R as shared
 
 @Composable
 fun SettingsScreen(dataViewModel: DataViewModel) {
@@ -203,13 +204,13 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         bottomStart = 3.dp,
                         bottomEnd = 3.dp
                     ),
-                    icon = R.drawable.backup_db_icon_vector
+                    icon = shared.drawable.backup_db_icon_vector
                 )
                 SettingsButton(
                     text = stringResource(R.string.settings_page_data_import_button_text),
                     onClick = { importFileLauncher.launch(arrayOf("application/json")) },
                     shape = RoundedCornerShape(3.dp),
-                    icon = R.drawable.restore_db_icon_vector
+                    icon = shared.drawable.restore_db_icon_vector
                 )
                 SettingsButton(
                     text = stringResource(R.string.settings_page_data_purge_button_text),
@@ -221,7 +222,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         bottomEnd = 16.dp
                     ),
                     isDestructive = true,
-                    icon = R.drawable.purge_db_icon_vector
+                    icon = shared.drawable.purge_db_icon_vector
                 )
             }
 
@@ -247,7 +248,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                             workManager.cancelAllWorkByTag("treatments")
                         }
                     },
-                    icon = R.drawable.notification_active_icon_vector,
+                    icon = shared.drawable.notification_active_icon_vector,
                     toastText = stringResource(R.string.settings_page_notifications_expiration_date_confirmation_toast),
                     nextReminderDate = nextTreatmentReminder
                 )
@@ -266,7 +267,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                             workManager.cancelAllWorkByTag("appointments")
                         }
                     },
-                    icon = R.drawable.notification_active_icon_vector,
+                    icon = shared.drawable.notification_active_icon_vector,
                     toastText = stringResource(R.string.settings_page_notifications_appointment_confirmation_toast),
                     nextReminderDate = nextAppointmentReminder
                 )
@@ -287,13 +288,13 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         bottomStart = 3.dp,
                         bottomEnd = 3.dp
                     ),
-                    icon = R.drawable.app_version_icon_vector
+                    icon = shared.drawable.app_version_icon_vector
                 )
                 SettingsButton(
                     text = "Medication information file version $medicationsGtinFileversion",
                     onClick = { },
                     shape = RoundedCornerShape(3.dp),
-                    icon = R.drawable.medication_info_icon_vector
+                    icon = shared.drawable.medication_info_icon_vector
                 )
                 SettingsButton(
                     text = "Medical devices information file version $medicalDeviceGtinFileVersion",
@@ -304,7 +305,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         bottomStart = 16.dp,
                         bottomEnd = 16.dp
                     ),
-                    icon = R.drawable.medical_device_info_version_icon_vector
+                    icon = shared.drawable.medical_device_info_version_icon_vector
                 )
             }
         }
@@ -320,7 +321,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
             onDismissRequest = { showConfirmDialog = false },
             icon = {
                 SvgIcon(
-                    resId = R.drawable.purge_db_icon_vector,
+                    resId = shared.drawable.purge_db_icon_vector,
                     modifier = Modifier.size(48.dp),
                     color = MaterialTheme.colorScheme.error
                 )

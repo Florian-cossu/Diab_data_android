@@ -9,7 +9,6 @@ import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
-import com.diabdata.R
 import com.diabdata.data.converters.toEntity
 import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
@@ -37,6 +36,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+import com.diabdata.shared.R as shared
 
 class DataViewModel(
     val repository: DataRepository,
@@ -399,38 +399,38 @@ class DataViewModel(
         deviceType: MedicalDeviceInfoType? = null
     ): Int {
         return when (addableType) {
-            AddableType.WEIGHT -> R.drawable.weight_icon_vector
-            AddableType.HBA1C -> R.drawable.hba1c_icon_vector
+            AddableType.WEIGHT -> shared.drawable.weight_icon_vector
+            AddableType.HBA1C -> shared.drawable.hba1c_icon_vector
             AddableType.APPOINTMENT -> when (appointmentType) {
-                AppointmentType.ANNUAL_CHECKUP -> R.drawable.recurring_event_icon_vector
-                AppointmentType.APPOINTMENT -> R.drawable.stethoscope_icon_vector
-                null -> R.drawable.event_icon_vector
+                AppointmentType.ANNUAL_CHECKUP -> shared.drawable.recurring_event_icon_vector
+                AppointmentType.APPOINTMENT -> shared.drawable.stethoscope_icon_vector
+                null -> shared.drawable.event_icon_vector
             }
 
             AddableType.TREATMENT -> when (treatmentType) {
-                TreatmentType.FAST_ACTING_INSULIN_CARTRIDGE -> R.drawable.fast_acting_insulin_cartridge_icon_vector
-                TreatmentType.FAST_ACTING_INSULIN_SYRINGE -> R.drawable.fast_acting_insulin_syringe_icon_vector
-                TreatmentType.FAST_ACTING_INSULIN_VIAL -> R.drawable.fast_acting_insulin_vial_icon_vector
-                TreatmentType.SLOW_ACTING_INSULIN_CARTRIDGE -> R.drawable.slow_acting_insulin_cartridge_icon_vector
-                TreatmentType.SLOW_ACTING_INSULIN_SYRINGE -> R.drawable.slow_acting_insulin_syringe_icon_vector
-                TreatmentType.SLOW_ACTING_INSULIN_VIAL -> R.drawable.slow_acting_insulin_vial_icon_vector
-                TreatmentType.B_KETONE_TEST_STRIP -> R.drawable.b_ketone_test_icon_vector
-                TreatmentType.BLOOD_GLUCOSE_TEST_STRIP -> R.drawable.glucose_test_icon_vector
-                TreatmentType.GLUCAGON_SYRINGE -> R.drawable.syringe_icon_vector
-                TreatmentType.GLUCAGON_SPRAY -> R.drawable.nasal_spray_icon_vector
-                null -> R.drawable.medication_icon_vector
+                TreatmentType.FAST_ACTING_INSULIN_CARTRIDGE -> shared.drawable.fast_acting_insulin_cartridge_icon_vector
+                TreatmentType.FAST_ACTING_INSULIN_SYRINGE -> shared.drawable.fast_acting_insulin_syringe_icon_vector
+                TreatmentType.FAST_ACTING_INSULIN_VIAL -> shared.drawable.fast_acting_insulin_vial_icon_vector
+                TreatmentType.SLOW_ACTING_INSULIN_CARTRIDGE -> shared.drawable.slow_acting_insulin_cartridge_icon_vector
+                TreatmentType.SLOW_ACTING_INSULIN_SYRINGE -> shared.drawable.slow_acting_insulin_syringe_icon_vector
+                TreatmentType.SLOW_ACTING_INSULIN_VIAL -> shared.drawable.slow_acting_insulin_vial_icon_vector
+                TreatmentType.B_KETONE_TEST_STRIP -> shared.drawable.b_ketone_test_icon_vector
+                TreatmentType.BLOOD_GLUCOSE_TEST_STRIP -> shared.drawable.glucose_test_icon_vector
+                TreatmentType.GLUCAGON_SYRINGE -> shared.drawable.syringe_icon_vector
+                TreatmentType.GLUCAGON_SPRAY -> shared.drawable.nasal_spray_icon_vector
+                null -> shared.drawable.medication_icon_vector
             }
 
-            AddableType.IMPORTANT_DATE -> R.drawable.important_date_icon_vector
+            AddableType.IMPORTANT_DATE -> shared.drawable.important_date_icon_vector
 
             AddableType.DEVICE -> when (deviceType) {
-                MedicalDeviceInfoType.WIRELESS_PATCH -> R.drawable.wireless_patch_icon_vector
-                MedicalDeviceInfoType.WIRED_PATCH -> R.drawable.wired_patch_icon_vector
-                MedicalDeviceInfoType.CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_SENSOR -> R.drawable.continuous_glucose_monitoring_system_sensor
-                MedicalDeviceInfoType.CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_TRANSMITTER -> R.drawable.continuous_glucose_monitoring_system_transmitter
-                MedicalDeviceInfoType.WIRED_PUMP -> R.drawable.wired_pump_icon_vector
-                MedicalDeviceInfoType.WIRELESS_PATCH_REMOTE -> R.drawable.wireless_patch_remote_icon_vector
-                else -> R.drawable.devices_icon_vector
+                MedicalDeviceInfoType.WIRELESS_PATCH -> shared.drawable.wireless_patch_icon_vector
+                MedicalDeviceInfoType.WIRED_PATCH -> shared.drawable.wired_patch_icon_vector
+                MedicalDeviceInfoType.CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_SENSOR -> shared.drawable.continuous_glucose_monitoring_system_sensor
+                MedicalDeviceInfoType.CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_TRANSMITTER -> shared.drawable.continuous_glucose_monitoring_system_transmitter
+                MedicalDeviceInfoType.WIRED_PUMP -> shared.drawable.wired_pump_icon_vector
+                MedicalDeviceInfoType.WIRELESS_PATCH_REMOTE -> shared.drawable.wireless_patch_remote_icon_vector
+                else -> shared.drawable.devices_icon_vector
             }
         }
     }

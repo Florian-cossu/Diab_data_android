@@ -9,8 +9,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import com.diabdata.ui.components.layout.SvgIcon
+import com.diabdata.shared.R as shared
 
 @Composable
 fun FlippableSelectionIcon(isSelected: Boolean) {
@@ -21,8 +21,8 @@ fun FlippableSelectionIcon(isSelected: Boolean) {
     val showingSelectedIcon = animatedRotation < 90f || animatedRotation > 270f
 
     SvgIcon(
-        resId = if (showingSelectedIcon) R.drawable.radio_button_unchecked_icon_vector
-        else R.drawable.radio_button_checked_icon_vector,
+        resId = if (showingSelectedIcon) shared.drawable.radio_button_unchecked_icon_vector
+        else shared.drawable.radio_button_checked_icon_vector,
         modifier = Modifier
             .size(15.dp)
             .graphicsLayer {

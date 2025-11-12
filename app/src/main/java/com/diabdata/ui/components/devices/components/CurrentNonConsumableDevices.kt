@@ -43,6 +43,7 @@ import com.diabdata.utils.getItemShape
 import com.diabdata.utils.shortenedFormatLocalDate
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import com.diabdata.shared.R as shared
 
 @Composable
 fun CurrentNonConsumableDevicesList(viewModel: DataViewModel) {
@@ -172,7 +173,7 @@ fun CurrentNonConsumableDevicesCards(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         SvgIcon(
-                                            resId = R.drawable.lot_icon_vector,
+                                            resId = shared.drawable.lot_icon_vector,
                                             modifier = Modifier.size(20.dp),
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -189,7 +190,7 @@ fun CurrentNonConsumableDevicesCards(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         SvgIcon(
-                                            resId = R.drawable.ref_icon_vector,
+                                            resId = shared.drawable.ref_icon_vector,
                                             modifier = Modifier.size(20.dp),
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -206,7 +207,7 @@ fun CurrentNonConsumableDevicesCards(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         SvgIcon(
-                                            resId = R.drawable.sn_icon_vector,
+                                            resId = shared.drawable.sn_icon_vector,
                                             modifier = Modifier.size(20.dp),
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )

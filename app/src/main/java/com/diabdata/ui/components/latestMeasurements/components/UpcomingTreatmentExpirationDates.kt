@@ -34,6 +34,7 @@ import com.diabdata.utils.getDaysLeftString
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import com.diabdata.shared.R as shared
 
 data class TreatmentCardData(
     val titleText: String,
@@ -56,7 +57,7 @@ fun UpcomingTreatmentExpirationDatesContent(
     val soonThreshold = today.plusDays(30)
 
     fun getUntilIconIdMap(isExpiringSoon: Boolean): Int =
-        if (isExpiringSoon) R.drawable.warning_icon_vector else R.drawable.hourglass_icon_vector
+        if (isExpiringSoon) shared.drawable.warning_icon_vector else shared.drawable.hourglass_icon_vector
 
     val cards = treatments.map { treatment ->
         val remainingText = getDaysLeftString(context, treatment.expirationDate)
