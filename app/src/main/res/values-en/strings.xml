@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Diab Data</string>
     <string name="annual_checkup">Annual Checkup</string>
     <string name="appointment">One-time appointment</string>
     <string name="ketone_test_strip">Blood ketone test strips</string>
