@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- ============================================= -->
     <!-- NAVIGATION -->
     <!-- ============================================= -->
@@ -23,6 +23,14 @@
     <!-- DATE & TIME -->
     <!-- ============================================= -->
     <!-- Single strings for special cases -->
+    <!-- Abbreviations -->
+    <string name="date_abbr_today">auj</string>
+    <string name="date_abbr_tomorrow">dem</string>
+    <plurals name="date_abbr_days">
+        <item quantity="one" tools:ignore="ImpliedQuantity">dem</item>
+        <item quantity="other">%dj</item>
+    </plurals>
+
     <!-- For current date -->
     <string name="date_today">Aujourd\'hui</string>
     <string name="date_this_month">Ce mois-ci</string>
@@ -298,9 +306,14 @@
     <string name="scanner_hint_datamatrix">Scannez la DataMatrix de votre traitement (petit QR Code)</string>
 
     <!-- ============================================= -->
-    <!-- WIDGETS & COMPLICATIONS -->
+    <!-- GLANCE WIDGET -->
     <!-- ============================================= -->
     <string name="widget_description">Aperçu des périphériques et des rendez-vous à venir</string>
     <string name="widget_no_data">Aucune donnée à afficher</string>
+
+    <!-- ============================================= -->
+    <!-- MEDICAL DEVICE EXPIRY RANGED VALUE COMPLICATION -->
+    <!-- ============================================= -->
     <string name="wear_complication_expiring_devices">À remplacer prochainement</string>
+    <string name="wear_complication_expiring_devices_plain_text_builder">Jours restants</string>
 </resources>

@@ -23,6 +23,14 @@
     <!-- DATE & TIME -->
     <!-- ============================================= -->
     <!-- Single strings for special cases -->
+    <!-- Abbreviations -->
+    <string name="date_abbr_today">tdy</string>
+    <string name="date_abbr_tomorrow">tmw</string>
+    <plurals name="date_abbr_days">
+        <item quantity="one">tmw</item>
+        <item quantity="other">%dd</item>
+    </plurals>
+
     <!-- For current date -->
     <string name="date_today">Today</string>
     <string name="date_this_month">This month</string>
@@ -298,9 +306,14 @@
     <string name="scanner_hint_datamatrix">Scan your medication DataMatrix (small QR Code)</string>
 
     <!-- ============================================= -->
-    <!-- WIDGETS & COMPLICATIONS -->
+    <!-- GLANCE WIDGET -->
     <!-- ============================================= -->
     <string name="widget_description">Overview of devices and upcoming appointments</string>
     <string name="widget_no_data">No data to display</string>
+
+    <!-- ============================================= -->
+    <!-- MEDICAL DEVICE EXPIRY RANGED VALUE COMPLICATION -->
+    <!-- ============================================= -->
     <string name="wear_complication_expiring_devices">To replace soon</string>
+    <string name="wear_complication_expiring_devices_plain_text_builder">Days left</string>
 </resources>

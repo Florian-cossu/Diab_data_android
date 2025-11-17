@@ -1,11 +1,10 @@
 package com.diabdata.wearOsComplications
 
 import android.content.Context
-import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.diabdata.data.DiabDataDatabase
-import com.diabdata.shared.dateUtils.getRelativeStringFrom
+import com.diabdata.shared.dateUtils.getNumberOfDaysUntil
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import kotlinx.coroutines.flow.firstOrNull
@@ -20,27 +19,24 @@ class ComplicationUpdateWorker(
     override suspend fun doWork(): Result {
         try {
             val nodeClient = Wearable.getNodeClient(applicationContext)
-            val nodes = nodeClient.connectedNodes.await()
-            nodes.forEach {
-                Log.d("ComplicationWorker", "Connected node: ${it.displayName} (${it.id})")
-            }
+            nodeClient.connectedNodes.await()
 
             val dao = DiabDataDatabase.getDatabase(applicationContext).medicalDevicesDao()
 
             val today = LocalDate.now()
-            val context = applicationContext
-
 
             val upcomingDevices = dao.getAllCurrentConsumableMedicalDevices(today).firstOrNull()
             val nextDevice = upcomingDevices?.minByOrNull { it.lifeSpanEndDate }
 
             val nextDeviceIcon = nextDevice?.deviceType.toString()
 
-            val dateText =
-                nextDevice?.lifeSpanEndDate?.getRelativeStringFrom(context = context) ?: "--/--"
+            val nextDeviceLifespan = nextDevice?.lifeSpan
 
-            val dataMapRequest = PutDataMapRequest.create("/medical_device_update")
-            dataMapRequest.dataMap.putString("nextDeviceDate", dateText)
+            val numberOfDays = nextDevice?.lifeSpanEndDate?.getNumberOfDaysUntil()
+
+            val dataMapRequest = PutDataMapRequest.create("/complications/medical_device_expiry")
+            dataMapRequest.dataMap.putString("nextDeviceExpiry", numberOfDays.toString())
+            dataMapRequest.dataMap.putString("nextDeviceLifespan", nextDeviceLifespan.toString())
             dataMapRequest.dataMap.putString("deviceIconRes", nextDeviceIcon)
             dataMapRequest.dataMap.putLong("timestamp", System.currentTimeMillis())
 

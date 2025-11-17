@@ -16,25 +16,27 @@ class ExpiringDevicesDataSyncListenerService : WearableListenerService() {
 
     override fun onDataChanged(dataEvents: DataEventBuffer) {
         dataEvents.forEach { event ->
-            if (event.type == DataEvent.TYPE_CHANGED && event.dataItem.uri.path == "/medical_device_update") {
+            if (event.type == DataEvent.TYPE_CHANGED && event.dataItem.uri.path == "/complications/medical_device_expiry") {
                 val dataMap = DataMapItem.fromDataItem(event.dataItem).dataMap
-                val date = dataMap.getString("nextDeviceDate")
+                val date = dataMap.getString("nextDeviceExpiry")
+                val lifespan = dataMap.getString("nextDeviceLifespan")
                 val iconRes = dataMap.getString("deviceIconRes")
                 dataMap.getLong("timestamp")
 
-                if (date != null && iconRes != null) {
-                    storeDataLocally(date, iconRes)
+                if (date != null && iconRes != null && lifespan != null) {
+                    storeDataLocally(date, lifespan, iconRes)
                     requestComplicationUpdate()
                 }
             }
         }
     }
 
-    private fun storeDataLocally(date: String, iconRes: String) {
-        val prefs = getSharedPreferences("complication_data", MODE_PRIVATE)
+    private fun storeDataLocally(date: String, lifespan: String, iconRes: String) {
+        val prefs = getSharedPreferences("complications_medical_device_expiry", MODE_PRIVATE)
         prefs.edit {
-            putString("nextDeviceDate", date)
+            putString("nextDeviceExpiry", date)
             putString("deviceIconRes", iconRes)
+            putString("nextDeviceLifespan", lifespan)
             putLong("timestamp", System.currentTimeMillis())
         }
     }

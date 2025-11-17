@@ -44,7 +44,7 @@ class DiabDataApp : Application() {
         ).build()
 
         workManager.enqueueUniquePeriodicWork(
-            "complication_periodic_update",
+            "complication_medical_device_expiry_periodic_update",
             ExistingPeriodicWorkPolicy.KEEP,
             periodicComplicationWork
         )
@@ -73,7 +73,7 @@ class DiabDataApp : Application() {
                         .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                         .build()
                     workManager.enqueueUniqueWork(
-                        "complication_update_once",
+                        "complication_medical_device_expiry_update_once",
                         ExistingWorkPolicy.REPLACE,
                         complicationWork
                     )
