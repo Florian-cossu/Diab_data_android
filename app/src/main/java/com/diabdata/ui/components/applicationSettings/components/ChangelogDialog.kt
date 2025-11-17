@@ -31,14 +31,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.shared.R as shared
 
 @Composable
 fun ChangelogDialog(onDismiss: () -> Unit) {
     rememberScrollState()
-    val confirmButtonText = stringResource(R.string.confirm_button_text)
+    val confirmButtonText = stringResource(shared.string.action_confirm)
     val windowInfo = LocalWindowInfo.current
     val density = LocalDensity.current
     val maxHeight = with(density) { windowInfo.containerSize.height.toDp() * 0.45f }

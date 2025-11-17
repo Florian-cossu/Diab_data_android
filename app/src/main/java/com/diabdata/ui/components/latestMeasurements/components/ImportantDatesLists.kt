@@ -26,13 +26,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.models.ImportantDate
+import com.diabdata.shared.dateUtils.formatLocalDate
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.layout.SvgIcon
-import com.diabdata.utils.formatLocalDate
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -61,7 +60,7 @@ fun ImportantDatesListContent(diagnosisEntries: List<ImportantDate>) {
             .background(Color.Transparent)
     ) {
         Text(
-            text = stringResource(R.string.important_dates_card_section_heading),
+            text = stringResource(shared.string.home_section_important_dates),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.surfaceTint
         )
@@ -74,20 +73,20 @@ fun ImportantDatesListContent(diagnosisEntries: List<ImportantDate>) {
             val remainingMonths = monthsTotal - years * 12
 
             val elapsedText = when {
-                years == 0L && remainingMonths == 0L -> stringResource(R.string.today)
+                years == 0L && remainingMonths == 0L -> stringResource(shared.string.date_today)
                 years == 0L -> pluralStringResource(
-                    R.plurals.plurals_months,
+                    shared.plurals.plurals_months,
                     remainingMonths.toInt(),
                     remainingMonths
                 )
 
                 remainingMonths == 0L -> pluralStringResource(
-                    R.plurals.plurals_years,
+                    shared.plurals.plurals_years,
                     years.toInt(),
                     years
                 )
                 else -> pluralStringResource(
-                    R.plurals.years_and_months,
+                    shared.plurals.years_and_months,
                     years.toInt(),
                     years,
                     remainingMonths
@@ -123,7 +122,7 @@ fun ImportantDatesListContent(diagnosisEntries: List<ImportantDate>) {
                         )
                         Text(
                             text = stringResource(
-                                R.string.important_date_on_text,
+                                shared.string.important_date_on_text,
                                 formatLocalDate(diagnosis.date)
                             ),
                             style = MaterialTheme.typography.bodySmall,

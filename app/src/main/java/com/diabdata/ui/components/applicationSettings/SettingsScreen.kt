@@ -35,7 +35,6 @@ import androidx.core.content.edit
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.diabdata.BuildConfig
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.ui.components.applicationSettings.components.ChangelogDialog
 import com.diabdata.ui.components.applicationSettings.components.SettingsButton
@@ -85,9 +84,9 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
             uri?.let {
                 val jsonString = dataViewModel.exportDataAsJsonString()
 
-                val channelName = context.getString(R.string.notification_channel_name_data)
-                val successText = context.getString(R.string.data_export_success_text)
-                val errorText = context.getString(R.string.data_export_error_text)
+                val channelName = context.getString(shared.string.notification_channel_data)
+                val successText = context.getString(shared.string.toast_data_export_success)
+                val errorText = context.getString(shared.string.toast_data_export_error)
 
                 try {
                     context.contentResolver.openOutputStream(uri)?.use { outputStream ->
@@ -113,10 +112,10 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     val importFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(), onResult = { uri: Uri? ->
             uri?.let {
-                val channelName = context.getString(R.string.notification_channel_name_data)
-                val successText = context.getString(R.string.data_import_success_text)
-                val errorText = context.getString(R.string.data_import_error_text)
-                val errorEmptyFile = context.getString(R.string.empty_file_error_text)
+                val channelName = context.getString(shared.string.notification_channel_data)
+                val successText = context.getString(shared.string.toast_data_import_success)
+                val errorText = context.getString(shared.string.toast_data_import_error)
+                val errorEmptyFile = context.getString(shared.string.toast_empty_file_error)
 
                 try {
                     val jsonString = context.contentResolver.openInputStream(uri)?.bufferedReader()
@@ -193,10 +192,10 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
         ) {
             // Database section
             SettingsSection(
-                title = stringResource(R.string.settings_page_data_heading)
+                title = stringResource(shared.string.settings_section_data)
             ) {
                 SettingsButton(
-                    text = stringResource(R.string.settings_page_data_export_button_text),
+                    text = stringResource(shared.string.settings_export_data),
                     onClick = { createFileLauncher.launch(fileName) },
                     shape = RoundedCornerShape(
                         topStart = 16.dp,
@@ -207,13 +206,13 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     icon = shared.drawable.backup_db_icon_vector
                 )
                 SettingsButton(
-                    text = stringResource(R.string.settings_page_data_import_button_text),
+                    text = stringResource(shared.string.settings_import_data),
                     onClick = { importFileLauncher.launch(arrayOf("application/json")) },
                     shape = RoundedCornerShape(3.dp),
                     icon = shared.drawable.restore_db_icon_vector
                 )
                 SettingsButton(
-                    text = stringResource(R.string.settings_page_data_purge_button_text),
+                    text = stringResource(shared.string.settings_purge_database),
                     onClick = { showConfirmDialog = true },
                     shape = RoundedCornerShape(
                         topStart = 3.dp,
@@ -228,10 +227,10 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
 
             // Notification section
             SettingsSection(
-                title = stringResource(R.string.settings_page_notifications_headings)
+                title = stringResource(shared.string.settings_section_notifications)
             ) {
                 SettingsToggle(
-                    text = stringResource(R.string.settings_page_notifications_expiration_date),
+                    text = stringResource(shared.string.notification_expiration_title),
                     checked = enableExpirationDateReminder,
                     onCheckedChange = { isChecked ->
                         enableExpirationDateReminder = isChecked
@@ -249,11 +248,11 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         }
                     },
                     icon = shared.drawable.notification_active_icon_vector,
-                    toastText = stringResource(R.string.settings_page_notifications_expiration_date_confirmation_toast),
+                    toastText = stringResource(shared.string.toast_expiration_reminders_enabled),
                     nextReminderDate = nextTreatmentReminder
                 )
                 SettingsToggle(
-                    text = stringResource(R.string.settings_page_notifications_appointment),
+                    text = stringResource(shared.string.settings_notification_appointment),
                     checked = enableAppointmentReminder,
                     onCheckedChange = { isChecked ->
                         enableAppointmentReminder = isChecked
@@ -268,14 +267,14 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         }
                     },
                     icon = shared.drawable.notification_active_icon_vector,
-                    toastText = stringResource(R.string.settings_page_notifications_appointment_confirmation_toast),
+                    toastText = stringResource(shared.string.toast_appointment_reminders_enabled),
                     nextReminderDate = nextAppointmentReminder
                 )
             }
 
             // Section Application
             SettingsSection(
-                title = stringResource(R.string.settings_page_application_heading)
+                title = stringResource(shared.string.settings_section_application)
             ) {
                 SettingsButton(
                     text = "Diabdata $versionName (code: $versionCode)",
@@ -312,10 +311,10 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     }
 
     if (showConfirmDialog) {
-        val purgeDatabaseModalTitle = stringResource(R.string.database_data_purge_modal_title)
-        val purgeDatabaseModalContents = stringResource(R.string.database_data_purge_modal_contents)
-        val confirmButtonText = stringResource(R.string.confirm_button_text)
-        val cancelButtonText = stringResource(R.string.cancel_button_text)
+        val purgeDatabaseModalTitle = stringResource(shared.string.dialog_purge_title)
+        val purgeDatabaseModalContents = stringResource(shared.string.dialog_purge_message)
+        val confirmButtonText = stringResource(shared.string.action_confirm)
+        val cancelButtonText = stringResource(shared.string.action_cancel)
 
         AlertDialog(
             onDismissRequest = { showConfirmDialog = false },

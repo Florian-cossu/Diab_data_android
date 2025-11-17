@@ -5,13 +5,12 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.diabdata.data.DiabDataDatabase
+import com.diabdata.shared.dateUtils.getRelativeStringFrom
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 class ComplicationUpdateWorker(
     context: Context,
@@ -29,15 +28,16 @@ class ComplicationUpdateWorker(
             val dao = DiabDataDatabase.getDatabase(applicationContext).medicalDevicesDao()
 
             val today = LocalDate.now()
+            val context = applicationContext
+
 
             val upcomingDevices = dao.getAllCurrentConsumableMedicalDevices(today).firstOrNull()
             val nextDevice = upcomingDevices?.minByOrNull { it.lifeSpanEndDate }
 
             val nextDeviceIcon = nextDevice?.deviceType.toString()
 
-            val dateText = nextDevice?.lifeSpanEndDate?.format(
-                DateTimeFormatter.ofPattern("dd MMM", Locale.getDefault())
-            ) ?: "--/--"
+            val dateText =
+                nextDevice?.lifeSpanEndDate?.getRelativeStringFrom(context = context) ?: "--/--"
 
             val dataMapRequest = PutDataMapRequest.create("/medical_device_update")
             dataMapRequest.dataMap.putString("nextDeviceDate", dateText)

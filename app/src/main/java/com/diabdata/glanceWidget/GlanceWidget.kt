@@ -1,7 +1,6 @@
 package com.diabdata.glanceWidget
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,11 +31,10 @@ import androidx.glance.text.TextStyle
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.diabdata.R
 import com.diabdata.glanceWidget.proto.WidgetState
 import com.diabdata.models.AddableType
-import com.diabdata.utils.getDaysLeftString
-import com.diabdata.utils.toShortenedFormatLocalDate
+import com.diabdata.shared.dateUtils.toRelativeString
+import com.diabdata.shared.dateUtils.toShortenedFormatLocalDate
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import com.diabdata.shared.R as shared
@@ -98,14 +96,6 @@ class GlanceWidget : GlanceAppWidget() {
     @Composable
     private fun WidgetContent(context: Context) {
         val state = currentState<WidgetState>()
-
-        state.devicesList.forEach {
-            Log.i(
-                "GlanceWidget",
-                "Device: ${it.name}, daysLeft=${it.daysLeft}, lifespanProgression=${it.lifespanProgression}"
-            )
-        }
-
 
         val devices = state.devicesList.sortedBy { it.type }
         val appointment = state.nextAppointment
@@ -214,7 +204,7 @@ class GlanceWidget : GlanceAppWidget() {
 
                         val endDate = LocalDate.parse(device.lifeSpanEndDate)
 
-                        val timeLeftString = getDaysLeftString(context, endDate)
+                        val timeLeftString = endDate.toRelativeString(context)
 
                         Row(
                             verticalAlignment = Alignment.CenterVertically
@@ -250,7 +240,7 @@ class GlanceWidget : GlanceAppWidget() {
 
             if (appointment.date.isEmpty() && devices.isEmpty()) {
                 Text(
-                    text = context.getString(R.string.glance_widget_no_data_text),
+                    text = context.getString(shared.string.widget_no_data),
                     modifier = GlanceModifier.defaultWeight(),
                     style = TextStyle(
                         fontSize = 12.sp,

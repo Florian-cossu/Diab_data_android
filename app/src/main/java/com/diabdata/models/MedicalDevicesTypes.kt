@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
-import com.diabdata.R
 import com.diabdata.shared.R as shared
 
 enum class MedicalDevicesTypes(
@@ -14,12 +13,12 @@ enum class MedicalDevicesTypes(
     @param:DrawableRes val iconRes: Int
 ) {
     WIRELESS_PATCH_REMOTE(
-        displayNameRes = R.string.annual_checkup,
+        displayNameRes = shared.string.device_type_wireless_patch_remote,
         iconRes = shared.drawable.wireless_patch_remote_icon_vector,
         baseColor = Color(0xFF2DDE7D),
     ),
     WIRED_PUMP(
-        displayNameRes = R.string.annual_checkup,
+        displayNameRes = shared.string.device_type_wired_pump,
         iconRes = shared.drawable.wired_pump_icon_vector,
         baseColor = Color(0xFF62DE2D),
     );

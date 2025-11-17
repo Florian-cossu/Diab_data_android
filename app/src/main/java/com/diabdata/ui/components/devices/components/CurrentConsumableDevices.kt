@@ -31,17 +31,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.MedicalDeviceInfoType
+import com.diabdata.shared.dateUtils.shortenedFormatLocalDate
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.layout.FaultyToggleButton
 import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.darken
 import com.diabdata.utils.getItemShape
-import com.diabdata.utils.shortenedFormatLocalDate
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -112,7 +111,7 @@ fun CurrentConsumableDevicesCards(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            text = stringResource(R.string.current_consumable_devices_card_section_heading),
+            text = stringResource(shared.string.home_section_current_consumable_devices),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.surfaceTint
         )
@@ -260,7 +259,7 @@ fun CurrentConsumableDevicesCards(
                                     modifier = Modifier.size(20.dp),
                                 )
                                 Text(
-                                    text = stringResource(R.string.current_non_consumable_devices_card_replacement_warning_text),
+                                    text = stringResource(shared.string.device_replacement_warning),
                                     color = card.device.deviceType.baseColor,
                                 )
                             } else {
@@ -303,18 +302,20 @@ fun CurrentConsumableDevicesCards(
 )
 @Composable
 fun ConsumableDevicesListPreview() {
+    val today = LocalDate.now()
+
     val fakeData = listOf(
         MedicalDeviceEntry(
             id = 1,
-            date = LocalDate.of(2025, 9, 1),
-            lifeSpanEndDate = LocalDate.of(2025, 9, 1).plusDays(90),
+            date = today.minusDays(26),
+            lifeSpanEndDate = today.plusDays(74),
             name = "Dexcom G6 Transmitter",
             batchNumber = "D378HP",
             serialNumber = "IUVYZBE678",
             referenceNumber = "UTIUFYEGI",
             manufacturer = "Dexcom",
             deviceType = MedicalDeviceInfoType.CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_TRANSMITTER,
-            createdAt = LocalDate.of(2025, 9, 1),
+            createdAt = today.minusDays(75),
             isArchived = false,
             lifeSpan = 90,
             isFaulty = false,
@@ -324,15 +325,15 @@ fun ConsumableDevicesListPreview() {
         ),
         MedicalDeviceEntry(
             id = 2,
-            date = LocalDate.of(2025, 9, 21),
-            lifeSpanEndDate = LocalDate.of(2025, 9, 21).plusDays(3),
+            date = today.minusDays(2),
+            lifeSpanEndDate = today.plusDays(0),
             name = "Omnipod Pod",
             batchNumber = "567GGU",
             serialNumber = "UTYFYZ38",
             referenceNumber = "1R5TFG",
             manufacturer = "Insulet",
             deviceType = MedicalDeviceInfoType.WIRELESS_PATCH,
-            createdAt = LocalDate.of(2025, 9, 25),
+            createdAt = today.minusDays(27),
             isArchived = false,
             lifeSpan = 3,
             isFaulty = false,
@@ -342,15 +343,15 @@ fun ConsumableDevicesListPreview() {
         ),
         MedicalDeviceEntry(
             id = 2,
-            date = LocalDate.of(2025, 9, 24),
-            lifeSpanEndDate = LocalDate.of(2025, 9, 24).plusDays(3),
+            date = today.minusDays(2),
+            lifeSpanEndDate = today.plusDays(2),
             name = "Omnipod Pod",
             batchNumber = "567GGU",
             serialNumber = "UTYFYZ38",
             referenceNumber = "1R5TFG",
             manufacturer = "Insulet",
             deviceType = MedicalDeviceInfoType.WIRELESS_PATCH,
-            createdAt = LocalDate.of(2025, 9, 25),
+            createdAt = today.minusDays(2),
             isArchived = false,
             lifeSpan = 3,
             isFaulty = true,

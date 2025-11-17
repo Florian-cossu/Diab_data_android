@@ -23,13 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.Locale
+import com.diabdata.shared.R as shared
 
 @Composable
 fun DateSelector(
@@ -50,13 +50,13 @@ fun DateSelector(
     }
 
     val labelText = if (isExpiryDate)
-        stringResource(R.string.add_data_popup_expiration_date_field_placeholder)
+        stringResource(shared.string.popup_placeholder_expiration_date)
     else if (isStartDate)
-        stringResource(R.string.add_data_popup_start_date_field_placeholder)
+        stringResource(shared.string.popup_placeholder_start_date)
     else if (isEndDate)
-        stringResource(R.string.add_data_popup_end_date_field_placeholder)
+        stringResource(shared.string.popup_placeholder_end_date)
     else
-        stringResource(R.string.add_data_popup_date_field_placeholder)
+        stringResource(shared.string.popup_placeholder_date)
 
     OutlinedTextField(
         value = dateText,
@@ -114,12 +114,12 @@ fun DatePickerModal(
                 onDateSelected(datePickerState.selectedDateMillis)
                 onDismiss()
             }) {
-                Text(stringResource(R.string.confirm_button_text))
+                Text(stringResource(shared.string.action_confirm))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel_button_text))
+                Text(stringResource(shared.string.action_cancel))
             }
         }
     ) {

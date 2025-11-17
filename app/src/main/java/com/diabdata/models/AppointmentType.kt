@@ -3,7 +3,6 @@ package com.diabdata.models
 import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.diabdata.R
 import com.diabdata.shared.R as shared
 
 enum class AppointmentType(
@@ -12,11 +11,11 @@ enum class AppointmentType(
     @param:DrawableRes val iconRes: Int
 ) {
     ANNUAL_CHECKUP(
-        displayNameRes = R.string.annual_checkup,
+        displayNameRes = shared.string.appointment_annual_checkup,
         iconRes = shared.drawable.recurring_event_icon_vector
     ),
     APPOINTMENT(
-        displayNameRes = R.string.appointment,
+        displayNameRes = shared.string.appointment_one_time,
         iconRes = shared.drawable.stethoscope_icon_vector
     );
 

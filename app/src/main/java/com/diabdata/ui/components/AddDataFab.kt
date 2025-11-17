@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.diabdata.R
 import com.diabdata.models.AddableType
 import com.diabdata.shared.R as shared
 
@@ -42,25 +41,27 @@ fun AddDataFab(
 
     val fabItems = listOf(
         Triple(
-            stringResource(R.string.addable_treatment_scan), shared.drawable.data_matrix_icon_vector
+            stringResource(shared.string.addable_treatment_scan),
+            shared.drawable.data_matrix_icon_vector
         ) { onScanClick() },
         Triple(
-            stringResource(R.string.addable_weight), shared.drawable.weight_add_icon_vector
+            stringResource(shared.string.addable_weight), shared.drawable.weight_add_icon_vector
         ) { onSelect(AddableType.WEIGHT) },
-        Triple(stringResource(R.string.addable_hba1c), shared.drawable.hba1c_add_icon_vector) {
+        Triple(stringResource(shared.string.addable_hba1c), shared.drawable.hba1c_add_icon_vector) {
             onSelect(
                 AddableType.HBA1C
             )
         },
         Triple(
-            stringResource(R.string.addable_important_date),
+            stringResource(shared.string.addable_important_date),
             shared.drawable.important_date_add_icon_vector
         ) { onSelect(AddableType.IMPORTANT_DATE) },
         Triple(
-            stringResource(R.string.addable_treatment), shared.drawable.medication_add_icon_vector
+            stringResource(shared.string.addable_treatment),
+            shared.drawable.medication_add_icon_vector
         ) { onSelect(AddableType.TREATMENT) },
         Triple(
-            stringResource(R.string.addable_appointment), shared.drawable.event_add_icon_vector
+            stringResource(shared.string.addable_appointment), shared.drawable.event_add_icon_vector
         ) { onSelect(AddableType.APPOINTMENT) })
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {

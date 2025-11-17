@@ -25,8 +25,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import com.diabdata.ui.components.layout.SvgIcon
+import com.diabdata.shared.R as shared
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -74,13 +74,13 @@ fun <T> EnumDropdown(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Search,
-                            contentDescription = stringResource(R.string.enum_dropdown_research_text)
+                            contentDescription = stringResource(shared.string.popup_placeholder_search)
                         )
                     }
                 }
             },
             label = { Text(label) },
-            placeholder = { if (isSearchable) Text(stringResource(R.string.enum_dropdown_research_text)) },
+            placeholder = { if (isSearchable) Text(stringResource(shared.string.popup_placeholder_search)) },
             readOnly = !isSearchable,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier

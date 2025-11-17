@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.data.converters.toEntity
 import com.diabdata.models.AddableType
@@ -103,7 +102,7 @@ fun MedicalDevicePopup(
 
     BasePopupLayout(
         title = context.getString(
-            if (toUpdate == null) R.string.add_data_popup_title else R.string.update_data_popup_title,
+            if (toUpdate == null) shared.string.popup_title_add else shared.string.popup_title_update,
             AddableType.DEVICE.getDisplayName(context)
         ),
         icon = AddableType.DEVICE.iconRes,
@@ -142,7 +141,7 @@ fun MedicalDevicePopup(
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp) // optionnel, un petit espace entre les colonnes
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Column(
                 modifier = Modifier.weight(1f)
@@ -169,7 +168,7 @@ fun MedicalDevicePopup(
         }
 
         EnumDropdown(
-            label = context.getString(R.string.add_data_popup_device_dropdown_placeholder),
+            label = context.getString(shared.string.popup_placeholder_device_type),
             options = MedicalDeviceInfoType.entries,
             selected = selectedDeviceType,
             displayName = { it.displayName(context) },
@@ -180,7 +179,7 @@ fun MedicalDevicePopup(
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text(stringResource(R.string.add_data_popup_device_name_field_label)) },
+            label = { Text(stringResource(shared.string.popup_device_name_label)) },
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.small
         )
@@ -188,7 +187,7 @@ fun MedicalDevicePopup(
         OutlinedTextField(
             value = batchNumber,
             onValueChange = { batchNumber = it },
-            label = { Text(stringResource(R.string.add_data_popup_device_batch_number_field_label)) },
+            label = { Text(stringResource(shared.string.popup_device_batch_label)) },
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.small
         )
@@ -196,7 +195,7 @@ fun MedicalDevicePopup(
         OutlinedTextField(
             value = serialNumber,
             onValueChange = { serialNumber = it },
-            label = { Text(stringResource(R.string.add_data_popup_device_serial_number_field_label)) },
+            label = { Text(stringResource(shared.string.popup_device_serial_label)) },
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.small
         )
@@ -204,7 +203,7 @@ fun MedicalDevicePopup(
         OutlinedTextField(
             value = manufacturer,
             onValueChange = { manufacturer = it },
-            label = { Text(stringResource(R.string.add_data_popup_device_manufacturer_field_label)) },
+            label = { Text(stringResource(shared.string.popup_device_manufacturer_label)) },
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.small
         )
@@ -215,14 +214,14 @@ fun MedicalDevicePopup(
                 lifeSpan = it.toIntOrNull() ?: 0
                 lifeSpanEndDate = selectedDate.plusDays(lifeSpan.toLong())
             },
-            label = { Text(stringResource(R.string.add_data_popup_device_life_span_field_label)) },
+            label = { Text(stringResource(shared.string.popup_device_lifespan_label)) },
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.small
         )
 
         CreateToggle(
-            text = context.getString(R.string.add_data_popup_device_is_faulty_toggle_label),
-            displayText = context.getString(R.string.add_data_popup_device_is_faulty_toggle_display_text),
+            text = context.getString(shared.string.popup_device_faulty_label),
+            displayText = context.getString(shared.string.popup_device_faulty_description),
             checked = isFaulty,
             onCheckedChange = { isFaulty = it },
             icon = shared.drawable.faulty_medical_device_icon_vector,
@@ -230,8 +229,8 @@ fun MedicalDevicePopup(
         )
 
         CreateToggle(
-            text = context.getString(R.string.add_data_popup_device_is_reported_toggle_label),
-            displayText = context.getString(R.string.add_data_popup_device_is_reported_toggle_display_text),
+            text = context.getString(shared.string.popup_device_reported_label),
+            displayText = context.getString(shared.string.popup_device_reported_description),
             checked = isReported,
             onCheckedChange = { isReported = it },
             icon = shared.drawable.report_icon_vector,

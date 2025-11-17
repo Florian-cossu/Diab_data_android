@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
-import com.diabdata.R
 import com.diabdata.shared.R as shared
+
 /**
  * Represents a type of medical device.
  * @param displayNameRes The string resource ID for the device's display name.
@@ -20,37 +20,37 @@ enum class MedicalDeviceInfoType(
     @param:DrawableRes val iconRes: Int
 ) {
     WIRELESS_PATCH(
-        displayNameRes = R.string.device_type_wireless_patch,
+        displayNameRes = shared.string.device_type_wireless_patch,
         iconRes = shared.drawable.wireless_patch_icon_vector,
         baseColor = Color(0xFFDEA32D),
     ),
     WIRED_PATCH(
-        displayNameRes = R.string.device_type_wired_patch,
+        displayNameRes = shared.string.device_type_wired_patch,
         iconRes = shared.drawable.wired_patch_icon_vector,
         baseColor = Color(0xFFBEDE2D),
     ),
     CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_SENSOR(
-        displayNameRes = R.string.device_type_cgm_sensor,
+        displayNameRes = shared.string.device_type_cgm_sensor,
         iconRes = shared.drawable.continuous_glucose_monitoring_system_sensor,
         baseColor = Color(0xFFFA7450),
     ),
     CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_TRANSMITTER(
-        displayNameRes = R.string.device_type_cgm_transmitter,
+        displayNameRes = shared.string.device_type_cgm_transmitter,
         iconRes = shared.drawable.continuous_glucose_monitoring_system_transmitter,
         baseColor = Color(0xFF458DEA),
     ),
     WIRELESS_PATCH_REMOTE(
-        displayNameRes = R.string.device_type_wireless_patch_remote,
+        displayNameRes = shared.string.device_type_wireless_patch_remote,
         iconRes = shared.drawable.wireless_patch_remote_icon_vector,
         baseColor = Color(0xFF2DDE7D),
     ),
     WIRED_PUMP(
-        displayNameRes = R.string.device_type_wired_pump,
+        displayNameRes = shared.string.device_type_wired_pump,
         iconRes = shared.drawable.wired_pump_icon_vector,
         baseColor = Color(0xFF62DE2D),
     ),
     UNKNOWN(
-        displayNameRes = R.string.unknown_device,
+        displayNameRes = shared.string.device_unknown,
         iconRes = shared.drawable.no_devices_icon_vector,
         baseColor = Color(0xFF62DE2D),
     );

@@ -6,19 +6,16 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -31,17 +28,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.MedicalDeviceInfoType
+import com.diabdata.shared.dateUtils.shortenedFormatLocalDate
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.devices.components.MedicalDeviceCardData
 import com.diabdata.ui.components.layout.ButtonType
@@ -49,9 +44,10 @@ import com.diabdata.ui.components.layout.DataTable
 import com.diabdata.ui.components.layout.DataTableDecoration
 import com.diabdata.ui.components.layout.FaultyToggleButton
 import com.diabdata.ui.components.layout.SvgIcon
+import com.diabdata.ui.components.noDataView.IconTypes
+import com.diabdata.ui.components.noDataView.NoDataView
 import com.diabdata.utils.darken
 import com.diabdata.utils.getItemShape
-import com.diabdata.utils.shortenedFormatLocalDate
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import com.diabdata.shared.R as shared
@@ -107,33 +103,7 @@ fun FaultyDevicesScreen(
                 .padding(innerPadding),
         ) {
             if (faultyDevices.isEmpty() && faultyCountsByBatchNumbers.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .padding(20.dp)
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 70.dp)
-                        .fillMaxSize(), contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.wrapContentWidth()
-                    ) {
-                        SvgIcon(
-                            resId = (shared.drawable.no_devices_icon_vector),
-                            modifier = Modifier
-                                .width((LocalWindowInfo.current.containerSize.width * 0.15f).dp)
-                                .aspectRatio(1f),
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                        )
-
-                        Text(
-                            text = stringResource(R.string.homescreen_no_data_text),
-                            modifier = Modifier.padding(top = 16.dp),
-                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                        )
-                    }
-                }
+                NoDataView(iconType = IconTypes.DEVICES)
             } else {
                 Column(
                     modifier = Modifier
@@ -147,7 +117,7 @@ fun FaultyDevicesScreen(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = stringResource(R.string.device_screen_faulty_devices_tab_faulty_heading),
+                                text = stringResource(shared.string.device_screen_faulty_heading),
                                 style = MaterialTheme.typography.headlineLarge,
                                 color = MaterialTheme.colorScheme.surfaceTint
                             )
@@ -164,15 +134,15 @@ fun FaultyDevicesScreen(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = stringResource(R.string.device_screen_faulty_devices_tab_reported_heading),
+                                text = stringResource(shared.string.device_screen_reported_heading),
                                 style = MaterialTheme.typography.headlineLarge,
                                 color = MaterialTheme.colorScheme.surfaceTint
                             )
                             DataTable(
                                 headerColor = MaterialTheme.colorScheme.primary,
                                 headers = listOf(
-                                    stringResource(R.string.device_screen_faulty_devices_batch_table_header),
-                                    stringResource(R.string.device_screen_faulty_devices_count_table_header)
+                                    stringResource(shared.string.device_batch_number_text),
+                                    stringResource(shared.string.device_total_count_text)
                                 ),
                                 data = faultyCountsByBatchNumbers,
                                 decoration = DataTableDecoration.build {

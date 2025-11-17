@@ -160,7 +160,7 @@ fun DatabaseEditionView(
                             SvgIcon(resId = shared.drawable.delete_icon_vector, color = textColor)
                         }
                         Spacer(Modifier.width(8.dp))
-                        Text(context.getString(R.string.delete_button_text))
+                        Text(context.getString(shared.string.action_delete))
                     }
                 }
 

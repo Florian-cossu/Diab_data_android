@@ -28,9 +28,9 @@ import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.WeightEntry
+import com.diabdata.shared.dateUtils.formatLocalDate
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.layout.SvgIcon
-import com.diabdata.utils.formatLocalDate
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
 import java.util.Locale
@@ -62,7 +62,7 @@ fun LatestMeasuresContent(
                     textColor = primaryColor,
                     titleText = String.format(Locale.getDefault(), "%.2f kg", latest.value),
                     dateText = stringResource(
-                        R.string.weight_on_date_text,
+                        shared.string.weight_on_date_text,
                         formatLocalDate(latest.date)
                     ),
                     addableType = AddableType.WEIGHT,
@@ -85,7 +85,7 @@ fun LatestMeasuresContent(
                     },
                     titleText = String.format(Locale.getDefault(), "%.1f%%", latest.value),
                     dateText = stringResource(
-                        R.string.hba1c_on_date_text,
+                        shared.string.hba1c_on_date_text,
                         formatLocalDate(latest.date)
                     ),
                     addableType = AddableType.HBA1C,
@@ -101,7 +101,7 @@ fun LatestMeasuresContent(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            text = stringResource(R.string.latest_measures_card_section_heading),
+            text = stringResource(shared.string.home_section_latest_measures),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.surfaceTint
         )

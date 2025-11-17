@@ -26,7 +26,6 @@ import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
-import com.diabdata.R
 import com.diabdata.models.classes.PlotPoint
 import com.diabdata.utils.linearRegression
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -56,6 +55,7 @@ import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import com.diabdata.shared.R as shared
 
 @Composable
 fun LineGraph(
@@ -79,7 +79,7 @@ fun LineGraph(
                 .height(240.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(stringResource(R.string.homescreen_no_data_text))
+            Text(stringResource(shared.string.homescreen_no_data_text))
         }
         return
     }

@@ -8,10 +8,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.diabdata.R
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import com.diabdata.shared.R as shared
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,12 +49,12 @@ fun DateRangeModal(
                     onDismiss()
                 }
             ) {
-                Text(stringResource(R.string.confirm_button_text))
+                Text(stringResource(shared.string.action_confirm))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel_button_text))
+                Text(stringResource(shared.string.action_cancel))
             }
         }
     ) {

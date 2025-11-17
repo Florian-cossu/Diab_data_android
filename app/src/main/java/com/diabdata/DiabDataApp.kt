@@ -45,7 +45,7 @@ class DiabDataApp : Application() {
 
         workManager.enqueueUniquePeriodicWork(
             "complication_periodic_update",
-            ExistingPeriodicWorkPolicy.KEEP, // ne pas recréer si déjà présent
+            ExistingPeriodicWorkPolicy.KEEP,
             periodicComplicationWork
         )
 

@@ -33,10 +33,14 @@ class ExpiringMedicalDevicesComplicationService :
         }
 
         return ShortTextComplicationData.Builder(
-            text = PlainComplicationText.Builder(latestDate).build(),
+            text = PlainComplicationText.Builder("").build(),
             contentDescription = PlainComplicationText.Builder("Prochaine expiration: $latestDate")
                 .build()
         )
+            .setTitle(
+                PlainComplicationText.Builder(latestDate)
+                    .build()
+            )
             .setMonochromaticImage(
                 MonochromaticImage.Builder(
                     Icon.createWithResource(applicationContext, latestIconRes)

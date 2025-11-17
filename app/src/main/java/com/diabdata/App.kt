@@ -37,7 +37,6 @@ import com.diabdata.utils.MedicalDevicesInitializer
 import com.diabdata.utils.MedicationInitializer
 import com.diabdata.shared.R as shared
 
-
 sealed interface NavIcon {
     data class Vector(val imageVector: ImageVector, val contentDescription: String) : NavIcon
     data class Svg(val resId: Int) : NavIcon
@@ -63,27 +62,27 @@ fun App(
     val items = listOf(
         BottomNavItem(
             route = "home",
-            label = R.string.home_menu_title,
+            label = shared.string.home_menu_title,
             unselectedIcon = NavIcon.Svg(shared.drawable.home_icon_vector),
             selectedIcon = NavIcon.Svg(shared.drawable.home_filled_icon_vector)
         ), BottomNavItem(
             route = "charts",
-            label = R.string.chart_menu_title,
+            label = shared.string.chart_menu_title,
             unselectedIcon = NavIcon.Svg(shared.drawable.chart_icon_vector),
             selectedIcon = NavIcon.Svg(shared.drawable.chart_filled_icon_vector)
         ), BottomNavItem(
             route = "data",
-            label = R.string.database_management_menu_title,
+            label = shared.string.database_management_menu_title,
             unselectedIcon = NavIcon.Svg(shared.drawable.database_icon_vector),
             selectedIcon = NavIcon.Svg(shared.drawable.database_filled_icon_vector)
         ), BottomNavItem(
             route = "devices",
-            label = R.string.devices_menu_title,
+            label = shared.string.devices_menu_title,
             unselectedIcon = NavIcon.Svg(shared.drawable.devices_icon_vector),
             selectedIcon = NavIcon.Svg(shared.drawable.devices_filled_icon_vector)
         ), BottomNavItem(
             route = "settings",
-            label = R.string.settings_menu_title,
+            label = shared.string.settings_menu_title,
             unselectedIcon = NavIcon.Svg(shared.drawable.settings_icon_vector),
             selectedIcon = NavIcon.Svg(shared.drawable.settings_filled_icon_vector)
         )

@@ -13,7 +13,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.data.converters.toEntity
 import com.diabdata.models.AddableType
@@ -24,6 +23,7 @@ import com.diabdata.ui.components.addDataPopup.BasePopupLayout
 import com.diabdata.ui.components.date_components.DateSelector
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import com.diabdata.shared.R as shared
 
 @Composable
 fun AppointmentPopup(
@@ -45,7 +45,7 @@ fun AppointmentPopup(
 
     BasePopupLayout(
         title = context.getString(
-            if (toUpdate == null) R.string.add_data_popup_title else R.string.update_data_popup_title,
+            if (toUpdate == null) shared.string.popup_title_add else shared.string.popup_title_update,
             AddableType.APPOINTMENT.getDisplayName(context)
         ),
         icon = AddableType.APPOINTMENT.iconRes,
@@ -77,7 +77,7 @@ fun AppointmentPopup(
         DateSelector(date = selectedDate, onDateSelected = { selectedDate = it })
 
         EnumDropdown(
-            label = context.getString(R.string.add_data_popup_appointment_dropdown_placeholder),
+            label = context.getString(shared.string.popup_placeholder_appointment_type),
             options = AppointmentType.entries,
             selected = selectedAppointmentType,
             displayName = { it.displayName(context) },
@@ -88,7 +88,7 @@ fun AppointmentPopup(
         OutlinedTextField(
             value = doctor,
             onValueChange = { doctor = it },
-            label = { Text(stringResource(R.string.add_data_popup_doctor_field_placeholder)) },
+            label = { Text(stringResource(shared.string.popup_placeholder_doctor)) },
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.small
         )
@@ -96,7 +96,7 @@ fun AppointmentPopup(
         OutlinedTextField(
             value = notes,
             onValueChange = { notes = it },
-            label = { Text(stringResource(R.string.upcoming_appointment_card_notes_header)) },
+            label = { Text(stringResource(shared.string.appointment_card_notes_header)) },
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.small
         )

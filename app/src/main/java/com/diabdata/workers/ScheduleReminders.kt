@@ -1,13 +1,13 @@
 package com.diabdata.workers
 
 import android.content.Context
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
+import com.diabdata.shared.R as shared
 
 suspend fun scheduleAllReminders(context: Context, dataViewModel: DataViewModel) {
     val reminderOffsets = listOf(30, 14, 1)
@@ -20,7 +20,7 @@ suspend fun scheduleAllReminders(context: Context, dataViewModel: DataViewModel)
             val notifyDate = appointment.date.minusDays(offset.toLong())
 
             val baseContent = context.getString(
-                R.string.appointment_reminder_notification_content,
+                shared.string.notification_appointment_content,
                 appointment.doctor,
                 appointment.date.format(
                     DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
@@ -32,7 +32,7 @@ suspend fun scheduleAllReminders(context: Context, dataViewModel: DataViewModel)
 
             scheduleNotification(
                 context,
-                title = context.getString(R.string.appointment_reminder_notification_title),
+                title = context.getString(shared.string.notification_appointment_title),
                 content = content,
                 date = notifyDate,
                 tag = "appointments"
@@ -45,9 +45,9 @@ suspend fun scheduleAllReminders(context: Context, dataViewModel: DataViewModel)
             val notifyDate = treatment.expirationDate.minusDays(offset.toLong())
             scheduleNotification(
                 context,
-                title = context.getString(R.string.medication_expiration_reminder_notification_title),
+                title = context.getString(shared.string.notification_expiration_title),
                 content = context.getString(
-                    R.string.medication_expiration_reminder_notification_content,
+                    shared.string.notification_expiration_content,
                     treatment.name,
                     treatment.expirationDate.format(
                         DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(
@@ -70,7 +70,7 @@ suspend fun scheduleAppointmentReminders(context: Context, dataViewModel: DataVi
         reminderOffsets.forEach { offset ->
             val notifyDate = appointment.date.minusDays(offset.toLong())
             val baseContent = context.getString(
-                R.string.appointment_reminder_notification_content,
+                shared.string.notification_appointment_content,
                 appointment.doctor,
                 appointment.date.format(
                     DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
@@ -82,7 +82,7 @@ suspend fun scheduleAppointmentReminders(context: Context, dataViewModel: DataVi
 
             scheduleNotification(
                 context,
-                title = context.getString(R.string.appointment_reminder_notification_title),
+                title = context.getString(shared.string.notification_appointment_title),
                 content = content,
                 date = notifyDate,
                 tag = "appointments"
@@ -100,9 +100,9 @@ suspend fun scheduleMedicationExpirationReminders(context: Context, dataViewMode
             val notifyDate = treatment.expirationDate.minusDays(offset.toLong())
             scheduleNotification(
                 context,
-                title = context.getString(R.string.medication_expiration_reminder_notification_title),
+                title = context.getString(shared.string.notification_expiration_title),
                 content = context.getString(
-                    R.string.medication_expiration_reminder_notification_content,
+                    shared.string.notification_expiration_content,
                     treatment.name,
                     treatment.expirationDate.format(
                         DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)

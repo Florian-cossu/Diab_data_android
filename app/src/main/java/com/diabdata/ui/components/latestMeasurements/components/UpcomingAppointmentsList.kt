@@ -32,15 +32,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
 import com.diabdata.models.AppointmentType
+import com.diabdata.shared.dateUtils.formatLocalDate
+import com.diabdata.shared.dateUtils.toRelativeString
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.layout.SvgIcon
-import com.diabdata.utils.formatLocalDate
-import com.diabdata.utils.getDaysLeftString
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
 import com.diabdata.shared.R as shared
@@ -61,7 +60,7 @@ fun UpcomingAppointmentsListContent(
             .background(Color.Transparent)
     ) {
         Text(
-            text = stringResource(R.string.upcoming_appointment_card_section_heading),
+            text = stringResource(shared.string.home_section_upcoming_appointments),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.surfaceTint
         )
@@ -69,7 +68,7 @@ fun UpcomingAppointmentsListContent(
         Spacer(Modifier.height(8.dp))
 
         upcomingAppointments.forEachIndexed { index, appointment ->
-            val remainingText = getDaysLeftString(context, appointment.date)
+            val remainingText = appointment.date.toRelativeString(context)
 
             Surface(
                 shape = getItemShape(index, upcomingAppointments.size),
@@ -134,7 +133,7 @@ fun UpcomingAppointmentsListContent(
                                         },
                                         title = {
                                             Text(
-                                                text = stringResource(R.string.upcoming_appointment_card_notes_header),
+                                                text = stringResource(shared.string.appointment_card_notes_header),
                                                 style = MaterialTheme.typography.titleMedium
                                             )
                                         },
@@ -147,14 +146,14 @@ fun UpcomingAppointmentsListContent(
                                         confirmButton = {
                                             TextButton(onClick = {
                                                 showNotesDialog = false
-                                            }) { Text(text = stringResource(R.string.confirm_button_text)) }
+                                            }) { Text(text = stringResource(shared.string.action_confirm)) }
                                         })
                                 }
                             }
 
                             Text(
                                 text = stringResource(
-                                    R.string.scheduled_on_date_text,
+                                    shared.string.scheduled_on_date_text,
                                     formatLocalDate(appointment.date)
                                 ),
                                 style = MaterialTheme.typography.bodySmall,
