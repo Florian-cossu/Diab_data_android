@@ -61,6 +61,11 @@ android {
         }
     }
 
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
+
+
     buildToolsVersion = "36.0.0"
 }
 

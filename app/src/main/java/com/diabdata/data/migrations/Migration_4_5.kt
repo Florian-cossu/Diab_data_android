@@ -5,6 +5,15 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 val MIGRATION_4_5 = object : Migration(4, 5) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        // Pas de changement, migration "vide"
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS medications (
+                cipGtin TEXT NOT NULL PRIMARY KEY,
+                insulin TEXT NOT NULL,
+                treatmentType TEXT NOT NULL,
+                fullName TEXT NOT NULL
+            )
+            """.trimIndent()
+        )
     }
 }

@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
         MedicalDeviceInfoEntity::class
     ],
     version = 18,
-    exportSchema = false
+    exportSchema = true
 )
 
 @TypeConverters(DateConverters::class)
