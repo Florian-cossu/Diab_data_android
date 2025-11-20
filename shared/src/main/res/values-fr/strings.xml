@@ -18,6 +18,7 @@
     <string name="action_delete">Supprimer</string>
     <string name="action_archive">Archiver</string>
     <string name="action_add">Ajouter</string>
+    <string name="action_set_lifespan">Désactivé</string>
 
     <!-- ============================================= -->
     <!-- DATE & TIME -->
@@ -241,6 +242,10 @@
     <string name="popup_device_faulty_description">Cocher si un problème avec l\'appareil est survenu</string>
     <string name="popup_device_reported_label">Problème signalé</string>
     <string name="popup_device_reported_description">Cocher si le problème avec l\'appareil a été signalé</string>
+    <string name="popup_device_lifespan_over_label">Appareil remplacé/expiré</string>
+    <string name="popup_device_lifespan_over_description">Cocher si l\'appareil a expiré ou a été remplacé</string>
+    <string name="popup_device_update_expired_devices_label">Mettre à jour les appareils expirés</string>
+    <string name="popup_device_update_expired_devices_description">Cocher si vous souhaitez mettre à jour les appareils similaires qui ont expiré aujourd\'hui ou avant</string>
 
     <!-- Validation messages -->
     <string name="validation_invalid_weight">Valeur de poids invalide</string>

@@ -15,8 +15,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.diabdata.data.DataViewModel
 import com.diabdata.data.converters.toEntity
-import com.diabdata.models.AddableType
 import com.diabdata.models.ImportantDate
+import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.ui.components.addDataPopup.BasePopupLayout
 import com.diabdata.ui.components.date_components.DateSelector
 import kotlinx.coroutines.launch

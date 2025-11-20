@@ -2,6 +2,8 @@ package com.diabdata.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
+
 
 @Entity(tableName = "medical_devices_infos")
 data class MedicalDeviceInfoEntity(

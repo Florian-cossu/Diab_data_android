@@ -9,8 +9,7 @@ import androidx.wear.watchface.complications.data.RangedValueComplicationData
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
 import com.diabdata.shared.R
-import com.diabdata.wear.models.MedicalDeviceInfoType
-import java.util.Locale.getDefault
+import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
 import com.diabdata.shared.R as shared
 
 class ExpiringMedicalDevicesComplicationService :
@@ -20,6 +19,7 @@ class ExpiringMedicalDevicesComplicationService :
 
         val prefs = getSharedPreferences("complications_medical_device_expiry", MODE_PRIVATE)
         val devicesDaysBeforeExpiry = prefs.getString("nextDeviceExpiry", "0") ?: "0"
+        val daysBeforeExpiry = devicesDaysBeforeExpiry.toInt()
         val deviceLifespanValue = prefs.getString("nextDeviceLifespan", "0") ?: "0"
         val deviceTypeStr = prefs.getString("deviceIconRes", "UNKNOWN") ?: "UNKNOWN"
 
@@ -29,11 +29,17 @@ class ExpiringMedicalDevicesComplicationService :
             MedicalDeviceInfoType.UNKNOWN.iconRes
         }
 
-        val daysCountText: String = resources.getQuantityString(
-            R.plurals.date_abbr_days,
-            devicesDaysBeforeExpiry.toInt(),
-            devicesDaysBeforeExpiry.toInt()
-        )
+        var daysCountText = ""
+
+        daysCountText = if (daysBeforeExpiry > 0) {
+            resources.getQuantityString(
+                R.plurals.date_abbr_days,
+                daysBeforeExpiry,
+                daysBeforeExpiry
+            )
+        } else {
+            getString(shared.string.date_abbr_today)
+        }
 
         val rangeValue: Float = deviceLifespanValue.toFloat() - devicesDaysBeforeExpiry.toFloat()
 
@@ -45,7 +51,7 @@ class ExpiringMedicalDevicesComplicationService :
             contentDescription = PlainComplicationText.Builder(getString(shared.string.wear_complication_expiring_devices_plain_text_builder))
                 .build()
         )
-            .setTitle(PlainComplicationText.Builder(daysCountText.lowercase(getDefault())).build())
+            .setTitle(PlainComplicationText.Builder(daysCountText).build())
             .setText(PlainComplicationText.Builder("").build())
             .setMonochromaticImage(
                 MonochromaticImage.Builder(
@@ -64,8 +70,8 @@ class ExpiringMedicalDevicesComplicationService :
             contentDescription = PlainComplicationText.Builder(getString(shared.string.wear_complication_expiring_devices_plain_text_builder))
                 .build()
         )
-            .setText(PlainComplicationText.Builder("2d").build())
-            .setTitle(PlainComplicationText.Builder("").build())
+            .setTitle(PlainComplicationText.Builder("2D").build())
+            .setText(PlainComplicationText.Builder("").build())
             .setMonochromaticImage(
                 MonochromaticImage.Builder(
                     Icon.createWithResource(

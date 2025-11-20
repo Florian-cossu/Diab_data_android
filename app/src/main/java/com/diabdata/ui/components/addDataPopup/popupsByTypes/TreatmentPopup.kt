@@ -15,9 +15,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.diabdata.data.DataViewModel
 import com.diabdata.data.converters.toEntity
-import com.diabdata.models.AddableType
 import com.diabdata.models.Treatment
-import com.diabdata.models.TreatmentType
+import com.diabdata.shared.utils.dataTypes.AddableType
+import com.diabdata.shared.utils.dataTypes.TreatmentType
 import com.diabdata.ui.components.EnumDropdown
 import com.diabdata.ui.components.addDataPopup.BasePopupLayout
 import com.diabdata.ui.components.date_components.DateSelector

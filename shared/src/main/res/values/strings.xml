@@ -23,6 +23,7 @@
     <string name="action_delete">Delete</string>
     <string name="action_archive">Archive</string>
     <string name="action_add">Add</string>
+    <string name="action_set_lifespan">Discarded</string>
 
     <!-- ============================================= -->
     <!-- DATE & TIME -->
@@ -246,6 +247,10 @@
     <string name="popup_device_faulty_description">Check if a problem with the device occured</string>
     <string name="popup_device_reported_label">Reported device</string>
     <string name="popup_device_reported_description">Check if the problem with the device was reported</string>
+    <string name="popup_device_lifespan_over_label">Expired/Replaced device</string>
+    <string name="popup_device_lifespan_over_description">Check if the device has expired or been replaced</string>
+    <string name="popup_device_update_expired_devices_label">Update expired devices</string>
+    <string name="popup_device_update_expired_devices_description">Check if you want to set similar devices that expired today or before as expired</string>
 
     <!-- Validation messages -->
     <string name="validation_invalid_weight">Invalid weight</string>

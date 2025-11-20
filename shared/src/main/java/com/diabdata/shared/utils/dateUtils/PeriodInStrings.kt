@@ -1,4 +1,4 @@
-package com.diabdata.shared.dateUtils
+package com.diabdata.shared.utils.dateUtils
 
 import android.content.Context
 import com.diabdata.shared.R

@@ -2,6 +2,7 @@ package com.diabdata.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.diabdata.shared.utils.dataTypes.AppointmentType
 import java.time.LocalDate
 
 @Entity(tableName = "appointments")

@@ -33,11 +33,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.diabdata.data.DataViewModel
-import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
-import com.diabdata.models.AppointmentType
-import com.diabdata.shared.dateUtils.formatLocalDate
-import com.diabdata.shared.dateUtils.toRelativeString
+import com.diabdata.shared.utils.dataTypes.AddableType
+import com.diabdata.shared.utils.dataTypes.AppointmentType
+import com.diabdata.shared.utils.dateUtils.formatLocalDate
+import com.diabdata.shared.utils.dateUtils.toRelativeString
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.getItemShape

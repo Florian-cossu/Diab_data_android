@@ -33,10 +33,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.diabdata.data.DataViewModel
-import com.diabdata.models.AddableType
 import com.diabdata.models.MedicalDeviceEntry
-import com.diabdata.models.MedicalDeviceInfoType
-import com.diabdata.shared.dateUtils.shortenedFormatLocalDate
+import com.diabdata.shared.utils.dataTypes.AddableType
+import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
+import com.diabdata.shared.utils.dateUtils.shortenedFormatLocalDate
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.devices.components.MedicalDeviceCardData
 import com.diabdata.ui.components.layout.ButtonType

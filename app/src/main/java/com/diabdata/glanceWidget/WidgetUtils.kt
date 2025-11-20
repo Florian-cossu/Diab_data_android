@@ -3,8 +3,8 @@ package com.diabdata.glanceWidget
 import androidx.compose.ui.graphics.Color
 import androidx.glance.color.ColorProvider
 import androidx.glance.unit.ColorProvider
-import com.diabdata.models.AppointmentType
-import com.diabdata.models.MedicalDeviceInfoType
+import com.diabdata.shared.utils.dataTypes.AppointmentType
+import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
 import com.diabdata.utils.darken
 
 fun getAppointmentTypeOrNull(typeName: String?): AppointmentType? {

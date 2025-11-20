@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.diabdata.data.DiabDataDatabase
-import com.diabdata.shared.dateUtils.getNumberOfDaysUntil
+import com.diabdata.shared.utils.dateUtils.getNumberOfDaysUntil
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import kotlinx.coroutines.flow.firstOrNull

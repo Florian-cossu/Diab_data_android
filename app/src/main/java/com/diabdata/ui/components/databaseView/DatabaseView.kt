@@ -71,7 +71,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.diabdata.R
 import com.diabdata.data.DataViewModel
-import com.diabdata.models.AddableType
+import com.diabdata.data.converters.toEntity
+import com.diabdata.models.MedicalDeviceEntry
+import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.FlippableSelectionIcon
 import com.diabdata.ui.components.layout.SvgIcon
@@ -87,6 +89,7 @@ fun DatabaseEditionView(
     dataViewModel: DataViewModel
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var selectedTypes by remember { mutableStateOf(setOf<AddableType>()) }
     var selectionMode by remember { mutableStateOf(false) }
     var selectedEntries by remember { mutableStateOf(setOf<DataViewModel.MixedDbEntry>()) }
@@ -96,6 +99,8 @@ fun DatabaseEditionView(
 
     val filteredEntries =
         mixedEntries.filter { it.addableType in selectedTypes || selectedTypes.isEmpty() }
+
+    val typesOfSelectedEntries = selectedEntries.map { it.addableType }.toSet()
 
     Scaffold { padding ->
         Column(
@@ -138,30 +143,84 @@ fun DatabaseEditionView(
                     val badgeTextColor = if (isPressed || isHovered) MaterialTheme.colorScheme.error
                     else MaterialTheme.colorScheme.onError
 
-                    Button(
-                        onClick = {
-                            selectedEntries.forEach { dataViewModel.deleteEntry(it) }
-                            selectedEntries = emptySet()
-                            selectionMode = false
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = bgColor,
-                            contentColor = textColor
-                        ),
-                        interactionSource = interactionSource
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        BadgedBox(
-                            badge = {
-                                Badge(containerColor = badgeColor) {
-                                    Text(selectedEntries.size.toString(), color = badgeTextColor)
-                                }
-                            }
+                        Button(
+                            onClick = {
+                                selectedEntries.forEach { dataViewModel.deleteEntry(it) }
+                                selectedEntries = emptySet()
+                                selectionMode = false
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = bgColor,
+                                contentColor = textColor
+                            ),
+                            interactionSource = interactionSource
                         ) {
-                            SvgIcon(resId = shared.drawable.delete_icon_vector, color = textColor)
+                            BadgedBox(
+                                badge = {
+                                    Badge(containerColor = badgeColor) {
+                                        Text(
+                                            selectedEntries.size.toString(),
+                                            color = badgeTextColor
+                                        )
+                                    }
+                                }
+                            ) {
+                                SvgIcon(
+                                    resId = shared.drawable.delete_icon_vector,
+                                    color = textColor
+                                )
+                            }
+                            Spacer(Modifier.width(8.dp))
+                            Text(context.getString(shared.string.action_delete))
                         }
-                        Spacer(Modifier.width(8.dp))
-                        Text(context.getString(shared.string.action_delete))
+
+                        if (typesOfSelectedEntries == setOf(AddableType.DEVICE)) {
+                            Button(
+                                onClick = {
+                                    scope.launch {
+                                        scope.launch {
+                                            val deviceEntries = selectedEntries
+                                                .filterIsInstance<DataViewModel.MixedDbEntry.DeviceEntry>()
+                                                .map { it.toEntity() as MedicalDeviceEntry }
+
+                                            dataViewModel.setDevicesLifespanOver(
+                                                deviceEntries,
+                                                isOver = true
+                                            )
+                                        }
+                                    }
+                                    selectedEntries = emptySet()
+                                    selectionMode = false
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                    contentColor = MaterialTheme.colorScheme.primary
+                                )
+                            ) {
+                                BadgedBox(
+                                    badge = {
+                                        Badge(
+                                            containerColor = MaterialTheme.colorScheme.primary
+                                        ) {
+                                            Text(selectedEntries.size.toString())
+                                        }
+                                    }
+                                ) {
+                                    SvgIcon(
+                                        shared.drawable.recycle_icon_vector,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                                Spacer(Modifier.width(8.dp))
+                                Text(context.getString(shared.string.action_set_lifespan))
+                            }
+                        }
                     }
+
                 }
 
                 if (!selectionMode && selectedEntries.isEmpty()) Spacer(Modifier.width(8.dp))
@@ -455,11 +514,25 @@ private fun EntryContent(entry: DataViewModel.MixedDbEntry) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Text(
-                    entry.name,
-                    fontWeight = FontWeight.Bold,
-                    color = entry.addableType.baseColor.darken()
-                )
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (entry.isLifeSpanOver) {
+                        SvgIcon(
+                            resId = shared.drawable.recycle_icon_vector,
+                            modifier = Modifier.size(16.dp),
+                            color = entry.addableType.baseColor.darken()
+                        )
+                    }
+                    Text(
+                        entry.name,
+                        fontWeight = FontWeight.Bold,
+                        color = entry.addableType.baseColor.darken()
+                    )
+                }
+
 
                 if (numbersWithIcons.isNotEmpty()) {
                     FlowRow(

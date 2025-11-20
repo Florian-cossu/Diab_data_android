@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.diabdata.models.AddableType
+import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.shared.R as shared
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

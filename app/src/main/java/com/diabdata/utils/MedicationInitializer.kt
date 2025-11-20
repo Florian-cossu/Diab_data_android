@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.core.content.edit
 import com.diabdata.data.DiabDataDatabase
 import com.diabdata.models.MedicationEntity
-import com.diabdata.models.TreatmentType
+import com.diabdata.shared.utils.dataTypes.TreatmentType
 import java.io.InputStream
 import java.security.MessageDigest
 

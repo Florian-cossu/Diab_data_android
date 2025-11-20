@@ -1,4 +1,4 @@
-package com.diabdata.models
+package com.diabdata.shared.utils.dataTypes
 
 import android.content.Context
 import androidx.annotation.DrawableRes

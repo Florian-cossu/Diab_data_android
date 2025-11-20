@@ -33,9 +33,9 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.diabdata.data.DataViewModel
-import com.diabdata.models.AddableType
 import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.Treatment
+import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.AppointmentPopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.Hba1cPopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.ImportantDatePopup

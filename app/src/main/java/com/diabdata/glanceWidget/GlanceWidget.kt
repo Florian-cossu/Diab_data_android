@@ -32,9 +32,9 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.diabdata.glanceWidget.proto.WidgetState
-import com.diabdata.models.AddableType
-import com.diabdata.shared.dateUtils.toRelativeString
-import com.diabdata.shared.dateUtils.toShortenedFormatLocalDate
+import com.diabdata.shared.utils.dataTypes.AddableType
+import com.diabdata.shared.utils.dateUtils.toRelativeString
+import com.diabdata.shared.utils.dateUtils.toShortenedFormatLocalDate
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import com.diabdata.shared.R as shared

@@ -1,10 +1,10 @@
-package com.diabdata.models
+package com.diabdata.shared.utils.dataTypes
 
 import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
-import com.diabdata.shared.R as shared
+import com.diabdata.shared.R
 
 enum class AddableType(
     val tableName: String,
@@ -14,39 +14,39 @@ enum class AddableType(
 ) {
     WEIGHT(
         tableName = "weight_entries",
-        displayNameRes = shared.string.addable_weight,
+        displayNameRes = R.string.addable_weight,
         baseColor = Color(0xFF4CAF50),
-        iconRes = shared.drawable.weight_icon_vector
+        iconRes = R.drawable.weight_icon_vector
     ),
     HBA1C(
         tableName = "hba1c_entries",
-        displayNameRes = shared.string.addable_hba1c,
+        displayNameRes = R.string.addable_hba1c,
         baseColor = Color(0xFF4DB3EA),
-        iconRes = shared.drawable.hba1c_icon_vector
+        iconRes = R.drawable.hba1c_icon_vector
     ),
     APPOINTMENT(
         tableName = "appointments",
-        displayNameRes = shared.string.addable_appointment,
+        displayNameRes = R.string.addable_appointment,
         baseColor = Color(0xFFF637C5),
-        iconRes = shared.drawable.event_icon_vector
+        iconRes = R.drawable.event_icon_vector
     ),
     TREATMENT(
         tableName = "treatments",
-        displayNameRes = shared.string.addable_treatment,
+        displayNameRes = R.string.addable_treatment,
         baseColor = Color(0xFF4ADCC4),
-        iconRes = shared.drawable.medication_icon_vector
+        iconRes = R.drawable.medication_icon_vector
     ),
     IMPORTANT_DATE(
         tableName = "important_date_entries",
-        displayNameRes = shared.string.addable_important_date,
+        displayNameRes = R.string.addable_important_date,
         baseColor = Color(0xFFFCB227),
-        iconRes = shared.drawable.important_date_icon_vector
+        iconRes = R.drawable.important_date_icon_vector
     ),
     DEVICE(
         tableName = "medical_devices",
-        displayNameRes = shared.string.addable_device,
+        displayNameRes = R.string.addable_device,
         baseColor = Color(0xFF4DB3EA),
-        iconRes = shared.drawable.devices_icon_vector
+        iconRes = R.drawable.devices_icon_vector
     );
 
     fun getDisplayName(context: Context): String =

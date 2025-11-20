@@ -42,9 +42,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.diabdata.data.DataViewModel
-import com.diabdata.models.AddableType
-import com.diabdata.shared.dateUtils.formatLocalDate
-import com.diabdata.shared.dateUtils.toCountString
+import com.diabdata.shared.utils.dataTypes.AddableType
+import com.diabdata.shared.utils.dateUtils.formatLocalDate
+import com.diabdata.shared.utils.dateUtils.toCountString
 import com.diabdata.ui.components.date_components.DateRangeModal
 import com.diabdata.ui.components.layout.LineGraph
 import com.diabdata.ui.components.layout.SvgIcon

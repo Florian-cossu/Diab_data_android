@@ -23,9 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.diabdata.data.DataViewModel
-import com.diabdata.models.AddableType
 import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.MedicalDeviceInfoEntity
+import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.ui.components.DataMatrixScannerDialog
 import com.diabdata.ui.components.ScanResult
 import com.diabdata.ui.components.ScannableTypes
