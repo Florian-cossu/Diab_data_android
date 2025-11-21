@@ -30,19 +30,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
-import com.diabdata.models.AddableType
 import com.diabdata.models.MedicalDeviceEntry
-import com.diabdata.models.MedicalDeviceInfoType
+import com.diabdata.shared.utils.dataTypes.AddableType
+import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
+import com.diabdata.shared.utils.dateUtils.shortenedFormatLocalDate
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.layout.FaultyToggleButton
 import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.darken
 import com.diabdata.utils.getItemShape
-import com.diabdata.utils.shortenedFormatLocalDate
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import com.diabdata.shared.R as shared
 
 @Composable
 fun CurrentNonConsumableDevicesList(viewModel: DataViewModel) {
@@ -93,7 +93,7 @@ fun CurrentNonConsumableDevicesCards(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            text = stringResource(R.string.current_non_consumable_devices_card_section_heading),
+            text = stringResource(shared.string.home_section_current_non_consumable_devices),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.surfaceTint
         )
@@ -172,7 +172,7 @@ fun CurrentNonConsumableDevicesCards(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         SvgIcon(
-                                            resId = R.drawable.lot_icon_vector,
+                                            resId = shared.drawable.lot_icon_vector,
                                             modifier = Modifier.size(20.dp),
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -189,7 +189,7 @@ fun CurrentNonConsumableDevicesCards(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         SvgIcon(
-                                            resId = R.drawable.ref_icon_vector,
+                                            resId = shared.drawable.ref_icon_vector,
                                             modifier = Modifier.size(20.dp),
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -206,7 +206,7 @@ fun CurrentNonConsumableDevicesCards(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         SvgIcon(
-                                            resId = R.drawable.sn_icon_vector,
+                                            resId = shared.drawable.sn_icon_vector,
                                             modifier = Modifier.size(20.dp),
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )

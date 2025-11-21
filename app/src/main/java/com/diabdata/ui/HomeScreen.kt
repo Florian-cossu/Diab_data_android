@@ -2,23 +2,16 @@ package com.diabdata.ui
 
 import android.Manifest
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,28 +19,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
-import com.diabdata.models.AddableType
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
+import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.ui.components.AddDataFab
 import com.diabdata.ui.components.DataMatrixScannerDialog
 import com.diabdata.ui.components.ScanResult
 import com.diabdata.ui.components.ScannableTypes
 import com.diabdata.ui.components.addDataPopup.AddDataPopup
 import com.diabdata.ui.components.latestMeasurements.LatestMeasurements
-import com.diabdata.ui.components.layout.SvgIcon
+import com.diabdata.ui.components.noDataView.NoDataView
 import com.diabdata.utils.MedicationInfo
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import com.diabdata.shared.R as shared
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -71,7 +60,11 @@ fun HomeScreen(
             if (isGranted) {
                 showScanner = true
             } else {
-                Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    shared.string.toast_camera_permission_error,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
 
@@ -88,32 +81,7 @@ fun HomeScreen(
                 )
             }
         } else {
-            Box(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.wrapContentWidth()
-                ) {
-                    SvgIcon(
-                        resId = (R.drawable.inbox_icon_vector),
-                        modifier = Modifier
-                            .width((LocalWindowInfo.current.containerSize.width * 0.15f).dp)
-                            .aspectRatio(1f),
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                    )
-
-                    Text(
-                        text = stringResource(R.string.homescreen_no_data_text),
-                        modifier = Modifier.padding(top = 16.dp),
-                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                    )
-                }
-            }
+            NoDataView()
         }
 
         if (showScanner) {
@@ -127,7 +95,6 @@ fun HomeScreen(
                                 val entity = dataViewModel.getMedicationByGtin(
                                     info.gtin.replace(regex = Regex("^0"), replacement = "")
                                 )
-                                Log.d("EXTRACTED-GTIN", info.gtin)
                                 if (entity != null) {
                                     val treatment = mapToTreatment(info, entity)
                                     dataViewModel.updatePrefilledTreatment(treatment)
@@ -135,7 +102,10 @@ fun HomeScreen(
                                 } else {
                                     Toast.makeText(
                                         context,
-                                        "Médicament inconnu pour GTIN ${info.gtin}",
+                                        context.getString(
+                                            shared.string.toast_data_unknown_medication_code,
+                                            info.gtin
+                                        ),
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }

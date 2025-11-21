@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello_world">From the Square world,\nHello, %1$s!</string>
+    <string name="tile_label">Hello, %1$s!</string>
+    <string name="complication_label">Appareils à remplacer</string>
+</resources>

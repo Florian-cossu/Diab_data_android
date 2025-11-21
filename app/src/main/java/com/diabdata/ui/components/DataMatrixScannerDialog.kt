@@ -21,13 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import com.diabdata.ui.components.latestMeasurements.CameraPreview
 import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.MedicalDeviceInfo
 import com.diabdata.utils.MedicationInfo
 import com.diabdata.utils.parseMedicalDevice
 import com.diabdata.utils.parseMedication
+import com.diabdata.shared.R as shared
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -84,13 +84,13 @@ fun DataMatrixScannerDialog(
                 .offset(y = scanSize / 2 + 16.dp) // sous le carré
         ) {
             SvgIcon(
-                resId = R.drawable.lightbulb_icon_vector,
+                resId = shared.drawable.lightbulb_icon_vector,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = stringResource(R.string.data_matrix_scanner_hint),
+                text = stringResource(shared.string.scanner_hint_datamatrix),
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.bodyMedium
             )

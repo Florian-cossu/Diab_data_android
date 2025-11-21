@@ -13,17 +13,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.data.converters.toEntity
-import com.diabdata.models.AddableType
 import com.diabdata.models.Treatment
-import com.diabdata.models.TreatmentType
+import com.diabdata.shared.utils.dataTypes.AddableType
+import com.diabdata.shared.utils.dataTypes.TreatmentType
 import com.diabdata.ui.components.EnumDropdown
 import com.diabdata.ui.components.addDataPopup.BasePopupLayout
 import com.diabdata.ui.components.date_components.DateSelector
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import com.diabdata.shared.R as shared
 
 @Composable
 fun TreatmentPopup(
@@ -50,7 +50,7 @@ fun TreatmentPopup(
 
     BasePopupLayout(
         title = context.getString(
-            if (toUpdate == null) R.string.add_data_popup_title else R.string.update_data_popup_title,
+            if (toUpdate == null) shared.string.popup_title_add else shared.string.popup_title_update,
             AddableType.TREATMENT.getDisplayName(context)
         ),
         icon = AddableType.TREATMENT.iconRes,
@@ -85,7 +85,7 @@ fun TreatmentPopup(
         )
 
         EnumDropdown(
-            label = context.getString(R.string.add_data_popup_medication_dropdown_placeholder),
+            label = context.getString(shared.string.popup_placeholder_medication_type),
             options = TreatmentType.entries,
             selected = selectedTreatmentType,
             displayName = { it.displayName(context) },
@@ -96,7 +96,7 @@ fun TreatmentPopup(
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text(stringResource(R.string.add_data_popup_medication_field_placeholder)) },
+            label = { Text(stringResource(shared.string.popup_placeholder_medication_name)) },
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.small
         )

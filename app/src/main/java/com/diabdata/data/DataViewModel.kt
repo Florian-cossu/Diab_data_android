@@ -9,21 +9,20 @@ import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
-import com.diabdata.R
 import com.diabdata.data.converters.toEntity
-import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
-import com.diabdata.models.AppointmentType
 import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.ImportantDate
 import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.MedicalDeviceInfoEntity
-import com.diabdata.models.MedicalDeviceInfoType
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
-import com.diabdata.models.TreatmentType
 import com.diabdata.models.WeightEntry
 import com.diabdata.models.classes.PlotPoint
+import com.diabdata.shared.utils.dataTypes.AddableType
+import com.diabdata.shared.utils.dataTypes.AppointmentType
+import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
+import com.diabdata.shared.utils.dataTypes.TreatmentType
 import com.diabdata.utils.AppointmentTypeAdapter
 import com.diabdata.utils.LocalDateAdapter
 import com.google.gson.GsonBuilder
@@ -37,6 +36,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+import com.diabdata.shared.R as shared
 
 class DataViewModel(
     val repository: DataRepository,
@@ -281,6 +281,14 @@ class DataViewModel(
 
     suspend fun updateDevice(device: MedicalDeviceEntry) = repository.updateDevice(device)
 
+    fun getAllFaultyDevicesExpiredToday() = repository.getAllFaultyDevicesExpiredToday()
+
+    suspend fun setDevicesLifespanOver(devices: List<MedicalDeviceEntry>, isOver: Boolean = true) {
+        for (device in devices) {
+            repository.updateDevice(device.copy(isLifeSpanOver = isOver))
+        }
+    }
+
     fun clearDatabase(context: Context) = viewModelScope.launch {
         val workManager = WorkManager.getInstance(context)
         val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
@@ -399,38 +407,38 @@ class DataViewModel(
         deviceType: MedicalDeviceInfoType? = null
     ): Int {
         return when (addableType) {
-            AddableType.WEIGHT -> R.drawable.weight_icon_vector
-            AddableType.HBA1C -> R.drawable.hba1c_icon_vector
+            AddableType.WEIGHT -> AddableType.WEIGHT.iconRes
+            AddableType.HBA1C -> AddableType.HBA1C.iconRes
             AddableType.APPOINTMENT -> when (appointmentType) {
-                AppointmentType.ANNUAL_CHECKUP -> R.drawable.recurring_event_icon_vector
-                AppointmentType.APPOINTMENT -> R.drawable.stethoscope_icon_vector
-                null -> R.drawable.event_icon_vector
+                AppointmentType.ANNUAL_CHECKUP -> AppointmentType.ANNUAL_CHECKUP.iconRes
+                AppointmentType.APPOINTMENT -> AppointmentType.APPOINTMENT.iconRes
+                null -> shared.drawable.event_icon_vector
             }
 
             AddableType.TREATMENT -> when (treatmentType) {
-                TreatmentType.FAST_ACTING_INSULIN_CARTRIDGE -> R.drawable.fast_acting_insulin_cartridge_icon_vector
-                TreatmentType.FAST_ACTING_INSULIN_SYRINGE -> R.drawable.fast_acting_insulin_syringe_icon_vector
-                TreatmentType.FAST_ACTING_INSULIN_VIAL -> R.drawable.fast_acting_insulin_vial_icon_vector
-                TreatmentType.SLOW_ACTING_INSULIN_CARTRIDGE -> R.drawable.slow_acting_insulin_cartridge_icon_vector
-                TreatmentType.SLOW_ACTING_INSULIN_SYRINGE -> R.drawable.slow_acting_insulin_syringe_icon_vector
-                TreatmentType.SLOW_ACTING_INSULIN_VIAL -> R.drawable.slow_acting_insulin_vial_icon_vector
-                TreatmentType.B_KETONE_TEST_STRIP -> R.drawable.b_ketone_test_icon_vector
-                TreatmentType.BLOOD_GLUCOSE_TEST_STRIP -> R.drawable.glucose_test_icon_vector
-                TreatmentType.GLUCAGON_SYRINGE -> R.drawable.syringe_icon_vector
-                TreatmentType.GLUCAGON_SPRAY -> R.drawable.nasal_spray_icon_vector
-                null -> R.drawable.medication_icon_vector
+                TreatmentType.FAST_ACTING_INSULIN_CARTRIDGE -> TreatmentType.FAST_ACTING_INSULIN_CARTRIDGE.iconRes
+                TreatmentType.FAST_ACTING_INSULIN_SYRINGE -> TreatmentType.FAST_ACTING_INSULIN_SYRINGE.iconRes
+                TreatmentType.FAST_ACTING_INSULIN_VIAL -> TreatmentType.FAST_ACTING_INSULIN_VIAL.iconRes
+                TreatmentType.SLOW_ACTING_INSULIN_CARTRIDGE -> TreatmentType.SLOW_ACTING_INSULIN_CARTRIDGE.iconRes
+                TreatmentType.SLOW_ACTING_INSULIN_SYRINGE -> TreatmentType.SLOW_ACTING_INSULIN_SYRINGE.iconRes
+                TreatmentType.SLOW_ACTING_INSULIN_VIAL -> TreatmentType.SLOW_ACTING_INSULIN_VIAL.iconRes
+                TreatmentType.B_KETONE_TEST_STRIP -> TreatmentType.B_KETONE_TEST_STRIP.iconRes
+                TreatmentType.BLOOD_GLUCOSE_TEST_STRIP -> TreatmentType.BLOOD_GLUCOSE_TEST_STRIP.iconRes
+                TreatmentType.GLUCAGON_SYRINGE -> TreatmentType.GLUCAGON_SYRINGE.iconRes
+                TreatmentType.GLUCAGON_SPRAY -> TreatmentType.GLUCAGON_SPRAY.iconRes
+                null -> shared.drawable.medication_icon_vector
             }
 
-            AddableType.IMPORTANT_DATE -> R.drawable.important_date_icon_vector
+            AddableType.IMPORTANT_DATE -> shared.drawable.important_date_icon_vector
 
             AddableType.DEVICE -> when (deviceType) {
-                MedicalDeviceInfoType.WIRELESS_PATCH -> R.drawable.wireless_patch_icon_vector
-                MedicalDeviceInfoType.WIRED_PATCH -> R.drawable.wired_patch_icon_vector
-                MedicalDeviceInfoType.CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_SENSOR -> R.drawable.continuous_glucose_monitoring_system_sensor
-                MedicalDeviceInfoType.CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_TRANSMITTER -> R.drawable.continuous_glucose_monitoring_system_transmitter
-                MedicalDeviceInfoType.WIRED_PUMP -> R.drawable.wired_pump_icon_vector
-                MedicalDeviceInfoType.WIRELESS_PATCH_REMOTE -> R.drawable.wireless_patch_remote_icon_vector
-                null -> R.drawable.devices_icon_vector
+                MedicalDeviceInfoType.WIRELESS_PATCH -> MedicalDeviceInfoType.WIRELESS_PATCH.iconRes
+                MedicalDeviceInfoType.WIRED_PATCH -> MedicalDeviceInfoType.WIRED_PATCH.iconRes
+                MedicalDeviceInfoType.CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_SENSOR -> MedicalDeviceInfoType.CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_SENSOR.iconRes
+                MedicalDeviceInfoType.CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_TRANSMITTER -> MedicalDeviceInfoType.CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_TRANSMITTER.iconRes
+                MedicalDeviceInfoType.WIRED_PUMP -> MedicalDeviceInfoType.WIRED_PUMP.iconRes
+                MedicalDeviceInfoType.WIRELESS_PATCH_REMOTE -> MedicalDeviceInfoType.WIRELESS_PATCH_REMOTE.iconRes
+                else -> shared.drawable.devices_icon_vector
             }
         }
     }

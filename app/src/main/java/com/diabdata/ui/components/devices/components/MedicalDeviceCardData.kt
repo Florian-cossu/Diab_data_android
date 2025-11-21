@@ -1,8 +1,8 @@
 package com.diabdata.ui.components.devices.components
 
 import androidx.compose.ui.graphics.Color
-import com.diabdata.models.AddableType
 import com.diabdata.models.MedicalDeviceEntry
+import com.diabdata.shared.utils.dataTypes.AddableType
 import java.time.LocalDate
 
 data class MedicalDeviceCardData(

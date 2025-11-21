@@ -32,11 +32,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
-import com.diabdata.models.AddableType
 import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.Treatment
+import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.AppointmentPopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.Hba1cPopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.ImportantDatePopup
@@ -44,7 +43,7 @@ import com.diabdata.ui.components.addDataPopup.popupsByTypes.MedicalDevicePopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.TreatmentPopup
 import com.diabdata.ui.components.addDataPopup.popupsByTypes.WeightPopup
 import com.diabdata.ui.components.layout.SvgIcon
-
+import com.diabdata.shared.R as shared
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -140,7 +139,7 @@ fun BasePopupLayout(
                 ) {
                     TextButton(onClick = onDismiss) {
                         Text(
-                            stringResource(R.string.cancel_button_text),
+                            stringResource(shared.string.action_cancel),
                             color = MaterialTheme.colorScheme.error
                         )
                     }
@@ -149,7 +148,7 @@ fun BasePopupLayout(
                         onClick = onConfirm,
                         enabled = isConfirmEnabled
                     ) {
-                        Text(stringResource(R.string.confirm_button_text))
+                        Text(stringResource(shared.string.action_confirm))
                     }
                 }
             }

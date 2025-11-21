@@ -1,6 +1,6 @@
 package com.diabdata.utils
 
-import com.diabdata.models.AppointmentType
+import com.diabdata.shared.utils.dataTypes.AppointmentType
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement

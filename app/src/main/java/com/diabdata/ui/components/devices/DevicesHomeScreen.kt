@@ -27,11 +27,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.ui.components.devices.devicesScreens.FaultyDevices
 import com.diabdata.ui.components.devices.devicesScreens.RecentDevicesScreen
 import com.diabdata.ui.components.layout.SvgIcon
+import com.diabdata.shared.R as shared
 
 enum class DeviceDestination(
     @param:StringRes val labelRes: Int,
@@ -40,16 +40,16 @@ enum class DeviceDestination(
     @param:DrawableRes val iconResFilled: Int,
 ) {
     OVERVIEW(
-        R.string.device_screen_overview_tab,
+        shared.string.device_screen_overview_tab,
         route = "devices",
-        iconRes = R.drawable.list_icon_vector,
-        iconResFilled = R.drawable.list_filled_icon_vector
+        iconRes = shared.drawable.list_icon_vector,
+        iconResFilled = shared.drawable.list_filled_icon_vector
     ),
     FAULTY(
-        R.string.device_screen_faulty_devices_tab,
+        shared.string.device_screen_faulty_devices_tab,
         route = "other",
-        iconRes = R.drawable.faulty_medical_device_icon_vector,
-        iconResFilled = R.drawable.faulty_medical_device_filled_icon_vector
+        iconRes = shared.drawable.faulty_medical_device_icon_vector,
+        iconResFilled = shared.drawable.faulty_medical_device_filled_icon_vector
     )
 }
 

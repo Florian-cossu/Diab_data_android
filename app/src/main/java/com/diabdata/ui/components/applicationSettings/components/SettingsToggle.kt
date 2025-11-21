@@ -20,11 +20,11 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import com.diabdata.ui.components.layout.SvgIcon
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import com.diabdata.shared.R as shared
 
 @Composable
 fun SettingsToggle(
@@ -44,7 +44,7 @@ fun SettingsToggle(
         val context = LocalContext.current
 
         val displayText = if (nextReminderDate != null) stringResource(
-            R.string.settings_notification_toggle_next_reminder_date, nextReminderDate.format(
+            shared.string.settings_notification_next_reminder, nextReminderDate.format(
                 DateTimeFormatter.ofLocalizedDate(
                     FormatStyle.MEDIUM
                 )

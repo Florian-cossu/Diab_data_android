@@ -1,19 +1,15 @@
 package com.diabdata.ui.components.graphsViewer
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -36,27 +32,26 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
-import com.diabdata.models.AddableType
+import com.diabdata.shared.utils.dataTypes.AddableType
+import com.diabdata.shared.utils.dateUtils.formatLocalDate
+import com.diabdata.shared.utils.dateUtils.toCountString
 import com.diabdata.ui.components.date_components.DateRangeModal
 import com.diabdata.ui.components.layout.LineGraph
 import com.diabdata.ui.components.layout.SvgIcon
-import com.diabdata.utils.formatLocalDate
-import com.diabdata.utils.periodCountToString
+import com.diabdata.ui.components.noDataView.NoDataView
 import java.time.LocalDate
 import java.time.Period
+import com.diabdata.shared.R as shared
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -66,9 +61,9 @@ fun GraphViewer(
 ) {
     val scrollState = rememberScrollState()
     val options = listOf(
-        stringResource(R.string.time_range_month),
-        stringResource(R.string.time_range_year),
-        stringResource(R.string.time_range_custom)
+        stringResource(shared.string.time_range_month),
+        stringResource(shared.string.time_range_year),
+        stringResource(shared.string.time_range_custom)
     )
 
     var selectedIndex by remember { mutableIntStateOf(2) }
@@ -101,6 +96,8 @@ fun GraphViewer(
         .collectAsState(initial = emptyList())
 
     var showRegressionLine by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
 
     Scaffold { padding ->
         Column(
@@ -154,7 +151,7 @@ fun GraphViewer(
                             .aspectRatio(1f)
                     ) {
                         SvgIcon(
-                            resId = R.drawable.date_range_icon_vector,
+                            resId = shared.drawable.date_range_icon_vector,
                             color = MaterialTheme.colorScheme.onTertiaryContainer
                         )
                     }
@@ -173,7 +170,7 @@ fun GraphViewer(
                         .aspectRatio(1f)
                 ) {
                     SvgIcon(
-                        resId = R.drawable.trending_up_icon_vector,
+                        resId = shared.drawable.trending_up_icon_vector,
                         color = if (showRegressionLine) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
                     )
                 }
@@ -193,11 +190,11 @@ fun GraphViewer(
                         Text(
                             "${
                                 stringResource(
-                                    R.string.database_management_time_range_indicator,
+                                    shared.string.database_time_range_indicator,
                                     formatLocalDate(minDate),
                                     formatLocalDate(maxDateAdjusted)
                                 )
-                            } (${periodCountToString(period)})",
+                            } (${period.toCountString(context)})",
                             color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
@@ -218,31 +215,7 @@ fun GraphViewer(
                     showTrendLine = showRegressionLine
                 )
             } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.wrapContentWidth()
-                    ) {
-                        SvgIcon(
-                            resId = (R.drawable.inbox_icon_vector),
-                            modifier = Modifier
-                                .width((LocalWindowInfo.current.containerSize.width * 0.15f).dp)
-                                .aspectRatio(1f),
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                        )
-
-                        Text(
-                            text = stringResource(R.string.homescreen_no_data_text),
-                            modifier = Modifier.padding(top = 16.dp),
-                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                        )
-                    }
-                }
+                NoDataView()
             }
         }
     }

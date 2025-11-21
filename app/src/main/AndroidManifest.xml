@@ -7,6 +7,7 @@
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
 
     <application
@@ -40,6 +41,13 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/glance_widget_info" />
         </receiver>
+
+        <meta-data
+            android:name="com.google.android.wearable.notification.preview.local.only"
+            android:value="true" />
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="false" />
 
     </application>
 

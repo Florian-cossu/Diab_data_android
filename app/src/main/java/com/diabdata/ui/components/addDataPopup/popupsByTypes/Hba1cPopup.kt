@@ -15,15 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
 import com.diabdata.data.converters.toEntity
-import com.diabdata.models.AddableType
 import com.diabdata.models.HBA1CEntry
+import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.ui.components.addDataPopup.BasePopupLayout
 import com.diabdata.ui.components.date_components.DateSelector
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import com.diabdata.shared.R as shared
 
 @Composable
 fun Hba1cPopup(
@@ -42,7 +42,7 @@ fun Hba1cPopup(
 
     BasePopupLayout(
         title = context.getString(
-            if (toUpdate == null) R.string.add_data_popup_title else R.string.update_data_popup_title,
+            if (toUpdate == null) shared.string.popup_title_add else shared.string.popup_title_update,
             AddableType.HBA1C.getDisplayName(context)
         ),
         icon = AddableType.HBA1C.iconRes,
@@ -80,7 +80,7 @@ fun Hba1cPopup(
         OutlinedTextField(
             value = hba1cText,
             onValueChange = { hba1cText = it },
-            label = { Text(stringResource(R.string.add_data_popup_HBA1C_field_placeholder)) },
+            label = { Text(stringResource(shared.string.popup_placeholder_hba1c)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.small

@@ -27,8 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.diabdata.R
-import com.diabdata.models.AddableType
+import com.diabdata.shared.utils.dataTypes.AddableType
+import com.diabdata.shared.R as shared
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -41,10 +41,12 @@ fun AddDeviceFab(
 
     val fabItems = listOf(
         Triple(
-            stringResource(R.string.addable_treatment_scan), R.drawable.data_matrix_icon_vector
+            stringResource(shared.string.addable_treatment_scan),
+            shared.drawable.data_matrix_icon_vector
         ) { onScanClick() },
         Triple(
-            stringResource(R.string.addable_device), R.drawable.medical_device_add_icon_vector
+            stringResource(shared.string.addable_device),
+            shared.drawable.medical_device_add_icon_vector
         ) { onSelect(AddableType.APPOINTMENT) })
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {

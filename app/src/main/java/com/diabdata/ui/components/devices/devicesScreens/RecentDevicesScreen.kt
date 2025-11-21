@@ -5,19 +5,13 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,18 +19,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
-import com.diabdata.models.AddableType
 import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.MedicalDeviceInfoEntity
+import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.ui.components.DataMatrixScannerDialog
 import com.diabdata.ui.components.ScanResult
 import com.diabdata.ui.components.ScannableTypes
@@ -44,7 +33,8 @@ import com.diabdata.ui.components.addDataPopup.AddDataPopup
 import com.diabdata.ui.components.devices.components.AddDeviceFab
 import com.diabdata.ui.components.devices.components.CurrentConsumableDevicesList
 import com.diabdata.ui.components.devices.components.CurrentNonConsumableDevicesList
-import com.diabdata.ui.components.layout.SvgIcon
+import com.diabdata.ui.components.noDataView.IconTypes
+import com.diabdata.ui.components.noDataView.NoDataView
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -83,33 +73,7 @@ fun RecentDevicesScreen(
                 Spacer(modifier = Modifier.height(70.dp))
             }
         } else {
-            Box(
-                modifier = Modifier
-                    .padding(20.dp)
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 70.dp)
-                    .fillMaxSize(), contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.wrapContentWidth()
-                ) {
-                    SvgIcon(
-                        resId = (R.drawable.no_devices_icon_vector),
-                        modifier = Modifier
-                            .width((LocalWindowInfo.current.containerSize.width * 0.15f).dp)
-                            .aspectRatio(1f),
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                    )
-
-                    Text(
-                        text = stringResource(R.string.homescreen_no_data_text),
-                        modifier = Modifier.padding(top = 16.dp),
-                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                    )
-                }
-            }
+            NoDataView(iconType = IconTypes.DEVICES)
         }
 
     }

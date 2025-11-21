@@ -32,17 +32,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
-import com.diabdata.models.AddableType
 import com.diabdata.models.Appointment
-import com.diabdata.models.AppointmentType
+import com.diabdata.shared.utils.dataTypes.AddableType
+import com.diabdata.shared.utils.dataTypes.AppointmentType
+import com.diabdata.shared.utils.dateUtils.formatLocalDate
+import com.diabdata.shared.utils.dateUtils.toRelativeString
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.layout.SvgIcon
-import com.diabdata.utils.formatLocalDate
-import com.diabdata.utils.getDaysLeftString
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
+import com.diabdata.shared.R as shared
 
 @Composable
 fun UpcomingAppointmentsListContent(
@@ -60,7 +60,7 @@ fun UpcomingAppointmentsListContent(
             .background(Color.Transparent)
     ) {
         Text(
-            text = stringResource(R.string.upcoming_appointment_card_section_heading),
+            text = stringResource(shared.string.home_section_upcoming_appointments),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.surfaceTint
         )
@@ -68,7 +68,7 @@ fun UpcomingAppointmentsListContent(
         Spacer(Modifier.height(8.dp))
 
         upcomingAppointments.forEachIndexed { index, appointment ->
-            val remainingText = getDaysLeftString(context, appointment.date)
+            val remainingText = appointment.date.toRelativeString(context)
 
             Surface(
                 shape = getItemShape(index, upcomingAppointments.size),
@@ -115,7 +115,7 @@ fun UpcomingAppointmentsListContent(
                                     )
                                 ) {
                                     SvgIcon(
-                                        resId = R.drawable.note_icon_vector,
+                                        resId = shared.drawable.note_icon_vector,
                                         modifier = Modifier.size(18.dp),
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -126,14 +126,14 @@ fun UpcomingAppointmentsListContent(
                                         onDismissRequest = { showNotesDialog = false },
                                         icon = {
                                             SvgIcon(
-                                                resId = R.drawable.note_icon_vector,
+                                                resId = shared.drawable.note_icon_vector,
                                                 modifier = Modifier.size(48.dp),
                                                 color = MaterialTheme.colorScheme.primary
                                             )
                                         },
                                         title = {
                                             Text(
-                                                text = stringResource(R.string.upcoming_appointment_card_notes_header),
+                                                text = stringResource(shared.string.appointment_card_notes_header),
                                                 style = MaterialTheme.typography.titleMedium
                                             )
                                         },
@@ -146,14 +146,14 @@ fun UpcomingAppointmentsListContent(
                                         confirmButton = {
                                             TextButton(onClick = {
                                                 showNotesDialog = false
-                                            }) { Text(text = stringResource(R.string.confirm_button_text)) }
+                                            }) { Text(text = stringResource(shared.string.action_confirm)) }
                                         })
                                 }
                             }
 
                             Text(
                                 text = stringResource(
-                                    R.string.scheduled_on_date_text,
+                                    shared.string.scheduled_on_date_text,
                                     formatLocalDate(appointment.date)
                                 ),
                                 style = MaterialTheme.typography.bodySmall,
@@ -163,7 +163,7 @@ fun UpcomingAppointmentsListContent(
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         SvgIcon(
-                            resId = R.drawable.hourglass_icon_vector,
+                            resId = shared.drawable.hourglass_icon_vector,
                             modifier = Modifier.size(15.dp),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

@@ -10,9 +10,9 @@ val MIGRATION_11_12 = object : Migration(11, 12) {
             CREATE TABLE IF NOT EXISTS medical_devices_infos (
                 cipGtin TEXT PRIMARY KEY NOT NULL,
                 manufacturer TEXT NOT NULL,
-                deviceType TEXT,
-                fullName TEXT,
-                daysLifespan INTEGER NOT NULL,
+                deviceType TEXT NOT NULL DEFAULT '',
+                fullName TEXT NOT NULL DEFAULT '',
+                daysLifespan INTEGER NOT NULL
             )
             """.trimIndent()
         )

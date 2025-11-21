@@ -22,18 +22,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.diabdata.R
 import com.diabdata.data.DataViewModel
-import com.diabdata.models.AddableType
 import com.diabdata.models.Treatment
-import com.diabdata.models.TreatmentType
+import com.diabdata.shared.utils.dataTypes.AddableType
+import com.diabdata.shared.utils.dataTypes.TreatmentType
+import com.diabdata.shared.utils.dateUtils.formatLocalDate
+import com.diabdata.shared.utils.dateUtils.toRelativeString
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.layout.SvgIcon
-import com.diabdata.utils.formatLocalDate
-import com.diabdata.utils.getDaysLeftString
 import com.diabdata.utils.getItemShape
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import com.diabdata.shared.R as shared
 
 data class TreatmentCardData(
     val titleText: String,
@@ -56,10 +56,10 @@ fun UpcomingTreatmentExpirationDatesContent(
     val soonThreshold = today.plusDays(30)
 
     fun getUntilIconIdMap(isExpiringSoon: Boolean): Int =
-        if (isExpiringSoon) R.drawable.warning_icon_vector else R.drawable.hourglass_icon_vector
+        if (isExpiringSoon) shared.drawable.warning_icon_vector else shared.drawable.hourglass_icon_vector
 
     val cards = treatments.map { treatment ->
-        val remainingText = getDaysLeftString(context, treatment.expirationDate)
+        val remainingText = treatment.expirationDate.toRelativeString(context)
         val daysUntil = ChronoUnit.DAYS.between(today, treatment.expirationDate).toInt()
 
         val isExpiringSoon = daysUntil in 0..29
@@ -68,7 +68,7 @@ fun UpcomingTreatmentExpirationDatesContent(
         TreatmentCardData(
             titleText = treatment.name.ifBlank { treatment.type.displayName(context) },
             dateText = stringResource(
-                R.string.expires_on_text,
+                shared.string.expires_on_text,
                 formatLocalDate(treatment.expirationDate)
             ),
             icon = treatment.type.iconRes,
@@ -81,7 +81,7 @@ fun UpcomingTreatmentExpirationDatesContent(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            text = stringResource(R.string.upcoming_expiration_dates_card_section_heading),
+            text = stringResource(shared.string.home_section_upcoming_treatment_expirations),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.surfaceTint
         )
@@ -156,13 +156,14 @@ fun UpcomingTreatmentExpirationDates(viewModel: DataViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewUpcomingTreatmentExpirationDates() {
+    val today = LocalDate.now()
     val sampleTreatments = listOf(
         Treatment(
             id = 1,
             expirationDate = LocalDate.now().plusMonths(2),
             name = "Levemir Penfill",
-            createdAt = LocalDate.now().minusYears(8),
-            updatedAt = LocalDate.now().minusYears(8),
+            createdAt = today.minusYears(1),
+            updatedAt = today.minusMonths(7),
             isArchived = false,
             type = TreatmentType.SLOW_ACTING_INSULIN_CARTRIDGE
         ),
@@ -170,8 +171,8 @@ fun PreviewUpcomingTreatmentExpirationDates() {
             id = 2,
             expirationDate = LocalDate.now().plusDays(23),
             name = "Novorapid Penfill",
-            createdAt = LocalDate.now().minusYears(8),
-            updatedAt = LocalDate.now().minusYears(8),
+            createdAt = today.minusYears(1),
+            updatedAt = today.minusDays(18),
             isArchived = false,
             type = TreatmentType.FAST_ACTING_INSULIN_CARTRIDGE
         )
