@@ -13,7 +13,7 @@ import com.diabdata.data.DataRepository
 import com.diabdata.data.DataViewModel
 import com.diabdata.data.DiabDataDatabase
 import com.diabdata.glanceWidget.GlanceWidgetWorker
-import com.diabdata.wearOsComplications.ComplicationUpdateWorker
+import com.diabdata.wearOsComplications.ExpiringDevicesComplicationUpdateWorker
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -39,7 +39,8 @@ class DiabDataApp : Application() {
         val vm = DataViewModel(repo, this)
         val workManager = WorkManager.getInstance(this)
 
-        val periodicComplicationWork = PeriodicWorkRequestBuilder<ComplicationUpdateWorker>(
+        val periodicComplicationWork =
+            PeriodicWorkRequestBuilder<ExpiringDevicesComplicationUpdateWorker>(
             30, TimeUnit.MINUTES
         ).build()
 
@@ -69,7 +70,8 @@ class DiabDataApp : Application() {
                     )
 
                     // Wear OS complication
-                    val complicationWork = OneTimeWorkRequestBuilder<ComplicationUpdateWorker>()
+                    val complicationWork =
+                        OneTimeWorkRequestBuilder<ExpiringDevicesComplicationUpdateWorker>()
                         .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                         .build()
                     workManager.enqueueUniqueWork(

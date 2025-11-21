@@ -52,7 +52,6 @@ class ExpiringMedicalDevicesComplicationService :
                 .build()
         )
             .setTitle(PlainComplicationText.Builder(daysCountText).build())
-            .setText(PlainComplicationText.Builder("").build())
             .setMonochromaticImage(
                 MonochromaticImage.Builder(
                     Icon.createWithResource(applicationContext, latestIconRes)
@@ -71,7 +70,6 @@ class ExpiringMedicalDevicesComplicationService :
                 .build()
         )
             .setTitle(PlainComplicationText.Builder("2D").build())
-            .setText(PlainComplicationText.Builder("").build())
             .setMonochromaticImage(
                 MonochromaticImage.Builder(
                     Icon.createWithResource(

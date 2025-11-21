@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 
-class ComplicationUpdateWorker(
+class ExpiringDevicesComplicationUpdateWorker(
     context: Context,
     params: WorkerParameters
 ) : CoroutineWorker(context, params) {
