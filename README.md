@@ -3,7 +3,7 @@
 <!-- PROJECT SHIELDS -->
 
 [![Static Badge](https://img.shields.io/badge/CONTRIBUTORS-1-blue)](https://github.com/Florian-cossu/chat_mockup/graphs/contributors)
-[![Static Badge](https://img.shields.io/badge/VERSION-3.9.7-teal)](#)
+[![Static Badge](https://img.shields.io/badge/VERSION-4.2.1-teal)](https://github.com/Florian-cossu/Diab_data_android/releases)
 [![Static Badge](https://img.shields.io/badge/OWNER-Florian%20Cossu-38bdf8)](https://github.com/Florian-cossu)
 
 <!-- PROJECT LOGO -->
