@@ -149,7 +149,7 @@ fun UpcomingTreatmentExpirationDatesContent(
 
 @Composable
 fun UpcomingTreatmentExpirationDates(viewModel: DataViewModel) {
-    val treatments by viewModel.upcomingExpirationDates.collectAsState()
+    val treatments by viewModel.upcomingExpiringTreatmentDates.collectAsState()
     UpcomingTreatmentExpirationDatesContent(treatments)
 }
 

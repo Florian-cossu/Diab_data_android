@@ -129,7 +129,7 @@ class DataViewModel(
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // Expiration dates
-    val upcomingExpirationDates: StateFlow<List<Treatment>> =
+    val upcomingExpiringTreatmentDates: StateFlow<List<Treatment>> =
         repository.getUpcomingExpDates(LocalDate.now())
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 

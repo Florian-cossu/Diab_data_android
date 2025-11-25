@@ -1,4 +1,4 @@
-package com.diabdata.workers
+package com.diabdata.workers.reminders
 
 import android.content.Context
 import androidx.work.CoroutineWorker

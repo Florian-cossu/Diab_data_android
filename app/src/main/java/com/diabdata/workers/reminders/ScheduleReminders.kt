@@ -1,4 +1,4 @@
-package com.diabdata.workers
+package com.diabdata.workers.reminders
 
 import android.content.Context
 import com.diabdata.data.DataViewModel
@@ -13,7 +13,7 @@ suspend fun scheduleAllReminders(context: Context, dataViewModel: DataViewModel)
     val reminderOffsets = listOf(30, 14, 1)
 
     val appointments = dataViewModel.upcomingAppointment.first()
-    val expirations = dataViewModel.upcomingExpirationDates.first()
+    val expirations = dataViewModel.upcomingExpiringTreatmentDates.first()
 
     appointments.forEach { appointment ->
         reminderOffsets.forEach { offset ->
@@ -93,7 +93,7 @@ suspend fun scheduleAppointmentReminders(context: Context, dataViewModel: DataVi
 
 suspend fun scheduleMedicationExpirationReminders(context: Context, dataViewModel: DataViewModel) {
     val reminderOffsets = listOf(30, 14, 1)
-    val expirations = dataViewModel.upcomingExpirationDates.first()
+    val expirations = dataViewModel.upcomingExpiringTreatmentDates.first()
 
     expirations.forEach { treatment ->
         reminderOffsets.forEach { offset ->

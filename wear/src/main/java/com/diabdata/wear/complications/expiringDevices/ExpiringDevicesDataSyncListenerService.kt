@@ -1,4 +1,4 @@
-package com.diabdata.wear.complication.expiringDevices
+package com.diabdata.wear.complications.expiringDevices
 
 import android.content.ComponentName
 import androidx.core.content.edit
