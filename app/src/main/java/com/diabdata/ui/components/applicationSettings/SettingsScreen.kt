@@ -42,8 +42,8 @@ import com.diabdata.ui.components.applicationSettings.components.SettingsSection
 import com.diabdata.ui.components.applicationSettings.components.SettingsToggle
 import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.showNotification
-import com.diabdata.workers.scheduleAppointmentReminders
-import com.diabdata.workers.scheduleMedicationExpirationReminders
+import com.diabdata.workers.reminders.scheduleAppointmentReminders
+import com.diabdata.workers.reminders.scheduleMedicationExpirationReminders
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.Instant

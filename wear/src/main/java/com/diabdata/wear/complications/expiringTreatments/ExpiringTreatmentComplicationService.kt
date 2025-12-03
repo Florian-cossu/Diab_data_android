@@ -1,4 +1,4 @@
-package com.diabdata.wear.complication.expiringDevices
+package com.diabdata.wear.complications.expiringTreatments
 
 import android.graphics.drawable.Icon
 import androidx.wear.watchface.complications.data.ComplicationData
@@ -8,32 +8,31 @@ import androidx.wear.watchface.complications.data.PlainComplicationText
 import androidx.wear.watchface.complications.data.RangedValueComplicationData
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
-import com.diabdata.shared.R
-import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
+import com.diabdata.shared.utils.dataTypes.AddableType
+import com.diabdata.shared.utils.dataTypes.TreatmentType
 import com.diabdata.shared.R as shared
 
-class ExpiringMedicalDevicesComplicationService :
+class ExpiringTreatmentComplicationService :
     SuspendingComplicationDataSourceService() {
 
     override suspend fun onComplicationRequest(request: ComplicationRequest): ComplicationData {
-
-        val prefs = getSharedPreferences("complications_medical_device_expiry", MODE_PRIVATE)
-        val devicesDaysBeforeExpiry = prefs.getString("nextDeviceExpiry", "0") ?: "0"
-        val daysBeforeExpiry = devicesDaysBeforeExpiry.toInt()
-        val deviceLifespanValue = prefs.getString("nextDeviceLifespan", "0") ?: "0"
-        val deviceTypeStr = prefs.getString("deviceIconRes", "UNKNOWN") ?: "UNKNOWN"
+        val prefs = getSharedPreferences("complications_treatment_expiry", MODE_PRIVATE)
+        val treatmentDaysBeforeExpiry = prefs.getString("nextTreatmentExpiry", "0") ?: "0"
+        val daysBeforeExpiry = treatmentDaysBeforeExpiry.toInt()
+        val treatmentElapsedLifespan = prefs.getString("elapsedTreatmentConservation", "0") ?: "0"
+        val treatmentTypeStr = prefs.getString("treatmentIconRes", "UNKNOWN") ?: "UNKNOWN"
 
         val latestIconRes = try {
-            MedicalDeviceInfoType.valueOf(deviceTypeStr).iconRes
+            TreatmentType.valueOf(treatmentTypeStr).iconRes
         } catch (e: Exception) {
-            MedicalDeviceInfoType.UNKNOWN.iconRes
+            AddableType.TREATMENT.iconRes
         }
 
         var daysCountText = ""
 
         daysCountText = if (daysBeforeExpiry > 0) {
             resources.getQuantityString(
-                R.plurals.date_abbr_days,
+                shared.plurals.date_abbr_days,
                 daysBeforeExpiry,
                 daysBeforeExpiry
             )
@@ -41,14 +40,16 @@ class ExpiringMedicalDevicesComplicationService :
             getString(shared.string.date_abbr_today)
         }
 
-        val rangeValue: Float = deviceLifespanValue.toFloat() - devicesDaysBeforeExpiry.toFloat()
+        val totalLifespan: Float = treatmentElapsedLifespan.toFloat() + daysBeforeExpiry.toFloat()
+
+        val rangeValue: Float = treatmentElapsedLifespan.toFloat()
 
 
         return RangedValueComplicationData.Builder(
             value = rangeValue.coerceAtLeast(0f),
             min = 0f,
-            max = if (deviceLifespanValue.toFloat() > 0f) deviceLifespanValue.toFloat() else 1f,
-            contentDescription = PlainComplicationText.Builder(getString(shared.string.wear_complication_expiring_devices_plain_text_builder))
+            max = if (totalLifespan > 0f) totalLifespan else 1f,
+            contentDescription = PlainComplicationText.Builder(getString(shared.string.wear_complication_expiring_treatments_plain_text_builder))
                 .build()
         )
             .setTitle(PlainComplicationText.Builder(daysCountText).build())
@@ -66,15 +67,15 @@ class ExpiringMedicalDevicesComplicationService :
             value = 2f,
             min = 0f,
             max = 3f,
-            contentDescription = PlainComplicationText.Builder(getString(shared.string.wear_complication_expiring_devices_plain_text_builder))
+            contentDescription = PlainComplicationText.Builder(getString(shared.string.wear_complication_expiring_treatments_plain_text_builder))
                 .build()
         )
-            .setTitle(PlainComplicationText.Builder("2D").build())
+            .setTitle(PlainComplicationText.Builder("1D").build())
             .setMonochromaticImage(
                 MonochromaticImage.Builder(
                     Icon.createWithResource(
                         applicationContext,
-                        MedicalDeviceInfoType.UNKNOWN.iconRes
+                        AddableType.TREATMENT.iconRes
                     )
                 ).build()
             )

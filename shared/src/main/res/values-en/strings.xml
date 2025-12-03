@@ -319,6 +319,24 @@
     <!-- ============================================= -->
     <!-- MEDICAL DEVICE EXPIRY RANGED VALUE COMPLICATION -->
     <!-- ============================================= -->
+    <string name="wear_complication_expiring_devices_label">Devices expiring soon</string>
     <string name="wear_complication_expiring_devices">To replace soon</string>
     <string name="wear_complication_expiring_devices_plain_text_builder">Days left</string>
+
+    <!-- ============================================= -->
+    <!-- APPOINTMENT COMPLICATION -->
+    <!-- ============================================= -->
+    <string name="wear_complication_upcoming_appointment_label">Upcoming appointments</string>
+
+    <!-- Text descriptions -->
+    <string name="wear_complication_no_upcoming_appointment_text_description">No appointments</string>
+    <string name="wear_complication_upcoming_appointment_today_text_description">Appointment today</string>
+    <string name="wear_complication_upcoming_appointment_tomorrow_text_description">Appointment tomorrow</string>
+    <string name="wear_complication_upcoming_appointment_in_days_text_description">Appointment in %1$s days</string>
+
+    <!-- ============================================= -->
+    <!-- TREATMENT EXPIRY RANGED VALUE COMPLICATION -->
+    <!-- ============================================= -->
+    <string name="wear_complication_expiring_treatments_label">Treatments expiring soon</string>
+    <string name="wear_complication_expiring_treatments_plain_text_builder">Days left</string>
 </resources>

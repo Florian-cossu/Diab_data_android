@@ -3,21 +3,13 @@ package com.diabdata
 import android.app.Application
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.OutOfQuotaPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.diabdata.data.DataRepository
 import com.diabdata.data.DataViewModel
 import com.diabdata.data.DiabDataDatabase
-import com.diabdata.glanceWidget.GlanceWidgetWorker
-import com.diabdata.wearOsComplications.ExpiringDevicesComplicationUpdateWorker
+import com.diabdata.workers.main.WorkersInitializer
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 class DiabDataApp : Application() {
     override fun onCreate() {
@@ -37,49 +29,18 @@ class DiabDataApp : Application() {
         )
 
         val vm = DataViewModel(repo, this)
-        val workManager = WorkManager.getInstance(this)
 
-        val periodicComplicationWork =
-            PeriodicWorkRequestBuilder<ExpiringDevicesComplicationUpdateWorker>(
-            30, TimeUnit.MINUTES
-        ).build()
-
-        workManager.enqueueUniquePeriodicWork(
-            "complication_medical_device_expiry_periodic_update",
-            ExistingPeriodicWorkPolicy.KEEP,
-            periodicComplicationWork
-        )
+        WorkersInitializer.enqueuePeriodicWorkers(this)
 
         ProcessLifecycleOwner.get().lifecycleScope.launch {
             combine(
-                vm.currentConsumableDevices,
-                vm.upcomingAppointment
+                vm.currentConsumableDevices, vm.upcomingAppointment
             ) { devices, appointments ->
                 devices to appointments.firstOrNull()
+            }.distinctUntilChanged().collect {
+                WorkersInitializer.enqueueOneTimeWorkers(this@DiabDataApp)
             }
-                .distinctUntilChanged()
-                .collect {
-                    // Glance widget
-                    val glanceWork = OneTimeWorkRequestBuilder<GlanceWidgetWorker>()
-                        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                        .build()
-                    workManager.enqueueUniqueWork(
-                        "glance_widget_update_once",
-                        ExistingWorkPolicy.REPLACE,
-                        glanceWork
-                    )
-
-                    // Wear OS complication
-                    val complicationWork =
-                        OneTimeWorkRequestBuilder<ExpiringDevicesComplicationUpdateWorker>()
-                        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                        .build()
-                    workManager.enqueueUniqueWork(
-                        "complication_medical_device_expiry_update_once",
-                        ExistingWorkPolicy.REPLACE,
-                        complicationWork
-                    )
-                }
         }
     }
 }
+
