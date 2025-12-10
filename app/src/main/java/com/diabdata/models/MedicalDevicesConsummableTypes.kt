@@ -24,12 +24,12 @@ enum class MedicalDevicesConsumableTypes(
     ),
     CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_SENSOR(
         displayNameRes = shared.string.device_type_cgm_sensor,
-        iconRes = shared.drawable.continuous_glucose_monitoring_system_sensor,
+        iconRes = shared.drawable.continuous_glucose_monitoring_system_sensor_icon_vector,
         baseColor = Color(0xFFF55128),
     ),
     CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_TRANSMITTER(
         displayNameRes = shared.string.device_type_cgm_transmitter,
-        iconRes = shared.drawable.continuous_glucose_monitoring_system_transmitter,
+        iconRes = shared.drawable.continuous_glucose_monitoring_system_transmitter_icon_vector,
         baseColor = Color(0xFF458DEA),
     );
 

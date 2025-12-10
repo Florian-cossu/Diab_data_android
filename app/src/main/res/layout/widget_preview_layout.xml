@@ -79,7 +79,7 @@
                 android:background="@drawable/circle_shape_cgm_sensor"
                 android:contentDescription="@string/appointment_annual_checkup"
                 android:padding="8dp"
-                android:src="@drawable/continuous_glucose_monitoring_system_sensor"
+                android:src="@drawable/continuous_glucose_monitoring_system_sensor_icon_vector"
                 android:tint="@color/device_type_continuous_glucose_monitoring_system_sensor_color_darkened"
                 tools:ignore="UseAppTint" />
 
@@ -117,7 +117,7 @@
                 android:background="@drawable/circle_shape_cgm_transmitter"
                 android:contentDescription="@string/appointment_annual_checkup"
                 android:padding="8dp"
-                android:src="@drawable/continuous_glucose_monitoring_system_transmitter"
+                android:src="@drawable/continuous_glucose_monitoring_system_transmitter_icon_vector"
                 android:tint="@color/device_type_continuous_glucose_monitoring_system_transmitter_color_darkened"
                 tools:ignore="UseAppTint" />
 

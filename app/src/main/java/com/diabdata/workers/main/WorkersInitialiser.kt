@@ -8,9 +8,9 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.diabdata.glanceWidget.GlanceWidgetWorker
-import com.diabdata.wearOsComplications.ExpiringDevicesComplicationUpdateWorker
-import com.diabdata.wearOsComplications.ExpiringTreatmentComplicationUpdateWorker
-import com.diabdata.wearOsComplications.UpcomingAppointmentComplicationUpdateWorker
+import com.diabdata.wearOsComplications.complicationsWorkers.ExpiringDevicesComplicationUpdateWorker
+import com.diabdata.wearOsComplications.complicationsWorkers.ExpiringTreatmentComplicationUpdateWorker
+import com.diabdata.wearOsComplications.complicationsWorkers.UpcomingAppointmentComplicationUpdateWorker
 import java.util.concurrent.TimeUnit
 
 object WorkersInitializer {

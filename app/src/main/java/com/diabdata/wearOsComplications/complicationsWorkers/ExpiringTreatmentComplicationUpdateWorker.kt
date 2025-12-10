@@ -1,4 +1,4 @@
-package com.diabdata.wearOsComplications
+package com.diabdata.wearOsComplications.complicationsWorkers
 
 import android.content.Context
 import androidx.work.CoroutineWorker
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 
-class UpcomingAppointmentComplicationUpdateWorker(
+class ExpiringTreatmentComplicationUpdateWorker(
     context: Context,
     params: WorkerParameters
 ) : CoroutineWorker(context, params) {
@@ -25,32 +25,29 @@ class UpcomingAppointmentComplicationUpdateWorker(
                 return Result.failure()
             }
 
-            val dao = DiabDataDatabase.getDatabase(applicationContext).appointmentDao()
+            val dao = DiabDataDatabase.getDatabase(applicationContext).treatmentDao()
+
             val today = LocalDate.now()
-            val upcomingAppointments = dao.getUpcomingAppointmentsFlow(today).firstOrNull()
 
-            val nextAppointment = upcomingAppointments?.minByOrNull { it.date }
+            val upcomingTreatments = dao.getUpcomingExpirationDatesFlow(today).firstOrNull()
+            val nextTreatment = upcomingTreatments?.minByOrNull { it.expirationDate }
 
-            val dataMapRequest = PutDataMapRequest.create("/complications/upcoming_appointment")
+            val dataMapRequest = PutDataMapRequest.create("/complications/treatment_expiry")
 
-            if (nextAppointment != null) {
-                val numberOfDays = nextAppointment.date.getNumberOfDaysUntil()
-                val appointmentType = nextAppointment.type.toString()
-                val doctor = nextAppointment.doctor.toString()
+            if (nextTreatment != null) {
+                val elapsed = nextTreatment.createdAt.getNumberOfDaysUntil()
+                val numberOfDays = nextTreatment.expirationDate.getNumberOfDaysUntil()
+                val nextTreatmentIcon = nextTreatment.type.toString()
 
-                dataMapRequest.dataMap.putInt("nextAppointment", numberOfDays)
-                dataMapRequest.dataMap.putString("doctor", doctor)
-                dataMapRequest.dataMap.putString("appointmentType", appointmentType)
-                dataMapRequest.dataMap.putBoolean("hasAppointment", true)
+                dataMapRequest.dataMap.putInt("nextTreatmentExpiryDays", numberOfDays)
+                dataMapRequest.dataMap.putInt("elapsedTreatmentConservation", elapsed)
+                dataMapRequest.dataMap.putString("treatmentIconRes", nextTreatmentIcon)
+                dataMapRequest.dataMap.putBoolean("hasTreatment", true)
             } else {
-                dataMapRequest.dataMap.putBoolean("hasAppointment", false)
+                dataMapRequest.dataMap.putBoolean("hasTreatment", false)
             }
 
             dataMapRequest.dataMap.putLong("timestamp", System.currentTimeMillis())
-            dataMapRequest.dataMap.putInt(
-                "updateCount",
-                (System.currentTimeMillis() % Int.MAX_VALUE).toInt()
-            )
 
             val putDataRequest = dataMapRequest.asPutDataRequest()
             putDataRequest.setUrgent()
@@ -61,6 +58,7 @@ class UpcomingAppointmentComplicationUpdateWorker(
 
             return Result.success()
         } catch (e: Exception) {
+            e.printStackTrace()
             return Result.retry()
         }
     }

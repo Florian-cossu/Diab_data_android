@@ -76,7 +76,7 @@ fun ChangelogDialog(onDismiss: () -> Unit) {
                     )
                     Spacer(Modifier.width(12.dp))
                     Text(
-                        text = "Updates - 11/10/2025",
+                        text = "Updates - 25/11/2025",
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -90,44 +90,28 @@ fun ChangelogDialog(onDismiss: () -> Unit) {
                         .heightIn(max = maxHeight)
                 ) {
                     changelogSection(
-                        "- NEW SECTION",
+                        "- CLEANUP",
                         listOf(
-                            "Added devices section in Navbar",
-                            "Added currently active consumable medical devices component",
-                            "Added non consumable medical devices list component",
-                            "Added tab navigation on device page to list reported and faulty devices"
+                            "Major reorganization of string resources with consistent naming.",
+                            "Moved almost all existing app resources into shared.",
+                            "Cleaned, grouped, and simplified libs.versions.toml.",
+                            "Removed unused dependencies (Accompanist, old chart libs).",
+                            "Updated Gradle configuration across modules."
                         )
                     )
                     changelogSection(
-                        "- SETTINGS PAGE",
+                        "- DATABASE",
                         listOf(
-                            "Added GTIN Csv version number in settings page",
-                            "Updated clear database popup text"
+                            "Added missing migration files.",
+                            "Enabled schema export.",
+                            "Fixed previous incorrect migrations."
                         )
                     )
                     changelogSection(
-                        "- ICONS",
-                        listOf("Added custom icon sets for upcoming device page")
-                    )
-                    changelogSection(
-                        "- DATABASE MANAGEMENT",
+                        "- WEAR OS WATCHES SUPPORT",
                         listOf(
-                            "Added clean database migrations",
-                            "Added medical devices database",
-                            "Added medical device insertion popup",
-                            "Added medical device scan popup",
-                            "Added medical device to the flow feeding the database view page"
-                        )
-                    )
-                    changelogSection(
-                        "- DATAMATRIX PARSER",
-                        listOf("Reworked datamatrix parser to be more robust")
-                    )
-                    changelogSection(
-                        "- WIDGET IMPLEMENTATION",
-                        listOf(
-                            "Finished Glance widget implementation",
-                            "Finished preview of widget for launcher"
+                            "Added wearOS module",
+                            "Created new complications for expiring treatments, devices as well as upcoming appointments"
                         )
                     )
                 }
