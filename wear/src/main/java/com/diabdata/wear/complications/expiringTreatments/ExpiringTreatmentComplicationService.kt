@@ -23,9 +23,9 @@ class ExpiringTreatmentComplicationService :
         val treatmentTypeStr = prefs.getString("treatmentIconRes", "UNKNOWN") ?: "UNKNOWN"
 
         val latestIconRes = try {
-            TreatmentType.valueOf(treatmentTypeStr).iconRes
+            TreatmentType.valueOf(treatmentTypeStr).iconFilledRes
         } catch (e: Exception) {
-            AddableType.TREATMENT.iconRes
+            AddableType.TREATMENT.iconFilledRes
         }
 
         var daysCountText = ""
@@ -75,7 +75,7 @@ class ExpiringTreatmentComplicationService :
                 MonochromaticImage.Builder(
                     Icon.createWithResource(
                         applicationContext,
-                        AddableType.TREATMENT.iconRes
+                        AddableType.TREATMENT.iconFilledRes
                     )
                 ).build()
             )

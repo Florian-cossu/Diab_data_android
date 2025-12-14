@@ -8,9 +8,10 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.diabdata.glanceWidget.GlanceWidgetWorker
-import com.diabdata.wearOsComplications.complicationsWorkers.ExpiringDevicesComplicationUpdateWorker
-import com.diabdata.wearOsComplications.complicationsWorkers.ExpiringTreatmentComplicationUpdateWorker
-import com.diabdata.wearOsComplications.complicationsWorkers.UpcomingAppointmentComplicationUpdateWorker
+import com.diabdata.wearOs.complicationsWorkers.ExpiringDevicesComplicationUpdateWorker
+import com.diabdata.wearOs.complicationsWorkers.ExpiringTreatmentComplicationUpdateWorker
+import com.diabdata.wearOs.complicationsWorkers.UpcomingAppointmentComplicationUpdateWorker
+import com.diabdata.wearOs.tilesWorkers.GlanceTileUpdateWorker
 import java.util.concurrent.TimeUnit
 
 object WorkersInitializer {
@@ -33,6 +34,11 @@ object WorkersInitializer {
                 12, TimeUnit.HOURS
             ).build()
 
+        val periodicGlanceTileWork =
+            PeriodicWorkRequestBuilder<GlanceTileUpdateWorker>(
+                12, TimeUnit.HOURS
+            ).build()
+
         workManager.enqueueUniquePeriodicWork(
             uniqueWorkName = "complication_medical_device_expiry_periodic_update",
             existingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.KEEP,
@@ -49,6 +55,12 @@ object WorkersInitializer {
             uniqueWorkName = "complication_treatment_expiry_periodic_update",
             existingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.KEEP,
             request = periodicTreatmentExpiryWorkPolicy
+        )
+
+        workManager.enqueueUniquePeriodicWork(
+            uniqueWorkName = "glance_tile_periodic_update",
+            existingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.KEEP,
+            request = periodicGlanceTileWork
         )
     }
 
@@ -95,6 +107,18 @@ object WorkersInitializer {
             uniqueWorkName = "complication_treatment_expiry_update_once",
             existingWorkPolicy = ExistingWorkPolicy.REPLACE,
             request = expiringTreatmentComplicationWork
+        )
+
+        // Wear Os tile
+        val glanceTileWork =
+            OneTimeWorkRequestBuilder<GlanceTileUpdateWorker>().setExpedited(
+                OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST
+            ).build()
+
+        workManager.enqueueUniqueWork(
+            uniqueWorkName = "glance_tile_update_once",
+            existingWorkPolicy = ExistingWorkPolicy.REPLACE,
+            request = glanceTileWork
         )
     }
 }

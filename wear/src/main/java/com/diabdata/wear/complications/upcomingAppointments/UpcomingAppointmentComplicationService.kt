@@ -31,7 +31,7 @@ class UpcomingAppointmentComplicationService : SuspendingComplicationDataSourceS
             iconRes = try {
                 AppointmentType.valueOf(appointmentTypeStr).iconRes
             } catch (e: Exception) {
-                AppointmentType.APPOINTMENT.iconRes
+                AppointmentType.APPOINTMENT.iconFilledRes
             }
 
             daysCountText = when (daysBeforeAppointment) {
@@ -57,7 +57,7 @@ class UpcomingAppointmentComplicationService : SuspendingComplicationDataSourceS
             doctor = ""
             contentDescription =
                 resources.getString(shared.string.wear_complication_no_upcoming_appointment_text_description)
-            iconRes = AppointmentType.APPOINTMENT.iconRes
+            iconRes = AppointmentType.APPOINTMENT.iconFilledRes
         }
 
         return ShortTextComplicationData.Builder(
@@ -85,7 +85,7 @@ class UpcomingAppointmentComplicationService : SuspendingComplicationDataSourceS
             contentDescription = PlainComplicationText.Builder(
                 resources.getString(
                     shared.string.wear_complication_upcoming_appointment_in_days_text_description,
-                    3
+                    "3"
                 )
             ).build()
         )
@@ -94,7 +94,7 @@ class UpcomingAppointmentComplicationService : SuspendingComplicationDataSourceS
                 MonochromaticImage.Builder(
                     Icon.createWithResource(
                         applicationContext,
-                        AppointmentType.APPOINTMENT.iconRes
+                        AppointmentType.APPOINTMENT.iconFilledRes
                     )
                 ).build()
             )

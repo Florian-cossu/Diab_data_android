@@ -23,9 +23,9 @@ class ExpiringMedicalDevicesComplicationService :
         val deviceTypeStr = prefs.getString("deviceIconRes", "UNKNOWN") ?: "UNKNOWN"
 
         val latestIconRes = try {
-            MedicalDeviceInfoType.valueOf(deviceTypeStr).iconRes
+            MedicalDeviceInfoType.valueOf(deviceTypeStr).iconFilledRes
         } catch (e: Exception) {
-            MedicalDeviceInfoType.UNKNOWN.iconRes
+            MedicalDeviceInfoType.UNKNOWN.iconFilledRes
         }
 
         var daysCountText = ""
@@ -73,7 +73,7 @@ class ExpiringMedicalDevicesComplicationService :
                 MonochromaticImage.Builder(
                     Icon.createWithResource(
                         applicationContext,
-                        MedicalDeviceInfoType.UNKNOWN.iconRes
+                        MedicalDeviceInfoType.UNKNOWN.iconFilledRes
                     )
                 ).build()
             )

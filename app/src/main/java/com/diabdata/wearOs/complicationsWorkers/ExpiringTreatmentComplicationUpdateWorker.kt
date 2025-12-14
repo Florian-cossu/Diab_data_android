@@ -1,4 +1,4 @@
-package com.diabdata.wearOsComplications.complicationsWorkers
+package com.diabdata.wearOs.complicationsWorkers
 
 import android.content.Context
 import androidx.work.CoroutineWorker
