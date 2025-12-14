@@ -50,26 +50,32 @@ dependencies {
     implementation(libs.androidx.wear.tooling.preview)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
-    implementation(libs.androidx.tiles)
-    implementation(libs.androidx.tiles.material)
-    implementation(libs.androidx.tiles.tooling.preview)
     implementation(libs.horologist.compose.tools)
-    implementation(libs.horologist.tiles)
-    implementation(libs.androidx.watchface.complications.data.source.ktx)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     debugImplementation(libs.androidx.tiles.tooling)
 
+    // Tiles
+    implementation(libs.androidx.tiles)
+    implementation(libs.horologist.tiles)
+    implementation(libs.androidx.tiles.material)
+    implementation(libs.androidx.tiles.tooling.preview)
+
     // Watch Face Complications
-    implementation("androidx.wear.watchface:watchface:1.2.1")
-    implementation("androidx.wear.watchface:watchface-complications-data-source:1.2.0")
+    implementation(libs.androidx.watchface)
+    implementation(libs.androidx.watchface.complications.data.source)
+    implementation(libs.androidx.watchface.complications.data.source.ktx)
 
     // Data Layer
-    implementation("com.google.android.gms:play-services-wearable:18.1.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
-    implementation("androidx.wear:wear:1.2.0")
+    implementation(libs.play.services.wearable)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.kotlinx.coroutines.guava)
+    implementation(libs.androidx.wear)
+
+    // GSON
+    implementation(libs.gson)
 
     // Shared resources
     implementation(project(":shared"))

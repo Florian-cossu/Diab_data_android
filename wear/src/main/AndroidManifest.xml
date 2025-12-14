@@ -121,9 +121,10 @@
         -->
 
         <service
-            android:name=".tile.MainTileService"
+            android:name=".tile.glanceTile.GlanceTileService"
             android:exported="true"
-            android:label="@string/tile_label"
+            android:label="@string/glance_tile_label"
+            android:description="@string/glance_tile_description"
             android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">
             <intent-filter>
                 <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
@@ -132,6 +133,18 @@
             <meta-data
                 android:name="androidx.wear.tiles.PREVIEW"
                 android:resource="@drawable/tile_preview" />
+        </service>
+
+        <service
+            android:name=".tile.glanceTile.GlanceTileDataListenerService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+                <data
+                    android:scheme="wear"
+                    android:host="*"
+                    android:pathPrefix="/diabdata/tile/glance_tile" />
+            </intent-filter>
         </service>
 
         <uses-library

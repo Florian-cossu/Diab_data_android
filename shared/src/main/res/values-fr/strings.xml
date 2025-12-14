@@ -311,6 +311,10 @@
     <string name="scanner_hint_datamatrix">Scannez la DataMatrix de votre traitement (petit QR Code)</string>
 
     <!-- ============================================= -->
+    <!-- WEAR OS -->
+    <!-- ============================================= -->
+
+    <!-- ============================================= -->
     <!-- GLANCE WIDGET -->
     <!-- ============================================= -->
     <string name="widget_description">Aperçu des périphériques et des rendez-vous à venir</string>
@@ -339,4 +343,10 @@
     <!-- ============================================= -->
     <string name="wear_complication_expiring_treatments_label">Traitements à remplacer</string>
     <string name="wear_complication_expiring_treatments_plain_text_builder">Jours restants</string>
+
+    <!-- ============================================= -->
+    <!-- GLANCE TILE -->
+    <!-- ============================================= -->
+    <string name="glance_tile_label">Tuile coup d\'œil</string>
+    <string name="glance_tile_description">Prochains rdvs, peremptions</string>
 </resources>

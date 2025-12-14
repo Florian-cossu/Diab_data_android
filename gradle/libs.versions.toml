@@ -4,21 +4,27 @@ cameraCore = "1.5.2"
 datastore = "1.2.0"
 glance = "1.1.1"
 gson = "2.13.2"
+gsonVersion = "2.10.1"
 kotlin = "2.2.21"
 coreKtx = "1.17.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 kotlinxCoroutinesPlayServices = "1.10.2"
+kotlinxCoroutinesPlayServicesVersion = "1.7.3"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.12.1"
 composeBom = "2025.12.00"
 material = "1.13.0"
 material3Expressive = "1.5.0-alpha10"
 navigationCompose = "2.9.6"
+playServicesWearableVersion = "18.1.0"
 protobufJavalite = "4.33.2"
 roomRuntime = "2.8.4"
 vico = "2.3.6"
+watchface = "1.2.1"
+watchfaceComplicationsDataSourceVersion = "1.2.0"
+wear = "1.3.0"
 workRuntimeKtx = "2.11.0"
 zxingAndroidEmbedded = "4.3.0"
 zxing = "3.5.4"
@@ -74,6 +80,11 @@ androidx-animation = { group = "androidx.compose.animation", name = "animation" 
 
 # Material
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }  # Version BOM
+androidx-watchface = { module = "androidx.wear.watchface:watchface", version.ref = "watchface" }
+androidx-watchface-complications-data-source-v120 = { module = "androidx.wear.watchface:watchface-complications-data-source", version.ref = "watchfaceComplicationsDataSourceVersion" }
+androidx-wear = { module = "androidx.wear:wear", version.ref = "wear" }
+gson-v2101 = { module = "com.google.code.gson:gson", version.ref = "gsonVersion" }
+kotlinx-coroutines-play-services-v173 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServicesVersion" }
 material3-expressive = { group = "androidx.compose.material3", name = "material3", version.ref = "material3Expressive" }  # Version alpha spécifique
 material = { module = "com.google.android.material:material", version.ref = "material" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
@@ -97,6 +108,7 @@ kotlinx-coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-
 kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServices" }
 
 # Vico
+play-services-wearable-v1810 = { module = "com.google.android.gms:play-services-wearable", version.ref = "playServicesWearableVersion" }
 vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
 vico-compose-m2 = { group = "com.patrykandpatrick.vico", name = "compose-m2", version.ref = "vico" }
 vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }

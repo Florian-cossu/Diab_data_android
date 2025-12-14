@@ -316,6 +316,10 @@
     <string name="scanner_hint_datamatrix">Scan your medication DataMatrix (small QR Code)</string>
 
     <!-- ============================================= -->
+    <!-- WEAR OS -->
+    <!-- ============================================= -->
+
+    <!-- ============================================= -->
     <!-- GLANCE WIDGET -->
     <!-- ============================================= -->
     <string name="widget_description">Overview of devices and upcoming appointments</string>
@@ -344,4 +348,10 @@
     <!-- ============================================= -->
     <string name="wear_complication_expiring_treatments_label">Treatments expiring soon</string>
     <string name="wear_complication_expiring_treatments_plain_text_builder">Days left</string>
+
+    <!-- ============================================= -->
+    <!-- GLANCE TILE -->
+    <!-- ============================================= -->
+    <string name="glance_tile_label">At a Glance Tile</string>
+    <string name="glance_tile_description">Upcoming appointments, devices expiry and treatments</string>
 </resources>

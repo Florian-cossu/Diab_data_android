@@ -1,6 +1,7 @@
 package com.diabdata
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.diabdata.data.DataRepository
@@ -31,16 +32,21 @@ class DiabDataApp : Application() {
         val vm = DataViewModel(repo, this)
 
         WorkersInitializer.enqueuePeriodicWorkers(this)
+        WorkersInitializer.enqueueOneTimeWorkers(this)
 
         ProcessLifecycleOwner.get().lifecycleScope.launch {
             combine(
-                vm.currentConsumableDevices, vm.upcomingAppointment
-            ) { devices, appointments ->
-                devices to appointments.firstOrNull()
-            }.distinctUntilChanged().collect {
-                WorkersInitializer.enqueueOneTimeWorkers(this@DiabDataApp)
+                vm.currentConsumableDevices,
+                vm.upcomingAppointment,
+                vm.upcomingExpiringTreatmentDates
+            ) { devices, appointments, treatments ->
+                Triple(devices, appointments, treatments)
             }
+                .distinctUntilChanged()
+                .collect {
+                    Log.d("DiabDataApp", "Données modifiées, mise à jour des workers")
+                    WorkersInitializer.enqueueOneTimeWorkers(this@DiabDataApp)
+                }
         }
     }
 }
-
