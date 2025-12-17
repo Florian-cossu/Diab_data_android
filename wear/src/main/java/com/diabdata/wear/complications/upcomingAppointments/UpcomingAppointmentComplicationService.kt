@@ -9,6 +9,7 @@ import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
 import com.diabdata.shared.utils.dataTypes.AppointmentType
+import com.diabdata.shared.utils.imgUtils.toAppointmentIcon
 import com.diabdata.shared.R as shared
 
 class UpcomingAppointmentComplicationService : SuspendingComplicationDataSourceService() {
@@ -18,7 +19,7 @@ class UpcomingAppointmentComplicationService : SuspendingComplicationDataSourceS
         val hasAppointment = prefs.getBoolean("hasAppointment", false)
 
         val daysCountText: String
-        val doctor: String  // Déclaration unique
+        val doctor: String
         val contentDescription: String
         val iconRes: Int
 
@@ -28,11 +29,7 @@ class UpcomingAppointmentComplicationService : SuspendingComplicationDataSourceS
                 prefs.getString("appointmentType", "APPOINTMENT") ?: "APPOINTMENT"
             doctor = prefs.getString("doctor", "") ?: ""
 
-            iconRes = try {
-                AppointmentType.valueOf(appointmentTypeStr).iconRes
-            } catch (e: Exception) {
-                AppointmentType.APPOINTMENT.iconFilledRes
-            }
+            iconRes = appointmentTypeStr.toAppointmentIcon(filled = true)
 
             daysCountText = when (daysBeforeAppointment) {
                 0 -> getString(shared.string.date_abbr_today)

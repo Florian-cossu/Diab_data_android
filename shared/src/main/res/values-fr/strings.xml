@@ -129,6 +129,7 @@
     <string name="medication_slow_acting_insulin_vial">Insuline lente flacon</string>
     <string name="medication_glucagon_syringe">Seringue glucagen</string>
     <string name="medication_glucagon_spray">Glucagen voie nasale (Baqsimi)</string>
+    <string name="medication_unknown">Traitement inconnu</string>
 
     <!-- ============================================= -->
     <!-- DEVICE TYPES -->

@@ -129,6 +129,7 @@
     <string name="medication_slow_acting_insulin_vial">Slow acting insulin vial</string>
     <string name="medication_glucagon_syringe">Glucagon syringe</string>
     <string name="medication_glucagon_spray">Glucagon nasal spray (Baqsimi)</string>
+    <string name="medication_unknown">Unknown medication</string>
 
     <!-- ============================================= -->
     <!-- DEVICE TYPES -->

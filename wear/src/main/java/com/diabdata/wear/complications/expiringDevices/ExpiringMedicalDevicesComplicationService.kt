@@ -9,6 +9,7 @@ import androidx.wear.watchface.complications.data.RangedValueComplicationData
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
 import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
+import com.diabdata.shared.utils.imgUtils.toDeviceIcon
 import com.diabdata.shared.R as shared
 
 class ExpiringMedicalDevicesComplicationService :
@@ -22,11 +23,7 @@ class ExpiringMedicalDevicesComplicationService :
         val deviceLifespanValue = prefs.getString("nextDeviceLifespan", "0") ?: "0"
         val deviceTypeStr = prefs.getString("deviceIconRes", "UNKNOWN") ?: "UNKNOWN"
 
-        val latestIconRes = try {
-            MedicalDeviceInfoType.valueOf(deviceTypeStr).iconFilledRes
-        } catch (e: Exception) {
-            MedicalDeviceInfoType.UNKNOWN.iconFilledRes
-        }
+        val latestIconRes = deviceTypeStr.toDeviceIcon(filled = true)
 
         var daysCountText = ""
 

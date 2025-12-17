@@ -61,6 +61,12 @@ enum class TreatmentType(
         displayNameRes = R.string.medication_glucose_test_strip,
         iconRes = R.drawable.glucose_test_icon_vector,
         iconFilledRes = R.drawable.glucose_test_filled_icon_vector
+    ),
+
+    UNKNOWN(
+        displayNameRes = R.string.medication_unknown,
+        iconRes = R.drawable.syringe_icon_vector,
+        iconFilledRes = R.drawable.syringe_filled_icon_vector
     );
 
     fun displayName(context: Context): String = context.getString(displayNameRes)
