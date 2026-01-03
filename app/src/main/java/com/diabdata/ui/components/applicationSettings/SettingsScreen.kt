@@ -78,15 +78,22 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
         mutableStateOf(prefs.getBoolean("appointment_reminder", false))
     }
 
+    val notifChannelName = stringResource(shared.string.notification_channel_data)
+    val dataExportSuccess = stringResource(shared.string.toast_data_export_success)
+    val dataImportSuccess = stringResource(shared.string.toast_data_import_success)
+    val dataExportError = stringResource(shared.string.toast_data_export_error)
+    val dataImportError = stringResource(shared.string.toast_data_import_error)
+    val emptyImportFileError = stringResource(shared.string.toast_empty_file_error)
+
     val createFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/json"),
         onResult = { uri: Uri? ->
             uri?.let {
                 val jsonString = dataViewModel.exportDataAsJsonString()
 
-                val channelName = context.getString(shared.string.notification_channel_data)
-                val successText = context.getString(shared.string.toast_data_export_success)
-                val errorText = context.getString(shared.string.toast_data_export_error)
+                val channelName = notifChannelName
+                val successText = dataExportSuccess
+                val errorText = dataExportError
 
                 try {
                     context.contentResolver.openOutputStream(uri)?.use { outputStream ->
@@ -112,10 +119,10 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     val importFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(), onResult = { uri: Uri? ->
             uri?.let {
-                val channelName = context.getString(shared.string.notification_channel_data)
-                val successText = context.getString(shared.string.toast_data_import_success)
-                val errorText = context.getString(shared.string.toast_data_import_error)
-                val errorEmptyFile = context.getString(shared.string.toast_empty_file_error)
+                val channelName = notifChannelName
+                val successText = dataImportSuccess
+                val errorText = dataImportError
+                val errorEmptyFile = emptyImportFileError
 
                 try {
                     val jsonString = context.contentResolver.openInputStream(uri)?.bufferedReader()
@@ -247,7 +254,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                             workManager.cancelAllWorkByTag("treatments")
                         }
                     },
-                    icon = shared.drawable.notification_active_icon_vector,
+                    icon = shared.drawable.notification_filled_icon_vector,
                     toastText = stringResource(shared.string.toast_expiration_reminders_enabled),
                     nextReminderDate = nextTreatmentReminder
                 )
@@ -266,7 +273,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                             workManager.cancelAllWorkByTag("appointments")
                         }
                     },
-                    icon = shared.drawable.notification_active_icon_vector,
+                    icon = shared.drawable.notification_filled_icon_vector,
                     toastText = stringResource(shared.string.toast_appointment_reminders_enabled),
                     nextReminderDate = nextAppointmentReminder
                 )

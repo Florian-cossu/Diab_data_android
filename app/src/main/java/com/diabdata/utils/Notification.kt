@@ -12,7 +12,7 @@ fun Context.showNotification(
     channelName: String? = null,
     content: String,
     channelDescription: String? = null,
-    iconName: String? = null,
+    iconId: Int? = null,
     importance: NotificationImportance = NotificationImportance.DEFAULT
 ) {
     val safeChannelName = channelName ?: "DiabData Notifications"
@@ -32,14 +32,10 @@ fun Context.showNotification(
     val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     manager.createNotificationChannel(channel)
 
-    // Icône de notif
-    val iconResId = iconName?.let {
-        resources.getIdentifier(it, "drawable", packageName)
-    } ?: shared.drawable.logo_icon_vector
+    val iconResId = iconId ?: shared.drawable.logo_icon_vector
 
-    // Construire la notif
     val builder = NotificationCompat.Builder(this, channelId)
-        .setSmallIcon(if (iconResId != 0) iconResId else shared.drawable.logo_icon_vector)
+        .setSmallIcon(iconResId)
         .setContentTitle(title)
         .setContentText(content)
         .setStyle(NotificationCompat.BigTextStyle().bigText(content))

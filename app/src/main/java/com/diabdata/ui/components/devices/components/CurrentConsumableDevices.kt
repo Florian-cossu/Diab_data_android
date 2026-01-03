@@ -15,16 +15,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -78,6 +83,15 @@ fun CurrentConsumableDevicesList(viewModel: DataViewModel) {
                     )
                 }
             },
+            onMarkRecycled = { device ->
+                coroutineScope.launch {
+                    viewModel.updateDevice(
+                        device.copy(
+                            isFaulty = !device.isLifeSpanOver
+                        )
+                    )
+                }
+            }
         )
     }
 }
@@ -87,6 +101,7 @@ fun CurrentConsumableDevicesList(viewModel: DataViewModel) {
 fun CurrentConsumableDevicesCards(
     devices: List<MedicalDeviceEntry>,
     onMarkFaulty: (MedicalDeviceEntry) -> Unit = {},
+    onMarkRecycled: (MedicalDeviceEntry) -> Unit = {}
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -118,7 +133,6 @@ fun CurrentConsumableDevicesCards(
         Spacer(Modifier.height(8.dp))
 
         cards.forEachIndexed { index, card ->
-            // Color animation for isFaulty device button
             val animatedContainerColor by animateColorAsState(
                 targetValue = if (card.device.isFaulty) {
                     card.textColor.darken()
@@ -239,13 +253,36 @@ fun CurrentConsumableDevicesCards(
                                 }
                             }
 
-                            FaultyToggleButton(
-                                isFaulty = card.device.isFaulty,
-                                isReported = card.device.isReported,
-                                onClick = { onMarkFaulty(card.device) },
-                                animatedContainerColor = animatedContainerColor,
-                                animatedIconColor = animatedIconColor
-                            )
+                            Row (
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                FaultyToggleButton(
+                                    isFaulty = card.device.isFaulty,
+                                    isReported = card.device.isReported,
+                                    onClick = { onMarkFaulty(card.device) },
+                                    animatedContainerColor = animatedContainerColor,
+                                    animatedIconColor = animatedIconColor
+                                )
+
+                                IconButton(
+                                    onClick = { onMarkRecycled(card.device) },
+                                    shapes = IconButtonDefaults.shapes(
+                                        shape = MaterialShapes.Square.toShape(),
+                                        pressedShape = MaterialShapes.Circle.toShape()
+                                    ),
+                                    modifier = Modifier.size(30.dp),
+                                    colors = IconButtonDefaults.iconButtonColors(
+                                        Color(0xFF0FC216).copy(alpha = 0.3f)
+                                    )
+                                ) {
+                                    SvgIcon(
+                                        resId = shared.drawable.recycle_icon_vector,
+                                        modifier = Modifier.size(20.dp),
+                                        color = Color(0xFF0FC216).darken()
+                                    )
+                                }
+                            }
                         }
                         Row(
                             modifier = Modifier.fillMaxWidth(),

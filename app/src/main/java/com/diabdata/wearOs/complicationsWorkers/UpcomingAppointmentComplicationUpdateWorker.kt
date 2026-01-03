@@ -36,7 +36,7 @@ class UpcomingAppointmentComplicationUpdateWorker(
             if (nextAppointment != null) {
                 val numberOfDays = nextAppointment.date.getNumberOfDaysUntil()
                 val appointmentType = nextAppointment.type.toString()
-                val doctor = nextAppointment.doctor.toString()
+                val doctor = nextAppointment.doctor
 
                 dataMapRequest.dataMap.putInt("nextAppointment", numberOfDays)
                 dataMapRequest.dataMap.putString("doctor", doctor)

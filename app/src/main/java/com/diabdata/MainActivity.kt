@@ -23,7 +23,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // --- Création unique de la DB et du ViewModel ---
         val db = DiabDataDatabase.getDatabase(this)
         val repository = DataRepository(
             weightDao = db.weightDao(),
@@ -39,7 +38,6 @@ class MainActivity : ComponentActivity() {
         val factory = DataViewModelFactory(repository, applicationContext as Application)
         dataViewModel = ViewModelProvider(this, factory)[DataViewModel::class.java]
 
-        // --- Gestion du status bar ---
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {

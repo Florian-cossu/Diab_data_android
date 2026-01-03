@@ -426,6 +426,7 @@ class DataViewModel(
                 TreatmentType.BLOOD_GLUCOSE_TEST_STRIP -> TreatmentType.BLOOD_GLUCOSE_TEST_STRIP.iconRes
                 TreatmentType.GLUCAGON_SYRINGE -> TreatmentType.GLUCAGON_SYRINGE.iconRes
                 TreatmentType.GLUCAGON_SPRAY -> TreatmentType.GLUCAGON_SPRAY.iconRes
+                TreatmentType.UNKNOWN -> TreatmentType.UNKNOWN.iconRes
                 null -> shared.drawable.medication_icon_vector
             }
 

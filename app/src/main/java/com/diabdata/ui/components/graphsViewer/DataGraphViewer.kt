@@ -56,7 +56,6 @@ import com.diabdata.shared.R as shared
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun GraphViewer(
-    modifier: Modifier = Modifier,
     viewModel: DataViewModel = viewModel(),
 ) {
     val scrollState = rememberScrollState()

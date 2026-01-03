@@ -21,6 +21,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.MedicationEntity
@@ -52,6 +53,8 @@ fun HomeScreen(
     val (selectedType, setSelectedType) = remember { mutableStateOf<AddableType?>(null) }
 
     var showScanner by remember { mutableStateOf(false) }
+
+    val unknownGtin = stringResource(shared.string.toast_data_unknown_medication_code)
 
     val scrollState = rememberScrollState()
 
@@ -102,10 +105,7 @@ fun HomeScreen(
                                 } else {
                                     Toast.makeText(
                                         context,
-                                        context.getString(
-                                            shared.string.toast_data_unknown_medication_code,
-                                            info.gtin
-                                        ),
+                                        unknownGtin,
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }

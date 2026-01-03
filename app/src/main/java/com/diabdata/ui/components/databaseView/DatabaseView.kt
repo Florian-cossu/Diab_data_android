@@ -88,7 +88,6 @@ import com.diabdata.shared.R as shared
 fun DatabaseEditionView(
     dataViewModel: DataViewModel
 ) {
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var selectedTypes by remember { mutableStateOf(setOf<AddableType>()) }
     var selectionMode by remember { mutableStateOf(false) }
@@ -134,6 +133,10 @@ fun DatabaseEditionView(
                     val isPressed by interactionSource.collectIsPressedAsState()
                     val isHovered by interactionSource.collectIsHoveredAsState()
 
+                    val deleteButtonText = stringResource(shared.string.action_delete)
+                    val discardedItemText = stringResource(shared.string.action_set_lifespan)
+
+
                     val bgColor = if (isPressed || isHovered) MaterialTheme.colorScheme.error
                     else MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
                     val textColor = if (isPressed || isHovered) MaterialTheme.colorScheme.onError
@@ -175,7 +178,7 @@ fun DatabaseEditionView(
                                 )
                             }
                             Spacer(Modifier.width(8.dp))
-                            Text(context.getString(shared.string.action_delete))
+                            Text(deleteButtonText)
                         }
 
                         if (typesOfSelectedEntries == setOf(AddableType.DEVICE)) {
@@ -216,7 +219,7 @@ fun DatabaseEditionView(
                                     )
                                 }
                                 Spacer(Modifier.width(8.dp))
-                                Text(context.getString(shared.string.action_set_lifespan))
+                                Text(discardedItemText)
                             }
                         }
                     }

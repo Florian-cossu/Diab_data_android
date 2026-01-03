@@ -3,7 +3,6 @@ package com.diabdata.workers.reminders
 import android.content.Context
 import com.diabdata.data.DataViewModel
 import kotlinx.coroutines.flow.first
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -116,23 +115,3 @@ suspend fun scheduleMedicationExpirationReminders(context: Context, dataViewMode
     }
 }
 
-// Reminder when user insert new data
-fun scheduleNewReminder(
-    context: Context,
-    date: LocalDate,
-    titleResId: Int,
-    content: String,
-    tag: String,
-    reminderOffsets: List<Long> = listOf(30, 14, 1)
-) {
-    reminderOffsets.forEach { offset ->
-        val notifyDate = date.minusDays(offset)
-        scheduleNotification(
-            context,
-            title = context.getString(titleResId),
-            content = content,
-            date = notifyDate,
-            tag = tag
-        )
-    }
-}

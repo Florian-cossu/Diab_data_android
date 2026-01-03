@@ -97,7 +97,7 @@ class GlanceTileUpdateWorker(
         return nextAppointment?.let {
             AppointmentInfo(
                 type = it.type.toString(),
-                doctor = it.doctor.toString(),
+                doctor = it.doctor,
                 daysUntil = it.date.getNumberOfDaysUntil()
             )
         }

@@ -128,10 +128,6 @@ fun generateMedicalDeviceEntry(
 ): MedicalDeviceEntry {
     val today = LocalDate.now()
 
-    if (scanResult.data.lot == null) {
-        throw Exception("Lot number is null")
-    }
-
     val deviceEntry = MedicalDeviceEntry(
         date = today,
         lifeSpanEndDate = today.plusDays(medicalDeviceInfo.daysLifespan.toLong()),
