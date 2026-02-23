@@ -1,5 +1,6 @@
 package com.diabdata.ui.components.date_components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -37,7 +38,8 @@ fun DateSelector(
     onDateSelected: (LocalDate) -> Unit,
     isExpiryDate: Boolean = false,
     isStartDate: Boolean = false,
-    isEndDate: Boolean = false
+    isEndDate: Boolean = false,
+    @StringRes labelRes: Int? = null
 ) {
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
 
@@ -45,18 +47,17 @@ fun DateSelector(
     var showModal by remember { mutableStateOf(false) }
 
     LaunchedEffect(date) {
-        // Sync externe -> interne
         dateText = TextFieldValue(date.format(formatter))
     }
 
-    val labelText = if (isExpiryDate)
-        stringResource(shared.string.popup_placeholder_expiration_date)
-    else if (isStartDate)
-        stringResource(shared.string.popup_placeholder_start_date)
-    else if (isEndDate)
-        stringResource(shared.string.popup_placeholder_end_date)
-    else
-        stringResource(shared.string.popup_placeholder_date)
+    val labelText = if (labelRes != null) {
+        stringResource(labelRes)
+    } else when {
+        isExpiryDate -> stringResource(shared.string.popup_placeholder_expiration_date)
+        isStartDate -> stringResource(shared.string.popup_placeholder_start_date)
+        isEndDate -> stringResource(shared.string.popup_placeholder_end_date)
+        else -> stringResource(shared.string.popup_placeholder_date)
+    }
 
     OutlinedTextField(
         value = dateText,

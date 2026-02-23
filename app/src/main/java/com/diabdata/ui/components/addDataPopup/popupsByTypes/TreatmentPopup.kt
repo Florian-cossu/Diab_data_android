@@ -49,7 +49,7 @@ fun TreatmentPopup(
     }
 
     BasePopupLayout(
-        title = context.getString(
+        title = stringResource(
             if (toUpdate == null) shared.string.popup_title_add else shared.string.popup_title_update,
             AddableType.TREATMENT.getDisplayName(context)
         ),
@@ -85,7 +85,7 @@ fun TreatmentPopup(
         )
 
         EnumDropdown(
-            label = context.getString(shared.string.popup_placeholder_medication_type),
+            label = stringResource(shared.string.popup_placeholder_medication_type),
             options = TreatmentType.entries,
             selected = selectedTreatmentType,
             displayName = { it.displayName(context) },

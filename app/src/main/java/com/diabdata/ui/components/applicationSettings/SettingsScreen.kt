@@ -2,6 +2,7 @@ package com.diabdata.ui.components.applicationSettings
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -44,19 +45,26 @@ import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.showNotification
 import com.diabdata.workers.reminders.scheduleAppointmentReminders
 import com.diabdata.workers.reminders.scheduleMedicationExpirationReminders
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
+import java.util.zip.ZipOutputStream
 import com.diabdata.shared.R as shared
 
 @Composable
 fun SettingsScreen(dataViewModel: DataViewModel) {
     val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
     val currentDate = dateFormat.format(Date())
-    val fileName = "diabdata_export_$currentDate.json"
+    val fileName = "diabdata_export_$currentDate.zip"
     val context = LocalContext.current
     val scrollState = rememberScrollState()
     val versionName = BuildConfig.VERSION_NAME
@@ -86,18 +94,31 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     val emptyImportFileError = stringResource(shared.string.toast_empty_file_error)
 
     val createFileLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument("application/json"),
+        contract = ActivityResultContracts.CreateDocument("application/zip"),
         onResult = { uri: Uri? ->
             uri?.let {
-                val jsonString = dataViewModel.exportDataAsJsonString()
-
                 val channelName = notifChannelName
                 val successText = dataExportSuccess
                 val errorText = dataExportError
-
                 try {
                     context.contentResolver.openOutputStream(uri)?.use { outputStream ->
-                        outputStream.write(jsonString.toByteArray())
+                        ZipOutputStream(outputStream).use { zip ->
+                            // 1. Export JSON
+                            val jsonString = dataViewModel.exportDataAsJsonString()
+                            zip.putNextEntry(ZipEntry("data.json"))
+                            zip.write(jsonString.toByteArray())
+                            zip.closeEntry()
+
+                            // 2. Export profile pic if it exists
+                            dataViewModel.userDetails.value?.profilePhotoPath?.let { path ->
+                                val photoFile = File(path)
+                                if (photoFile.exists()) {
+                                    zip.putNextEntry(ZipEntry("profile_photo.jpg"))
+                                    photoFile.inputStream().use { it.copyTo(zip) }
+                                    zip.closeEntry()
+                                }
+                            }
+                        }
                     }
                     Toast.makeText(context, successText, Toast.LENGTH_SHORT).show()
                     context.showNotification(
@@ -114,44 +135,111 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     )
                 }
             }
-        })
+        }
+    )
 
     val importFileLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocument(), onResult = { uri: Uri? ->
+        contract = ActivityResultContracts.OpenDocument(),
+        onResult = { uri: Uri? ->
             uri?.let {
                 val channelName = notifChannelName
                 val successText = dataImportSuccess
                 val errorText = dataImportError
                 val errorEmptyFile = emptyImportFileError
 
-                try {
-                    val jsonString = context.contentResolver.openInputStream(uri)?.bufferedReader()
-                        ?.use { reader ->
-                            reader.readText()
+                scope.launch(Dispatchers.IO) {
+                    try {
+                        context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                            val bytes = inputStream.readBytes()
+                            Log.d("Import", "1. File read: ${bytes.size} bytes")
+
+                            val isZip = bytes.size >= 2
+                                    && bytes[0] == 0x50.toByte()
+                                    && bytes[1] == 0x4B.toByte()
+
+                            if (isZip) {
+                                var jsonString: String? = null
+                                var photoBytes: ByteArray? = null
+
+                                // 1. Lire TOUT le ZIP
+                                ZipInputStream(bytes.inputStream()).use { zip ->
+                                    var entry = zip.nextEntry
+                                    while (entry != null) {
+                                        when (entry.name) {
+                                            "data.json" -> jsonString = String(zip.readBytes())
+                                            "profile_photo.jpg" -> photoBytes = zip.readBytes()
+                                        }
+                                        zip.closeEntry()
+                                        entry = zip.nextEntry
+                                    }
+                                }
+
+                                // 2. D'abord sauvegarder la photo
+                                var newPhotoPath: String? = null
+                                photoBytes?.let { pBytes ->
+                                    val photoFile = File(
+                                        context.filesDir,
+                                        "profile_photo_${System.currentTimeMillis()}.jpg"
+                                    )
+                                    photoFile.outputStream().use { output ->
+                                        output.write(pBytes)
+                                    }
+                                    context.filesDir.listFiles()
+                                        ?.filter {
+                                            it.name.startsWith("profile_photo")
+                                                    && it.name != photoFile.name
+                                        }
+                                        ?.forEach { it.delete() }
+
+                                    newPhotoPath = photoFile.absolutePath
+                                }
+
+                                // 3. Ensuite importer le JSON
+                                jsonString?.let { json ->
+                                    if (json.isNotEmpty()) {
+                                        dataViewModel.importDataFromJsonString(json)
+                                    }
+                                }
+
+                                // 4. Enfin mettre à jour le path photo en DB après un délai
+                                //    pour s'assurer que le upsert du JSON est terminé
+                                newPhotoPath?.let { path ->
+                                    delay(500)  // Attendre que le viewModelScope.launch termine
+                                    dataViewModel.updateProfilePhotoPath(path)
+                                }
+                            } else {
+                                // Ancien format JSON
+                                val jsonString = String(bytes)
+                                if (jsonString.isNotEmpty()) {
+                                    dataViewModel.importDataFromJsonString(jsonString)
+                                } else {
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(context, errorEmptyFile, Toast.LENGTH_LONG).show()
+                                    }
+                                    return@use
+                                }
+                            }
+
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context, successText, Toast.LENGTH_SHORT).show()
+                            }
+                            context.showNotification(
+                                title = successText,
+                                content = uri.lastPathSegment.orEmpty(),
+                                channelName = channelName,
+                            )
                         }
-
-                    if (!jsonString.isNullOrEmpty()) {
-                        dataViewModel.importDataFromJsonString(jsonString)
-
-                        Toast.makeText(context, successText, Toast.LENGTH_SHORT).show()
-                        context.showNotification(
-                            title = successText,
-                            content = uri.lastPathSegment.orEmpty(),
-                            channelName = channelName,
-                        )
-                    } else {
-                        Toast.makeText(context, errorEmptyFile, Toast.LENGTH_LONG).show()
+                    } catch (e: Exception) {
+                        Log.e("Import", "GLOBAL CRASH", e)
+                        e.printStackTrace()
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "$errorText : ${e.message}", Toast.LENGTH_LONG).show()
+                        }
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    context.showNotification(
-                        title = "$errorText : ${e.message}",
-                        content = uri.lastPathSegment.orEmpty(),
-                        channelName = channelName,
-                    )
                 }
             }
-        })
+        }
+    )
 
     val workManager = WorkManager.getInstance(context)
 
@@ -214,7 +302,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 )
                 SettingsButton(
                     text = stringResource(shared.string.settings_import_data),
-                    onClick = { importFileLauncher.launch(arrayOf("application/json")) },
+                    onClick = { importFileLauncher.launch(arrayOf("application/json", "application/zip")) },
                     shape = RoundedCornerShape(3.dp),
                     icon = shared.drawable.restore_db_icon_vector
                 )

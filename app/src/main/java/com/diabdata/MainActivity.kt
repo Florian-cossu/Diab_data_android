@@ -33,6 +33,7 @@ class MainActivity : ComponentActivity() {
             medicationDao = db.medicationDao(),
             medicalDevicesDao = db.medicalDevicesDao(),
             medicalDeviceInfo = db.medicalDevicesInfoDao(),
+            userDetailsDao = db.userDetailsDao(),
             database = db
         )
         val factory = DataViewModelFactory(repository, applicationContext as Application)

@@ -41,7 +41,7 @@ fun Hba1cPopup(
     val isValid = hba1cText.replace(',', '.').toFloatOrNull()?.let { it in 0f..15f } == true
 
     BasePopupLayout(
-        title = context.getString(
+        title = stringResource(
             if (toUpdate == null) shared.string.popup_title_add else shared.string.popup_title_update,
             AddableType.HBA1C.getDisplayName(context)
         ),

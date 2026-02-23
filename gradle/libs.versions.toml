@@ -1,6 +1,7 @@
 [versions]
 agp = "8.13.2"
 cameraCore = "1.5.2"
+coilCompose = "2.7.0"
 core = "1.7.0"
 datastore = "1.2.0"
 glance = "1.1.1"
@@ -90,6 +91,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-watchface = { module = "androidx.wear.watchface:watchface", version.ref = "watchface" }
 androidx-watchface-complications-data-source-v120 = { module = "androidx.wear.watchface:watchface-complications-data-source", version.ref = "watchfaceComplicationsDataSourceVersion" }
 androidx-wear = { module = "androidx.wear:wear", version.ref = "wear" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 gson-v2101 = { module = "com.google.code.gson:gson", version.ref = "gsonVersion" }
 kotlinx-coroutines-play-services-v173 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServicesVersion" }
 material3-expressive = { group = "androidx.compose.material3", name = "material3", version.ref = "material3Expressive" }  # Version alpha spécifique

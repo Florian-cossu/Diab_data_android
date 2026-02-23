@@ -7,13 +7,16 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -33,6 +38,8 @@ import com.diabdata.ui.components.databaseView.DatabaseEditionView
 import com.diabdata.ui.components.devices.DevicesScreen
 import com.diabdata.ui.components.graphsViewer.GraphViewer
 import com.diabdata.ui.components.layout.SvgIcon
+import com.diabdata.ui.components.profile.UserAvatarWithMenu
+import com.diabdata.ui.components.profile.UserDetailsScreen
 import com.diabdata.utils.MedicalDevicesInitializer
 import com.diabdata.utils.MedicationInitializer
 import com.diabdata.shared.R as shared
@@ -46,6 +53,7 @@ data class BottomNavItem(
     val route: String, val label: Int, val selectedIcon: NavIcon, val unselectedIcon: NavIcon
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun App(
@@ -53,6 +61,9 @@ fun App(
 ) {
     val context = LocalContext.current.applicationContext
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    val userDetails by dataViewModel.userDetails.collectAsStateWithLifecycle(initialValue = null)
 
     LaunchedEffect(Unit) {
         MedicationInitializer(context, db).initialize()
@@ -89,51 +100,72 @@ fun App(
     )
 
     Scaffold(
-        bottomBar = {
-            NavigationBar {
-                val currentBackStack by navController.currentBackStackEntryAsState()
-                val currentDestination = currentBackStack?.destination
-
-                items.forEach { item ->
-                    val selected = currentDestination?.route == item.route
-
-                    NavigationBarItem(
-                        icon = {
-                            val icon = if (selected) item.selectedIcon else item.unselectedIcon
-
-                            when (icon) {
-                                is NavIcon.Vector -> Icon(
-                                    icon.imageVector,
-                                    icon.contentDescription,
-                                    tint = if (selected) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-
-                                is NavIcon.Svg -> SvgIcon(
-                                    resId = icon.resId,
-                                    color = if (selected) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
+        topBar = {
+            if (currentRoute != "profile") {
+                    TopAppBar(
+                        title = { Text("") },
+                        actions = {
+                            UserAvatarWithMenu(
+                                firstName = userDetails?.firstName,
+                                lastName = userDetails?.lastName,
+                                profilePhotoPath = userDetails?.profilePhotoPath,
+                                onEditProfile = { navController.navigate("profile") }
+                            )
                         },
-                        label = { Text(stringResource(item.label)) },
-                        selected = selected,
-                        onClick = {
-                            navController.navigate(item.route) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
+                        expandedHeight = 40.dp
+                    )
+                }
+        },
+        bottomBar = {
+            if (currentRoute != "profile") {
+                NavigationBar {
+                    val currentBackStack by navController.currentBackStackEntryAsState()
+                    val currentDestination = currentBackStack?.destination
+
+                    items.forEach { item ->
+                        val selected = currentDestination?.route == item.route
+
+                        NavigationBarItem(
+                            icon = {
+                                val icon = if (selected) item.selectedIcon else item.unselectedIcon
+
+                                when (icon) {
+                                    is NavIcon.Vector -> Icon(
+                                        icon.imageVector,
+                                        icon.contentDescription,
+                                        tint = if (selected) MaterialTheme.colorScheme.primary
+                                        else MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+
+                                    is NavIcon.Svg -> SvgIcon(
+                                        resId = icon.resId,
+                                        color = if (selected) MaterialTheme.colorScheme.primary
+                                        else MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
                                 }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        })
+                            },
+                            label = { Text(stringResource(item.label)) },
+                            selected = selected,
+                            onClick = {
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            })
+                    }
                 }
             }
         }) { paddingValues ->
         NavHost(
             navController = navController,
             startDestination = "home",
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier.padding(
+                if (currentRoute == "profile") PaddingValues(start = 0.dp, top = 0.dp, end = 0.dp, bottom = paddingValues.calculateBottomPadding())
+                else paddingValues
+            ),
             enterTransition = {
                 slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(300)) + fadeIn(
                     animationSpec = tween(300)
@@ -159,6 +191,13 @@ fun App(
             composable("data") { DatabaseEditionView(dataViewModel) }
             composable("devices") { DevicesScreen(dataViewModel) }
             composable("settings") { SettingsScreen(dataViewModel) }
+
+            composable("profile") {
+                UserDetailsScreen(
+                    dataViewModel = dataViewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
         }
     }
 }

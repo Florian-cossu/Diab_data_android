@@ -13,6 +13,7 @@ import com.diabdata.dao.MedicalDeviceDao
 import com.diabdata.dao.MedicalDevicesInfoDao
 import com.diabdata.dao.MedicationDao
 import com.diabdata.dao.TreatmentDao
+import com.diabdata.dao.UserDetailsDao
 import com.diabdata.dao.WeightDao
 import com.diabdata.data.converters.DateConverters
 import com.diabdata.data.migrations.ALL_MIGRATIONS
@@ -23,6 +24,7 @@ import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.MedicalDeviceInfoEntity
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
+import com.diabdata.models.UserDetails
 import com.diabdata.models.WeightEntry
 import com.diabdata.utils.MedicalDevicesInitializer
 import com.diabdata.utils.MedicationInitializer
@@ -39,9 +41,10 @@ import kotlinx.coroutines.launch
         ImportantDate::class,
         MedicalDeviceEntry::class,
         MedicationEntity::class,
-        MedicalDeviceInfoEntity::class
+        MedicalDeviceInfoEntity::class,
+        UserDetails::class
     ],
-    version = 18,
+    version = 20,
     exportSchema = true
 )
 
@@ -56,6 +59,8 @@ abstract class DiabDataDatabase : RoomDatabase() {
     abstract fun medicationDao(): MedicationDao
     abstract fun medicalDevicesDao(): MedicalDeviceDao
     abstract fun medicalDevicesInfoDao(): MedicalDevicesInfoDao
+    abstract fun userDetailsDao(): UserDetailsDao
+
 
     fun getAllTableNames(): List<String> {
         val db = openHelper.readableDatabase

@@ -104,7 +104,7 @@ class GlanceTileUpdateWorker(
     }
 
     private suspend fun sendToWatch(jsonData: String) {
-        val dataMapRequest = PutDataMapRequest.create("/tile/glance_tile").apply {
+        val dataMapRequest = PutDataMapRequest.create("/diabdata/tile/glance_tile").apply {
             dataMap.putString("json_data", jsonData)
             dataMap.putLong("timestamp", System.currentTimeMillis())
             dataMap.putInt("updateCount", (System.currentTimeMillis() % Int.MAX_VALUE).toInt())

@@ -68,10 +68,15 @@ fun <T> EnumDropdown(
                 }
             },
             leadingIcon = {
-                if (isSearchable) {
-                    IconButton(
-                        onClick = { query = "" },
-                    ) {
+                val selectedIconRes = selected?.let { iconRes?.invoke(it) }
+                if (selectedIconRes != null) {
+                    SvgIcon(
+                        resId = selectedIconRes,
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                } else if (isSearchable) {
+                    IconButton(onClick = { query = "" }) {
                         Icon(
                             imageVector = Icons.Outlined.Search,
                             contentDescription = stringResource(shared.string.popup_placeholder_search)

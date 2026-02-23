@@ -26,6 +26,7 @@ class DiabDataApp : Application() {
             medicationDao = db.medicationDao(),
             medicalDevicesDao = db.medicalDevicesDao(),
             medicalDeviceInfo = db.medicalDevicesInfoDao(),
+            userDetailsDao = db.userDetailsDao(),
             database = db
         )
 

@@ -2,11 +2,13 @@ package com.diabdata.data
 
 import android.app.Application
 import android.content.Context
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import com.diabdata.data.converters.toEntity
@@ -17,13 +19,19 @@ import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.MedicalDeviceInfoEntity
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
+import com.diabdata.models.UserDetails
 import com.diabdata.models.WeightEntry
 import com.diabdata.models.classes.PlotPoint
 import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.shared.utils.dataTypes.AppointmentType
+import com.diabdata.shared.utils.dataTypes.BloodType
+import com.diabdata.shared.utils.dataTypes.DiabetesType
+import com.diabdata.shared.utils.dataTypes.Gender
+import com.diabdata.shared.utils.dataTypes.GlucoseUnit
 import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
 import com.diabdata.shared.utils.dataTypes.TreatmentType
 import com.diabdata.utils.AppointmentTypeAdapter
+import com.diabdata.utils.EnumTypeAdapter
 import com.diabdata.utils.LocalDateAdapter
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +43,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.time.LocalDate
 import com.diabdata.shared.R as shared
 
@@ -60,6 +69,10 @@ class DataViewModel(
 
     val medicalDevices: StateFlow<List<MedicalDeviceEntry>> = repository.getAllDevices()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val userDetails: StateFlow<UserDetails?> = repository.getUserDetails()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
 
     // Helpers to check if we have Data
     data class DataAvailability(
@@ -267,6 +280,11 @@ class DataViewModel(
         }
     }
 
+    // Delete user details
+    fun deleteUserDetails() = viewModelScope.launch {
+        repository.deleteUserDetails()
+    }
+
     // Update function
     suspend fun updateEntry(entry: MixedDbEntry) {
         when (entry.addableType) {
@@ -280,6 +298,40 @@ class DataViewModel(
     }
 
     suspend fun updateDevice(device: MedicalDeviceEntry) = repository.updateDevice(device)
+
+    // Update user details
+    fun updateUserDetails(userDetails: UserDetails) {
+        viewModelScope.launch {
+            repository.updateUserDetails(userDetails)
+        }
+    }
+
+    // DataViewModel
+    fun saveProfilePhoto(uri: Uri, onSaved: (String) -> Unit = {}) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val fileName = "profile_photo_${System.currentTimeMillis()}.jpg"
+            val file = File(application.filesDir, fileName)
+
+            application.filesDir.listFiles()
+                ?.filter { it.name.startsWith("profile_photo_") && it.name != fileName }
+                ?.forEach { it.delete() }
+
+            application.contentResolver.openInputStream(uri)?.use { input ->
+                file.outputStream().use { output -> input.copyTo(output) }
+            }
+
+            val path = file.absolutePath
+            repository.addProfilePhotoPath(path)
+
+            withContext(Dispatchers.Main) {
+                onSaved(path)
+            }
+        }
+    }
+
+    suspend fun updateProfilePhotoPath(path: String) {
+        repository.addProfilePhotoPath(path)
+    }
 
     fun getAllFaultyDevicesExpiredToday() = repository.getAllFaultyDevicesExpiredToday()
 
@@ -591,16 +643,23 @@ class DataViewModel(
             appointments = appointments.value,
             treatments = treatments.value,
             importantDates = importantDates.value,
-            devices = medicalDevices.value
+            devices = medicalDevices.value,
+            userDetails = userDetails.value
         )
 
         return gson.toJson(exportData)
     }
 
-    fun importDataFromJsonString(json: String) {
+    suspend fun importDataFromJsonString(json: String) {
         val gson = GsonBuilder()
             .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
             .registerTypeAdapter(AppointmentType::class.java, AppointmentTypeAdapter())
+            .registerTypeAdapter(DiabetesType::class.java,
+                EnumTypeAdapter(DiabetesType::class.java)
+            )
+            .registerTypeAdapter(Gender::class.java, EnumTypeAdapter(Gender::class.java))
+            .registerTypeAdapter(BloodType::class.java, EnumTypeAdapter(BloodType::class.java))
+            .registerTypeAdapter(GlucoseUnit::class.java, EnumTypeAdapter(GlucoseUnit::class.java))
             .create()
 
         val importedData: ExportData = gson.fromJson(json, ExportData::class.java)
@@ -623,6 +682,9 @@ class DataViewModel(
             }
             importedData.devices.forEach { device ->
                 repository.insertDevice(device.copy())
+            }
+            importedData.userDetails?.let { userDetails ->
+                repository.updateUserDetails(userDetails.copy(profilePhotoPath = null))
             }
         }
     }

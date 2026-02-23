@@ -1,31 +1,36 @@
 package com.diabdata.wear.tile.glanceTile
 
 import android.util.Log
+import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
-import androidx.wear.protolayout.ColorBuilders
 import androidx.wear.protolayout.DeviceParametersBuilders
 import androidx.wear.protolayout.DimensionBuilders.dp
 import androidx.wear.protolayout.DimensionBuilders.expand
-import androidx.wear.protolayout.DimensionBuilders.sp
 import androidx.wear.protolayout.LayoutElementBuilders
 import androidx.wear.protolayout.LayoutElementBuilders.Column
-import androidx.wear.protolayout.LayoutElementBuilders.FontStyle
-import androidx.wear.protolayout.LayoutElementBuilders.Layout
 import androidx.wear.protolayout.LayoutElementBuilders.LayoutElement
 import androidx.wear.protolayout.LayoutElementBuilders.Spacer
-import androidx.wear.protolayout.LayoutElementBuilders.Text
-import androidx.wear.protolayout.ModifiersBuilders
 import androidx.wear.protolayout.ResourceBuilders
 import androidx.wear.protolayout.TimelineBuilders
+import androidx.wear.protolayout.material3.CardColors
+import androidx.wear.protolayout.material3.ColorScheme
+import androidx.wear.protolayout.material3.MaterialScope
+import androidx.wear.protolayout.material3.Typography
+import androidx.wear.protolayout.material3.icon
+import androidx.wear.protolayout.material3.iconDataCard
+import androidx.wear.protolayout.material3.materialScope
+import androidx.wear.protolayout.material3.primaryLayout
+import androidx.wear.protolayout.material3.text
+import androidx.wear.protolayout.modifiers.clickable
+import androidx.wear.protolayout.types.LayoutColor
+import androidx.wear.protolayout.types.layoutString
 import androidx.wear.tiles.RequestBuilders
 import androidx.wear.tiles.TileBuilders
 import androidx.wear.tiles.TileService
-import androidx.wear.tiles.tooling.preview.Preview
-import androidx.wear.tiles.tooling.preview.TilePreviewData
-import androidx.wear.tooling.preview.devices.WearDevices
 import com.diabdata.shared.R
-import com.diabdata.shared.utils.imgUtils.IconVariant
-import com.diabdata.shared.utils.imgUtils.ResourceType.Appointment.getIconRes
+import com.diabdata.shared.utils.dataTypes.AppointmentType
+import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
+import com.diabdata.shared.utils.dataTypes.TreatmentType
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import com.google.common.util.concurrent.ListenableFuture
@@ -39,117 +44,306 @@ import kotlinx.coroutines.guava.future
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
-import java.lang.System.currentTimeMillis
 import java.util.concurrent.Executors
 
 data class TileData(
     val device: DeviceInfo?,
     val treatment: TreatmentInfo?,
     val appointment: AppointmentInfo?,
-    val timestamp: Long = currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis()
 )
 
 data class DeviceInfo(
-    val type: String, val daysUntilExpiry: Int, val lifespan: String
+    val type: String,
+    val name: String,
+    val daysUntilExpiry: Int,
+    val lifespan: String
 )
 
 data class TreatmentInfo(
-    val type: String, val daysUntilExpiry: Int, val daysSinceCreation: Int
+    val type: String,
+    val name: String,
+    val daysUntilExpiry: Int,
+    val daysSinceCreation: Int
 )
 
 data class AppointmentInfo(
-    val type: String, val doctor: String, val daysUntil: Int
+    val type: String,
+    val name: String,
+    val doctor: String,
+    val daysUntil: Int
 )
 
 class GlanceTileService : TileService() {
+    companion object {
+        private const val CACHE_DURATION = 5000L
+        private const val FETCH_TIMEOUT = 3000L
+        const val TILE_VERSION = "4"
+        private const val DATA_PATH = "wear://*/diabdata/tile/glance_tile"
+    }
 
     private val gson = Gson()
     private val serviceScope = CoroutineScope(
         Executors.newSingleThreadExecutor().asCoroutineDispatcher() + SupervisorJob()
     )
+    private var cachedData: TileData? = null
+    private var cacheTime: Long = 0
 
     override fun onTileResourcesRequest(
         requestParams: RequestBuilders.ResourcesRequest
     ): ListenableFuture<ResourceBuilders.Resources> {
         return serviceScope.future {
-            val builder = ResourceBuilders.Resources.Builder()
-                .setVersion("1")
+            ResourceBuilders.Resources.Builder()
+                .setVersion(TILE_VERSION)
+                .apply {
+                    registerAllImages(this)
+                }
+                .build()
+        }
+    }
 
-            val devices = listOf(
-                "WIRELESS_PATCH",
-                "WIRED_PATCH",
-                "CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_SENSOR",
-                "CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_TRANSMITTER"
-            )
-
-            val treatments = listOf(
-                "FAST_ACTING_INSULIN_CARTRIDGE",
-                "FAST_ACTING_INSULIN_SYRINGE",
-                "FAST_ACTING_INSULIN_VIAL",
-                "SLOW_ACTING_INSULIN_CARTRIDGE",
-                "SLOW_ACTING_INSULIN_SYRINGE",
-                "SLOW_ACTING_INSULIN_VIAL",
-                "GLUCAGON_SYRINGE",
-                "GLUCAGON_SPRAY",
-                "B_KETONE_TEST_STRIP",
-                "BLOOD_GLUCOSE_TEST_STRIP"
-            )
-
-            val eventIcon = R.drawable.event_icon_vector
-
-            devices.forEach { iconName ->
-                val iconResId = getIconRes(iconName, IconVariant.FILLED)
-                builder.addIdToImageMapping(
-                    iconName,
-                    ResourceBuilders.ImageResource.Builder()
-                        .setAndroidResourceByResId(
-                            ResourceBuilders.AndroidImageResourceByResId.Builder()
-                                .setResourceId(iconResId)
-                                .build()
-                        )
-                        .build()
-                )
-            }
-
-            treatments.forEach { iconName ->
-                val iconResId = getIconRes(iconName, IconVariant.FILLED)
-                builder.addIdToImageMapping(
-                    iconName,
-                    ResourceBuilders.ImageResource.Builder()
-                        .setAndroidResourceByResId(
-                            ResourceBuilders.AndroidImageResourceByResId.Builder()
-                                .setResourceId(iconResId)
-                                .build()
-                        )
-                        .build()
-                )
-            }
-
+    private fun registerAllImages(builder: ResourceBuilders.Resources.Builder) {
+        MedicalDeviceInfoType.entries.forEach { device ->
             builder.addIdToImageMapping(
-                "event_icon",
+                device.name,
                 ResourceBuilders.ImageResource.Builder()
                     .setAndroidResourceByResId(
                         ResourceBuilders.AndroidImageResourceByResId.Builder()
-                            .setResourceId(eventIcon)
+                            .setResourceId(device.iconFilledRes)
                             .build()
                     )
                     .build()
             )
-
-            builder.build()
         }
+
+        TreatmentType.entries.forEach { treatment ->
+            builder.addIdToImageMapping(
+                treatment.name,
+                ResourceBuilders.ImageResource.Builder()
+                    .setAndroidResourceByResId(
+                        ResourceBuilders.AndroidImageResourceByResId.Builder()
+                            .setResourceId(treatment.iconFilledRes)
+                            .build()
+                    )
+                    .build()
+            )
+        }
+
+        AppointmentType.entries.forEach { appointment ->
+            builder.addIdToImageMapping(
+                appointment.name,
+                ResourceBuilders.ImageResource.Builder()
+                    .setAndroidResourceByResId(
+                        ResourceBuilders.AndroidImageResourceByResId.Builder()
+                            .setResourceId(appointment.iconFilledRes)
+                            .build()
+                    )
+                    .build()
+            )
+        }
+
+        builder.addIdToImageMapping(
+            "sync_icon",
+            ResourceBuilders.ImageResource.Builder()
+                .setAndroidResourceByResId(
+                    ResourceBuilders.AndroidImageResourceByResId.Builder()
+                        .setResourceId(R.drawable.hourglass_icon_vector)
+                        .build()
+                )
+                .build()
+        )
     }
 
     override fun onTileRequest(
         requestParams: RequestBuilders.TileRequest
     ): ListenableFuture<TileBuilders.Tile> {
         return serviceScope.future {
-            val tileData = withTimeoutOrNull(3000L) {
-                fetchTileData()
+            val tileData = getCachedOrFreshData()
+
+            TileBuilders.Tile.Builder()
+                .setResourcesVersion(TILE_VERSION)
+                .setTileTimeline(
+                    TimelineBuilders.Timeline.fromLayoutElement(
+                        createLayout(tileData, requestParams.deviceConfiguration)
+                    )
+                )
+                .build()
+        }
+    }
+
+    private fun createLayout(
+        data: TileData?,
+        deviceConfiguration: DeviceParametersBuilders.DeviceParameters
+    ): LayoutElement {
+        return materialScope(
+            context = this,
+            deviceConfiguration = deviceConfiguration,
+            allowDynamicTheme = true
+        ) {
+            if (data != null) {
+                buildDataLayout(data)
+            } else {
+                buildEmptyLayout()
             }
-            createTile(
-                tileData, requestParams
-            )
+        }
+    }
+
+    // Extension function pour MaterialScope pour construire la mise en page avec données
+    private fun MaterialScope.buildDataLayout(data: TileData): LayoutElement {
+        return primaryLayout(
+            mainSlot = {
+                column {
+                    setWidth(expand())
+
+                    data.device?.let { device ->
+                        addContent(
+                            createDataCard(
+                                device.type,
+                                device.name,
+                                "Expire dans ${device.daysUntilExpiry}j",
+                                getCardColors(device.daysUntilExpiry)
+                            )
+                        )
+                        addContent(Spacer.Builder().setHeight(dp(8f)).build())
+                    }
+
+                    data.treatment?.let { treatment ->
+                        addContent(
+                            createDataCard(
+                                treatment.type,
+                                treatment.name,
+                                "Expire dans ${treatment.daysUntilExpiry}j",
+                                getCardColors(treatment.daysUntilExpiry)
+                            )
+                        )
+                        addContent(Spacer.Builder().setHeight(dp(8f)).build())
+                    }
+
+                    data.appointment?.let { appointment ->
+                        addContent(
+                            createDataCard(
+                                appointment.type,
+                                appointment.name,
+                                "Dans ${appointment.daysUntil}j - ${appointment.doctor}",
+                                colors = CardColors(ColorScheme().primary)
+                            )
+                        )
+                    }
+                }
+            }
+        )
+    }
+
+    private fun MaterialScope.createDataCard(
+        iconId: String,
+        primaryText: String,
+        secondaryText: String,
+        colors: CardColors
+    ): LayoutElement {
+        return iconDataCard(
+            secondaryIcon = {
+                icon(
+                    protoLayoutResourceId = iconId,
+                    width = dp(24f),
+                    height = dp(24f),
+                    tintColor = colorScheme.onSurfaceVariant
+                )
+            },
+            title = {
+                text(
+                    text = primaryText.layoutString,
+                    typography = Typography.BODY_MEDIUM,
+                    color = colors.titleColor
+                )
+            },
+            content = {
+                text(
+                    text = secondaryText.layoutString,
+                    typography = Typography.LABEL_SMALL,
+                    color = colors.contentColor
+                )
+            },
+            shape = shapes.medium,
+            colors = colors,
+            onClick = clickable()
+        )
+    }
+
+    private fun MaterialScope.buildEmptyLayout(): LayoutElement {
+        return primaryLayout(
+            mainSlot = {
+                Column.Builder()
+                    .setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
+                    .setWidth(expand())
+                    .setHeight(expand())
+                    .addContent(
+                        icon(
+                            protoLayoutResourceId = "sync_icon",
+                            width = dp(48f),
+                            height = dp(48f),
+                            tintColor = colorScheme.onSurfaceVariant
+                        )
+                    )
+                    .addContent(Spacer.Builder().setHeight(dp(12f)).build())
+                    .addContent(
+                        text(
+                            text = "En attente de synchronisation".layoutString,
+                            typography = Typography.BODY_MEDIUM,
+                            color = colorScheme.onSurface
+                        )
+                    )
+                    .addContent(Spacer.Builder().setHeight(dp(4f)).build())
+                    .addContent(
+                        text(
+                            text = "Ouvrir l'application".layoutString,
+                            typography = Typography.LABEL_SMALL,
+                            color = colorScheme.onSurfaceVariant
+                        )
+                    )
+                    .build()
+            }
+        )
+    }
+
+    private fun MaterialScope.getCardColors(daysUntilExpiry: Int): CardColors {
+        return when {
+            daysUntilExpiry <= 3 -> {
+                // Rouge pour urgence
+                CardColors(
+                    backgroundColor = LayoutColor("#B71C1C".toColorInt()),
+                    contentColor = colorScheme.onError
+                )
+            }
+            daysUntilExpiry <= 7 -> {
+                // Orange pour attention
+                CardColors(
+                    backgroundColor = LayoutColor("#E65100".toColorInt()),
+                    contentColor = colorScheme.onPrimary
+                )
+            }
+            else -> {
+                // Vert pour OK
+                CardColors(
+                    backgroundColor = LayoutColor("#1B5E20".toColorInt()),
+                    contentColor = colorScheme.onPrimary
+                )
+            }
+        }
+    }
+
+    private fun column(builder: Column.Builder.() -> Unit): Column {
+        return Column.Builder().apply(builder).build()
+    }
+
+    private suspend fun getCachedOrFreshData(): TileData? {
+        val currentTime = System.currentTimeMillis()
+        return if (cachedData != null && (currentTime - cacheTime) < CACHE_DURATION) {
+            cachedData
+        } else {
+            val freshData = withTimeoutOrNull(FETCH_TIMEOUT) { fetchTileData() }
+            cachedData = freshData
+            cacheTime = currentTime
+            freshData
         }
     }
 
@@ -157,36 +351,26 @@ class GlanceTileService : TileService() {
         return try {
             withContext(Dispatchers.IO) {
                 val dataClient = Wearable.getDataClient(applicationContext)
-
-                // Path correct qui correspond à celui du worker
-                val dataItems = dataClient.getDataItems(
-                    "wear://*/diabdata/tile/glance_tile".toUri()
-                ).await()
-
-                Log.d("GlanceTileService", "Found ${dataItems.count} data items")
+                val dataItems = dataClient.getDataItems(DATA_PATH.toUri()).await()
 
                 val result = dataItems.firstOrNull()?.let { item ->
                     val dataMap = DataMapItem.fromDataItem(item).dataMap
                     val jsonData = dataMap.getString("json_data")
-
-                    Log.d("GlanceTileService", "JSON data: $jsonData")
-
                     jsonData?.let {
                         try {
                             gson.fromJson(it, TileData::class.java)
                         } catch (e: Exception) {
-                            Log.e("GlanceTileService", "Erreur parsing JSON", e)
+                            Log.e("GlanceTileService", "Error parsing JSON", e)
                             null
                         }
                     }
                 }
 
                 dataItems.release()
-
                 result
             }
         } catch (e: Exception) {
-            Log.e("GlanceTileService", "Erreur fetch data", e)
+            Log.e("GlanceTileService", "Error fetching data", e)
             null
         }
     }
@@ -194,147 +378,5 @@ class GlanceTileService : TileService() {
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel()
-    }
-}
-
-fun createTile(data: TileData?, requestParams: RequestBuilders.TileRequest): TileBuilders.Tile {
-    Log.d("GlanceTileService", "Creating tile with data: $data")
-
-    return TileBuilders.Tile.Builder().setResourcesVersion("1").setTileTimeline(
-        TimelineBuilders.Timeline.Builder().addTimelineEntry(
-            TimelineBuilders.TimelineEntry.Builder().setLayout(
-                Layout.Builder().setRoot(createSimpleLayout(data, requestParams.deviceConfiguration)).build()
-            ).build()
-        ).build()
-    ).build()
-}
-
-fun createSimpleLayout(
-    data: TileData?,
-    deviceParameters: DeviceParametersBuilders.DeviceParameters
-): LayoutElement {
-    return Column.Builder().setWidth(expand()).setHeight(expand()).setModifiers(
-        ModifiersBuilders.Modifiers.Builder().setPadding(
-            ModifiersBuilders.Padding.Builder().setAll(dp(12f)).build()
-        ).build()
-    ).apply {
-        addContent(
-            Spacer.Builder().setHeight(dp(8f)).build()
-        )
-
-        if (data != null) {
-            var hasData = false
-
-            data.device?.let { device ->
-                hasData = true
-                addContent(
-                    LayoutElementBuilders.Row.Builder()
-                        .setVerticalAlignment(LayoutElementBuilders.VERTICAL_ALIGN_CENTER)
-                        .addContent(
-                            LayoutElementBuilders.Image.Builder()
-                                .setResourceId(device.type)
-                                .setWidth(dp(24f))
-                                .setHeight(dp(24f))
-                                .build()
-                        )
-
-                        .addContent(
-                            Spacer.Builder().setWidth(dp(8f)).build()
-                        )
-                        .addContent(
-                            Text.Builder()
-                                .setText("Périph: ${device.type}")
-                                .setFontStyle(
-                                    FontStyle.Builder().setSize(sp(12f)).build()
-                                )
-                                .build()
-                        )
-                        .build()
-                )
-            }
-
-            data.treatment?.let { treatment ->
-                hasData = true
-                addContent(
-                    Text.Builder().setText("• Traitement: ${treatment.type}").setFontStyle(
-                        FontStyle.Builder().setSize(sp(12f)).build()
-                    ).build()
-                )
-                addContent(
-                    Text.Builder().setText("  ${treatment.daysUntilExpiry} jours").setFontStyle(
-                        FontStyle.Builder().setSize(sp(11f))
-                            .setColor(ColorBuilders.argb(0xFF999999.toInt())).build()
-                    ).build()
-                )
-            }
-
-            data.appointment?.let { appointment ->
-                hasData = true
-                addContent(
-                    Text.Builder().setText("• RDV: ${appointment.type}").setFontStyle(
-                        FontStyle.Builder().setSize(sp(12f)).build()
-                    ).build()
-                )
-                addContent(
-                    Text.Builder().setText("  ${appointment.daysUntil} jours").setFontStyle(
-                        FontStyle.Builder().setSize(sp(11f))
-                            .setColor(ColorBuilders.argb(0xFF999999.toInt())).build()
-                    ).build()
-                )
-            }
-
-            if (!hasData) {
-                addContent(
-                    Text.Builder().setText("Aucune donnée disponible").setFontStyle(
-                        FontStyle.Builder().setSize(sp(12f))
-                            .setColor(ColorBuilders.argb(0xFF999999.toInt())).build()
-                    ).build()
-                )
-            }
-        } else {
-            addContent(
-                Text.Builder().setText("En attente de sync...").setFontStyle(
-                    FontStyle.Builder().setSize(sp(12f))
-                        .setColor(ColorBuilders.argb(0xFF999999.toInt())).build()
-                ).build()
-            )
-
-            addContent(
-                Text.Builder().setText("Ouvrez l'app mobile").setFontStyle(
-                    FontStyle.Builder().setSize(sp(10f))
-                        .setColor(ColorBuilders.argb(0xFF666666.toInt())).build()
-                ).build()
-            )
-        }
-    }.build()
-}
-
-class GlanceTileLayoutPreview {
-    @Preview(device = WearDevices.SMALL_ROUND, name = "Round Device")
-    @Preview(device = WearDevices.SQUARE, name = "Square Device")
-    fun tilePreviewWithData(): TilePreviewData {
-        val fakeData = TileData(
-            device = DeviceInfo(
-                type = "CONTINUOUS_GLUCOSE_MONITORING_SYSTEM_SENSOR",
-                daysUntilExpiry = 3,
-                lifespan = "7 jours"
-            ), treatment = TreatmentInfo(
-                type = "FAST_ACTING_INSULIN_CARTRIDGE", daysUntilExpiry = 12, daysSinceCreation = 5
-            ), appointment = AppointmentInfo(
-                type = "ANNUAL_CHECKUP", doctor = "Dr. Martin", daysUntil = 25
-            ), timestamp = currentTimeMillis()
-        )
-
-        return TilePreviewData { requestParams ->
-            createTile(fakeData, requestParams)
-        }
-    }
-
-    @Preview(device = WearDevices.SMALL_ROUND, name = "Round Device - No Data")
-    @Preview(device = WearDevices.SQUARE, name = "Square Device - No Data")
-    fun tilePreviewWithNoData(): TilePreviewData {
-        return TilePreviewData { requestParams ->
-            createTile(null, requestParams)
-        }
     }
 }

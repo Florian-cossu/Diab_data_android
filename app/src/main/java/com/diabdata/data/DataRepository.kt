@@ -7,6 +7,7 @@ import com.diabdata.dao.MedicalDeviceDao
 import com.diabdata.dao.MedicalDevicesInfoDao
 import com.diabdata.dao.MedicationDao
 import com.diabdata.dao.TreatmentDao
+import com.diabdata.dao.UserDetailsDao
 import com.diabdata.dao.WeightDao
 import com.diabdata.models.Appointment
 import com.diabdata.models.HBA1CEntry
@@ -15,6 +16,7 @@ import com.diabdata.models.MedicalDeviceEntry
 import com.diabdata.models.MedicalDeviceInfoEntity
 import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
+import com.diabdata.models.UserDetails
 import com.diabdata.models.WeightEntry
 import com.diabdata.models.classes.FaultyBatchCount
 import com.diabdata.models.classes.PlotPoint
@@ -31,6 +33,7 @@ class DataRepository(
     private val medicationDao: MedicationDao,
     private val medicalDevicesDao: MedicalDeviceDao,
     private val medicalDeviceInfo: MedicalDevicesInfoDao,
+    private val userDetailsDao: UserDetailsDao,
     val database: DiabDataDatabase,
 ) {
     // ----------------
@@ -205,6 +208,22 @@ class DataRepository(
     /** Find a medical device by its code (GTIN or CIP) */
     suspend fun findMedicalDeviceByCode(code: String): MedicalDeviceInfoEntity? =
         medicalDeviceInfo.findByCode(code)
+
+    // ----------------
+    // User details
+    // ----------------
+    /** Flow of user details */
+    fun getUserDetails(): Flow<UserDetails?> = userDetailsDao.getUserDetails()
+
+    /** Update user details */
+    suspend fun updateUserDetails(userDetails: UserDetails) = userDetailsDao.upsertUserDetails(userDetails)
+
+    /** Delete user details */
+    suspend fun deleteUserDetails() = userDetailsDao.deleteUserDetails()
+
+    /** Add profile photo path */
+    suspend fun addProfilePhotoPath(path: String?) = userDetailsDao.updateProfilePhotoPath(path)
+
 
     /** Delete a device record by Id**/
     suspend fun deleteDevice(id: Int) = medicalDevicesDao.deleteById(id)

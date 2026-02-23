@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
     id("com.google.devtools.ksp") version "2.2.20-2.0.4"
-    id("com.google.protobuf") version "0.9.5"
+    id("com.google.protobuf") version "0.9.6"
 }
 
 android {
@@ -18,9 +18,9 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = getVersionCode()
-        versionName = "4.2.2"
+        versionName = "4.3.0"
         buildConfigField("String", "MEDICATION_GTIN_FILE_VERSION", "\"1.2.0\"")
-        buildConfigField("String", "MEDICAL_DEVICES_GTIN_FILE_VERSION", "\"1.0.2\"")
+        buildConfigField("String", "MEDICAL_DEVICES_GTIN_FILE_VERSION", "\"1.0.3\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -96,6 +96,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.ui.text)
+
+    // Image loading
+    implementation(libs.coil.compose)
 
     // Vico
     implementation(libs.vico.compose)
