@@ -1,40 +1,45 @@
 [versions]
 agp = "8.13.2"
-cameraCore = "1.5.2"
+cameraCore = "1.5.3"
 coilCompose = "2.7.0"
 core = "1.7.0"
 datastore = "1.2.0"
 glance = "1.1.1"
 gson = "2.13.2"
 gsonVersion = "2.13.2"
-kotlin = "2.3.0"
+kotlin = "2.3.10"
 coreKtx = "1.17.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 kotlinxCoroutinesPlayServices = "1.10.2"
 kotlinxCoroutinesPlayServicesVersion = "1.10.2"
+ktorSerializationGson = "3.4.0"
+ktorServerContentNegotiation = "3.4.0"
+ktorServerCore = "3.4.0"
+ktorServerCors = "3.4.0"
+ktorServerNetty = "3.4.0"
 lifecycleRuntimeKtx = "2.10.0"
-activityCompose = "1.12.2"
-composeBom = "2025.12.01"
+activityCompose = "1.12.4"
+composeBom = "2026.02.00"
 material = "1.13.0"
-material3Expressive = "1.5.0-alpha11"
-navigationCompose = "2.9.6"
+material3Expressive = "1.5.0-alpha14"
+navigationCompose = "2.9.7"
 playServicesWearableVersion = "19.0.0"
-protobufJavalite = "4.33.2"
+protobufJavalite = "4.33.5"
 roomRuntime = "2.8.4"
 tilesTesting = "1.5.0"
 vico = "2.3.6"
 watchface = "1.2.1"
 watchfaceComplicationsDataSourceVersion = "1.2.1"
 wear = "1.3.0"
-workRuntimeKtx = "2.11.0"
+workRuntimeKtx = "2.11.1"
 zxingAndroidEmbedded = "4.3.0"
 zxing = "3.5.4"
 glanceAppwidget = "1.2.0-rc01"
 glanceMaterial3 = "1.1.1"
 lifecycleProcess = "2.10.0"
-watchfaceComplicationsDataSource = "1.3.0-beta01"
+watchfaceComplicationsDataSource = "1.3.0-rc01"
 appcompat = "1.7.1"
 playServicesWearable = "19.0.0"
 wearToolingPreview = "1.0.0"
@@ -42,13 +47,13 @@ coreSplashscreen = "1.2.0"
 horologistComposeTools = "0.7.15"
 horologistTiles = "0.7.15"
 watchfaceComplicationsDataSourceKtx = "1.2.1"
-tilesMaterialVersion = "1.6.0-alpha03"
+tilesMaterialVersion = "1.6.0-beta01"
 guava = "33.5.0-android"
 protolayout = "1.3.0"
 protolayoutMaterial3 = "1.3.0"
 protolayoutExpression = "1.3.0"
 coreKtxVersion = "1.7.0"
-tilesToolingPreview = "1.6.0-alpha03"
+tilesToolingPreview = "1.6.0-beta01"
 
 [libraries]
 # Camera
@@ -94,6 +99,11 @@ androidx-wear = { module = "androidx.wear:wear", version.ref = "wear" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 gson-v2101 = { module = "com.google.code.gson:gson", version.ref = "gsonVersion" }
 kotlinx-coroutines-play-services-v173 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServicesVersion" }
+ktor-serialization-gson = { module = "io.ktor:ktor-serialization-gson", version.ref = "ktorSerializationGson" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktorServerContentNegotiation" }
+ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktorServerCore" }
+ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktorServerCors" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktorServerNetty" }
 material3-expressive = { group = "androidx.compose.material3", name = "material3", version.ref = "material3Expressive" }  # Version alpha spécifique
 material = { module = "com.google.android.material:material", version.ref = "material" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }

@@ -1,27 +1,43 @@
 package com.diabdata.ui.components.profile
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.diabdata.castServer.CastServerService
+import com.diabdata.shared.R
 import com.diabdata.ui.components.layout.SvgIcon
-import com.diabdata.shared.R as R
 
+// ui/UserAvatarMenu.kt
 @Composable
 fun UserAvatarMenu(
     expanded: Boolean,
     onDismiss: () -> Unit,
     onEditProfile: () -> Unit
 ) {
+    val context = LocalContext.current
+
+    var isServerRunning by remember { mutableStateOf(CastServerService.isRunning) }
+
+    LaunchedEffect(expanded) {
+        if (expanded) {
+            isServerRunning = CastServerService.isRunning
+        }
+    }
+
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismiss,
@@ -30,6 +46,7 @@ fun UserAvatarMenu(
         tonalElevation = 8.dp,
         modifier = Modifier.widthIn(min = 250.dp)
     ) {
+        // --- Edit profile ---
         DropdownMenuItem(
             leadingIcon = {
                 SvgIcon(
@@ -44,6 +61,8 @@ fun UserAvatarMenu(
                 onEditProfile()
             }
         )
+
+        // --- Cast to doctor ---
         DropdownMenuItem(
             leadingIcon = {
                 SvgIcon(
@@ -57,16 +76,40 @@ fun UserAvatarMenu(
                 onDismiss()
             }
         )
+
+        // --- Cast to my computer ---
         DropdownMenuItem(
             leadingIcon = {
                 SvgIcon(
-                    resId = R.drawable.cast_to_desktop_icon_vector,
+                    resId = if (isServerRunning)
+                        R.drawable.stop_icon_vector
+                    else
+                        R.drawable.cast_to_desktop_icon_vector,
                     modifier = Modifier.size(24.dp),
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = if (isServerRunning)
+                        MaterialTheme.colorScheme.error
+                    else
+                        MaterialTheme.colorScheme.onSurface
                 )
             },
-            text = { Text(stringResource(R.string.cast_to_user_computer)) },
+            text = {
+                if (isServerRunning) {
+                    Text(
+                        text = stringResource(R.string.stop_casting),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                } else {
+                    Text(text = stringResource(R.string.cast_to_user_computer))
+                }
+            },
             onClick = {
+                if (isServerRunning) {
+                    CastServerService.stop(context)
+                    isServerRunning = false
+                } else {
+                    CastServerService.start(context)
+                    isServerRunning = true
+                }
                 onDismiss()
             }
         )

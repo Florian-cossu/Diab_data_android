@@ -4,8 +4,9 @@
     <!-- AVATAR MENU -->
     <!-- ============================================= -->
     <string name="edit_profile">Éditer le profil</string>
-    <string name="cast_to_user_computer">Ouvrir sur mon ordinateur</string>
-    <string name="cast_to_doctors_computer">Caster à mon médecin</string>
+    <string name="cast_to_user_computer">Partager sur mon ordinateur</string>
+    <string name="cast_to_doctors_computer">Partager à mon médecin</string>
+    <string name="stop_casting">Arrêter le partage</string>
 
     <!-- ============================================= -->
     <!-- USER PROFILE -->

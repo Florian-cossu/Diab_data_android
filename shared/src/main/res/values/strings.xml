@@ -9,8 +9,9 @@
     <!-- AVATAR MENU -->
     <!-- ============================================= -->
     <string name="edit_profile">Update profile</string>
-    <string name="cast_to_user_computer">Open on my computer</string>
+    <string name="cast_to_user_computer">Cast to my computer</string>
     <string name="cast_to_doctors_computer">Cast to my doctor</string>
+    <string name="stop_casting">Stop casting</string>
 
     <!-- ============================================= -->
     <!-- USER PROFILE -->
