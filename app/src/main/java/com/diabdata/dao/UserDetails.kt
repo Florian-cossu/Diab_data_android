@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDetailsDao {
-
     @Query("SELECT * FROM user_details WHERE id = 0")
     fun getUserDetails(): Flow<UserDetails?>
 

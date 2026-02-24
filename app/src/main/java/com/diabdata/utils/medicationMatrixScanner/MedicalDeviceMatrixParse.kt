@@ -1,4 +1,4 @@
-package com.diabdata.utils
+package com.diabdata.utils.medicationMatrixScanner
 
 data class MedicalDeviceInfo(
     val gtin: String,

@@ -46,8 +46,8 @@ import com.diabdata.ui.components.layout.FaultyToggleButton
 import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.ui.components.noDataView.IconTypes
 import com.diabdata.ui.components.noDataView.NoDataView
-import com.diabdata.utils.darken
-import com.diabdata.utils.getItemShape
+import com.diabdata.utils.ui.darken
+import com.diabdata.utils.ui.getItemShape
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import com.diabdata.shared.R as shared

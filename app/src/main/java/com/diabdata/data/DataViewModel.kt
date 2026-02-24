@@ -30,9 +30,10 @@ import com.diabdata.shared.utils.dataTypes.Gender
 import com.diabdata.shared.utils.dataTypes.GlucoseUnit
 import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
 import com.diabdata.shared.utils.dataTypes.TreatmentType
-import com.diabdata.utils.AppointmentTypeAdapter
-import com.diabdata.utils.EnumTypeAdapter
-import com.diabdata.utils.LocalDateAdapter
+import com.diabdata.utils.data.AppointmentTypeAdapter
+import com.diabdata.utils.data.EnumTypeAdapter
+import com.diabdata.utils.data.GsonFactory
+import com.diabdata.utils.data.LocalDateAdapter
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -632,10 +633,7 @@ class DataViewModel(
 
     // Section for data import/export
     fun exportDataAsJsonString(): String {
-        val gson = GsonBuilder()
-            .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
-            .setPrettyPrinting()
-            .create()
+        val gson = GsonFactory.create(prettyPrint = true)
 
         val exportData = ExportData(
             weights = weights.value,
@@ -651,16 +649,7 @@ class DataViewModel(
     }
 
     suspend fun importDataFromJsonString(json: String) {
-        val gson = GsonBuilder()
-            .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
-            .registerTypeAdapter(AppointmentType::class.java, AppointmentTypeAdapter())
-            .registerTypeAdapter(DiabetesType::class.java,
-                EnumTypeAdapter(DiabetesType::class.java)
-            )
-            .registerTypeAdapter(Gender::class.java, EnumTypeAdapter(Gender::class.java))
-            .registerTypeAdapter(BloodType::class.java, EnumTypeAdapter(BloodType::class.java))
-            .registerTypeAdapter(GlucoseUnit::class.java, EnumTypeAdapter(GlucoseUnit::class.java))
-            .create()
+        val gson = GsonFactory.create()
 
         val importedData: ExportData = gson.fromJson(json, ExportData::class.java)
 

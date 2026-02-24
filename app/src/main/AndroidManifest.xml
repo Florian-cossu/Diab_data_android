@@ -45,7 +45,7 @@
         </receiver>
 
         <service
-            android:name=".castServer.CastServerService"
+            android:name=".castServer.castToUser.CastToUserServerService"
             android:foregroundServiceType="specialUse"
             android:exported="false">
             <property

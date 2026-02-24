@@ -1,4 +1,4 @@
-package com.diabdata.utils
+package com.diabdata.utils.data
 
 import com.diabdata.shared.utils.dataTypes.AppointmentType
 import com.google.gson.JsonDeserializationContext

@@ -1,4 +1,4 @@
-package com.diabdata.utils
+package com.diabdata.utils.medicationMatrixScanner
 
 data class MedicationInfo(
     val gtin: String, val lot: String?, val expiration: String?, val serial: String?

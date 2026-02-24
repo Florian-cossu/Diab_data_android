@@ -77,8 +77,8 @@ import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.FlippableSelectionIcon
 import com.diabdata.ui.components.layout.SvgIcon
-import com.diabdata.utils.darken
-import com.diabdata.utils.getItemShape
+import com.diabdata.utils.ui.darken
+import com.diabdata.utils.ui.getItemShape
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs

@@ -1,4 +1,4 @@
-package com.diabdata.utils
+package com.diabdata.utils.data
 
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer

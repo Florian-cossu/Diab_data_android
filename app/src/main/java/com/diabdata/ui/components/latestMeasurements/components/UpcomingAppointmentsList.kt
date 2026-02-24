@@ -40,7 +40,7 @@ import com.diabdata.shared.utils.dateUtils.formatLocalDate
 import com.diabdata.shared.utils.dateUtils.toRelativeString
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.layout.SvgIcon
-import com.diabdata.utils.getItemShape
+import com.diabdata.utils.ui.getItemShape
 import java.time.LocalDate
 import com.diabdata.shared.R as shared
 

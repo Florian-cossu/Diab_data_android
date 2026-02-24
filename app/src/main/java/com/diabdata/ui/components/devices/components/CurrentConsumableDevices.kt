@@ -44,8 +44,8 @@ import com.diabdata.shared.utils.dateUtils.shortenedFormatLocalDate
 import com.diabdata.ui.components.ColoredIconCircle
 import com.diabdata.ui.components.layout.FaultyToggleButton
 import com.diabdata.ui.components.layout.SvgIcon
-import com.diabdata.utils.darken
-import com.diabdata.utils.getItemShape
+import com.diabdata.utils.ui.darken
+import com.diabdata.utils.ui.getItemShape
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit

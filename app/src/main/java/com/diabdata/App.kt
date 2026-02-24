@@ -40,8 +40,8 @@ import com.diabdata.ui.components.graphsViewer.GraphViewer
 import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.ui.components.profile.UserAvatarWithMenu
 import com.diabdata.ui.components.profile.UserDetailsScreen
-import com.diabdata.utils.MedicalDevicesInitializer
-import com.diabdata.utils.MedicationInitializer
+import com.diabdata.utils.medicationMatrixScanner.MedicalDevicesInitializer
+import com.diabdata.utils.medicationMatrixScanner.MedicationInitializer
 import com.diabdata.shared.R as shared
 
 sealed interface NavIcon {

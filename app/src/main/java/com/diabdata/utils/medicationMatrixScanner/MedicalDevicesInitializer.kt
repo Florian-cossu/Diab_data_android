@@ -1,4 +1,4 @@
-package com.diabdata.utils
+package com.diabdata.utils.medicationMatrixScanner
 
 import android.content.Context
 import androidx.core.content.edit

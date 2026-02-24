@@ -34,7 +34,7 @@ import com.diabdata.ui.components.ScannableTypes
 import com.diabdata.ui.components.addDataPopup.AddDataPopup
 import com.diabdata.ui.components.latestMeasurements.LatestMeasurements
 import com.diabdata.ui.components.noDataView.NoDataView
-import com.diabdata.utils.MedicationInfo
+import com.diabdata.utils.medicationMatrixScanner.MedicationInfo
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import com.diabdata.shared.R as shared

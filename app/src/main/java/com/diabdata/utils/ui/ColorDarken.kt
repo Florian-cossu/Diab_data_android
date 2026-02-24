@@ -1,4 +1,4 @@
-package com.diabdata.utils
+package com.diabdata.utils.ui
 
 import androidx.compose.ui.graphics.Color
 

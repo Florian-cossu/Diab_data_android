@@ -1,4 +1,4 @@
-package com.diabdata.utils
+package com.diabdata.utils.medicationMatrixScanner
 
 fun generateDataMatrixDelimiters(excludedDelimiters: List<String> = emptyList()): String {
     val delimiters = listOf(

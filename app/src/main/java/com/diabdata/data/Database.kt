@@ -26,8 +26,8 @@ import com.diabdata.models.MedicationEntity
 import com.diabdata.models.Treatment
 import com.diabdata.models.UserDetails
 import com.diabdata.models.WeightEntry
-import com.diabdata.utils.MedicalDevicesInitializer
-import com.diabdata.utils.MedicationInitializer
+import com.diabdata.utils.medicationMatrixScanner.MedicalDevicesInitializer
+import com.diabdata.utils.medicationMatrixScanner.MedicationInitializer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

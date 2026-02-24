@@ -1,4 +1,4 @@
-package com.diabdata.utils
+package com.diabdata.utils.data
 
 import android.util.Log
 import com.google.gson.TypeAdapter

@@ -5,7 +5,7 @@ import androidx.glance.color.ColorProvider
 import androidx.glance.unit.ColorProvider
 import com.diabdata.shared.utils.dataTypes.AppointmentType
 import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
-import com.diabdata.utils.darken
+import com.diabdata.utils.ui.darken
 
 fun getAppointmentTypeOrNull(typeName: String?): AppointmentType? {
     return typeName?.let {

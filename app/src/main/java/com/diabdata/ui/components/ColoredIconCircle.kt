@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.diabdata.ui.components.layout.SvgIcon
-import com.diabdata.utils.darken
+import com.diabdata.utils.ui.darken
 
 @Composable
 fun ColoredIconCircle(

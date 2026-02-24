@@ -17,7 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.diabdata.castServer.CastServerService
+import com.diabdata.castServer.castToUser.CastToUserServerService
 import com.diabdata.shared.R
 import com.diabdata.ui.components.layout.SvgIcon
 
@@ -30,11 +30,11 @@ fun UserAvatarMenu(
 ) {
     val context = LocalContext.current
 
-    var isServerRunning by remember { mutableStateOf(CastServerService.isRunning) }
+    var isServerRunning by remember { mutableStateOf(CastToUserServerService.isRunning) }
 
     LaunchedEffect(expanded) {
         if (expanded) {
-            isServerRunning = CastServerService.isRunning
+            isServerRunning = CastToUserServerService.isRunning
         }
     }
 
@@ -104,10 +104,10 @@ fun UserAvatarMenu(
             },
             onClick = {
                 if (isServerRunning) {
-                    CastServerService.stop(context)
+                    CastToUserServerService.stop(context)
                     isServerRunning = false
                 } else {
-                    CastServerService.start(context)
+                    CastToUserServerService.start(context)
                     isServerRunning = true
                 }
                 onDismiss()

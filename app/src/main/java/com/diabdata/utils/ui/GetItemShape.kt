@@ -1,4 +1,4 @@
-package com.diabdata.utils
+package com.diabdata.utils.ui
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Shape
