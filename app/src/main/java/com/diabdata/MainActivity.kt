@@ -1,6 +1,7 @@
 package com.diabdata
 
 import android.app.Application
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -22,13 +23,21 @@ import com.diabdata.data.DataViewModelFactory
 import com.diabdata.data.DiabDataDatabase
 import com.diabdata.ui.theme.DiabDataTheme
 import com.diabdata.utils.PermissionManager
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class MainActivity : ComponentActivity() {
     private lateinit var dataViewModel: DataViewModel
 
+    private val _shortcutDestination = MutableStateFlow<String?>(null)
+    val shortcutDestination: StateFlow<String?> = _shortcutDestination.asStateFlow()
+
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        handleShortcutIntent(intent)
 
         val db = DiabDataDatabase.getDatabase(this)
         val repository = DataRepository(
@@ -55,9 +64,27 @@ class MainActivity : ComponentActivity() {
 
             DiabDataTheme {
                 RequestPermissionsOnLaunch()
-                App(db, dataViewModel)
+                App(db, dataViewModel, shortcutDestination)
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleShortcutIntent(intent)
+    }
+
+    private fun handleShortcutIntent(intent: Intent?) {
+        val destination = intent?.getStringExtra("shortcut_destination")
+        if (destination != null) {
+            _shortcutDestination.value = destination
+        }
+    }
+
+    fun consumeShortcut() {
+        _shortcutDestination.value = null
+        intent?.removeExtra("shortcut_destination")
     }
 
     @Composable

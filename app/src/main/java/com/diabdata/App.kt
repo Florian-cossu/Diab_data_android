@@ -1,6 +1,7 @@
 package com.diabdata
 
 import android.os.Build
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -42,6 +43,7 @@ import com.diabdata.ui.components.profile.UserAvatarWithMenu
 import com.diabdata.ui.components.profile.UserDetailsScreen
 import com.diabdata.utils.medicationMatrixScanner.MedicalDevicesInitializer
 import com.diabdata.utils.medicationMatrixScanner.MedicationInitializer
+import kotlinx.coroutines.flow.StateFlow
 import com.diabdata.shared.R as shared
 
 sealed interface NavIcon {
@@ -57,13 +59,34 @@ data class BottomNavItem(
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun App(
-    db: DiabDataDatabase, dataViewModel: DataViewModel
+    db: DiabDataDatabase,
+    dataViewModel: DataViewModel,
+    shortcutDestination: StateFlow<String?>
 ) {
     val context = LocalContext.current.applicationContext
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val userDetails by dataViewModel.userDetails.collectAsStateWithLifecycle(initialValue = null)
+
+    val pendingDestination by shortcutDestination.collectAsStateWithLifecycle()
+    val activity = LocalActivity.current as? MainActivity
+
+    LaunchedEffect(pendingDestination) {
+        pendingDestination?.let { destination ->
+            val validRoutes = listOf("home", "charts", "data", "devices", "settings", "profile")
+            if (destination in validRoutes) {
+                navController.navigate(destination) {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+            activity?.consumeShortcut()
+        }
+    }
 
     LaunchedEffect(Unit) {
         MedicationInitializer(context, db).initialize()

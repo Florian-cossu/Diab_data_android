@@ -42,9 +42,13 @@
     <!-- ============================================= -->
     <string name="home_menu_title">Accueil</string>
     <string name="database_management_menu_title">Données</string>
+    <string name="database_management_menu_title_long">Gérer les données</string>
     <string name="devices_menu_title">Appareils</string>
+    <string name="devices_menu_title_long">Gérer les appareils</string>
     <string name="settings_menu_title">Paramètres</string>
+    <string name="settings_menu_title_long">Ouvrir la page des paramètres</string>
     <string name="chart_menu_title">Graphiques</string>
+    <string name="chart_menu_title_long">Ouvrir la page des graphiques</string>
 
     <!-- ============================================= -->
     <!-- COMMON ACTIONS -->

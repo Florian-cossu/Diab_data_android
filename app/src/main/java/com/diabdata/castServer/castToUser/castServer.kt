@@ -71,7 +71,7 @@ class CastToUserServerService : Service() {
         val db = DiabDataDatabase.getDatabase(this)
         serverUrl = "http://$ip:$PORT"
 
-        authToken = java.util.UUID.randomUUID().toString()
+        authToken = (100000..999999).random().toString()
 
         server = embeddedServer(Netty, port = PORT) {
             install(ContentNegotiation) {
@@ -88,7 +88,14 @@ class CastToUserServerService : Service() {
             }
             routing {
                 get("/ping") {
-                    call.respond(mapOf("message" to "successfully connected to DiabData server", "statusCode" to "200"))
+                    val token = call.request.headers["Authorization"]?.removePrefix("Bearer ")
+                    if (token != null && token == authToken) {
+                        call.respond(HttpStatusCode.OK, mapOf("message" to "authenticated"))
+                    } else if (token != null) {
+                        call.respond(HttpStatusCode.Forbidden, mapOf("message" to "invalid token"))
+                    } else {
+                        call.respond(HttpStatusCode.OK, mapOf("message" to "reachable"))
+                    }
                 }
 
                 route("/api") {
@@ -97,6 +104,16 @@ class CastToUserServerService : Service() {
                     get("/user") {
                         val userInfo = db.userDetailsDao().getUserDetails().first()
                         call.respond(userInfo ?: mapOf("message" to "No user profile found"))
+                    }
+
+                    post("/shutdown") {
+                        call.respond(HttpStatusCode.OK, mapOf("message" to "server shutting down"))
+
+                        kotlinx.coroutines.delay(500)
+                        val intent = Intent(this@CastToUserServerService, CastToUserServerService::class.java).apply {
+                            action = ACTION_STOP
+                        }
+                        this@CastToUserServerService.stopSelf()
                     }
                 }
 

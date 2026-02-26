@@ -47,9 +47,13 @@
     <!-- ============================================= -->
     <string name="home_menu_title">Home</string>
     <string name="database_management_menu_title">Data</string>
+    <string name="database_management_menu_title_long">Manage data</string>
     <string name="devices_menu_title">Devices</string>
+    <string name="devices_menu_title_long">Manage devices</string>
     <string name="settings_menu_title">Settings</string>
+    <string name="settings_menu_title_long">Open settings page</string>
     <string name="chart_menu_title">Graphs</string>
+    <string name="chart_menu_title_long">Open graphs page</string>
 
     <!-- ============================================= -->
     <!-- COMMON ACTIONS -->
