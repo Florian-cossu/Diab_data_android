@@ -6,12 +6,12 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,18 +46,12 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-
     val availability by dataViewModel.dataAvailability.collectAsState()
     val hasData = availability.hasAnyData
-
     val (selectedType, setSelectedType) = remember { mutableStateOf<AddableType?>(null) }
-
     var showScanner by remember { mutableStateOf(false) }
-
     val unknownGtin = stringResource(shared.string.toast_data_unknown_medication_code)
-
     val scrollState = rememberScrollState()
-
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(), onResult = { isGranted ->
             if (isGranted) {
@@ -71,7 +65,7 @@ fun HomeScreen(
             }
         })
 
-    Scaffold { padding ->
+    Box(modifier = Modifier.fillMaxSize()) {
         if (hasData) {
             Column(
                 modifier = Modifier
@@ -79,64 +73,60 @@ fun HomeScreen(
                     .padding(horizontal = 16.dp)
                     .verticalScroll(scrollState)
             ) {
-                LatestMeasurements(
-                    viewModel = dataViewModel
-                )
+                LatestMeasurements(viewModel = dataViewModel)
             }
         } else {
             NoDataView()
         }
 
-        if (showScanner) {
-            DataMatrixScannerDialog(
-                onDismiss = { showScanner = false },
-                onResult = { result ->
-                    scope.launch {
-                        when (result) {
-                            is ScanResult.Medication -> {
-                                val info = result.data
-                                val entity = dataViewModel.getMedicationByGtin(
-                                    info.gtin.replace(regex = Regex("^0"), replacement = "")
-                                )
-                                if (entity != null) {
-                                    val treatment = mapToTreatment(info, entity)
-                                    dataViewModel.updatePrefilledTreatment(treatment)
-                                    setSelectedType(AddableType.TREATMENT)
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        unknownGtin,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-
-                            else -> null
-                        }
-                        showScanner = false
-                    }
-                },
-                visible = showScanner,
-                scannedType = ScannableTypes.MEDICATION
-            )
-        }
-
-        selectedType?.let { type ->
-            AddDataPopup(
-                type = type,
-                dataViewModel = dataViewModel,
-                prefilledTreatment = dataViewModel.prefilledTreatment,
-                onDismiss = {
-                    setSelectedType(null)
-                    dataViewModel.prefilledTreatment = null
-                })
-        }
-
-
+        // Le FAB directement dans le Box
         AddDataFab(
             onSelect = setSelectedType,
             onScanClick = {
                 permissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        )
+    }
+
+    // Les dialogs restent au même niveau
+    if (showScanner) {
+        DataMatrixScannerDialog(
+            onDismiss = { showScanner = false },
+            onResult = { result ->
+                scope.launch {
+                    when (result) {
+                        is ScanResult.Medication -> {
+                            val info = result.data
+                            val entity = dataViewModel.getMedicationByGtin(
+                                info.gtin.replace(regex = Regex("^0"), replacement = "")
+                            )
+                            if (entity != null) {
+                                val treatment = mapToTreatment(info, entity)
+                                dataViewModel.updatePrefilledTreatment(treatment)
+                                setSelectedType(AddableType.TREATMENT)
+                            } else {
+                                Toast.makeText(context, unknownGtin, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                        else -> null
+                    }
+                    showScanner = false
+                }
+            },
+            visible = showScanner,
+            scannedType = ScannableTypes.MEDICATION
+        )
+    }
+
+    selectedType?.let { type ->
+        AddDataPopup(
+            type = type,
+            dataViewModel = dataViewModel,
+            prefilledTreatment = dataViewModel.prefilledTreatment,
+            onDismiss = {
+                setSelectedType(null)
+                dataViewModel.prefilledTreatment = null
             }
         )
     }

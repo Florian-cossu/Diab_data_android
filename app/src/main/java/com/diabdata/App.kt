@@ -135,6 +135,12 @@ fun App(
                                 onEditProfile = { navController.navigate("profile") }
                             )
                         },
+                        contentPadding = PaddingValues(
+                            start = 32.dp,
+                            top = 10.dp,
+                            end = 32.dp,
+                            bottom = 10.dp
+                        ),
                         expandedHeight = 40.dp
                     )
                 }

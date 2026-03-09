@@ -1,6 +1,10 @@
 package com.diabdata.castServer.castToUser
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.net.wifi.WifiManager
@@ -8,19 +12,31 @@ import android.os.IBinder
 import android.text.format.Formatter
 import androidx.core.app.NotificationCompat
 import com.diabdata.castServer.AuthPlugin
+import com.diabdata.castServer.utils.computeTrend
 import com.diabdata.data.DiabDataDatabase
+import com.diabdata.models.UserDetails
+import com.diabdata.shared.R
 import com.diabdata.utils.data.GsonFactory
-import io.ktor.serialization.gson.*
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.http.*
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.serialization.gson.GsonConverter
+import io.ktor.server.application.install
+import io.ktor.server.engine.EmbeddedServer
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.cors.routing.CORS
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.put
+import io.ktor.server.routing.route
+import io.ktor.server.routing.routing
 import kotlinx.coroutines.flow.first
-import com.diabdata.shared.R as R
+import java.time.LocalDate
 
 class CastToUserServerService : Service() {
 
@@ -106,6 +122,51 @@ class CastToUserServerService : Service() {
                         call.respond(userInfo ?: mapOf("message" to "No user profile found"))
                     }
 
+                    put("/updateUser") {
+                        val updatedUser = call.receive<UserDetails>()
+                        db.userDetailsDao().upsertUserDetails(updatedUser)
+                        call.respond(HttpStatusCode.OK, mapOf("message" to "User updated"))
+                    }
+
+                    get("/user/photo") {
+                        val userInfo = db.userDetailsDao().getUserDetails().first()
+                        val path = userInfo?.profilePhotoPath
+
+                        if (path == null) {
+                            call.respond(
+                                HttpStatusCode.NotFound,
+                                mapOf("message" to "No photo path")
+                            )
+                            return@get
+                        }
+
+                        val file = java.io.File(path)
+                        if (!file.exists()) {
+                            call.respond(
+                                HttpStatusCode.NotFound,
+                                mapOf("message" to "Photo file not found")
+                            )
+                            return@get
+                        }
+
+                        val bytes = file.readBytes()
+                        val base64 =
+                            android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP)
+                        val extension = file.extension.lowercase()
+                        val mimeType = when (extension) {
+                            "png" -> "image/png"
+                            "webp" -> "image/webp"
+                            "svg" -> "image/svg+xml"
+                            else -> "image/jpeg"
+                        }
+
+                        call.respond(
+                            mapOf(
+                                "photo" to "data:$mimeType;base64,$base64"
+                            )
+                        )
+                    }
+
                     post("/shutdown") {
                         call.respond(HttpStatusCode.OK, mapOf("message" to "server shutting down"))
 
@@ -114,6 +175,55 @@ class CastToUserServerService : Service() {
                             action = ACTION_STOP
                         }
                         this@CastToUserServerService.stopSelf()
+                    }
+
+                    post("/dashboard") {
+                        val today = LocalDate.now()
+
+                        val dates = db.importantDateDao().getAllImportantDates().first()
+
+                        // Poids sur 1 an
+                        val allWeights = db.weightDao().getWeightsSince(today.minusYears(1)).first()
+                        val latestWeight = allWeights.maxByOrNull { it.date }?.let { latest ->
+                            mapOf(
+                                "value" to latest.value,
+                                "date" to latest.date.toString(),
+                                "trend" to computeTrend(
+                                    entries = allWeights,
+                                    valueExtractor = { it.value },
+                                    dateExtractor = { it.date }
+                                )
+                            )
+                        }
+
+                        val allHba1c =
+                            db.hba1cDao().getHBA1CEntriesSince(today.minusYears(1)).first()
+                        val latestHba1c = allHba1c.maxByOrNull { it.date }?.let { latest ->
+                            mapOf(
+                                "value" to latest.value,
+                                "date" to latest.date.toString(),
+                                "trend" to computeTrend(
+                                    entries = allHba1c,
+                                    valueExtractor = { it.value },
+                                    dateExtractor = { it.date }
+                                )
+                            )
+                        }
+
+                        val appointments =
+                            db.appointmentDao().getUpcomingAppointmentsFlow(today).first()
+                        val treatments =
+                            db.treatmentDao().getUpcomingExpirationDatesFlow(today).first()
+
+                        call.respond(
+                            mapOf(
+                                "importantDates" to dates,
+                                "latestWeight" to latestWeight,
+                                "latestHba1c" to latestHba1c,
+                                "upcomingAppointments" to appointments,
+                                "activeTreatments" to treatments
+                            )
+                        )
                     }
                 }
 
