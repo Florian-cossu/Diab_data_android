@@ -1,16 +1,12 @@
 package com.diabdata.ui.components.latestMeasurements.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,9 +25,10 @@ import com.diabdata.models.HBA1CEntry
 import com.diabdata.models.WeightEntry
 import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.shared.utils.dateUtils.formatLocalDate
-import com.diabdata.ui.components.ColoredIconCircle
+import com.diabdata.ui.components.ColoredIconCircleProps
+import com.diabdata.ui.components.cardsList.CardItem
+import com.diabdata.ui.components.cardsList.CardsList
 import com.diabdata.ui.components.layout.SvgIcon
-import com.diabdata.utils.ui.getItemShape
 import java.time.LocalDate
 import java.util.Locale
 import com.diabdata.shared.R as shared
@@ -55,7 +52,7 @@ fun LatestMeasuresContent(
 
     if (weightEntries.isEmpty() && hba1cEntries.isEmpty()) return
 
-    val cards = buildList {
+    val measures = buildList {
         weightEntries.maxByOrNull { it.date }?.let { latest ->
             add(
                 MeasureCardData(
@@ -74,7 +71,6 @@ fun LatestMeasuresContent(
                 )
             )
         }
-
         hba1cEntries.maxByOrNull { it.date }?.let { latest ->
             add(
                 MeasureCardData(
@@ -99,57 +95,47 @@ fun LatestMeasuresContent(
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            text = stringResource(shared.string.home_section_latest_measures),
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.surfaceTint
-        )
-        Spacer(Modifier.height(8.dp))
-
-        cards.forEachIndexed { index, card ->
-            Surface(
-                shape = getItemShape(index, cards.size),
-                tonalElevation = 2.dp,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier.padding(20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ColoredIconCircle(
-                        iconRes = card.addableType.iconRes,
-                        baseColor = if (card.textColor != primaryColor) card.textColor else card.addableType.baseColor,
-                        size = 40.dp,
-                        iconSize = 25.dp
-                    )
-                    Spacer(Modifier.width(16.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = card.titleText,
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                color = card.textColor,
-                                fontWeight = FontWeight.Bold
+    CardsList(
+        header = stringResource(shared.string.home_section_latest_measures),
+        cards = measures.map { card ->
+            CardItem(
+                leadingColoredCircleIcon = ColoredIconCircleProps(
+                    iconRes = card.addableType.iconRes,
+                    baseColor = if (card.textColor != primaryColor) card.textColor else card.addableType.baseColor,
+                    size = 40.dp,
+                    iconSize = 25.dp
+                ),
+                content = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = card.titleText,
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    color = card.textColor,
+                                    fontWeight = FontWeight.Bold
+                                )
                             )
-                        )
-                        Text(
-                            text = card.dateText,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    card.trendIcon?.let { iconRes ->
-                        SvgIcon(
-                            resId = iconRes,
-                            modifier = Modifier.size(15.dp),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                            Text(
+                                text = card.dateText,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        card.trendIcon?.let { iconRes ->
+                            SvgIcon(
+                                resId = iconRes,
+                                modifier = Modifier.size(15.dp),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
-            }
-            if (index != cards.size - 1) Spacer(Modifier.height(3.dp))
+            )
         }
-    }
+    )
 }
 
 @Composable
@@ -198,12 +184,16 @@ fun PreviewLatestMeasures() {
             updatedAt = LocalDate.of(2015, 4, 2),
         )
     )
-
     MaterialTheme {
-        LatestMeasuresContent(
-            weightEntries = sampleWeights,
-            hba1cEntries = sampleHba1c
-        )
+        Box(
+            modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.surfaceContainer)
+        ) {
+            LatestMeasuresContent(
+                weightEntries = sampleWeights,
+                hba1cEntries = sampleHba1c
+            )
+        }
     }
 }
 

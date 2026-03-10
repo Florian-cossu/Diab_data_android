@@ -107,7 +107,7 @@ class GlanceWidget : GlanceAppWidget() {
                     horizontal = 10.dp,
                     vertical = 6.dp
                 )
-                .background(GlanceTheme.colors.surface)
+                .background(GlanceTheme.colors.widgetBackground)
                 .cornerRadius(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

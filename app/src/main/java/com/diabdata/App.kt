@@ -18,6 +18,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -123,6 +124,7 @@ fun App(
     )
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
             if (currentRoute != "profile") {
                     TopAppBar(
@@ -137,17 +139,22 @@ fun App(
                         },
                         contentPadding = PaddingValues(
                             start = 32.dp,
-                            top = 10.dp,
+                            top = 5.dp,
                             end = 32.dp,
                             bottom = 10.dp
                         ),
-                        expandedHeight = 40.dp
+                        expandedHeight = 40.dp,
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        )
                     )
                 }
         },
         bottomBar = {
             if (currentRoute != "profile") {
-                NavigationBar {
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                ) {
                     val currentBackStack by navController.currentBackStackEntryAsState()
                     val currentDestination = currentBackStack?.destination
 

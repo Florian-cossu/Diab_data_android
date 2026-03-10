@@ -2,20 +2,17 @@ package com.diabdata.ui.components.latestMeasurements.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -38,9 +35,10 @@ import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.shared.utils.dataTypes.AppointmentType
 import com.diabdata.shared.utils.dateUtils.formatLocalDate
 import com.diabdata.shared.utils.dateUtils.toRelativeString
-import com.diabdata.ui.components.ColoredIconCircle
+import com.diabdata.ui.components.ColoredIconCircleProps
+import com.diabdata.ui.components.cardsList.CardItem
+import com.diabdata.ui.components.cardsList.CardsList
 import com.diabdata.ui.components.layout.SvgIcon
-import com.diabdata.utils.ui.getItemShape
 import java.time.LocalDate
 import com.diabdata.shared.R as shared
 
@@ -52,136 +50,117 @@ fun UpcomingAppointmentsListContent(
 
     val context = LocalContext.current
     val primaryColor = MaterialTheme.colorScheme.primary
-    LocalDate.now()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Transparent)
-    ) {
-        Text(
-            text = stringResource(shared.string.home_section_upcoming_appointments),
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.surfaceTint
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        upcomingAppointments.forEachIndexed { index, appointment ->
+    CardsList(
+        header = stringResource(shared.string.home_section_upcoming_appointments),
+        pageSize = 3,
+        cards = upcomingAppointments.map { appointment ->
             val remainingText = appointment.date.toRelativeString(context)
 
-            Surface(
-                shape = getItemShape(index, upcomingAppointments.size),
-                tonalElevation = 2.dp,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(20.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ColoredIconCircle(
-                        iconRes = appointment.type.iconRes,
-                        baseColor = AddableType.APPOINTMENT.baseColor,
-                        size = 40.dp,
-                        iconSize = 25.dp
-                    )
-                    Spacer(Modifier.width(16.dp))
-                    Column(
-                        modifier = Modifier.weight(1f)
+            CardItem(
+                leadingColoredCircleIcon = ColoredIconCircleProps(
+                    iconRes = appointment.type.iconRes,
+                    baseColor = AddableType.APPOINTMENT.baseColor,
+                    size = 40.dp,
+                    iconSize = 25.dp
+                ),
+                content = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "${appointment.doctor} - (${appointment.type.displayName(context)})",
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                color = primaryColor,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            if (!appointment.notes.isNullOrBlank()) {
-                                var showNotesDialog by remember { mutableStateOf(false) }
-                                IconButton(
-                                    onClick = {
-                                        showNotesDialog = true
-                                    },
-                                    modifier = Modifier.size(22.dp),
-                                    colors = IconButtonDefaults.iconButtonColors(
-                                        containerColor = Color.Transparent,
-                                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                ) {
-                                    SvgIcon(
-                                        resId = shared.drawable.note_icon_vector,
-                                        modifier = Modifier.size(18.dp),
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-
-                                if (showNotesDialog) {
-                                    AlertDialog(
-                                        onDismissRequest = { showNotesDialog = false },
-                                        icon = {
-                                            SvgIcon(
-                                                resId = shared.drawable.note_icon_vector,
-                                                modifier = Modifier.size(48.dp),
-                                                color = MaterialTheme.colorScheme.primary
-                                            )
-                                        },
-                                        title = {
-                                            Text(
-                                                text = stringResource(shared.string.appointment_card_notes_header),
-                                                style = MaterialTheme.typography.titleMedium
-                                            )
-                                        },
-                                        text = {
-                                            Text(
-                                                text = appointment.notes,
-                                                style = MaterialTheme.typography.bodyMedium
-                                            )
-                                        },
-                                        confirmButton = {
-                                            TextButton(onClick = {
-                                                showNotesDialog = false
-                                            }) { Text(text = stringResource(shared.string.action_confirm)) }
-                                        })
-                                }
-                            }
-
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = stringResource(
-                                    shared.string.scheduled_on_date_text,
-                                    formatLocalDate(appointment.date)
-                                ),
+                                text = "${appointment.doctor} - (${
+                                    appointment.type.displayName(
+                                        context
+                                    )
+                                })",
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    color = primaryColor,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                if (!appointment.notes.isNullOrBlank()) {
+                                    var showNotesDialog by remember { mutableStateOf(false) }
+                                    IconButton(
+                                        onClick = { showNotesDialog = true },
+                                        modifier = Modifier.size(22.dp),
+                                        colors = IconButtonDefaults.iconButtonColors(
+                                            containerColor = Color.Transparent,
+                                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    ) {
+                                        SvgIcon(
+                                            resId = shared.drawable.note_icon_vector,
+                                            modifier = Modifier.size(18.dp),
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                    if (showNotesDialog) {
+                                        AlertDialog(
+                                            onDismissRequest = { showNotesDialog = false },
+                                            icon = {
+                                                SvgIcon(
+                                                    resId = shared.drawable.note_icon_vector,
+                                                    modifier = Modifier.size(48.dp),
+                                                    color = MaterialTheme.colorScheme.primary
+                                                )
+                                            },
+                                            title = {
+                                                Text(
+                                                    text = stringResource(shared.string.appointment_card_notes_header),
+                                                    style = MaterialTheme.typography.titleMedium
+                                                )
+                                            },
+                                            text = {
+                                                Text(
+                                                    text = appointment.notes,
+                                                    style = MaterialTheme.typography.bodyMedium
+                                                )
+                                            },
+                                            confirmButton = {
+                                                TextButton(onClick = {
+                                                    showNotesDialog = false
+                                                }) {
+                                                    Text(text = stringResource(shared.string.action_confirm))
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+                                Text(
+                                    text = stringResource(
+                                        shared.string.scheduled_on_date_text,
+                                        formatLocalDate(appointment.date)
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            SvgIcon(
+                                resId = shared.drawable.hourglass_icon_vector,
+                                modifier = Modifier.size(15.dp),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text(
+                                text = remainingText,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        SvgIcon(
-                            resId = shared.drawable.hourglass_icon_vector,
-                            modifier = Modifier.size(15.dp),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Text(
-                            text =
-                                remainingText,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
                 }
-            }
-            if (index != upcomingAppointments.size - 1) {
-                Spacer(modifier = Modifier.height(3.dp))
-            }
+            )
         }
-    }
+    )
 }
 
 @Composable
@@ -217,6 +196,11 @@ fun PreviewUpcomingAppointmentsList() {
     )
 
     MaterialTheme {
-        UpcomingAppointmentsListContent(upcomingAppointments = sampleAppointments)
+        Box(
+            modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.surfaceContainer)
+        ) {
+            UpcomingAppointmentsListContent(upcomingAppointments = sampleAppointments)
+        }
     }
 }

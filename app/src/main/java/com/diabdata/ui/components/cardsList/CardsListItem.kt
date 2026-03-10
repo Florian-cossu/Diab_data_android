@@ -49,7 +49,7 @@ import com.diabdata.utils.ui.getItemShape
  * - Both trailing icon and switch can coexist on the same card.
  *
  * ## Styling
- * - The card uses [MaterialTheme.colorScheme.surfaceContainerHigh] as its background color.
+ * - The card uses [MaterialTheme.colorScheme.surface] as its background color.
  * - The [shape] parameter controls the corner rounding, typically computed by [getItemShape]
  *   based on the card's position within the parent [CardsList] stack.
  *
@@ -94,7 +94,7 @@ fun CardListItem(
 ) {
     Surface(
         shape = shape,
-        tonalElevation = 2.dp,
+        color = MaterialTheme.colorScheme.surface,
         modifier = modifier.fillMaxWidth()
     ) {
         Row(
