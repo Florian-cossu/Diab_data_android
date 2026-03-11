@@ -43,7 +43,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -101,7 +100,7 @@ fun DatabaseEditionView(
 
     val typesOfSelectedEntries = selectedEntries.map { it.addableType }.toSet()
 
-    Scaffold { padding ->
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -371,7 +370,6 @@ fun EntryCardSwipeM3(
 
         Surface(
             shape = shape,
-            tonalElevation = 2.dp,
             color = archivedCardBgColor,
             modifier = Modifier
                 .fillMaxWidth()

@@ -2,20 +2,20 @@
 
 <!-- PROJECT SHIELDS -->
 
-[![Static Badge](https://img.shields.io/badge/CONTRIBUTORS-1-blue)](https://github.com/Florian-cossu/chat_mockup/graphs/contributors)
-[![Static Badge](https://img.shields.io/badge/VERSION-4.2.2-teal)](https://github.com/Florian-cossu/Diab_data_android/releases)
+[![Static Badge](https://img.shields.io/badge/CONTRIBUTORS-1-blue)](https://github.com/Florian-cossu/Diab_data_android/graphs/contributors)
+[![Static Badge](https://img.shields.io/badge/VERSION-4.3.0-teal)](https://github.com/Florian-cossu/Diab_data_android/releases)
 [![Static Badge](https://img.shields.io/badge/OWNER-Florian%20Cossu-38bdf8)](https://github.com/Florian-cossu)
 
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/Florian-cossu/android_app">
-    <img src="resources/logo.svg" alt="Logo" width="80" height="80">
+  <a href="https://github.com/Florian-cossu/Diab_data_android">
+    <img src="resources/Logo/new_logo.svg" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Diab Data</h3>
   <p align="center">
-  <a href="https://github.com/Florian-cossu/android_app/releases">Releases</a>
+  <a href="https://github.com/Florian-cossu/Diab_data_android/releases">Releases</a> • <a href="https://diabdata.vercel.app/">Website</a>
   </p>
   <p align="center">
     An android app that lets you keep track of all diabetes related information that you may need to communicate on a regular basis.
@@ -86,7 +86,7 @@ This project is built using the following frameworks/libraries:
 Clone repository
 
 ```bash
-git clone https://github.com/Florian-cossu/android_app.git
+git clone https://github.com/Florian-cossu/Diab_data_android.git
 ```
 
 You can then open the project in Android Studio.
@@ -125,7 +125,8 @@ FCOSSU-Database_migration
 
 ## Roadmap
 
-See the [open issues](https://github.com/Florian-cossu/android_app/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/Florian-cossu/Diab_data_android/issues) for a full list of
+proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -147,6 +148,7 @@ Here is a list of some of the sources used for the readme creation:
 
 Florian Cossu - [Linkedin](https://www.linkedin.com/in/florian-cossu/) - florian.cossu@gmail.com - [Github](https://github.com/Florian-cossu)
 
-Project Link: [https://github.com/Florian-cossu/chat_mockup](https://github.com/Florian-cossu/android_app)
+Project
+Link: [https://github.com/Florian-cossu/chat_mockup](https://github.com/Florian-cossu/Diab_data_android)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

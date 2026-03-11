@@ -161,7 +161,7 @@ fun CurrentConsumableDevicesCards(
 
             Surface(
                 shape = getItemShape(index, cards.size),
-                tonalElevation = 2.dp,
+                color = MaterialTheme.colorScheme.surface,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(

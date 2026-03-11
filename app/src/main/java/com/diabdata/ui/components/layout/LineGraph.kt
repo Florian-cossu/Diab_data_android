@@ -181,7 +181,7 @@ fun LineGraph(
         Spacer(Modifier.height(12.dp))
         Surface(
             shape = RoundedCornerShape(10.dp),
-            tonalElevation = 2.dp,
+            color = MaterialTheme.colorScheme.surface,
         ) {
             CartesianChartHost(
                 chart = rememberCartesianChart(

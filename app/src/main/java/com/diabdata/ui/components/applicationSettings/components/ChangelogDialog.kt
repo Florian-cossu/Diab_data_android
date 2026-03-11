@@ -37,7 +37,7 @@ import com.diabdata.shared.R as shared
 @Composable
 fun ChangelogDialog(onDismiss: () -> Unit) {
     rememberScrollState()
-    val confirmButtonText = stringResource(shared.string.action_confirm)
+    val confirmButtonText = stringResource(shared.string.action_close)
     val windowInfo = LocalWindowInfo.current
     val density = LocalDensity.current
     val maxHeight = with(density) { windowInfo.containerSize.height.toDp() * 0.45f }
@@ -76,7 +76,7 @@ fun ChangelogDialog(onDismiss: () -> Unit) {
                     )
                     Spacer(Modifier.width(12.dp))
                     Text(
-                        text = "Updates - 25/11/2025",
+                        text = "Updates - 11/03/2026",
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -90,13 +90,26 @@ fun ChangelogDialog(onDismiss: () -> Unit) {
                         .heightIn(max = maxHeight)
                 ) {
                     changelogSection(
+                        "- BRANDING",
+                        listOf(
+                            "Created brand new application logo."
+                        )
+                    )
+                    changelogSection(
                         "- CLEANUP",
                         listOf(
                             "Major reorganization of string resources with consistent naming.",
                             "Moved almost all existing app resources into shared.",
                             "Cleaned, grouped, and simplified libs.versions.toml.",
-                            "Removed unused dependencies (Accompanist, old chart libs).",
                             "Updated Gradle configuration across modules."
+                        )
+                    )
+                    changelogSection(
+                        "- GUI",
+                        listOf(
+                            "Turned stacked card into a component with pagination options",
+                            "Updated the app to get closer to what native Google apps look like",
+                            "Major reorganization of string resources with consistent naming.",
                         )
                     )
                     changelogSection(

@@ -12,9 +12,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -67,12 +65,50 @@ fun DevicesScreen(
     val selectedDestination = DeviceDestination.entries.indexOfFirst { it.route == currentRoute }
         .takeIf { it != -1 } ?: 0
 
-    Scaffold(modifier = modifier) { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize()
         ) {
+            SecondaryTabRow(
+                selectedTabIndex = selectedDestination,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                DeviceDestination.entries.forEachIndexed { index, destination ->
+                    Tab(
+                        selected = selectedDestination == index,
+                        onClick = {
+                            navController.navigate(destination.route) {
+                                popUpTo(startDestination.route) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                        text = {
+                            Text(
+                                text = stringResource(id = destination.labelRes),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        icon = {
+                            if (selectedDestination == index)
+                                SvgIcon(
+                                    destination.iconResFilled,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            else
+                                SvgIcon(
+                                    destination.iconRes,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                        }
+                    )
+                }
+            }
+
             NavHost(
                 navController = navController,
                 startDestination = startDestination.route,
@@ -102,44 +138,4 @@ fun DevicesScreen(
                 }
             }
         }
-
-        SecondaryTabRow(
-            selectedTabIndex = selectedDestination,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            DeviceDestination.entries.forEachIndexed { index, destination ->
-                Tab(
-                    selected = selectedDestination == index,
-                    onClick = {
-                        navController.navigate(destination.route) {
-                            popUpTo(startDestination.route) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    selectedContentColor = MaterialTheme.colorScheme.primary,
-                    unselectedContentColor = MaterialTheme.colorScheme.onSurface,
-                    text = {
-                        Text(
-                            text = stringResource(id = destination.labelRes),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    },
-                    icon = {
-                        if (selectedDestination == index)
-                            SvgIcon(
-                                destination.iconResFilled,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        else
-                            SvgIcon(
-                                destination.iconRes,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                    }
-                )
-            }
-        }
-    }
 }

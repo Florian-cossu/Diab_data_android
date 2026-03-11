@@ -54,6 +54,9 @@
     <!-- COMMON ACTIONS -->
     <!-- ============================================= -->
     <string name="action_confirm">Confirmer</string>
+    <string name="action_back">Retour</string>
+    <string name="action_close">Fermer</string>
+    <string name="action_open">Ouvrir</string>
     <string name="action_update">Mettre à jour</string>
     <string name="action_cancel">Annuler</string>
     <string name="action_delete">Supprimer</string>

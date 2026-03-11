@@ -32,7 +32,7 @@ fun Context.showNotification(
     val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     manager.createNotificationChannel(channel)
 
-    val iconResId = iconId ?: shared.drawable.logo_icon_vector
+    val iconResId = iconId ?: shared.drawable.ic_logo_outlined
 
     val builder = NotificationCompat.Builder(this, channelId)
         .setSmallIcon(iconResId)

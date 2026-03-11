@@ -25,7 +25,7 @@ fun SettingsButton(
     text: String, onClick: () -> Unit, shape: Shape, isDestructive: Boolean = false, icon: Int = 0
 ) {
     Surface(
-        shape = shape, tonalElevation = 2.dp,
+        color = MaterialTheme.colorScheme.surface,
         modifier = Modifier.fillMaxWidth()
     ) {
         TextButton(

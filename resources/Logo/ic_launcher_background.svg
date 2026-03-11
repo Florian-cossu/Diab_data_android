@@ -1,0 +1,11 @@
+<svg id="vector" width="108" height="108" version="1.1" viewBox="0 0 108 108"
+    xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="gradient_0" x2="108" y1="108" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#00D800" style="stop-color:#0daeff" offset="0" />
+            <stop stop-color="#009700" style="stop-color:#37ecff" offset="1" />
+        </linearGradient>
+    </defs>
+    <path d="m0 0h108v108h-108z" fill="url(#gradient_0)" stroke="#000" stroke-linecap="round"
+        stroke-linejoin="round" stroke-opacity="0" />
+</svg>

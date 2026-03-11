@@ -79,7 +79,6 @@ fun HomeScreen(
             NoDataView()
         }
 
-        // Le FAB directement dans le Box
         AddDataFab(
             onSelect = setSelectedType,
             onScanClick = {
@@ -88,7 +87,6 @@ fun HomeScreen(
         )
     }
 
-    // Les dialogs restent au même niveau
     if (showScanner) {
         DataMatrixScannerDialog(
             onDismiss = { showScanner = false },

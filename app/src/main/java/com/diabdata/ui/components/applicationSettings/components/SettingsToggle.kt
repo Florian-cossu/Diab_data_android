@@ -38,7 +38,7 @@ fun SettingsToggle(
 ) {
     Surface(
         shape = shape,
-        tonalElevation = 2.dp,
+        color = MaterialTheme.colorScheme.surface,
         modifier = Modifier.fillMaxWidth()
     ) {
         val context = LocalContext.current
