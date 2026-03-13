@@ -25,8 +25,7 @@ fun SettingsButton(
     text: String, onClick: () -> Unit, shape: Shape, isDestructive: Boolean = false, icon: Int = 0
 ) {
     Surface(
-        color = MaterialTheme.colorScheme.surface,
-        modifier = Modifier.fillMaxWidth()
+        color = MaterialTheme.colorScheme.surface, modifier = Modifier.fillMaxWidth()
     ) {
         TextButton(
             onClick = onClick, shape = shape, colors = ButtonDefaults.textButtonColors(

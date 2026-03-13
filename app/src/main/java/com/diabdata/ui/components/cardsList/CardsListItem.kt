@@ -38,7 +38,7 @@ import com.diabdata.utils.ui.getItemShape
  * 1. **Colored circle icon** ([CardItem.leadingColoredCircleIcon]): an icon rendered inside
  *    a tinted circular background via [ColoredIconCircle].
  * 2. **Simple SVG icon** ([CardItem.leadingIcon]): a flat icon rendered via [SvgIcon]
- *    with [MaterialTheme.colorScheme.onSurfaceVariant] tint.
+ *    with [MaterialTheme.colorScheme.onSurface] tint.
  * 3. If neither is provided, no leading section is displayed.
  *
  * ## Trailing section
@@ -92,11 +92,9 @@ fun CardListItem(
     shape: Shape,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        shape = shape,
-        color = MaterialTheme.colorScheme.surface,
-        modifier = modifier.fillMaxWidth()
-    ) {
+    val surfaceModifier = modifier.fillMaxWidth()
+
+    val content: @Composable () -> Unit = {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -113,28 +111,36 @@ fun CardListItem(
                         iconSize = cardItem.leadingColoredCircleIcon.iconSize
                     )
                 }
-
                 cardItem.leadingIcon != null -> {
                     SvgIcon(
                         resId = cardItem.leadingIcon,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = cardItem.leadingIconColor ?: MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(24.dp)
                     )
                 }
             }
-
             Box(modifier = Modifier.weight(1f)) {
                 cardItem.content()
             }
 
             if (cardItem.trailingIcon != null) {
-                IconButton(
-                    onClick = { cardItem.onTrailingIconClick?.invoke() },
-                    modifier = Modifier.size(24.dp)
-                ) {
+                val trailingOnClick = cardItem.onTrailingIconClick ?: cardItem.onClick
+
+                if (trailingOnClick != null) {
+                    IconButton(
+                        onClick = trailingOnClick,
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        SvgIcon(
+                            resId = cardItem.trailingIcon,
+                            color = if (cardItem.isDestructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                } else {
                     SvgIcon(
                         resId = cardItem.trailingIcon,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = if (cardItem.isDestructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -146,6 +152,26 @@ fun CardListItem(
                     onCheckedChange = cardItem.onSwitchChange
                 )
             }
+        }
+    }
+
+    if (cardItem.onClick != null) {
+        Surface(
+            shape = shape,
+            color = MaterialTheme.colorScheme.surface,
+            contentColor = if (cardItem.isDestructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+            modifier = surfaceModifier,
+            onClick = cardItem.onClick
+        ) {
+            content()
+        }
+    } else {
+        Surface(
+            shape = shape,
+            color = MaterialTheme.colorScheme.surface,
+            modifier = surfaceModifier
+        ) {
+            content()
         }
     }
 }

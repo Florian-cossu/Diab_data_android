@@ -10,11 +10,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -38,9 +38,10 @@ import androidx.work.WorkManager
 import com.diabdata.BuildConfig
 import com.diabdata.data.DataViewModel
 import com.diabdata.ui.components.applicationSettings.components.ChangelogDialog
-import com.diabdata.ui.components.applicationSettings.components.SettingsButton
 import com.diabdata.ui.components.applicationSettings.components.SettingsSection
 import com.diabdata.ui.components.applicationSettings.components.SettingsToggle
+import com.diabdata.ui.components.cardsList.CardItem
+import com.diabdata.ui.components.cardsList.CardsList
 import com.diabdata.ui.components.layout.SvgIcon
 import com.diabdata.utils.showNotification
 import com.diabdata.workers.reminders.scheduleAppointmentReminders
@@ -284,40 +285,82 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 .padding(20.dp),
             verticalArrangement = spacedBy(32.dp)
         ) {
-            // Database section
-            SettingsSection(
-                title = stringResource(shared.string.settings_section_data)
-            ) {
-                SettingsButton(
-                    text = stringResource(shared.string.settings_export_data),
+            val dataBaseSection: List<CardItem> = listOf(
+                CardItem(
+                    leadingIcon = shared.drawable.backup_db_icon_vector,
+                    content = {
+                        Row {
+                            Text(stringResource(shared.string.settings_export_data))
+                        }
+                    },
                     onClick = { createFileLauncher.launch(fileName) },
-                    shape = RoundedCornerShape(
-                        topStart = 16.dp,
-                        topEnd = 16.dp,
-                        bottomStart = 3.dp,
-                        bottomEnd = 3.dp
-                    ),
-                    icon = shared.drawable.backup_db_icon_vector
-                )
-                SettingsButton(
-                    text = stringResource(shared.string.settings_import_data),
-                    onClick = { importFileLauncher.launch(arrayOf("application/json", "application/zip")) },
-                    shape = RoundedCornerShape(3.dp),
-                    icon = shared.drawable.restore_db_icon_vector
-                )
-                SettingsButton(
-                    text = stringResource(shared.string.settings_purge_database),
-                    onClick = { showConfirmDialog = true },
-                    shape = RoundedCornerShape(
-                        topStart = 3.dp,
-                        topEnd = 3.dp,
-                        bottomStart = 16.dp,
-                        bottomEnd = 16.dp
-                    ),
+                    trailingIcon = shared.drawable.arrow_right_icon_vector
+                ),
+                CardItem(
+                    leadingIcon = shared.drawable.restore_db_icon_vector,
+                    content = {
+                        Row {
+                            Text(stringResource(shared.string.settings_import_data))
+                        }
+                    },
+                    onClick = {
+                        importFileLauncher.launch(
+                            arrayOf(
+                                "application/json",
+                                "application/zip"
+                            )
+                        )
+                    },
+                    trailingIcon = shared.drawable.arrow_right_icon_vector
+                ),
+                CardItem(
+                    leadingIcon = shared.drawable.purge_db_icon_vector,
+                    leadingIconColor = MaterialTheme.colorScheme.error,
                     isDestructive = true,
-                    icon = shared.drawable.purge_db_icon_vector
+                    content = {
+                        Row {
+                            Text(stringResource(shared.string.settings_purge_database))
+                        }
+                    },
+                    onClick = { showConfirmDialog = true },
+                    trailingIcon = shared.drawable.arrow_right_icon_vector
                 )
-            }
+            )
+
+            val aboutApplicationSection: List<CardItem> = listOf(
+                CardItem(
+                    leadingIcon = shared.drawable.app_version_icon_vector,
+                    content = {
+                        Row {
+                            Text("Diabdata $versionName")
+                        }
+                    },
+                    onClick = { showChangeLogDialog = true },
+                    trailingIcon = shared.drawable.arrow_right_icon_vector
+                ),
+                CardItem(
+                    leadingIcon = shared.drawable.medication_info_icon_vector,
+                    content = {
+                        Row {
+                            Text("Medication information file version $medicationsGtinFileversion")
+                        }
+                    },
+                ),
+                CardItem(
+                    leadingIcon = shared.drawable.medical_device_info_version_icon_vector,
+                    content = {
+                        Row {
+                            Text("Medical devices information file version $medicalDeviceGtinFileVersion")
+                        }
+                    },
+                )
+            )
+
+            // Database section
+            CardsList(
+                header = stringResource(shared.string.settings_section_data),
+                cards = dataBaseSection
+            )
 
             // Notification section
             SettingsSection(
@@ -366,41 +409,10 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 )
             }
 
-            // Section Application
-            SettingsSection(
-                title = stringResource(shared.string.settings_section_application)
-            ) {
-                SettingsButton(
-                    text = "Diabdata $versionName (code: $versionCode)",
-                    onClick = {
-                        showChangeLogDialog = true
-                    },
-                    shape = RoundedCornerShape(
-                        topStart = 16.dp,
-                        topEnd = 16.dp,
-                        bottomStart = 3.dp,
-                        bottomEnd = 3.dp
-                    ),
-                    icon = shared.drawable.app_version_icon_vector
-                )
-                SettingsButton(
-                    text = "Medication information file version $medicationsGtinFileversion",
-                    onClick = { },
-                    shape = RoundedCornerShape(3.dp),
-                    icon = shared.drawable.medication_info_icon_vector
-                )
-                SettingsButton(
-                    text = "Medical devices information file version $medicalDeviceGtinFileVersion",
-                    onClick = { },
-                    shape = RoundedCornerShape(
-                        topStart = 3.dp,
-                        topEnd = 3.dp,
-                        bottomStart = 16.dp,
-                        bottomEnd = 16.dp
-                    ),
-                    icon = shared.drawable.medical_device_info_version_icon_vector
-                )
-            }
+            CardsList(
+                header = stringResource(shared.string.settings_section_application),
+                cards = aboutApplicationSection
+            )
         }
     }
 

@@ -54,88 +54,84 @@ enum class DeviceDestination(
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun DevicesScreen(
-    dataViewModel: DataViewModel,
-    modifier: Modifier = Modifier
+    dataViewModel: DataViewModel, modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
     val startDestination = DeviceDestination.OVERVIEW
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val selectedDestination = DeviceDestination.entries.indexOfFirst { it.route == currentRoute }
-        .takeIf { it != -1 } ?: 0
+    val selectedDestination =
+        DeviceDestination.entries.indexOfFirst { it.route == currentRoute }.takeIf { it != -1 } ?: 0
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        SecondaryTabRow(
+            selectedTabIndex = selectedDestination,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            SecondaryTabRow(
-                selectedTabIndex = selectedDestination,
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                DeviceDestination.entries.forEachIndexed { index, destination ->
-                    Tab(
-                        selected = selectedDestination == index,
-                        onClick = {
-                            navController.navigate(destination.route) {
-                                popUpTo(startDestination.route) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        selectedContentColor = MaterialTheme.colorScheme.primary,
-                        unselectedContentColor = MaterialTheme.colorScheme.onSurface,
-                        text = {
-                            Text(
-                                text = stringResource(id = destination.labelRes),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        },
-                        icon = {
-                            if (selectedDestination == index)
-                                SvgIcon(
-                                    destination.iconResFilled,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            else
-                                SvgIcon(
-                                    destination.iconRes,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
+            DeviceDestination.entries.forEachIndexed { index, destination ->
+                Tab(
+                    selected = selectedDestination == index,
+                    onClick = {
+                        navController.navigate(destination.route) {
+                            popUpTo(startDestination.route) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                    )
-                }
-            }
-
-            NavHost(
-                navController = navController,
-                startDestination = startDestination.route,
-                modifier = Modifier.fillMaxSize(),
-                enterTransition = {
-                    slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(300)) +
-                            fadeIn(animationSpec = tween(300))
-                },
-                exitTransition = {
-                    slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween(300)) +
-                            fadeOut(animationSpec = tween(300))
-                },
-                popEnterTransition = {
-                    slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(300)) +
-                            fadeIn(animationSpec = tween(300))
-                },
-                popExitTransition = {
-                    slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(300)) +
-                            fadeOut(animationSpec = tween(300))
-                }
-            ) {
-                composable(DeviceDestination.OVERVIEW.route) {
-                    RecentDevicesScreen(dataViewModel = dataViewModel)
-                }
-                composable(DeviceDestination.FAULTY.route) {
-                    FaultyDevices(dataViewModel)
-                }
+                    },
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                    text = {
+                        Text(
+                            text = stringResource(id = destination.labelRes),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    icon = {
+                        if (selectedDestination == index) SvgIcon(
+                            destination.iconResFilled, color = MaterialTheme.colorScheme.primary
+                        )
+                        else SvgIcon(
+                            destination.iconRes, color = MaterialTheme.colorScheme.onSurface
+                        )
+                    })
             }
         }
+
+        NavHost(
+            navController = navController,
+            startDestination = startDestination.route,
+            modifier = Modifier.fillMaxSize(),
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(300)) + fadeIn(
+                    animationSpec = tween(300)
+                )
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween(300)) + fadeOut(
+                    animationSpec = tween(300)
+                )
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(300)) + fadeIn(
+                    animationSpec = tween(300)
+                )
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(300)) + fadeOut(
+                    animationSpec = tween(300)
+                )
+            }) {
+            composable(DeviceDestination.OVERVIEW.route) {
+                RecentDevicesScreen(dataViewModel = dataViewModel)
+            }
+            composable(DeviceDestination.FAULTY.route) {
+                FaultyDevices(dataViewModel)
+            }
+        }
+    }
 }

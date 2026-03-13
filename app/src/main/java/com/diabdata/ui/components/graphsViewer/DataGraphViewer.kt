@@ -116,7 +116,7 @@ fun GraphViewer(
                     ToggleButton(
                         checked = selectedIndex == index,
                         colors = ToggleButtonDefaults.toggleButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
                         ),
                         onCheckedChange = { selectedIndex = index },
                         contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
