@@ -6,6 +6,9 @@ import java.time.format.DateTimeFormatter
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
+val scriptDir = File(System.getProperty("user.dir"))
+println("📂 Working directory: $scriptDir")
+
 val today = LocalDate.now()
 val dtFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
@@ -355,6 +358,8 @@ val json = """
 
 val outputDir = File("generated_test_data")
 outputDir.mkdirs()
+
+println("📂 Output directory: ${outputDir.absolutePath}")
 
 val profilePhoto = File("scripts/profile_photo.jpg")
 if (!profilePhoto.exists()) {
