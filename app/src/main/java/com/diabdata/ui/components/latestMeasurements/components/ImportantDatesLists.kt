@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.diabdata.data.DataViewModel
 import com.diabdata.models.ImportantDate
 import com.diabdata.shared.utils.dataTypes.AddableType
+import com.diabdata.shared.utils.dataTypes.DiabetesType
 import com.diabdata.shared.utils.dateUtils.formatLocalDate
 import com.diabdata.ui.components.ColoredIconCircleProps
 import com.diabdata.ui.components.cardsList.CardItem
@@ -35,27 +36,58 @@ import com.diabdata.shared.R as shared
 @Composable
 fun ImportantDatesList(viewModel: DataViewModel) {
     val availability by viewModel.dataAvailability.collectAsState()
-    val showSection = availability.hasImportantDates
-
-    val diagnosisEntries by viewModel.importantDates.collectAsState(initial = emptyList())
+    val userDetails by viewModel.userDetails.collectAsState()
+    val showSection = availability.hasImportantDates || userDetails?.diagnosisDate != null
+    val importantDates by viewModel.importantDates.collectAsState(initial = emptyList())
 
     if (showSection) {
-        ImportantDatesListContent(diagnosisEntries)
+        ImportantDatesListContent(
+            importantDates = importantDates,
+            diagnosisDate = userDetails?.diagnosisDate,
+            diabetesType = userDetails?.diabetesType
+        )
     }
 }
 
 @Composable
-fun ImportantDatesListContent(diagnosisEntries: List<ImportantDate>) {
+fun ImportantDatesListContent(
+    importantDates: List<ImportantDate>,
+    diagnosisDate: LocalDate? = null,
+    diabetesType: DiabetesType? = null
+) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val today = LocalDate.now()
+    val diagnosisLabel = if (diabetesType != null) {
+        stringResource(
+            shared.string.specific_diabetes_discovery_label,
+            stringResource(diabetesType.displayNameRes)
+        )
+    } else {
+        stringResource(shared.string.generic_diabetes_discovery_label)
+    }
+
+    val allDates = buildList {
+        if (diagnosisDate != null) {
+            add(
+                ImportantDate(
+                    id = -1,
+                    date = diagnosisDate,
+                    importantDate = diagnosisLabel,
+                    isArchived = false,
+                    createdAt = diagnosisDate,
+                    updatedAt = diagnosisDate
+                )
+            )
+        }
+        addAll(importantDates)
+    }
 
     CardsList(
         header = stringResource(shared.string.home_section_important_dates),
-        cards = diagnosisEntries.map { diagnosis ->
+        cards = allDates.map { diagnosis ->
             val years = ChronoUnit.YEARS.between(diagnosis.date, today)
             val monthsTotal = ChronoUnit.MONTHS.between(diagnosis.date, today)
             val remainingMonths = monthsTotal - years * 12
-
             val elapsedText = when {
                 years == 0L && remainingMonths == 0L -> stringResource(shared.string.date_today)
                 years == 0L -> pluralStringResource(
@@ -75,7 +107,6 @@ fun ImportantDatesListContent(diagnosisEntries: List<ImportantDate>) {
                     remainingMonths
                 )
             }
-
             CardItem(
                 leadingColoredCircleIcon = ColoredIconCircleProps(
                     iconRes = AddableType.IMPORTANT_DATE.iconRes,

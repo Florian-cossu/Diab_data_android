@@ -250,6 +250,10 @@
     <string name="home_section_current_consumable_devices">Active peripherals</string>
     <string name="home_section_current_non_consumable_devices">My devices</string>
 
+    <!-- Important date card-->
+    <string name="generic_diabetes_discovery_label">Diabetes discovery</string>
+    <string name="specific_diabetes_discovery_label">%1s discovery</string>
+
     <!-- Appointment card -->
     <string name="appointment_card_notes_header">Notes</string>
 

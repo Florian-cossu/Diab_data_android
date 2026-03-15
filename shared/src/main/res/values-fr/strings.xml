@@ -250,6 +250,10 @@
     <string name="home_section_current_consumable_devices">Périphériques actifs</string>
     <string name="home_section_current_non_consumable_devices">Mes appareils</string>
 
+    <!-- Important date card-->
+    <string name="generic_diabetes_discovery_label">Découverte du diabète</string>
+    <string name="specific_diabetes_discovery_label">Découverte du %1s</string>
+
     <!-- Appointment card -->
     <string name="appointment_card_notes_header">Notes</string>
 
