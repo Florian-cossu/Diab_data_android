@@ -11,6 +11,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +30,11 @@ import com.diabdata.utils.ui.getItemShape
  *
  * ```
  * ┌─────────────────────────────────────────────────────────┐
- * │  [Leading Icon]  [Content]  [Trailing Icon]  [Switch]   │
+ * │  [Leading Icon]       [Content]       [Trailing Icon]   │
+ * └─────────────────────────────────────────────────────────┘
+ *
+ * ┌─────────────────────────────────────────────────────────┐
+ * │  [Leading Icon]         [Content]            [Switch]   │
  * └─────────────────────────────────────────────────────────┘
  * ```
  *
@@ -46,6 +51,8 @@ import com.diabdata.utils.ui.getItemShape
  *   Clicking it invokes [CardItem.onTrailingIconClick] if provided.
  * - If [CardItem.switchState] and [CardItem.onSwitchChange] are both set,
  *   a [Switch] is displayed after the trailing icon.
+ * - If [CardItem.switchState], a [CardItem.onSwitchChange] and [CardItem.trailingIcon] are set,
+ *   a [Switch] with the trailing icon is displayed
  * - Both trailing icon and switch can coexist on the same card.
  *
  * ## Styling
@@ -123,7 +130,7 @@ fun CardListItem(
                 cardItem.content()
             }
 
-            if (cardItem.trailingIcon != null) {
+            if (cardItem.trailingIcon != null && cardItem.switchState == null) {
                 val trailingOnClick = cardItem.onTrailingIconClick ?: cardItem.onClick
 
                 if (trailingOnClick != null) {
@@ -147,10 +154,27 @@ fun CardListItem(
             }
 
             if (cardItem.switchState != null && cardItem.onSwitchChange != null) {
-                Switch(
-                    checked = cardItem.switchState,
-                    onCheckedChange = cardItem.onSwitchChange
-                )
+                if (cardItem.trailingIcon != null) {
+                    Switch(
+                        checked = cardItem.switchState,
+                        onCheckedChange = cardItem.onSwitchChange,
+                        thumbContent = {
+                            if (cardItem.switchState) {
+                                SvgIcon(
+                                    resId = cardItem.trailingIcon,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    )
+                } else {
+                    Switch(
+                        checked = cardItem.switchState,
+                        onCheckedChange = cardItem.onSwitchChange
+                    )
+                }
             }
         }
     }

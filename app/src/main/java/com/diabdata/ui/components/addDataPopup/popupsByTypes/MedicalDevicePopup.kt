@@ -72,7 +72,7 @@ fun MedicalDevicePopup(
     }
     var selectedDate by remember {
         mutableStateOf(
-            prefilled?.date ?: toUpdate?.date ?: today
+            prefilled?.date ?: toUpdate?.date?.toLocalDate() ?: today
         )
     }
 
@@ -105,7 +105,7 @@ fun MedicalDevicePopup(
     val isValid = batchNumber.isNotBlank() && name.isNotBlank()
 
     BasePopupLayout(
-        title = context.getString(
+        title = stringResource(
             if (toUpdate == null) shared.string.popup_title_add else shared.string.popup_title_update,
             AddableType.DEVICE.getDisplayName(context)
         ),
@@ -114,7 +114,7 @@ fun MedicalDevicePopup(
         onConfirm = {
             val deviceEntry = DataViewModel.MixedDbEntry.DeviceEntry(
                 id = toUpdate?.id ?: 0,
-                date = selectedDate,
+                date = selectedDate.atStartOfDay(),
                 lifeSpanEndDate = lifeSpanEndDate,
                 addableType = AddableType.DEVICE,
                 name = name,
@@ -179,7 +179,7 @@ fun MedicalDevicePopup(
         }
 
         EnumDropdown(
-            label = context.getString(shared.string.popup_placeholder_device_type),
+            label = stringResource(shared.string.popup_placeholder_device_type),
             options = MedicalDeviceInfoType.entries,
             selected = selectedDeviceType,
             displayName = { it.displayName(context) },
@@ -231,8 +231,8 @@ fun MedicalDevicePopup(
         )
 
         CreateToggle(
-            text = context.getString(shared.string.popup_device_faulty_label),
-            displayText = context.getString(shared.string.popup_device_faulty_description),
+            text = stringResource(shared.string.popup_device_faulty_label),
+            displayText = stringResource(shared.string.popup_device_faulty_description),
             checked = isFaulty,
             onCheckedChange = { isFaulty = it },
             icon = shared.drawable.faulty_medical_device_icon_vector,
@@ -240,8 +240,8 @@ fun MedicalDevicePopup(
         )
 
         CreateToggle(
-            text = context.getString(shared.string.popup_device_reported_label),
-            displayText = context.getString(shared.string.popup_device_reported_description),
+            text = stringResource(shared.string.popup_device_reported_label),
+            displayText = stringResource(shared.string.popup_device_reported_description),
             checked = isReported,
             onCheckedChange = { isReported = it },
             icon = shared.drawable.report_icon_vector,
@@ -249,8 +249,8 @@ fun MedicalDevicePopup(
 
         if (toUpdate != null) {
             CreateToggle(
-                text = context.getString(shared.string.popup_device_lifespan_over_label),
-                displayText = context.getString(shared.string.popup_device_lifespan_over_description),
+                text = stringResource(shared.string.popup_device_lifespan_over_label),
+                displayText = stringResource(shared.string.popup_device_lifespan_over_description),
                 checked = isLifeSpanOver,
                 onCheckedChange = { isLifeSpanOver = it },
                 icon = shared.drawable.recycle_icon_vector,
@@ -260,8 +260,8 @@ fun MedicalDevicePopup(
 
         if (toUpdate == null) {
             CreateToggle(
-                text = context.getString(shared.string.popup_device_update_expired_devices_label),
-                displayText = context.getString(shared.string.popup_device_update_expired_devices_description),
+                text = stringResource(shared.string.popup_device_update_expired_devices_label),
+                displayText = stringResource(shared.string.popup_device_update_expired_devices_description),
                 checked = setSimilarDevicesToExpired,
                 onCheckedChange = { setSimilarDevicesToExpired = it },
                 icon = shared.drawable.select_all_icon_vector

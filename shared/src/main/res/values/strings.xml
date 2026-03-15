@@ -370,7 +370,8 @@
     <!-- Notifications -->
     <string name="settings_notification_expiration">Medication expiration</string>
     <string name="settings_notification_appointment">Upcoming appointment</string>
-    <string name="settings_notification_next_reminder">Next reminder scheduled on %1$s</string>
+    <string name="settings_notification_next_appointment_reminder">For the next appointment scheduled on %1$s</string>
+    <string name="settings_notification_next_expiration_reminder">For the medication expiring on %1$s</string>
 
     <!-- ============================================= -->
     <!-- NOTIFICATIONS -->

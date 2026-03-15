@@ -1,6 +1,8 @@
 package com.diabdata.workers.reminders
 
 import android.content.Context
+import androidx.work.WorkManager
+import androidx.work.await
 import com.diabdata.data.DataViewModel
 import kotlinx.coroutines.flow.first
 import java.time.format.DateTimeFormatter
@@ -54,7 +56,7 @@ suspend fun scheduleAllReminders(context: Context, dataViewModel: DataViewModel)
                         )
                     )
                 ),
-                date = notifyDate,
+                date = notifyDate.atTime(9, 0),
                 tag = "treatments"
             )
         }
@@ -62,6 +64,10 @@ suspend fun scheduleAllReminders(context: Context, dataViewModel: DataViewModel)
 }
 
 suspend fun scheduleAppointmentReminders(context: Context, dataViewModel: DataViewModel) {
+    val workManager = WorkManager.getInstance(context)
+    workManager.cancelAllWorkByTag("appointments").await()
+    workManager.pruneWork().await()
+
     val reminderOffsets = listOf(30, 14, 1)
     val appointments = dataViewModel.upcomingAppointment.first()
 
@@ -72,7 +78,7 @@ suspend fun scheduleAppointmentReminders(context: Context, dataViewModel: DataVi
                 shared.string.notification_appointment_content,
                 appointment.doctor,
                 appointment.date.format(
-                    DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                    DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT)
                         .withLocale(Locale.getDefault())
                 )
             )
@@ -91,6 +97,10 @@ suspend fun scheduleAppointmentReminders(context: Context, dataViewModel: DataVi
 }
 
 suspend fun scheduleMedicationExpirationReminders(context: Context, dataViewModel: DataViewModel) {
+    val workManager = WorkManager.getInstance(context)
+    workManager.cancelAllWorkByTag("treatments").await()
+    workManager.pruneWork().await()
+
     val reminderOffsets = listOf(30, 14, 1)
     val expirations = dataViewModel.upcomingExpiringTreatmentDates.first()
 
@@ -108,10 +118,9 @@ suspend fun scheduleMedicationExpirationReminders(context: Context, dataViewMode
                             .withLocale(Locale.getDefault())
                     )
                 ),
-                date = notifyDate,
+                date = notifyDate.atTime(9, 0),
                 tag = "treatments"
             )
         }
     }
 }
-

@@ -20,9 +20,10 @@ import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.shared.utils.dataTypes.AppointmentType
 import com.diabdata.ui.components.EnumDropdown
 import com.diabdata.ui.components.addDataPopup.BasePopupLayout
-import com.diabdata.ui.components.date_components.DateSelector
+import com.diabdata.ui.components.date_components.DateTimeSelector
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import com.diabdata.shared.R as shared
 
 @Composable
@@ -33,7 +34,7 @@ fun AppointmentPopup(
 ) {
     var doctor by remember { mutableStateOf(toUpdate?.doctor ?: "") }
     var notes by remember { mutableStateOf(toUpdate?.notes ?: "") }
-    var selectedDate by remember { mutableStateOf(toUpdate?.date ?: LocalDate.now()) }
+    var selectedDate by remember { mutableStateOf(toUpdate?.date ?: LocalDateTime.now()) }
     var selectedAppointmentType by remember {
         mutableStateOf(
             toUpdate?.type ?: AppointmentType.APPOINTMENT
@@ -44,7 +45,7 @@ fun AppointmentPopup(
     val today = LocalDate.now()
 
     BasePopupLayout(
-        title = context.getString(
+        title = stringResource(
             if (toUpdate == null) shared.string.popup_title_add else shared.string.popup_title_update,
             AddableType.APPOINTMENT.getDisplayName(context)
         ),
@@ -74,10 +75,10 @@ fun AppointmentPopup(
         },
         isConfirmEnabled = doctor.isNotBlank()
     ) {
-        DateSelector(date = selectedDate, onDateSelected = { selectedDate = it })
+        DateTimeSelector(dateTime = selectedDate, onDateTimeSelected = { selectedDate = it })
 
         EnumDropdown(
-            label = context.getString(shared.string.popup_placeholder_appointment_type),
+            label = stringResource(shared.string.popup_placeholder_appointment_type),
             options = AppointmentType.entries,
             selected = selectedAppointmentType,
             displayName = { it.displayName(context) },

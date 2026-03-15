@@ -10,6 +10,7 @@ import com.diabdata.glanceWidget.proto.WidgetAppointment
 import com.diabdata.glanceWidget.proto.WidgetDevice
 import kotlinx.coroutines.flow.firstOrNull
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.roundToInt
@@ -22,10 +23,11 @@ class GlanceWidgetWorker(
     override suspend fun doWork(): Result {
 
         val db = DiabDataDatabase.getDatabase(context)
-        val today = LocalDate.now()
+        val today = LocalDateTime.now()
         val formatter = DateTimeFormatter.ISO_LOCAL_DATE
 
-        val devicesFlow = db.medicalDevicesDao().getAllCurrentConsumableMedicalDevices(today)
+        val devicesFlow =
+            db.medicalDevicesDao().getAllCurrentConsumableMedicalDevices(today.toLocalDate())
         val devices = devicesFlow.firstOrNull()?.map {
             Log.i(
                 "GlanceWidgetWorker",

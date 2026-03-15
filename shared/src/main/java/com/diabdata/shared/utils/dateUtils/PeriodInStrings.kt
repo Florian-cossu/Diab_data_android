@@ -3,6 +3,7 @@ package com.diabdata.shared.utils.dateUtils
 import android.content.Context
 import com.diabdata.shared.R
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Period
 import kotlin.math.abs
 
@@ -128,6 +129,19 @@ fun Period.toLocalizedString(
 fun LocalDate.toRelativeString(context: Context): String {
     val today = LocalDate.now()
     val period = Period.between(today, this)
+    return period.toLocalizedString(context, today)
+}
+
+/**
+ * Extension to compute and return a localized string representation of a date relative to today.
+ * Handles both past and future dates.
+ *
+ * @param context Context to use for resource lookups
+ * @return [Period.toLocalizedString]
+ */
+fun LocalDateTime.toRelativeString(context: Context): String {
+    val today = LocalDate.now()
+    val period = Period.between(today, this.toLocalDate())
     return period.toLocalizedString(context, today)
 }
 

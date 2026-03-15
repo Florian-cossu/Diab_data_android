@@ -1,6 +1,7 @@
 package com.diabdata.shared.utils.dateUtils
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Period
 import java.time.temporal.ChronoUnit
 
@@ -18,6 +19,10 @@ fun Period.getNumberOfYears(): Int {
 
 fun LocalDate.getNumberOfDaysUntil(date: LocalDate = LocalDate.now()): Int {
     return ChronoUnit.DAYS.between(date, this).toInt()
+}
+
+fun LocalDateTime.getNumberOfDaysUntil(date: LocalDateTime = LocalDateTime.now()): Int {
+    return ChronoUnit.DAYS.between(date.toLocalDate(), this.toLocalDate()).toInt()
 }
 
 fun LocalDate.getNumberOfMonths(date: LocalDate = LocalDate.now()): Int {

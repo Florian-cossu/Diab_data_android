@@ -36,7 +36,11 @@ fun Hba1cPopup(
     val scope = rememberCoroutineScope()
 
     var hba1cText by remember { mutableStateOf(toUpdate?.value?.toString() ?: "") }
-    var selectedDate by remember { mutableStateOf(toUpdate?.date ?: LocalDate.now()) }
+    var selectedDate by remember {
+        mutableStateOf(
+            toUpdate?.date?.toLocalDate() ?: LocalDate.now()
+        )
+    }
 
     val isValid = hba1cText.replace(',', '.').toFloatOrNull()?.let { it in 0f..15f } == true
 
@@ -51,7 +55,7 @@ fun Hba1cPopup(
             hba1cText.replace(',', '.').toFloatOrNull()?.let { value ->
                 val entry = DataViewModel.MixedDbEntry.Hba1cEntry(
                     id = toUpdate?.id ?: 0,
-                    date = selectedDate,
+                    date = selectedDate.atStartOfDay(),
                     createdAt = toUpdate?.createdAt ?: today,
                     isArchived = toUpdate?.isArchived ?: false,
                     value = value,

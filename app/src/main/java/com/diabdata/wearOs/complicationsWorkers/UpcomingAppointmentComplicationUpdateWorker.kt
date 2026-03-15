@@ -9,7 +9,7 @@ import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.tasks.await
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class UpcomingAppointmentComplicationUpdateWorker(
     context: Context,
@@ -26,7 +26,7 @@ class UpcomingAppointmentComplicationUpdateWorker(
             }
 
             val dao = DiabDataDatabase.getDatabase(applicationContext).appointmentDao()
-            val today = LocalDate.now()
+            val today = LocalDateTime.now()
             val upcomingAppointments = dao.getUpcomingAppointmentsFlow(today).firstOrNull()
 
             val nextAppointment = upcomingAppointments?.minByOrNull { it.date }

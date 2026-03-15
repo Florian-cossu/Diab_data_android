@@ -4,11 +4,12 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.diabdata.shared.utils.dataTypes.AppointmentType
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Entity(tableName = "appointments")
 data class Appointment(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val date: LocalDate,
+    val date: LocalDateTime,
     val doctor: String,
     val type: AppointmentType,
     val createdAt: LocalDate,

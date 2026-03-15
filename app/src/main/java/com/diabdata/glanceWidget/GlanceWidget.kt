@@ -34,7 +34,7 @@ import androidx.work.WorkManager
 import com.diabdata.glanceWidget.proto.WidgetState
 import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.shared.utils.dateUtils.toRelativeString
-import com.diabdata.shared.utils.dateUtils.toShortenedFormatLocalDate
+import com.diabdata.shared.utils.dateUtils.toShortenedFormatLocalDateTime
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import com.diabdata.shared.R as shared
@@ -152,7 +152,7 @@ class GlanceWidget : GlanceAppWidget() {
                         Spacer(modifier = GlanceModifier.height(4.dp))
 
                         Text(
-                            text = appointment.date.toShortenedFormatLocalDate(),
+                            text = appointment.date.toShortenedFormatLocalDateTime(),
                             style = TextStyle(
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,

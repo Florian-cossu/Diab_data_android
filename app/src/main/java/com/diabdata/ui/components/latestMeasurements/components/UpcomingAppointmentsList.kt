@@ -33,13 +33,14 @@ import com.diabdata.data.DataViewModel
 import com.diabdata.models.Appointment
 import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.shared.utils.dataTypes.AppointmentType
-import com.diabdata.shared.utils.dateUtils.formatLocalDate
+import com.diabdata.shared.utils.dateUtils.formatLocalDateTime
 import com.diabdata.shared.utils.dateUtils.toRelativeString
 import com.diabdata.ui.components.ColoredIconCircleProps
 import com.diabdata.ui.components.cardsList.CardItem
 import com.diabdata.ui.components.cardsList.CardsList
 import com.diabdata.ui.components.layout.SvgIcon
 import java.time.LocalDate
+import java.time.LocalDateTime
 import com.diabdata.shared.R as shared
 
 @Composable
@@ -136,7 +137,7 @@ fun UpcomingAppointmentsListContent(
                                 Text(
                                     text = stringResource(
                                         shared.string.scheduled_on_date_text,
-                                        formatLocalDate(appointment.date)
+                                        formatLocalDateTime(appointment.date)
                                     ),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -176,7 +177,7 @@ fun PreviewUpcomingAppointmentsList() {
         Appointment(
             doctor = "Dr. Dupont",
             type = AppointmentType.APPOINTMENT,
-            date = LocalDate.now().plusDays(5),
+            date = LocalDateTime.now().plusDays(5),
             notes = "Rappel vaccin",
             id = 1,
             createdAt = LocalDate.of(2015, 3, 1),
@@ -186,7 +187,7 @@ fun PreviewUpcomingAppointmentsList() {
         Appointment(
             doctor = "Dr. Martin",
             type = AppointmentType.ANNUAL_CHECKUP,
-            date = LocalDate.now().plusMonths(2),
+            date = LocalDateTime.now().plusMonths(2),
             notes = null,
             id = 2,
             createdAt = LocalDate.of(2015, 3, 1),

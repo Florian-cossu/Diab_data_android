@@ -24,17 +24,9 @@ import com.diabdata.models.WeightEntry
 import com.diabdata.models.classes.PlotPoint
 import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.shared.utils.dataTypes.AppointmentType
-import com.diabdata.shared.utils.dataTypes.BloodType
-import com.diabdata.shared.utils.dataTypes.DiabetesType
-import com.diabdata.shared.utils.dataTypes.Gender
-import com.diabdata.shared.utils.dataTypes.GlucoseUnit
 import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
 import com.diabdata.shared.utils.dataTypes.TreatmentType
-import com.diabdata.utils.data.AppointmentTypeAdapter
-import com.diabdata.utils.data.EnumTypeAdapter
 import com.diabdata.utils.data.GsonFactory
-import com.diabdata.utils.data.LocalDateAdapter
-import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -46,6 +38,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.time.LocalDate
+import java.time.LocalDateTime
 import com.diabdata.shared.R as shared
 
 class DataViewModel(
@@ -365,7 +358,7 @@ class DataViewModel(
     sealed class MixedDbEntry {
         abstract val id: Int
         abstract val addableType: AddableType
-        abstract val date: LocalDate
+        abstract val date: LocalDateTime
 
         abstract val icon: Int
         abstract val isArchived: Boolean
@@ -375,7 +368,7 @@ class DataViewModel(
 
         data class AppointmentEntry(
             override val id: Int,
-            override val date: LocalDate,
+            override val date: LocalDateTime,
             override val addableType: AddableType = AddableType.APPOINTMENT,
             val doctor: String,
             val type: AppointmentType,
@@ -388,7 +381,7 @@ class DataViewModel(
 
         data class ImportantDateEntry(
             override val id: Int,
-            override val date: LocalDate,
+            override val date: LocalDateTime,
             override val addableType: AddableType = AddableType.IMPORTANT_DATE,
             val importantDate: String,
             override val icon: Int,
@@ -399,7 +392,7 @@ class DataViewModel(
 
         data class Hba1cEntry(
             override val id: Int,
-            override val date: LocalDate,
+            override val date: LocalDateTime,
             override val addableType: AddableType = AddableType.HBA1C,
             val value: Float,
             override val icon: Int,
@@ -410,7 +403,7 @@ class DataViewModel(
 
         data class TreatmentEntry(
             override val id: Int,
-            override val date: LocalDate,
+            override val date: LocalDateTime,
             override val addableType: AddableType = AddableType.TREATMENT,
             val name: String,
             val treatmentType: TreatmentType,
@@ -422,7 +415,7 @@ class DataViewModel(
 
         data class WeightEntry(
             override val id: Int,
-            override val date: LocalDate,
+            override val date: LocalDateTime,
             override val addableType: AddableType = AddableType.WEIGHT,
             val value: Float,
             override val icon: Int,
@@ -433,7 +426,7 @@ class DataViewModel(
 
         data class DeviceEntry(
             override val id: Int,
-            override val date: LocalDate,
+            override val date: LocalDateTime,
             val lifeSpanEndDate: LocalDate,
             override val addableType: AddableType = AddableType.DEVICE,
             val name: String,
@@ -525,7 +518,7 @@ class DataViewModel(
                 add(
                     MixedDbEntry.ImportantDateEntry(
                         id = it.id,
-                        date = it.date,
+                        date = it.date.atStartOfDay(),
                         importantDate = it.importantDate,
                         icon = getIconForMixedEntry(AddableType.IMPORTANT_DATE),
                         isArchived = it.isArchived,
@@ -539,7 +532,7 @@ class DataViewModel(
                 add(
                     MixedDbEntry.Hba1cEntry(
                         id = it.id,
-                        date = it.date,
+                        date = it.date.atStartOfDay(),
                         value = it.value,
                         icon = getIconForMixedEntry(AddableType.HBA1C),
                         isArchived = it.isArchived,
@@ -553,7 +546,7 @@ class DataViewModel(
                 add(
                     MixedDbEntry.TreatmentEntry(
                         id = it.id,
-                        date = it.expirationDate,
+                        date = it.expirationDate.atStartOfDay(),
                         name = it.name,
                         treatmentType = it.type,
                         icon = getIconForMixedEntry(AddableType.TREATMENT, treatmentType = it.type),
@@ -568,7 +561,7 @@ class DataViewModel(
                 add(
                     MixedDbEntry.WeightEntry(
                         id = it.id,
-                        date = it.date,
+                        date = it.date.atStartOfDay(),
                         value = it.value,
                         icon = getIconForMixedEntry(AddableType.WEIGHT),
                         isArchived = it.isArchived,
@@ -582,7 +575,7 @@ class DataViewModel(
                 add(
                     MixedDbEntry.DeviceEntry(
                         id = it.id,
-                        date = it.date,
+                        date = it.date.atStartOfDay(),
                         lifeSpanEndDate = it.lifeSpanEndDate,
                         addableType = AddableType.DEVICE,
                         name = it.name,

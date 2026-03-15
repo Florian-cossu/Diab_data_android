@@ -6,14 +6,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +30,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -126,4 +131,117 @@ fun DatePickerModal(
     ) {
         DatePicker(state = datePickerState)
     }
+}
+
+@Composable
+fun DateTimeSelector(
+    dateTime: LocalDateTime,
+    onDateTimeSelected: (LocalDateTime) -> Unit,
+    @StringRes labelRes: Int? = null
+) {
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm", Locale.getDefault())
+    var dateTimeText by remember { mutableStateOf(TextFieldValue(dateTime.format(formatter))) }
+    var showDateModal by remember { mutableStateOf(false) }
+    var showTimeModal by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf(dateTime.toLocalDate()) }
+
+    LaunchedEffect(dateTime) {
+        dateTimeText = TextFieldValue(dateTime.format(formatter))
+    }
+
+    val labelText = if (labelRes != null) {
+        stringResource(labelRes)
+    } else {
+        stringResource(shared.string.popup_placeholder_date)
+    }
+
+    OutlinedTextField(
+        value = dateTimeText,
+        onValueChange = { newValue ->
+            dateTimeText = newValue
+            try {
+                val parsed = LocalDateTime.parse(newValue.text, formatter)
+                onDateTimeSelected(parsed)
+            } catch (_: DateTimeParseException) {
+            }
+        },
+        label = { Text(labelText) },
+        singleLine = true,
+        trailingIcon = {
+            Icon(
+                imageVector = Icons.Default.DateRange,
+                contentDescription = labelText,
+                modifier = Modifier.clickable { showDateModal = true }
+            )
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .clickable { showDateModal = true },
+        shape = MaterialTheme.shapes.small
+    )
+
+    // Étape 1 : Sélection de la date
+    if (showDateModal) {
+        DatePickerModal(
+            onDateSelected = { millis ->
+                millis?.let {
+                    selectedDate = Instant.ofEpochMilli(it)
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                    showTimeModal = true  // → passe à l'étape 2
+                }
+                showDateModal = false
+            },
+            onDismiss = { showDateModal = false }
+        )
+    }
+
+    // Étape 2 : Sélection de l'heure
+    if (showTimeModal) {
+        TimePickerModal(
+            initialHour = dateTime.hour,
+            initialMinute = dateTime.minute,
+            onTimeSelected = { hour, minute ->
+                val newDateTime = selectedDate.atTime(hour, minute)
+                onDateTimeSelected(newDateTime)
+                showTimeModal = false
+            },
+            onDismiss = { showTimeModal = false }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimePickerModal(
+    initialHour: Int,
+    initialMinute: Int,
+    onTimeSelected: (hour: Int, minute: Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val timePickerState = rememberTimePickerState(
+        initialHour = initialHour,
+        initialMinute = initialMinute,
+        is24Hour = true
+    )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = {
+                onTimeSelected(timePickerState.hour, timePickerState.minute)
+            }) {
+                Text(stringResource(shared.string.action_confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(shared.string.action_cancel))
+            }
+        },
+        text = {
+            TimePicker(state = timePickerState)
+        }
+    )
 }

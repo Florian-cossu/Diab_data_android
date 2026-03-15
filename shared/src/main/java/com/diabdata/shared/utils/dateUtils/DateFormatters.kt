@@ -1,6 +1,7 @@
 package com.diabdata.shared.utils.dateUtils
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -20,9 +21,25 @@ fun String.toShortenedFormatLocalDate(
     return shortenedFormatLocalDate(date, locale)
 }
 
+fun String.toShortenedFormatLocalDateTime(
+    locale: Locale = Locale.getDefault()
+): String {
+    val date = LocalDateTime.parse(this)
+    return shortenedFormatLocalDate(date.toLocalDate())
+}
+
 fun formatLocalDate(
     date: LocalDate,
     pattern: String = "dd MMM yyyy",
+    locale: Locale = Locale.getDefault()
+): String {
+    val formatter = DateTimeFormatter.ofPattern(pattern, locale)
+    return date.format(formatter)
+}
+
+fun formatLocalDateTime(
+    date: LocalDateTime,
+    pattern: String = "dd MMM yyyy HH:mm",
     locale: Locale = Locale.getDefault()
 ): String {
     val formatter = DateTimeFormatter.ofPattern(pattern, locale)

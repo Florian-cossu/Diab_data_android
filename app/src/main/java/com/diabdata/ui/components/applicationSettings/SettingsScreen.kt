@@ -1,5 +1,6 @@
 package com.diabdata.ui.components.applicationSettings
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.util.Log
@@ -21,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -33,13 +35,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.diabdata.BuildConfig
 import com.diabdata.data.DataViewModel
 import com.diabdata.ui.components.applicationSettings.components.ChangelogDialog
-import com.diabdata.ui.components.applicationSettings.components.SettingsSection
-import com.diabdata.ui.components.applicationSettings.components.SettingsToggle
 import com.diabdata.ui.components.cardsList.CardItem
 import com.diabdata.ui.components.cardsList.CardsList
 import com.diabdata.ui.components.layout.SvgIcon
@@ -48,12 +47,13 @@ import com.diabdata.workers.reminders.scheduleAppointmentReminders
 import com.diabdata.workers.reminders.scheduleMedicationExpirationReminders
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Date
 import java.util.Locale
 import java.util.zip.ZipEntry
@@ -61,6 +61,7 @@ import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 import com.diabdata.shared.R as shared
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun SettingsScreen(dataViewModel: DataViewModel) {
     val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
@@ -69,7 +70,6 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
     val versionName = BuildConfig.VERSION_NAME
-    val versionCode = BuildConfig.VERSION_CODE
     val medicationsGtinFileversion = BuildConfig.MEDICATION_GTIN_FILE_VERSION
     val medicalDeviceGtinFileVersion = BuildConfig.MEDICAL_DEVICES_GTIN_FILE_VERSION
 
@@ -249,29 +249,17 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     val treatmentInfos by workManager.getWorkInfosByTagLiveData("treatments")
         .observeAsState(initial = emptyList())
 
-    val nextAppointmentReminder = remember(appointmentInfos) {
-        appointmentInfos
-            .filter { it.state == WorkInfo.State.ENQUEUED }
-            .mapNotNull { info ->
-                info.tags.firstOrNull { it.startsWith("appointments_") }
-                    ?.removePrefix("appointments_")
-                    ?.toLongOrNull()
-            }.minOfOrNull { epochMilli ->
-                Instant.ofEpochMilli(epochMilli).atZone(ZoneId.systemDefault()).toLocalDate()
-            }
-    }
+    val nextAppointmentDate by dataViewModel.upcomingAppointment
+        .map { appointments ->
+            appointments.minByOrNull { it.date }?.date
+        }
+        .collectAsState(initial = null)
 
-    val nextTreatmentReminder = remember(treatmentInfos) {
-        treatmentInfos
-            .filter { it.state == WorkInfo.State.ENQUEUED }
-            .mapNotNull { info ->
-                info.tags.firstOrNull { it.startsWith("treatments_") }
-                    ?.removePrefix("treatments_")
-                    ?.toLongOrNull()
-            }.minOfOrNull { epochMilli ->
-                Instant.ofEpochMilli(epochMilli).atZone(ZoneId.systemDefault()).toLocalDate()
-            }
-    }
+    val nextTreatmentExpirationDate by dataViewModel.upcomingExpiringTreatmentDates
+        .map { treatments ->
+            treatments.minByOrNull { it.expirationDate }?.expirationDate
+        }
+        .collectAsState(initial = null)
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -327,6 +315,104 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                 )
             )
 
+            val toastExpirationEnabled =
+                stringResource(shared.string.toast_expiration_reminders_enabled)
+            val toastAppointmentReminderEnabled =
+                stringResource(shared.string.toast_appointment_reminders_enabled)
+
+            val notificationSection: List<CardItem> = listOf(
+                CardItem(
+                    leadingIcon = shared.drawable.medication_expiry_notification_icon_vector,
+                    content = {
+                        val displayText = if (nextTreatmentExpirationDate != null) stringResource(
+                            shared.string.settings_notification_next_expiration_reminder,
+                            nextTreatmentExpirationDate!!.format(
+                                DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                            )
+                        ) else ""
+
+                        Column {
+                            Text(
+                                text = stringResource(shared.string.notification_expiration_title),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = displayText,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    },
+                    switchState = enableExpirationDateReminder,
+                    onSwitchChange = { isChecked ->
+                        enableExpirationDateReminder = isChecked
+                        prefs.edit { putBoolean("expiration_reminder", isChecked) }
+                        val workManager = WorkManager.getInstance(context)
+                        if (isChecked) {
+                            scope.launch {
+                                scheduleMedicationExpirationReminders(
+                                    context,
+                                    dataViewModel
+                                )
+                            }
+                            Toast.makeText(context, toastExpirationEnabled, Toast.LENGTH_SHORT)
+                                .show()
+                        } else {
+                            workManager.cancelAllWorkByTag("treatments")
+                        }
+                    },
+                    trailingIcon = shared.drawable.notification_filled_icon_vector
+                ),
+                CardItem(
+                    leadingIcon = shared.drawable.event_notification_icon_vector,
+                    content = {
+                        val displayText = if (nextAppointmentDate != null) stringResource(
+                            shared.string.settings_notification_next_appointment_reminder,
+                            nextAppointmentDate!!.format(
+                                DateTimeFormatter.ofLocalizedDateTime(
+                                    FormatStyle.MEDIUM,
+                                    FormatStyle.SHORT
+                                )
+                            )
+                        ) else ""
+
+                        Column {
+                            Text(
+                                text = stringResource(shared.string.settings_notification_appointment),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = displayText,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    },
+                    switchState = enableAppointmentReminder,
+                    onSwitchChange = { isChecked ->
+                        enableAppointmentReminder = isChecked
+                        prefs.edit { putBoolean("appointment_reminder", isChecked) }
+                        val workManager = WorkManager.getInstance(context)
+                        if (isChecked) {
+                            scope.launch {
+                                scheduleAppointmentReminders(
+                                    context,
+                                    dataViewModel
+                                )
+                            }
+                            Toast.makeText(
+                                context,
+                                toastAppointmentReminderEnabled,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            workManager.cancelAllWorkByTag("appointments")
+                        }
+                    },
+                    trailingIcon = shared.drawable.notification_filled_icon_vector
+                )
+            )
+
             val aboutApplicationSection: List<CardItem> = listOf(
                 CardItem(
                     leadingIcon = shared.drawable.app_version_icon_vector,
@@ -363,52 +449,12 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
             )
 
             // Notification section
-            SettingsSection(
-                title = stringResource(shared.string.settings_section_notifications)
-            ) {
-                SettingsToggle(
-                    text = stringResource(shared.string.notification_expiration_title),
-                    checked = enableExpirationDateReminder,
-                    onCheckedChange = { isChecked ->
-                        enableExpirationDateReminder = isChecked
-                        prefs.edit { putBoolean("expiration_reminder", isChecked) }
-                        val workManager = WorkManager.getInstance(context)
-                        if (isChecked) {
-                            scope.launch {
-                                scheduleMedicationExpirationReminders(
-                                    context,
-                                    dataViewModel
-                                )
-                            }
-                        } else {
-                            workManager.cancelAllWorkByTag("treatments")
-                        }
-                    },
-                    icon = shared.drawable.notification_filled_icon_vector,
-                    toastText = stringResource(shared.string.toast_expiration_reminders_enabled),
-                    nextReminderDate = nextTreatmentReminder
-                )
-                SettingsToggle(
-                    text = stringResource(shared.string.settings_notification_appointment),
-                    checked = enableAppointmentReminder,
-                    onCheckedChange = { isChecked ->
-                        enableAppointmentReminder = isChecked
-                        prefs.edit { putBoolean("appointment_reminder", isChecked) }
-                        val workManager = WorkManager.getInstance(context)
-                        if (isChecked) {
-                            scope.launch {
-                                scheduleAppointmentReminders(context, dataViewModel)
-                            }
-                        } else {
-                            workManager.cancelAllWorkByTag("appointments")
-                        }
-                    },
-                    icon = shared.drawable.notification_filled_icon_vector,
-                    toastText = stringResource(shared.string.toast_appointment_reminders_enabled),
-                    nextReminderDate = nextAppointmentReminder
-                )
-            }
+            CardsList(
+                header = stringResource(shared.string.settings_section_notifications),
+                cards = notificationSection
+            )
 
+            // About app section
             CardsList(
                 header = stringResource(shared.string.settings_section_application),
                 cards = aboutApplicationSection

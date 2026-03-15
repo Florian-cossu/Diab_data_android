@@ -44,7 +44,7 @@ import kotlinx.coroutines.launch
         MedicalDeviceInfoEntity::class,
         UserDetails::class
     ],
-    version = 20,
+    version = 21,
     exportSchema = true
 )
 

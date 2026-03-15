@@ -41,13 +41,13 @@ fun WeightPopup(
         )
     }
     var selectedDate by remember {
-        mutableStateOf(toUpdate?.date ?: LocalDate.now())
+        mutableStateOf(toUpdate?.date?.toLocalDate() ?: LocalDate.now())
     }
 
     val isValid = weightText.replace(',', '.').toDoubleOrNull()?.let { it in 0.0..600.0 } == true
 
     BasePopupLayout(
-        title = context.getString(
+        title = stringResource(
             if (toUpdate == null) shared.string.popup_title_add else shared.string.popup_title_update,
             AddableType.WEIGHT.getDisplayName(context)
         ),
@@ -57,7 +57,7 @@ fun WeightPopup(
             weightText.replace(',', '.').toFloatOrNull()?.let { value ->
                 val entry = DataViewModel.MixedDbEntry.WeightEntry(
                     id = toUpdate?.id ?: 0,
-                    date = selectedDate,
+                    date = selectedDate.atStartOfDay(),
                     addableType = AddableType.WEIGHT,
                     value = value,
                     icon = AddableType.WEIGHT.iconRes,

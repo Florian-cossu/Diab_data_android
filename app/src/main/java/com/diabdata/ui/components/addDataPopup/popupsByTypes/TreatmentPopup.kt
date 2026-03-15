@@ -39,7 +39,7 @@ fun TreatmentPopup(
     var name by remember { mutableStateOf(toUpdate?.name ?: prefilled?.name ?: "") }
     var selectedDate by remember {
         mutableStateOf(
-            toUpdate?.date ?: prefilled?.expirationDate ?: LocalDate.now()
+            toUpdate?.date?.toLocalDate() ?: prefilled?.expirationDate ?: LocalDate.now()
         )
     }
     var selectedTreatmentType by remember {
@@ -58,7 +58,7 @@ fun TreatmentPopup(
         onConfirm = {
             val treatmentEntry = DataViewModel.MixedDbEntry.TreatmentEntry(
                 id = toUpdate?.id ?: 0,
-                date = selectedDate,
+                date = selectedDate.atStartOfDay(),
                 addableType = AddableType.TREATMENT,
                 name = name,
                 treatmentType = selectedTreatmentType,

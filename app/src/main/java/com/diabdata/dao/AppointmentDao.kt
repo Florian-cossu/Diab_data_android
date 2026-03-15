@@ -6,7 +6,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.diabdata.models.Appointment
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Dao
 interface AppointmentDao {
@@ -26,5 +26,5 @@ interface AppointmentDao {
     fun getAllAppointmentsFlow(): Flow<List<Appointment>>
 
     @Query("SELECT * FROM appointments WHERE date >= :today AND isArchived = 0 ORDER BY date ASC")
-    fun getUpcomingAppointmentsFlow(today: LocalDate): Flow<List<Appointment>>
+    fun getUpcomingAppointmentsFlow(today: LocalDateTime): Flow<List<Appointment>>
 }

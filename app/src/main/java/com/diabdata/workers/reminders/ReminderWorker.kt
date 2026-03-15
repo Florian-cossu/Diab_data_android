@@ -17,7 +17,6 @@ class SingleNotificationWorker(
         val content = inputData.getString("content") ?: return Result.failure()
         val tag = inputData.getString("tag") ?: "default"
 
-        // utilise applicationContext au lieu de LocalContext
         val channelName = when (tag) {
             "treatments" -> applicationContext.getString(shared.string.notification_channel_expirations)
             "appointments" -> applicationContext.getString(shared.string.notification_channel_appointments)

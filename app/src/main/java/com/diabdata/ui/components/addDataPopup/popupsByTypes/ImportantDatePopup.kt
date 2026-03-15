@@ -34,10 +34,14 @@ fun ImportantDatePopup(
     val scope = rememberCoroutineScope()
 
     var diagnosis by remember { mutableStateOf(toUpdate?.importantDate ?: "") }
-    var selectedDate by remember { mutableStateOf(toUpdate?.date ?: LocalDate.now()) }
+    var selectedDate by remember {
+        mutableStateOf(
+            toUpdate?.date?.toLocalDate() ?: LocalDate.now()
+        )
+    }
 
     BasePopupLayout(
-        title = context.getString(
+        title = stringResource(
             if (toUpdate == null) shared.string.popup_title_add else shared.string.popup_title_update,
             AddableType.IMPORTANT_DATE.getDisplayName(context)
         ),
@@ -46,7 +50,7 @@ fun ImportantDatePopup(
         onConfirm = {
             val entry = DataViewModel.MixedDbEntry.ImportantDateEntry(
                 id = toUpdate?.id ?: 0,
-                date = selectedDate,
+                date = selectedDate.atStartOfDay(),
                 createdAt = toUpdate?.createdAt ?: today,
                 isArchived = toUpdate?.isArchived ?: false,
                 importantDate = diagnosis,

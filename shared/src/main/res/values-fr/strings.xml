@@ -355,7 +355,8 @@
     <!-- Notifications -->
     <string name="settings_notification_expiration">Expiration des traitements</string>
     <string name="settings_notification_appointment">Rendez-vous à venir</string>
-    <string name="settings_notification_next_reminder">Prochain rappel prévu %1$s</string>
+    <string name="settings_notification_next_appointment_reminder">Pour le prochain RDV prévu le %1$s</string>
+    <string name="settings_notification_next_expiration_reminder">Pour le traitement qui expirera le %1$s</string>
 
     <!-- ============================================= -->
     <!-- NOTIFICATIONS -->

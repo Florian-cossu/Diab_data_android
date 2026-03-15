@@ -44,7 +44,7 @@ fun SettingsToggle(
         val context = LocalContext.current
 
         val displayText = if (nextReminderDate != null) stringResource(
-            shared.string.settings_notification_next_reminder, nextReminderDate.format(
+            shared.string.settings_notification_next_appointment_reminder, nextReminderDate.format(
                 DateTimeFormatter.ofLocalizedDate(
                     FormatStyle.MEDIUM
                 )

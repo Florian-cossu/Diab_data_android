@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class GlanceTileUpdateWorker(
     context: Context,
@@ -46,11 +47,11 @@ class GlanceTileUpdateWorker(
     }
 
     private suspend fun collectAllData(): TileData = withContext(Dispatchers.IO) {
-        val today = LocalDate.now()
+        val today = LocalDateTime.now()
 
-        val deviceInfo = getDeviceInfo(today)
+        val deviceInfo = getDeviceInfo(today.toLocalDate())
 
-        val treatmentInfo = getTreatmentInfo(today)
+        val treatmentInfo = getTreatmentInfo(today.toLocalDate())
 
         val appointmentInfo = getAppointmentInfo(today)
 
@@ -89,7 +90,7 @@ class GlanceTileUpdateWorker(
         }
     }
 
-    private suspend fun getAppointmentInfo(today: LocalDate): AppointmentInfo? {
+    private suspend fun getAppointmentInfo(today: LocalDateTime): AppointmentInfo? {
         val dao = database.appointmentDao()
         val upcomingAppointments = dao.getUpcomingAppointmentsFlow(today).firstOrNull()
         val nextAppointment = upcomingAppointments?.minByOrNull { it.date }

@@ -22,7 +22,7 @@ fun DataViewModel.MixedDbEntry.toEntity(): Any = when (this) {
 
     is DataViewModel.MixedDbEntry.ImportantDateEntry -> ImportantDate(
         id = id,
-        date = date,
+        date = date.toLocalDate(),
         createdAt = createdAt,
         isArchived = isArchived,
         importantDate = importantDate,
@@ -31,7 +31,7 @@ fun DataViewModel.MixedDbEntry.toEntity(): Any = when (this) {
 
     is DataViewModel.MixedDbEntry.Hba1cEntry -> HBA1CEntry(
         id = id,
-        date = date,
+        date = date.toLocalDate(),
         createdAt = createdAt,
         isArchived = isArchived,
         value = value,
@@ -40,7 +40,7 @@ fun DataViewModel.MixedDbEntry.toEntity(): Any = when (this) {
 
     is DataViewModel.MixedDbEntry.TreatmentEntry -> Treatment(
         id = id,
-        expirationDate = date,
+        expirationDate = date.toLocalDate(),
         name = name,
         createdAt = createdAt,
         isArchived = isArchived,
@@ -50,7 +50,7 @@ fun DataViewModel.MixedDbEntry.toEntity(): Any = when (this) {
 
     is DataViewModel.MixedDbEntry.WeightEntry -> WeightEntry(
         id = id,
-        date = date,
+        date = date.toLocalDate(),
         createdAt = createdAt,
         isArchived = isArchived,
         value = value,
@@ -59,7 +59,7 @@ fun DataViewModel.MixedDbEntry.toEntity(): Any = when (this) {
 
     is DataViewModel.MixedDbEntry.DeviceEntry -> MedicalDeviceEntry(
         id = id,
-        date = date,
+        date = date.toLocalDate(),
         lifeSpanEndDate = lifeSpanEndDate,
         name = name,
         batchNumber = batchNumber,

@@ -23,6 +23,7 @@ import com.diabdata.models.classes.PlotPoint
 import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class DataRepository(
     private val weightDao: WeightDao,
@@ -100,7 +101,7 @@ class DataRepository(
 
     /** Flow of upcoming appointments starting today */
     fun getUpcomingAppointments(): Flow<List<Appointment>> {
-        return appointmentDao.getUpcomingAppointmentsFlow(LocalDate.now())
+        return appointmentDao.getUpcomingAppointmentsFlow(LocalDateTime.now())
     }
 
     /** Delete an Appointment record by Id**/

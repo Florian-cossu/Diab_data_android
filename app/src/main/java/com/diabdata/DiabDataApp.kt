@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.work.WorkManager
 import com.diabdata.data.DataRepository
 import com.diabdata.data.DataViewModel
 import com.diabdata.data.DiabDataDatabase
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 class DiabDataApp : Application() {
     override fun onCreate() {
         super.onCreate()
+        WorkManager.getInstance(this).pruneWork()
 
         val db = DiabDataDatabase.getDatabase(this)
         val repo = DataRepository(

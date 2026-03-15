@@ -36,7 +36,7 @@ import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.flow.first
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class CastToUserServerService : Service() {
 
@@ -178,12 +178,14 @@ class CastToUserServerService : Service() {
                     }
 
                     post("/dashboard") {
-                        val today = LocalDate.now()
+                        val today = LocalDateTime.now()
 
                         val dates = db.importantDateDao().getAllImportantDates().first()
 
                         // Poids sur 1 an
-                        val allWeights = db.weightDao().getWeightsSince(today.minusYears(1)).first()
+                        val allWeights =
+                            db.weightDao().getWeightsSince(today.toLocalDate().minusYears(1))
+                                .first()
                         val latestWeight = allWeights.maxByOrNull { it.date }?.let { latest ->
                             mapOf(
                                 "value" to latest.value,
@@ -197,7 +199,8 @@ class CastToUserServerService : Service() {
                         }
 
                         val allHba1c =
-                            db.hba1cDao().getHBA1CEntriesSince(today.minusYears(1)).first()
+                            db.hba1cDao().getHBA1CEntriesSince(today.toLocalDate().minusYears(1))
+                                .first()
                         val latestHba1c = allHba1c.maxByOrNull { it.date }?.let { latest ->
                             mapOf(
                                 "value" to latest.value,
@@ -213,7 +216,8 @@ class CastToUserServerService : Service() {
                         val appointments =
                             db.appointmentDao().getUpcomingAppointmentsFlow(today).first()
                         val treatments =
-                            db.treatmentDao().getUpcomingExpirationDatesFlow(today).first()
+                            db.treatmentDao().getUpcomingExpirationDatesFlow(today.toLocalDate())
+                                .first()
 
                         call.respond(
                             mapOf(
