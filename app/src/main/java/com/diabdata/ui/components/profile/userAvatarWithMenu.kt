@@ -7,6 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun UserAvatarWithMenu(
@@ -14,6 +16,7 @@ fun UserAvatarWithMenu(
     lastName: String?,
     profilePhotoPath: String?,
     onEditProfile: () -> Unit,
+    size: Dp = 35.dp
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -22,7 +25,8 @@ fun UserAvatarWithMenu(
             firstName = firstName,
             lastName = lastName,
             profilePhotoPath = profilePhotoPath,
-            onClick = { menuExpanded = true }
+            onClick = { menuExpanded = true },
+            size = size
         )
         UserAvatarMenu(
             expanded = menuExpanded,

@@ -18,7 +18,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = getVersionCode()
-        versionName = "4.3.0"
+        versionName = "4.8.0"
         buildConfigField("String", "MEDICATION_GTIN_FILE_VERSION", "\"1.2.0\"")
         buildConfigField("String", "MEDICAL_DEVICES_GTIN_FILE_VERSION", "\"1.0.3\"")
 
@@ -129,6 +129,11 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.material.icons.extended)
 
+    // Adaptive compose libs
+    implementation(libs.androidx.compose.adaptive)
+    implementation(libs.androidx.compose.adaptive.layout)
+    implementation(libs.androidx.compose.adaptive.navigation)
+
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.foundation.layout)
     implementation(libs.androidx.runtime)
@@ -154,6 +159,7 @@ dependencies {
     implementation(libs.androidx.watchface.complications.data.source)
     implementation(libs.play.services.wearable)
     implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.material3)
 
     // Annotation processing
     ksp(libs.androidx.room.compiler)

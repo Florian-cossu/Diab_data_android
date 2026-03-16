@@ -24,7 +24,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -32,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
@@ -55,7 +55,6 @@ import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Date
-import java.util.Locale
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
@@ -64,7 +63,7 @@ import com.diabdata.shared.R as shared
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun SettingsScreen(dataViewModel: DataViewModel) {
-    val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("dd-MM-yyyy", LocalLocale.current.platformLocale)
     val currentDate = dateFormat.format(Date())
     val fileName = "diabdata_export_$currentDate.zip"
     val context = LocalContext.current
@@ -241,13 +240,6 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
             }
         }
     )
-
-    val workManager = WorkManager.getInstance(context)
-
-    val appointmentInfos by workManager.getWorkInfosByTagLiveData("appointments")
-        .observeAsState(initial = emptyList())
-    val treatmentInfos by workManager.getWorkInfosByTagLiveData("treatments")
-        .observeAsState(initial = emptyList())
 
     val nextAppointmentDate by dataViewModel.upcomingAppointment
         .map { appointments ->

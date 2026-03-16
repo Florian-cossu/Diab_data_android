@@ -2,8 +2,10 @@ package com.diabdata.ui.components.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +44,7 @@ fun UserAvatar(
     firstName: String?,
     lastName: String?,
     profilePhotoPath: String?,
-    size: Dp = 30.dp,
+    size: Dp = 35.dp,
     onClick: () -> Unit
 ) {
     val initial = remember(firstName, lastName) {
@@ -64,6 +66,12 @@ fun UserAvatar(
     Box(
         modifier = Modifier
             .size(size)
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = CircleShape
+            )
+            .padding(5.dp)
             .clip(CircleShape)
             .then(
                 if (!hasPhoto) Modifier.background(backgroundColor)

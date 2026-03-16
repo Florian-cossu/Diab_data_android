@@ -52,7 +52,7 @@ fun ChangelogDialog(onDismiss: () -> Unit) {
         contentAlignment = Alignment.Center
     ) {
         Surface(
-            shape = MaterialTheme.shapes.extraLarge, // Coins plus arrondis
+            shape = MaterialTheme.shapes.extraLarge,
             tonalElevation = 6.dp,
             modifier = Modifier
                 .fillMaxWidth()
@@ -76,7 +76,7 @@ fun ChangelogDialog(onDismiss: () -> Unit) {
                     )
                     Spacer(Modifier.width(12.dp))
                     Text(
-                        text = "Updates - 11/03/2026",
+                        text = "Updates - 16/03/2026",
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -110,6 +110,7 @@ fun ChangelogDialog(onDismiss: () -> Unit) {
                             "Turned stacked card into a component with pagination options",
                             "Updated the app to get closer to what native Google apps look like",
                             "Major reorganization of string resources with consistent naming.",
+                            "(WIP) App is now adaptative to screen. Some components still need to be updated",
                         )
                     )
                     changelogSection(
