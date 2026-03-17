@@ -18,6 +18,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.diabdata.castServer.castToUser.CastToUserServerService
+import com.diabdata.relay.ShareDialog
+import com.diabdata.relay.ShareMode
 import com.diabdata.shared.R
 import com.diabdata.ui.components.layout.SvgIcon
 
@@ -29,6 +31,7 @@ fun UserAvatarMenu(
     onEditProfile: () -> Unit
 ) {
     val context = LocalContext.current
+    var showShareDialog by remember { mutableStateOf<ShareMode?>(null) }
 
     var isServerRunning by remember { mutableStateOf(CastToUserServerService.isRunning) }
 
@@ -36,6 +39,13 @@ fun UserAvatarMenu(
         if (expanded) {
             isServerRunning = CastToUserServerService.isRunning
         }
+    }
+
+    showShareDialog?.let { mode ->
+        ShareDialog(
+            mode = mode,
+            onDismiss = { showShareDialog = null }
+        )
     }
 
     DropdownMenu(
@@ -59,6 +69,22 @@ fun UserAvatarMenu(
             onClick = {
                 onDismiss()
                 onEditProfile()
+            }
+        )
+
+        // --- Cast to doctor ---
+        DropdownMenuItem(
+            leadingIcon = {
+                SvgIcon(
+                    resId = R.drawable.secure_cast_to_desktop_icon_vector,
+                    modifier = Modifier.size(24.dp),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            text = { Text("TEST RELAY") },
+            onClick = {
+                onDismiss()
+                showShareDialog = ShareMode.MEDICAL
             }
         )
 

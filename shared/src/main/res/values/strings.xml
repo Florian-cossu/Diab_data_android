@@ -68,6 +68,7 @@
     <string name="action_archive">Archive</string>
     <string name="action_add">Add</string>
     <string name="action_set_lifespan">Discarded</string>
+    <string name="action_retry">Retry</string>
 
     <!-- ============================================= -->
     <!-- DATE & TIME -->
@@ -448,4 +449,14 @@
     <!-- ============================================= -->
     <string name="glance_tile_label">At a Glance Tile</string>
     <string name="glance_tile_description">Upcoming appointments, devices expiry and treatments</string>
+
+    <!-- ============================================= -->
+    <!-- SHARE VIA RELAY SERVER -->
+    <!-- ============================================= -->
+    <string name="share_dialog_title_compagnon_mode">Compagnon mode</string>
+    <string name="share_dialog_title_medical_mode">Sharing to doctor</string>
+    <string name="share_dialog_connecting_to_relay_message">Connecting to relay…</string>
+    <string name="share_dialog_compagnon_mode_instruction_message">Scan QR code or type the token on the connection form</string>
+    <string name="share_dialog_medical_mode_instruction_message">Show this QR code to your doctor</string>
+    <string name="share_dialog_stop_sharing_button_label">Stop sharing</string>
 </resources>

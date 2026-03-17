@@ -15,11 +15,7 @@ junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 kotlinxCoroutinesPlayServices = "1.10.2"
 kotlinxCoroutinesPlayServicesVersion = "1.10.2"
-ktorSerializationGson = "3.4.1"
-ktorServerContentNegotiation = "3.4.1"
-ktorServerCore = "3.4.1"
-ktorServerCors = "3.4.1"
-ktorServerNetty = "3.4.1"
+ktor = "3.4.1"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
 composeBom = "2026.03.00"
@@ -100,16 +96,18 @@ androidx-animation = { group = "androidx.compose.animation", name = "animation" 
 # Material
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }  # Version BOM
 androidx-watchface = { module = "androidx.wear.watchface:watchface", version.ref = "watchface" }
-androidx-watchface-complications-data-source-v120 = { module = "androidx.wear.watchface:watchface-complications-data-source", version.ref = "watchfaceComplicationsDataSourceVersion" }
 androidx-wear = { module = "androidx.wear:wear", version.ref = "wear" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
-gson-v2101 = { module = "com.google.code.gson:gson", version.ref = "gsonVersion" }
-kotlinx-coroutines-play-services-v173 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServicesVersion" }
-ktor-serialization-gson = { module = "io.ktor:ktor-serialization-gson", version.ref = "ktorSerializationGson" }
-ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktorServerContentNegotiation" }
-ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktorServerCore" }
-ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktorServerCors" }
-ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktorServerNetty" }
+ktor-serialization-gson = { module = "io.ktor:ktor-serialization-gson", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 material3-expressive = { group = "androidx.compose.material3", name = "material3", version.ref = "material3Expressive" }  # Version alpha spécifique
 material = { module = "com.google.android.material:material", version.ref = "material" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
@@ -133,7 +131,6 @@ kotlinx-coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-
 kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServices" }
 
 # Vico
-play-services-wearable-v1810 = { module = "com.google.android.gms:play-services-wearable", version.ref = "playServicesWearableVersion" }
 vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
 vico-compose-m2 = { group = "com.patrykandpatrick.vico", name = "compose-m2", version.ref = "vico" }
 vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }

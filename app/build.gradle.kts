@@ -185,11 +185,18 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // KTOR SERVER ON DEVICE
+    // KTOR SERVER ON DEVICE [WILL BE DEPRECATED AFTER MIGRATION TO RELAY SERVER]
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.server.cors)
+
+    // KTOR CLIENT WEBSOCKET [FOR THE NEW RELAY SERVER SYSTEM]
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.websockets)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
 
     // Ktor + GSON
     implementation(libs.ktor.serialization.gson)

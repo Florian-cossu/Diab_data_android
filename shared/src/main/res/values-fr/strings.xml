@@ -63,6 +63,7 @@
     <string name="action_archive">Archiver</string>
     <string name="action_add">Ajouter</string>
     <string name="action_set_lifespan">Désactivé</string>
+    <string name="action_retry">Réessayer</string>
 
     <!-- ============================================= -->
     <!-- DATE & TIME -->
@@ -433,4 +434,14 @@
     <!-- ============================================= -->
     <string name="glance_tile_label">Tuile coup d\'œil</string>
     <string name="glance_tile_description">Prochains rdvs, peremptions</string>
+
+    <!-- ============================================= -->
+    <!-- SHARE VIA RELAY SERVER -->
+    <!-- ============================================= -->
+    <string name="share_dialog_title_compagnon_mode">Mode compagnon</string>
+    <string name="share_dialog_title_medical_mode">Partage médecin</string>
+    <string name="share_dialog_connecting_to_relay_message">Connexion au relai…</string>
+    <string name="share_dialog_compagnon_mode_instruction_message">Scannez le QR code ou saisissez le code sur votre ordinateur</string>
+    <string name="share_dialog_medical_mode_instruction_message">Montrez le QR code à votre médecin</string>
+    <string name="share_dialog_stop_sharing_button_label">Arrêter le partage</string>
 </resources>
