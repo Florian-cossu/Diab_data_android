@@ -91,7 +91,7 @@ fun ShareDialog(
                         val token = viewModel.token ?: return@Column
 
                         val qrBitmap = remember(token) {
-                            generateQrCode("https://app.diabdata.fr/$token")
+                            generateQrCode("https://app.diabdata.fr/link_device/$token")
                         }
                         qrBitmap?.let {
                             Image(

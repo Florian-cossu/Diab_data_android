@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.websocket.WebSockets
-import io.ktor.client.plugins.websocket.webSocket
+import io.ktor.client.plugins.websocket.wss
 import io.ktor.websocket.Frame
 import io.ktor.websocket.WebSocketSession
 import io.ktor.websocket.readText
@@ -25,15 +25,13 @@ class RelayClient {
 
     companion object {
         /**
-         * Dev: Update this IP to match your local machine's IP.
-         * Also update the cleartext permission in:
-         * `app/src/main/res/xml/network_security_config.xml`
-         *
-         * Prod: This will be replaced by the relay domain
+         * Production relay server
+         * Dev: replace with your local IP (e.g. 192.168.1.32)
          */
-        private const val RELAY_HOST = "192.168.1.32"
-        private const val RELAY_PORT = 8080
+        private const val RELAY_HOST = "relay.diabdata.fr"
+        private const val RELAY_PORT = 443
         private const val RELAY_PATH = "/ws/app"
+        private const val USE_SSL = true
     }
 
     private val gson = Gson()
@@ -72,7 +70,7 @@ class RelayClient {
 
         job = CoroutineScope(Dispatchers.IO).launch {
             try {
-                client.webSocket(
+                client.wss(
                     host = RELAY_HOST,
                     port = RELAY_PORT,
                     path = RELAY_PATH

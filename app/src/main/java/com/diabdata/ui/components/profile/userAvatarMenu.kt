@@ -76,15 +76,15 @@ fun UserAvatarMenu(
         DropdownMenuItem(
             leadingIcon = {
                 SvgIcon(
-                    resId = R.drawable.secure_cast_to_desktop_icon_vector,
+                    resId = R.drawable.computer_arrow_up_icon_vector,
                     modifier = Modifier.size(24.dp),
                     color = MaterialTheme.colorScheme.onSurface
                 )
             },
-            text = { Text("TEST RELAY") },
+            text = { Text(stringResource(R.string.cast_to_user_computer)) },
             onClick = {
                 onDismiss()
-                showShareDialog = ShareMode.MEDICAL
+                showShareDialog = ShareMode.COMPANION
             }
         )
 

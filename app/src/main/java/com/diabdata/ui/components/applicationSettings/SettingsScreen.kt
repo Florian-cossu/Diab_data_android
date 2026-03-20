@@ -274,7 +274,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         }
                     },
                     onClick = { createFileLauncher.launch(fileName) },
-                    trailingIcon = shared.drawable.arrow_right_icon_vector
+                    trailingIcon = shared.drawable.arrow_right_icon
                 ),
                 CardItem(
                     leadingIcon = shared.drawable.restore_db_icon_vector,
@@ -291,7 +291,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                             )
                         )
                     },
-                    trailingIcon = shared.drawable.arrow_right_icon_vector
+                    trailingIcon = shared.drawable.arrow_right_icon
                 ),
                 CardItem(
                     leadingIcon = shared.drawable.purge_db_icon_vector,
@@ -303,7 +303,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         }
                     },
                     onClick = { showConfirmDialog = true },
-                    trailingIcon = shared.drawable.arrow_right_icon_vector
+                    trailingIcon = shared.drawable.arrow_right_icon
                 )
             )
 
@@ -414,7 +414,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         }
                     },
                     onClick = { showChangeLogDialog = true },
-                    trailingIcon = shared.drawable.arrow_right_icon_vector
+                    trailingIcon = shared.drawable.arrow_right_icon
                 ),
                 CardItem(
                     leadingIcon = shared.drawable.medication_info_icon_vector,
