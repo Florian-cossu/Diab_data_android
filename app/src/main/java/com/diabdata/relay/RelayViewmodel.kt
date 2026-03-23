@@ -154,6 +154,12 @@ class RelayViewModel(application: Application): AndroidViewModel(application) {
                         }
                     }
 
+                    "/api/latestMeasures" -> {
+                        val weights = db.weightDao().getWeightPlotData(today.minusYears(1).toLocalDate(), today.toLocalDate()).first()
+                        val hba1cs = db.hba1cDao().getHBA1CPlotData(today.minusYears(1).toLocalDate(), today.toLocalDate()).first()
+                        mapOf("weights" to weights, "hba1cs" to hba1cs)
+                    }
+
                     else -> {
                         mapOf("error" to "Unknown route")
                     }

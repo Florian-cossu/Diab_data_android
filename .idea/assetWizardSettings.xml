@@ -14,8 +14,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="computer_arrow_up_icon_vector" />
-                            <entry key="sourceFile" value="$PROJECT_DIR$/../diabdata-website/public/img/icons/computer_arrow_up_icon_vector.svg" />
+                            <entry key="outputName" value="gynecology_icon_vector" />
+                            <entry key="sourceFile" value="$PROJECT_DIR$/../diabdata-website/public/img/icons/gynecology_icon_vector.svg" />
                           </map>
                         </option>
                       </PersistentState>
