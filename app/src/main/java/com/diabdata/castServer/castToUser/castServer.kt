@@ -117,6 +117,7 @@ class CastToUserServerService : Service() {
                 route("/api") {
                     install(AuthPlugin)
 
+                    // Done
                     get("/user") {
                         val userInfo = db.userDetailsDao().getUserDetails().first()
                         call.respond(userInfo ?: mapOf("message" to "No user profile found"))
@@ -167,6 +168,7 @@ class CastToUserServerService : Service() {
                         )
                     }
 
+                    // ws so useless
                     post("/shutdown") {
                         call.respond(HttpStatusCode.OK, mapOf("message" to "server shutting down"))
 
@@ -177,6 +179,7 @@ class CastToUserServerService : Service() {
                         this@CastToUserServerService.stopSelf()
                     }
 
+                    // Done
                     post("/dashboard") {
                         val today = LocalDateTime.now()
 

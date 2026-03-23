@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -72,6 +73,8 @@ fun UserAvatarMenu(
             }
         )
 
+        HorizontalDivider()
+
         // --- Cast to doctor ---
         DropdownMenuItem(
             leadingIcon = {
@@ -100,43 +103,7 @@ fun UserAvatarMenu(
             text = { Text(stringResource(R.string.cast_to_doctors_computer)) },
             onClick = {
                 onDismiss()
-            }
-        )
-
-        // --- Cast to my computer ---
-        DropdownMenuItem(
-            leadingIcon = {
-                SvgIcon(
-                    resId = if (isServerRunning)
-                        R.drawable.stop_icon_vector
-                    else
-                        R.drawable.cast_to_desktop_icon_vector,
-                    modifier = Modifier.size(24.dp),
-                    color = if (isServerRunning)
-                        MaterialTheme.colorScheme.error
-                    else
-                        MaterialTheme.colorScheme.onSurface
-                )
-            },
-            text = {
-                if (isServerRunning) {
-                    Text(
-                        text = stringResource(R.string.stop_casting),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                } else {
-                    Text(text = stringResource(R.string.cast_to_user_computer))
-                }
-            },
-            onClick = {
-                if (isServerRunning) {
-                    CastToUserServerService.stop(context)
-                    isServerRunning = false
-                } else {
-                    CastToUserServerService.start(context)
-                    isServerRunning = true
-                }
-                onDismiss()
+                showShareDialog = ShareMode.MEDICAL
             }
         )
     }

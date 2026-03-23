@@ -8,7 +8,7 @@ import java.util.UUID
 object TokenGenerator {
 
     private const val TOKEN_LENGTH = 10
-    private const val CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    private const val CHARS = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
     private val secureRandom = SecureRandom()
 
     /**
