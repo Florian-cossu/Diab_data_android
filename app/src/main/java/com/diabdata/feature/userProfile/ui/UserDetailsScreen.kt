@@ -44,7 +44,7 @@ import com.diabdata.shared.utils.dataTypes.BloodType
 import com.diabdata.shared.utils.dataTypes.DiabetesType
 import com.diabdata.shared.utils.dataTypes.Gender
 import com.diabdata.shared.utils.dataTypes.GlucoseUnit
-import com.diabdata.core.ui.components.EnumDropdown
+import com.diabdata.core.ui.components.actionInput.EnumDropdown
 import com.diabdata.core.ui.components.date_components.DateSelector
 import java.time.LocalDate
 import com.diabdata.shared.R as shared

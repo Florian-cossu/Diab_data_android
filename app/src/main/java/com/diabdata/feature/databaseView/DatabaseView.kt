@@ -74,8 +74,8 @@ import com.diabdata.core.database.converters.toEntity
 import com.diabdata.core.model.MedicalDevice
 import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.core.utils.ui.ColoredIconCircle
-import com.diabdata.core.ui.components.FlippableSelectionIcon
-import com.diabdata.core.ui.components.SvgIcon
+import com.diabdata.core.ui.components.actionInput.FlippableSelectionIcon
+import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.core.utils.ui.darken
 import com.diabdata.core.utils.ui.getItemShape
 import kotlinx.coroutines.launch

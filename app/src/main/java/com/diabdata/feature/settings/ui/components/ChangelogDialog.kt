@@ -31,7 +31,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.diabdata.core.ui.components.SvgIcon
+import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.shared.R as shared
 
 @Composable

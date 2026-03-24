@@ -1,4 +1,4 @@
-package com.diabdata.core.ui.components
+package com.diabdata.core.utils.ui
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image

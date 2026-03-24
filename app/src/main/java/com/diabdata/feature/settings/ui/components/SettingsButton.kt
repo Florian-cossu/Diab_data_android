@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import com.diabdata.core.ui.components.SvgIcon
+import com.diabdata.core.utils.ui.SvgIcon
 
 @Composable
 fun SettingsButton(

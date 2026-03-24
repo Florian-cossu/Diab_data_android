@@ -1,4 +1,4 @@
-package com.diabdata.feature.dataMarixScanner.ui
+package com.diabdata.feature.dataMatrixScanner.ui
 
 import android.annotation.SuppressLint
 import android.os.Build

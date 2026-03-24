@@ -11,7 +11,7 @@ import com.diabdata.feature.hba1c.data.HBA1CDao
 import com.diabdata.feature.importantDates.data.ImportantDateDao
 import com.diabdata.feature.devices.data.MedicalDeviceDao
 import com.diabdata.feature.devices.data.MedicalDevicesInfoDao
-import com.diabdata.dao.MedicationDao
+import com.diabdata.feature.dataMatrixScanner.data.MedicationDao
 import com.diabdata.feature.treatments.data.TreatmentDao
 import com.diabdata.feature.userProfile.data.UserDetailsDao
 import com.diabdata.feature.weight.data.WeightDao
@@ -26,8 +26,8 @@ import com.diabdata.core.model.Medication
 import com.diabdata.core.model.Treatment
 import com.diabdata.core.model.UserDetails
 import com.diabdata.core.model.Weight
-import com.diabdata.feature.dataMarixScanner.utils.MedicalDevicesInitializer
-import com.diabdata.feature.dataMarixScanner.utils.MedicationInitializer
+import com.diabdata.feature.dataMatrixScanner.utils.MedicalDevicesInitializer
+import com.diabdata.feature.dataMatrixScanner.utils.MedicationInitializer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

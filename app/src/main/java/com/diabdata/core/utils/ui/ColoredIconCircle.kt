@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.diabdata.core.ui.components.cardsList.CardItem
 import com.diabdata.core.ui.components.cardsList.CardListItem
-import com.diabdata.core.ui.components.SvgIcon
 
 /**
  * A composable that renders an icon inside a tinted circular background.

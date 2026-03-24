@@ -1,4 +1,4 @@
-package com.diabdata.core.ui.components
+package com.diabdata.core.ui.components.actionInput
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.diabdata.core.utils.ui.SvgIcon
 import kotlinx.coroutines.delay
 import com.diabdata.shared.R as shared
 

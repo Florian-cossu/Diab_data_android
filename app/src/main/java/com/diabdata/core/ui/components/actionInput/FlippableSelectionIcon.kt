@@ -1,4 +1,4 @@
-package com.diabdata.core.ui.components
+package com.diabdata.core.ui.components.actionInput
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
+import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.shared.R as shared
 
 @Composable

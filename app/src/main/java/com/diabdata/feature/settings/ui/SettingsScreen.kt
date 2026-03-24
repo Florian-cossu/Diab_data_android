@@ -41,7 +41,7 @@ import com.diabdata.core.database.DataViewModel
 import com.diabdata.feature.settings.ui.components.ChangelogDialog
 import com.diabdata.core.ui.components.cardsList.CardItem
 import com.diabdata.core.ui.components.cardsList.CardsList
-import com.diabdata.core.ui.components.SvgIcon
+import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.core.notifications.showNotification
 import com.diabdata.workers.reminders.scheduleAppointmentReminders
 import com.diabdata.workers.reminders.scheduleMedicationExpirationReminders

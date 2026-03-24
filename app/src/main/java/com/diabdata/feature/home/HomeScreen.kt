@@ -27,14 +27,14 @@ import com.diabdata.core.database.DataViewModel
 import com.diabdata.core.model.Medication
 import com.diabdata.core.model.Treatment
 import com.diabdata.shared.utils.dataTypes.AddableType
-import com.diabdata.core.ui.components.AddDataFab
-import com.diabdata.feature.dataMarixScanner.ui.DataMatrixScannerDialog
-import com.diabdata.feature.dataMarixScanner.ui.ScanResult
-import com.diabdata.feature.dataMarixScanner.ui.ScannableTypes
+import com.diabdata.core.ui.components.actionInput.AddDataFab
+import com.diabdata.feature.dataMatrixScanner.ui.DataMatrixScannerDialog
+import com.diabdata.feature.dataMatrixScanner.ui.ScanResult
+import com.diabdata.feature.dataMatrixScanner.ui.ScannableTypes
 import com.diabdata.core.ui.components.addDataPopup.AddDataPopup
 import com.diabdata.feature.home.components.LatestMeasurements
-import com.diabdata.feature.noDataView.NoDataView
-import com.diabdata.feature.dataMarixScanner.utils.MedicationInfo
+import com.diabdata.core.ui.components.noDataView.NoDataView
+import com.diabdata.feature.dataMatrixScanner.utils.MedicationInfo
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import com.diabdata.shared.R as shared

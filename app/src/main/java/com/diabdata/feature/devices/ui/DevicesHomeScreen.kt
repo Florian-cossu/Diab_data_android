@@ -28,7 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import com.diabdata.core.database.DataViewModel
 import com.diabdata.feature.devices.ui.devicesScreens.FaultyDevices
 import com.diabdata.feature.devices.ui.devicesScreens.RecentDevicesScreen
-import com.diabdata.core.ui.components.SvgIcon
+import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.shared.R as shared
 
 enum class DeviceDestination(

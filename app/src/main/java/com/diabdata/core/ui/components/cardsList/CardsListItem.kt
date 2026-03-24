@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import com.diabdata.core.utils.ui.ColoredIconCircle
 import com.diabdata.core.utils.ui.ColoredIconCircleProps
-import com.diabdata.core.ui.components.SvgIcon
+import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.core.utils.ui.getItemShape
 
 /**

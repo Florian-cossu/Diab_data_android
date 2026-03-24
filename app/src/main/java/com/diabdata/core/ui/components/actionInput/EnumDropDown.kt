@@ -1,4 +1,4 @@
-package com.diabdata.core.ui.components
+package com.diabdata.core.ui.components.actionInput
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.shared.R as shared
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)

@@ -43,8 +43,8 @@ import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
 import com.diabdata.shared.utils.dateUtils.shortenedFormatLocalDate
 import com.diabdata.core.utils.ui.ColoredIconCircle
-import com.diabdata.core.ui.components.FaultyToggleButton
-import com.diabdata.core.ui.components.SvgIcon
+import com.diabdata.core.ui.components.actionInput.FaultyToggleButton
+import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.core.utils.ui.darken
 import com.diabdata.core.utils.ui.getItemShape
 import kotlinx.coroutines.launch

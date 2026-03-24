@@ -1,4 +1,4 @@
-package com.diabdata.feature.dataMarixScanner.utils
+package com.diabdata.feature.dataMatrixScanner.utils
 
 fun generateDataMatrixDelimiters(excludedDelimiters: List<String> = emptyList()): String {
     val delimiters = listOf(

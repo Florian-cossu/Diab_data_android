@@ -1,4 +1,4 @@
-package com.diabdata.dao
+package com.diabdata.feature.dataMatrixScanner.data
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -11,7 +11,7 @@ interface MedicationDao {
     @Query("SELECT * FROM medications WHERE cipGtin = :code LIMIT 1")
     suspend fun findByCode(code: String): Medication?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertAll(medications: List<Medication>)
 
     @Query("SELECT COUNT(*) FROM medications")

@@ -42,7 +42,7 @@ import com.diabdata.feature.importantDates.components.ImportantDatePopup
 import com.diabdata.feature.devices.ui.MedicalDevicePopup
 import com.diabdata.feature.treatments.ui.TreatmentPopup
 import com.diabdata.feature.weight.ui.WeightPopup
-import com.diabdata.core.ui.components.SvgIcon
+import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.shared.R as shared
 
 @OptIn(ExperimentalMaterial3Api::class)

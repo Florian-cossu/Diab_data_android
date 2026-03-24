@@ -1,4 +1,4 @@
-package com.diabdata.feature.dataMarixScanner.utils
+package com.diabdata.feature.dataMatrixScanner.utils
 
 import android.content.Context
 import androidx.core.content.edit

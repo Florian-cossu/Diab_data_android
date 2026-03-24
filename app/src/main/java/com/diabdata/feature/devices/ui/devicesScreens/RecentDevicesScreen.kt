@@ -29,12 +29,12 @@ import com.diabdata.feature.devices.ui.components.AddDeviceFab
 import com.diabdata.feature.devices.ui.components.CurrentConsumableDevicesList
 import com.diabdata.feature.devices.ui.components.CurrentNonConsumableDevicesList
 import com.diabdata.shared.utils.dataTypes.AddableType
-import com.diabdata.feature.dataMarixScanner.ui.DataMatrixScannerDialog
-import com.diabdata.feature.dataMarixScanner.ui.ScanResult
-import com.diabdata.feature.dataMarixScanner.ui.ScannableTypes
+import com.diabdata.feature.dataMatrixScanner.ui.DataMatrixScannerDialog
+import com.diabdata.feature.dataMatrixScanner.ui.ScanResult
+import com.diabdata.feature.dataMatrixScanner.ui.ScannableTypes
 import com.diabdata.core.ui.components.addDataPopup.AddDataPopup
-import com.diabdata.feature.noDataView.IconTypes
-import com.diabdata.feature.noDataView.NoDataView
+import com.diabdata.core.ui.components.noDataView.IconTypes
+import com.diabdata.core.ui.components.noDataView.NoDataView
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 

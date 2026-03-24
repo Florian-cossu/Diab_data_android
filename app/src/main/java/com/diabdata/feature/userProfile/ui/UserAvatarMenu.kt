@@ -22,7 +22,7 @@ import com.diabdata.feature.casting.castServer.castToUser.CastToUserServerServic
 import com.diabdata.feature.casting.relay.ShareDialog
 import com.diabdata.feature.casting.relay.ShareMode
 import com.diabdata.shared.R
-import com.diabdata.core.ui.components.SvgIcon
+import com.diabdata.core.utils.ui.SvgIcon
 
 // ui/UserAvatarMenu.kt
 @Composable

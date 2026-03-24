@@ -1,4 +1,4 @@
-package com.diabdata.feature.dataMarixScanner.ui
+package com.diabdata.feature.dataMatrixScanner.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -21,11 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.diabdata.core.ui.components.SvgIcon
-import com.diabdata.feature.dataMarixScanner.utils.MedicalDeviceInfo
-import com.diabdata.feature.dataMarixScanner.utils.MedicationInfo
-import com.diabdata.feature.dataMarixScanner.utils.parseMedicalDevice
-import com.diabdata.feature.dataMarixScanner.utils.parseMedication
+import com.diabdata.core.utils.ui.SvgIcon
+import com.diabdata.feature.dataMatrixScanner.utils.MedicalDeviceInfo
+import com.diabdata.feature.dataMatrixScanner.utils.MedicationInfo
+import com.diabdata.feature.dataMatrixScanner.utils.parseMedicalDevice
+import com.diabdata.feature.dataMatrixScanner.utils.parseMedication
 import com.diabdata.shared.R as shared
 
 @RequiresApi(Build.VERSION_CODES.P)

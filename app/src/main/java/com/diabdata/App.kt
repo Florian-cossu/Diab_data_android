@@ -56,13 +56,13 @@ import com.diabdata.feature.settings.ui.SettingsScreen
 import com.diabdata.feature.databaseView.DatabaseEditionView
 import com.diabdata.feature.devices.ui.DevicesScreen
 import com.diabdata.feature.graphs.GraphViewer
-import com.diabdata.core.ui.components.SvgIcon
+import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.feature.userProfile.ui.UserAvatarWithMenu
 import com.diabdata.feature.userProfile.ui.UserDetailsScreen
 import com.diabdata.core.utils.ScreenSize
 import com.diabdata.core.utils.getScreenSize
-import com.diabdata.feature.dataMarixScanner.utils.MedicalDevicesInitializer
-import com.diabdata.feature.dataMarixScanner.utils.MedicationInitializer
+import com.diabdata.feature.dataMatrixScanner.utils.MedicalDevicesInitializer
+import com.diabdata.feature.dataMatrixScanner.utils.MedicationInitializer
 import kotlinx.coroutines.flow.StateFlow
 import com.diabdata.shared.R as shared
 

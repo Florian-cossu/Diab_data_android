@@ -47,8 +47,8 @@ import com.diabdata.shared.utils.dateUtils.formatLocalDate
 import com.diabdata.shared.utils.dateUtils.toCountString
 import com.diabdata.core.ui.components.date_components.DateRangeModal
 import com.diabdata.feature.graphs.components.LineGraph
-import com.diabdata.core.ui.components.SvgIcon
-import com.diabdata.feature.noDataView.NoDataView
+import com.diabdata.core.utils.ui.SvgIcon
+import com.diabdata.core.ui.components.noDataView.NoDataView
 import com.diabdata.core.utils.ScreenSize
 import com.diabdata.core.utils.getScreenSize
 import java.time.LocalDate

@@ -1,4 +1,4 @@
-package com.diabdata.feature.noDataView
+package com.diabdata.core.ui.components.noDataView
 
 import android.content.Context
 import androidx.annotation.DrawableRes
@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.diabdata.core.ui.components.SvgIcon
+import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.core.ui.theme.DiabDataTheme
 import com.diabdata.shared.R as shared
 

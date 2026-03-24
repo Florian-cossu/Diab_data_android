@@ -1,4 +1,4 @@
-package com.diabdata.feature.dataMarixScanner.utils
+package com.diabdata.feature.dataMatrixScanner.utils
 
 data class MedicalDeviceInfo(
     val gtin: String,

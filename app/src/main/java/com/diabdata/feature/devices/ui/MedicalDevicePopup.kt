@@ -29,10 +29,10 @@ import com.diabdata.core.database.converters.toEntity
 import com.diabdata.core.model.MedicalDevice
 import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
-import com.diabdata.core.ui.components.EnumDropdown
+import com.diabdata.core.ui.components.actionInput.EnumDropdown
 import com.diabdata.core.ui.components.addDataPopup.BasePopupLayout
 import com.diabdata.core.ui.components.date_components.DateSelector
-import com.diabdata.core.ui.components.SvgIcon
+import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.core.utils.ui.darken
 import kotlinx.coroutines.launch
 import java.time.LocalDate

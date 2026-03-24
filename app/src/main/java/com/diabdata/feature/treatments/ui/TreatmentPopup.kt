@@ -18,7 +18,7 @@ import com.diabdata.core.database.converters.toEntity
 import com.diabdata.core.model.Treatment
 import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.shared.utils.dataTypes.TreatmentType
-import com.diabdata.core.ui.components.EnumDropdown
+import com.diabdata.core.ui.components.actionInput.EnumDropdown
 import com.diabdata.core.ui.components.addDataPopup.BasePopupLayout
 import com.diabdata.core.ui.components.date_components.DateSelector
 import kotlinx.coroutines.launch

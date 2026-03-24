@@ -1,4 +1,4 @@
-package com.diabdata.core.ui.components
+package com.diabdata.core.ui.components.actionInput
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background

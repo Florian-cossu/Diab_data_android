@@ -38,7 +38,7 @@ import com.diabdata.shared.utils.dateUtils.toRelativeString
 import com.diabdata.core.utils.ui.ColoredIconCircleProps
 import com.diabdata.core.ui.components.cardsList.CardItem
 import com.diabdata.core.ui.components.cardsList.CardsList
-import com.diabdata.core.ui.components.SvgIcon
+import com.diabdata.core.utils.ui.SvgIcon
 import java.time.LocalDate
 import java.time.LocalDateTime
 import com.diabdata.shared.R as shared
