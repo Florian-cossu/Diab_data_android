@@ -90,7 +90,7 @@ enum class IconVariant {
 }
 
 /**
- * Extension function to convert a string representation of a device type to its corresponding icon resource ID.
+ * Extension function to convert a string representation of a devices type to its corresponding icon resource ID.
  */
 fun String.toDeviceIcon(filled: Boolean = false): Int =
     toIconRes(ResourceType.Device, if (filled) IconVariant.FILLED else IconVariant.OUTLINED)
@@ -102,7 +102,7 @@ fun String.toAppointmentIcon(filled: Boolean = false): Int =
     toIconRes(ResourceType.Appointment, if (filled) IconVariant.FILLED else IconVariant.OUTLINED)
 
 /**
- * Extension function to convert a string representation of a treatment type to its corresponding icon resource ID.
+ * Extension function to convert a string representation of a treatments type to its corresponding icon resource ID.
  */
 fun String.toTreatmentIcon(filled: Boolean = false): Int =
     toIconRes(ResourceType.Treatment, if (filled) IconVariant.FILLED else IconVariant.OUTLINED)

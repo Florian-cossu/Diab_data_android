@@ -40,7 +40,7 @@
         </activity>
 
         <receiver
-            android:name=".glanceWidget.GlanceWidgetReceiver"
+            android:name=".widget.glanceWidget.GlanceWidgetReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -51,7 +51,7 @@
         </receiver>
 
         <service
-            android:name=".castServer.castToUser.CastToUserServerService"
+            android:name=".feature.casting.castServer.castToUser.CastToUserServerService"
             android:foregroundServiceType="specialUse"
             android:exported="false">
             <property

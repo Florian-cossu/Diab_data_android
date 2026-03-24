@@ -3,8 +3,8 @@ package com.diabdata.workers.reminders
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.diabdata.utils.NotificationImportance
-import com.diabdata.utils.showNotification
+import com.diabdata.core.notifications.NotificationImportance
+import com.diabdata.core.notifications.showNotification
 import com.diabdata.shared.R as shared
 
 class SingleNotificationWorker(

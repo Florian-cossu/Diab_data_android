@@ -2,6 +2,9 @@
 # Android Studio / IntelliJ
 # --------------------
 *.iml
+.idea/
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
 
 # --------------------
 # Gradle

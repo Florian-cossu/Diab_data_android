@@ -3,7 +3,7 @@ package com.diabdata.workers.reminders
 import android.content.Context
 import androidx.work.WorkManager
 import androidx.work.await
-import com.diabdata.data.DataViewModel
+import com.diabdata.core.database.DataViewModel
 import kotlinx.coroutines.flow.first
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle

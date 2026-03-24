@@ -49,20 +49,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.diabdata.data.DataViewModel
-import com.diabdata.data.DiabDataDatabase
-import com.diabdata.ui.HomeScreen
-import com.diabdata.ui.components.applicationSettings.SettingsScreen
-import com.diabdata.ui.components.databaseView.DatabaseEditionView
-import com.diabdata.ui.components.devices.DevicesScreen
-import com.diabdata.ui.components.graphsViewer.GraphViewer
-import com.diabdata.ui.components.layout.SvgIcon
-import com.diabdata.ui.components.profile.UserAvatarWithMenu
-import com.diabdata.ui.components.profile.UserDetailsScreen
-import com.diabdata.utils.ScreenSize
-import com.diabdata.utils.getScreenSize
-import com.diabdata.utils.medicationMatrixScanner.MedicalDevicesInitializer
-import com.diabdata.utils.medicationMatrixScanner.MedicationInitializer
+import com.diabdata.core.database.DataViewModel
+import com.diabdata.core.database.DiabDataDatabase
+import com.diabdata.feature.home.HomeScreen
+import com.diabdata.feature.settings.ui.SettingsScreen
+import com.diabdata.feature.databaseView.DatabaseEditionView
+import com.diabdata.feature.devices.ui.DevicesScreen
+import com.diabdata.feature.graphs.GraphViewer
+import com.diabdata.core.ui.components.SvgIcon
+import com.diabdata.feature.userProfile.ui.UserAvatarWithMenu
+import com.diabdata.feature.userProfile.ui.UserDetailsScreen
+import com.diabdata.core.utils.ScreenSize
+import com.diabdata.core.utils.getScreenSize
+import com.diabdata.feature.dataMarixScanner.utils.MedicalDevicesInitializer
+import com.diabdata.feature.dataMarixScanner.utils.MedicationInitializer
 import kotlinx.coroutines.flow.StateFlow
 import com.diabdata.shared.R as shared
 

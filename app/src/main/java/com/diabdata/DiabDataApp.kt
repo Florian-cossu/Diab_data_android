@@ -5,9 +5,9 @@ import android.util.Log
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkManager
-import com.diabdata.data.DataRepository
-import com.diabdata.data.DataViewModel
-import com.diabdata.data.DiabDataDatabase
+import com.diabdata.core.database.DataRepository
+import com.diabdata.core.database.DataViewModel
+import com.diabdata.core.database.DiabDataDatabase
 import com.diabdata.workers.main.WorkersInitializer
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
