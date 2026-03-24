@@ -8,15 +8,19 @@ import com.diabdata.shared.R
 enum class AppointmentType(
     @param:StringRes
     val displayNameRes: Int,
-    @param:DrawableRes val iconRes: Int
+    @param:DrawableRes val iconRes: Int,
+    @param:DrawableRes val iconFilledRes: Int
 ) {
     ANNUAL_CHECKUP(
         displayNameRes = R.string.appointment_annual_checkup,
-        iconRes = R.drawable.recurring_event_icon_vector
+        iconRes = R.drawable.recurring_event_icon_vector,
+        iconFilledRes = R.drawable.recurring_event_filled_icon_vector
+
     ),
     APPOINTMENT(
         displayNameRes = R.string.appointment_one_time,
-        iconRes = R.drawable.stethoscope_icon_vector
+        iconRes = R.drawable.stethoscope_icon_vector,
+        iconFilledRes = R.drawable.stethoscope_filled_icon_vector
     );
 
     fun displayName(context: Context): String =

@@ -3,8 +3,8 @@ package com.diabdata.workers.reminders
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.diabdata.utils.NotificationImportance
-import com.diabdata.utils.showNotification
+import com.diabdata.core.notifications.NotificationImportance
+import com.diabdata.core.notifications.showNotification
 import com.diabdata.shared.R as shared
 
 class SingleNotificationWorker(
@@ -17,7 +17,6 @@ class SingleNotificationWorker(
         val content = inputData.getString("content") ?: return Result.failure()
         val tag = inputData.getString("tag") ?: "default"
 
-        // utilise applicationContext au lieu de LocalContext
         val channelName = when (tag) {
             "treatments" -> applicationContext.getString(shared.string.notification_channel_expirations)
             "appointments" -> applicationContext.getString(shared.string.notification_channel_appointments)

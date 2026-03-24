@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <shortcut
+        android:shortcutId="shortcut_charts"
+        android:enabled="true"
+        android:icon="@drawable/chart_filled_icon_vector"
+        android:shortcutShortLabel="@string/chart_menu_title"
+        android:shortcutLongLabel="@string/chart_menu_title_long">
+        <intent
+            android:action="com.diabdata.ACTION_SHORTCUT"
+            android:targetPackage="com.diabdata"
+            android:targetClass="com.diabdata.MainActivity">
+            <extra
+                android:name="shortcut_destination"
+                android:value="charts" />
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="shortcut_data"
+        android:enabled="true"
+        android:icon="@drawable/database_filled_icon_vector"
+        android:shortcutShortLabel="@string/database_management_menu_title"
+        android:shortcutLongLabel="@string/database_management_menu_title_long">
+        <intent
+            android:action="com.diabdata.ACTION_SHORTCUT"
+            android:targetPackage="com.diabdata"
+            android:targetClass="com.diabdata.MainActivity">
+            <extra
+                android:name="shortcut_destination"
+                android:value="data" />
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="shortcut_devices"
+        android:enabled="true"
+        android:icon="@drawable/devices_filled_icon_vector"
+        android:shortcutShortLabel="@string/devices_menu_title"
+        android:shortcutLongLabel="@string/devices_menu_title_long">
+        <intent
+            android:action="com.diabdata.ACTION_SHORTCUT"
+            android:targetPackage="com.diabdata"
+            android:targetClass="com.diabdata.MainActivity">
+            <extra
+                android:name="shortcut_destination"
+                android:value="devices" />
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="shortcut_settings"
+        android:enabled="true"
+        android:icon="@drawable/settings_filled_icon_vector"
+        android:shortcutShortLabel="@string/settings_menu_title"
+        android:shortcutLongLabel="@string/settings_menu_title_long">
+        <intent
+            android:action="com.diabdata.ACTION_SHORTCUT"
+            android:targetPackage="com.diabdata"
+            android:targetClass="com.diabdata.MainActivity">
+            <extra
+                android:name="shortcut_destination"
+                android:value="settings" />
+        </intent>
+    </shortcut>
+
+</shortcuts>

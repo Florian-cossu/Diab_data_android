@@ -1,0 +1,17 @@
+package com.diabdata.core.model
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.diabdata.shared.utils.dataTypes.TreatmentType
+import java.time.LocalDate
+
+@Entity(tableName = "treatments")
+data class Treatment(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val expirationDate: LocalDate,
+    val name: String,
+    val createdAt: LocalDate,
+    val isArchived: Boolean,
+    val type: TreatmentType,
+    val updatedAt: LocalDate
+)

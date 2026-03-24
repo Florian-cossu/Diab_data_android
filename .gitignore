@@ -1,16 +1,54 @@
+# --------------------
+# Android Studio / IntelliJ
+# --------------------
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+.idea/
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
+
+# --------------------
+# Gradle
+# --------------------
+.gradle/
+build/
+**/build/
+
+# --------------------
+# Local configuration
+# --------------------
 local.properties
-/.kotlin/errors/errors-1755187174533.log
+
+# --------------------
+# Kotlin
+# --------------------
+.kotlin/
+.kotlin/errors/
+
+# --------------------
+# Native build
+# --------------------
+.externalNativeBuild/
+.cxx/
+
+# --------------------
+# macOS
+# --------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# --------------------
+# Android
+# --------------------
+captures/
+
+# --------------------
+# Logs
+# --------------------
+*.log
+
+# --------------------
+# Temporary / Misc
+# --------------------
+*.swp
+*.tmp

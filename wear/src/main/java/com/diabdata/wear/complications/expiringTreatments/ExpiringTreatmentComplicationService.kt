@@ -9,7 +9,7 @@ import androidx.wear.watchface.complications.data.RangedValueComplicationData
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
 import com.diabdata.shared.utils.dataTypes.AddableType
-import com.diabdata.shared.utils.dataTypes.TreatmentType
+import com.diabdata.shared.utils.imgUtils.toTreatmentIcon
 import com.diabdata.shared.R as shared
 
 class ExpiringTreatmentComplicationService :
@@ -22,11 +22,7 @@ class ExpiringTreatmentComplicationService :
         val treatmentElapsedLifespan = prefs.getString("elapsedTreatmentConservation", "0") ?: "0"
         val treatmentTypeStr = prefs.getString("treatmentIconRes", "UNKNOWN") ?: "UNKNOWN"
 
-        val latestIconRes = try {
-            TreatmentType.valueOf(treatmentTypeStr).iconRes
-        } catch (e: Exception) {
-            AddableType.TREATMENT.iconRes
-        }
+        val latestIconRes = treatmentTypeStr.toTreatmentIcon(filled = true)
 
         var daysCountText = ""
 
@@ -75,7 +71,7 @@ class ExpiringTreatmentComplicationService :
                 MonochromaticImage.Builder(
                     Icon.createWithResource(
                         applicationContext,
-                        AddableType.TREATMENT.iconRes
+                        AddableType.TREATMENT.iconFilledRes
                     )
                 ).build()
             )

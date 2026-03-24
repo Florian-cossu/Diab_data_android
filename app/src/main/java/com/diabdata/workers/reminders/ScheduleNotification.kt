@@ -5,7 +5,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import java.time.Duration
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.concurrent.TimeUnit
@@ -14,11 +13,11 @@ fun scheduleNotification(
     context: Context,
     title: String,
     content: String,
-    date: LocalDate,
+    date: LocalDateTime,
     tag: String,
     hour: Int = 9
 ) {
-    val notifyDateTime = date.atTime(hour, 0)
+    val notifyDateTime = date
     val delay = Duration.between(LocalDateTime.now(), notifyDateTime).toMillis()
 
     if (delay <= 0) return
@@ -28,7 +27,8 @@ fun scheduleNotification(
 
     val data = workDataOf(
         "title" to title,
-        "content" to content
+        "content" to content,
+        "tag" to tag
     )
 
     val workRequest = OneTimeWorkRequestBuilder<SingleNotificationWorker>()

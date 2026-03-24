@@ -5,8 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
-    id("com.google.devtools.ksp") version "2.2.20-2.0.4"
-    id("com.google.protobuf") version "0.9.5"
+    id("com.google.devtools.ksp") version "2.3.2"
+    id("com.google.protobuf") version "0.9.6"
 }
 
 android {
@@ -18,9 +18,9 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = getVersionCode()
-        versionName = "4.2.2"
+        versionName = "4.9.0"
         buildConfigField("String", "MEDICATION_GTIN_FILE_VERSION", "\"1.2.0\"")
-        buildConfigField("String", "MEDICAL_DEVICES_GTIN_FILE_VERSION", "\"1.0.2\"")
+        buildConfigField("String", "MEDICAL_DEVICES_GTIN_FILE_VERSION", "\"1.0.3\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -61,6 +61,16 @@ android {
         }
     }
 
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/INDEX.LIST",
+                "META-INF/MANIFEST.MF",
+                "META-INF/io.netty.versions.properties"
+            )
+        }
+    }
+
     ksp {
         arg("room.schemaLocation", "$projectDir/schemas")
     }
@@ -97,6 +107,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.ui.text)
 
+    // Image loading
+    implementation(libs.coil.compose)
+
     // Vico
     implementation(libs.vico.compose)
     // implementation(libs.vico.compose.m2)
@@ -115,6 +128,11 @@ dependencies {
     implementation(libs.material3.expressive)      // Unstable expressive version
     implementation(libs.material)
     implementation(libs.androidx.material.icons.extended)
+
+    // Adaptive compose libs
+    implementation(libs.androidx.compose.adaptive)
+    implementation(libs.androidx.compose.adaptive.layout)
+    implementation(libs.androidx.compose.adaptive.navigation)
 
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.foundation.layout)
@@ -140,6 +158,8 @@ dependencies {
     // Wear OS complication
     implementation(libs.androidx.watchface.complications.data.source)
     implementation(libs.play.services.wearable)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.material3)
 
     // Annotation processing
     ksp(libs.androidx.room.compiler)
@@ -160,10 +180,26 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))  // BOM aussi pour les tests
+    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // KTOR SERVER ON DEVICE [WILL BE DEPRECATED AFTER MIGRATION TO RELAY SERVER]
+    implementation(libs.ktor.server.core)
+    implementation(libs.ktor.server.netty)
+    implementation(libs.ktor.server.content.negotiation)
+    implementation(libs.ktor.server.cors)
+
+    // KTOR CLIENT WEBSOCKET [FOR THE NEW RELAY SERVER SYSTEM]
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.websockets)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+
+    // Ktor + GSON
+    implementation(libs.ktor.serialization.gson)
 
     // Shared
     implementation(project(":shared"))

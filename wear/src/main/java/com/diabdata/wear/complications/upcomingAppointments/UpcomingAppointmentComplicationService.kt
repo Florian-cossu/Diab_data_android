@@ -9,6 +9,7 @@ import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
 import com.diabdata.shared.utils.dataTypes.AppointmentType
+import com.diabdata.shared.utils.imgUtils.toAppointmentIcon
 import com.diabdata.shared.R as shared
 
 class UpcomingAppointmentComplicationService : SuspendingComplicationDataSourceService() {
@@ -18,7 +19,7 @@ class UpcomingAppointmentComplicationService : SuspendingComplicationDataSourceS
         val hasAppointment = prefs.getBoolean("hasAppointment", false)
 
         val daysCountText: String
-        val doctor: String  // Déclaration unique
+        val doctor: String
         val contentDescription: String
         val iconRes: Int
 
@@ -28,11 +29,7 @@ class UpcomingAppointmentComplicationService : SuspendingComplicationDataSourceS
                 prefs.getString("appointmentType", "APPOINTMENT") ?: "APPOINTMENT"
             doctor = prefs.getString("doctor", "") ?: ""
 
-            iconRes = try {
-                AppointmentType.valueOf(appointmentTypeStr).iconRes
-            } catch (e: Exception) {
-                AppointmentType.APPOINTMENT.iconRes
-            }
+            iconRes = appointmentTypeStr.toAppointmentIcon(filled = true)
 
             daysCountText = when (daysBeforeAppointment) {
                 0 -> getString(shared.string.date_abbr_today)
@@ -57,7 +54,7 @@ class UpcomingAppointmentComplicationService : SuspendingComplicationDataSourceS
             doctor = ""
             contentDescription =
                 resources.getString(shared.string.wear_complication_no_upcoming_appointment_text_description)
-            iconRes = AppointmentType.APPOINTMENT.iconRes
+            iconRes = AppointmentType.APPOINTMENT.iconFilledRes
         }
 
         return ShortTextComplicationData.Builder(
@@ -85,7 +82,7 @@ class UpcomingAppointmentComplicationService : SuspendingComplicationDataSourceS
             contentDescription = PlainComplicationText.Builder(
                 resources.getString(
                     shared.string.wear_complication_upcoming_appointment_in_days_text_description,
-                    3
+                    "3"
                 )
             ).build()
         )
@@ -94,7 +91,7 @@ class UpcomingAppointmentComplicationService : SuspendingComplicationDataSourceS
                 MonochromaticImage.Builder(
                     Icon.createWithResource(
                         applicationContext,
-                        AppointmentType.APPOINTMENT.iconRes
+                        AppointmentType.APPOINTMENT.iconFilledRes
                     )
                 ).build()
             )
