@@ -1,4 +1,4 @@
-package com.diabdata.feature.settings.ui.components
+package com.diabdata.feature.settings.ui.components.changelog
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height

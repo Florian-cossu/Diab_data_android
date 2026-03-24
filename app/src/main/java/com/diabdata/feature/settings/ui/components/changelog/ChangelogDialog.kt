@@ -1,4 +1,4 @@
-package com.diabdata.feature.settings.ui.components
+package com.diabdata.feature.settings.ui.components.changelog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -90,31 +90,31 @@ fun ChangelogDialog(onDismiss: () -> Unit) {
                         .heightIn(max = maxHeight)
                 ) {
                     changelogSection(
-                        "- BRANDING",
+                        "BRANDING",
                         listOf(
                             "Created brand new application logo."
                         )
                     )
                     changelogSection(
-                        "- CLEANUP",
+                        "CLEANUP",
                         listOf(
                             "Major reorganization of string resources with consistent naming.",
                             "Moved almost all existing app resources into shared.",
                             "Cleaned, grouped, and simplified libs.versions.toml.",
-                            "Updated Gradle configuration across modules."
+                            "Updated Gradle configuration across modules.",
+                            "Project architecture overhaul"
                         )
                     )
                     changelogSection(
-                        "- GUI",
+                        "GUI",
                         listOf(
                             "Turned stacked card into a component with pagination options",
                             "Updated the app to get closer to what native Google apps look like",
-                            "Major reorganization of string resources with consistent naming.",
                             "(WIP) App is now adaptative to screen. Some components still need to be updated",
                         )
                     )
                     changelogSection(
-                        "- DATABASE",
+                        "DATABASE",
                         listOf(
                             "Added missing migration files.",
                             "Enabled schema export.",
@@ -122,10 +122,18 @@ fun ChangelogDialog(onDismiss: () -> Unit) {
                         )
                     )
                     changelogSection(
-                        "- WEAR OS WATCHES SUPPORT",
+                        "WEAR OS WATCHES SUPPORT",
                         listOf(
                             "Added wearOS module",
                             "Created new complications for expiring treatments, devices as well as upcoming appointments"
+                        )
+                    )
+                    changelogSection(
+                        "DATA CASTING (WIP)",
+                        listOf(
+                            "Added 2 new sharing types for user data:",
+                            "Companion: to view/update/remove data from computer",
+                            "Doctor: To share with your doctor the minimum amount of data (viewing only)"
                         )
                     )
                 }

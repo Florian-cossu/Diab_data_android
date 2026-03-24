@@ -38,7 +38,7 @@ import androidx.core.content.edit
 import androidx.work.WorkManager
 import com.diabdata.BuildConfig
 import com.diabdata.core.database.DataViewModel
-import com.diabdata.feature.settings.ui.components.ChangelogDialog
+import com.diabdata.feature.settings.ui.components.changelog.ChangelogDialog
 import com.diabdata.core.ui.components.cardsList.CardItem
 import com.diabdata.core.ui.components.cardsList.CardsList
 import com.diabdata.core.utils.ui.SvgIcon
