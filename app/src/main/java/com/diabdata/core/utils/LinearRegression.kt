@@ -1,6 +1,10 @@
 package com.diabdata.core.utils
 
 fun linearRegression(x: List<Double>, y: List<Double>): (Double) -> Double {
+    require(x.size == y.size) { "x and y must have the same size" }
+    require(x.isNotEmpty()) { "x must not be empty" }
+    require(y.isNotEmpty()) { "y must not be empty" }
+
     val n = x.size
     val sumX = x.sum()
     val sumY = y.sum()

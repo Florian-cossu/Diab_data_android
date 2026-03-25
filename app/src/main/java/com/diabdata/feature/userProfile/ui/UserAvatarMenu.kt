@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.diabdata.feature.casting.castServer.castToUser.CastToUserServerService
-import com.diabdata.feature.casting.relay.ShareDialog
+import com.diabdata.feature.casting.relay.ui.ShareDialog
 import com.diabdata.feature.casting.relay.ShareMode
 import com.diabdata.shared.R
 import com.diabdata.core.utils.ui.SvgIcon

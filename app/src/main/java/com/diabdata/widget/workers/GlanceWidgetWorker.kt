@@ -83,6 +83,8 @@ class GlanceWidgetWorker @AssistedInject constructor(
 }
 
 fun getLifeSpanProgress(startDate: LocalDate, endDate: LocalDate): Int {
+    require(startDate < endDate) {"Start date cannot be set after endDate"}
+
     val today = LocalDate.now()
 
     val totalDays = ChronoUnit.DAYS.between(startDate, endDate).toDouble().coerceAtLeast(1.0)
