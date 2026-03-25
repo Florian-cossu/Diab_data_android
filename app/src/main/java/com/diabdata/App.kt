@@ -79,7 +79,6 @@ data class BottomNavItem(
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun App(
-    db: DiabDataDatabase,
     dataViewModel: DataViewModel,
     shortcutDestination: StateFlow<String?>
 ) {
@@ -111,12 +110,6 @@ fun App(
             }
             activity?.consumeShortcut()
         }
-    }
-
-    // ── Initializers ──
-    LaunchedEffect(Unit) {
-        MedicationInitializer(context, db).initialize()
-        MedicalDevicesInitializer(context, db).initialize()
     }
 
     // ── Nav items ──

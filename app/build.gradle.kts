@@ -4,9 +4,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("kotlin-kapt")
     id("com.google.devtools.ksp") version "2.3.2"
     id("com.google.protobuf") version "0.9.6"
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -56,8 +56,8 @@ android {
 
     sourceSets {
         getByName("main") {
-            java.srcDir("build/generated/source/proto/main/java")
-            assets.srcDir("src/main/proto")
+            java.directories.add(file("build/generated/source/proto/main/java").toString())
+            assets.directories.add(file("src/main/proto").toString())
         }
     }
 
@@ -147,6 +147,13 @@ dependencies {
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.work.runtime.ktx)
 
+    // Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.common)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.hilt.compiler)
+    ksp(libs.androidx.hilt.compiler)
+
     // Widgets
     implementation(libs.androidx.glance)
     implementation(libs.androidx.glance.appwidget)
@@ -160,6 +167,7 @@ dependencies {
     implementation(libs.play.services.wearable)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.material3)
+
 
     // Annotation processing
     ksp(libs.androidx.room.compiler)

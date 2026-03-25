@@ -93,43 +93,4 @@ abstract class DiabDataDatabase : RoomDatabase() {
 
         openHelper.writableDatabase.execSQL("VACUUM")
     }
-
-    companion object {
-        @Volatile
-        private var INSTANCE: DiabDataDatabase? = null
-
-        fun getDatabase(context: Context): DiabDataDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    DiabDataDatabase::class.java,
-                    "diabdata_database"
-                )
-                    .fallbackToDestructiveMigration(false)
-                    .addMigrations(*ALL_MIGRATIONS)
-                    .addCallback(object : Callback() {
-                        override fun onOpen(db: SupportSQLiteDatabase) {
-                            super.onOpen(db)
-
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val database = getDatabase(context)
-                                val countMedicationInfo = database.medicationDao().countAll()
-                                val countDeviceInfo = database.medicalDevicesInfoDao().countAll()
-
-                                if (countMedicationInfo == 0) {
-                                    MedicationInitializer(context, database).initialize()
-                                }
-
-                                if (countDeviceInfo == 0) {
-                                    MedicalDevicesInitializer(context, database).initialize()
-                                }
-                            }
-                        }
-                    })
-                    .build()
-                INSTANCE = instance
-                instance
-            }
-        }
-    }
 }

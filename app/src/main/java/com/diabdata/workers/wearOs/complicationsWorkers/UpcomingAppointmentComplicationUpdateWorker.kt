@@ -1,19 +1,24 @@
 package com.diabdata.workers.wearOs.complicationsWorkers
 
 import android.content.Context
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.diabdata.core.database.DiabDataDatabase
+import com.diabdata.feature.appointments.data.AppointmentDao
 import com.diabdata.shared.utils.dateUtils.getNumberOfDaysUntil
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 
-class UpcomingAppointmentComplicationUpdateWorker(
-    context: Context,
-    params: WorkerParameters
+@HiltWorker
+class UpcomingAppointmentComplicationUpdateWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val dao: AppointmentDao
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -25,7 +30,6 @@ class UpcomingAppointmentComplicationUpdateWorker(
                 return Result.failure()
             }
 
-            val dao = DiabDataDatabase.getDatabase(applicationContext).appointmentDao()
             val today = LocalDateTime.now()
             val upcomingAppointments = dao.getUpcomingAppointmentsFlow(today).firstOrNull()
 

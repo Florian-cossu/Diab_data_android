@@ -28,6 +28,7 @@ import com.diabdata.shared.utils.dataTypes.AppointmentType
 import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
 import com.diabdata.shared.utils.dataTypes.TreatmentType
 import com.diabdata.core.utils.data.GsonFactory
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,8 +41,10 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
+import javax.inject.Inject
 
-class DataViewModel(
+@HiltViewModel
+class DataViewModel @Inject constructor(
     val repository: DataRepository,
     application: Application
 ) : AndroidViewModel(application) {
@@ -646,7 +649,7 @@ class DataViewModel(
 
         val importedData: ExportData = gson.fromJson(json, ExportData::class.java)
 
-        viewModelScope.launch {
+        withContext(Dispatchers.IO) {
             importedData.weights.forEach { weight ->
                 repository.insertWeight(weight.copy()) // Reset IDs to have them auto incremented by Room to prevent app crashes
             }
