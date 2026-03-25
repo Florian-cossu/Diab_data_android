@@ -24,6 +24,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Module
@@ -31,10 +32,11 @@ import javax.inject.Singleton
 object DatabaseModule {
     @Singleton
     @Provides
-    fun provideDiabDataDatabase(@ApplicationContext context: Context): DiabDataDatabase {
-        lateinit var database: DiabDataDatabase
-
-        database = Room.databaseBuilder(
+    fun provideDiabDataDatabase(
+        @ApplicationContext context: Context,
+        databaseProvider: Provider<DiabDataDatabase>
+    ): DiabDataDatabase {
+        return Room.databaseBuilder(
             context.applicationContext,
             DiabDataDatabase::class.java,
             "diabdata_database"
@@ -46,7 +48,7 @@ object DatabaseModule {
                     super.onOpen(db)
 
                     CoroutineScope(Dispatchers.IO).launch {
-                        val database = database
+                        val database = databaseProvider.get()
                         val countMedicationInfo = database.medicationDao().countAll()
                         val countDeviceInfo = database.medicalDevicesInfoDao().countAll()
 
@@ -61,8 +63,6 @@ object DatabaseModule {
                 }
             })
             .build()
-
-        return database
     }
 
     @Provides

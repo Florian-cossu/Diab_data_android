@@ -26,9 +26,6 @@ class DiabDataApp : Application(), Configuration.Provider {
             .setWorkerFactory(workerFactory)
             .build()
 
-    val now = LocalDate.now()
-
-
     override fun onCreate() {
         super.onCreate()
 
@@ -40,7 +37,7 @@ class DiabDataApp : Application(), Configuration.Provider {
             combine(
                 repository.getAllCurrentConsumableDevices(),
                 repository.getUpcomingAppointments(),
-                repository.getUpcomingExpDates(now)
+                repository.getUpcomingExpDates(LocalDate.now())
             ) { devices, appointments, treatments ->
                 Triple(devices, appointments, treatments)
             }
