@@ -204,7 +204,6 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                                 // 4. Enfin mettre à jour le path photo en DB après un délai
                                 //    pour s'assurer que le upsert du JSON est terminé
                                 newPhotoPath?.let { path ->
-                                    delay(500)  // Attendre que le viewModelScope.launch termine
                                     dataViewModel.updateProfilePhotoPath(path)
                                 }
                             } else {

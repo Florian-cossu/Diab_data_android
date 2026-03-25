@@ -3,6 +3,7 @@ package com.diabdata.widget.workers
 import android.content.Context
 import android.util.Log
 import androidx.glance.appwidget.updateAll
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.diabdata.core.database.DiabDataDatabase
@@ -10,6 +11,8 @@ import com.diabdata.glanceWidget.proto.WidgetAppointment
 import com.diabdata.glanceWidget.proto.WidgetDevice
 import com.diabdata.widget.glanceWidget.GlanceWidget
 import com.diabdata.widget.widgetDataStore
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.firstOrNull
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -17,14 +20,15 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.roundToInt
 
-class GlanceWidgetWorker(
-    private val context: Context,
-    workerParameters: WorkerParameters
+@HiltWorker
+class GlanceWidgetWorker @AssistedInject constructor(
+    @Assisted private val context: Context,
+    @Assisted workerParameters: WorkerParameters,
+    private val db: DiabDataDatabase
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
 
-        val db = DiabDataDatabase.getDatabase(context)
         val today = LocalDateTime.now()
         val formatter = DateTimeFormatter.ISO_LOCAL_DATE
 

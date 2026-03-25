@@ -12,12 +12,14 @@ import android.os.IBinder
 import android.text.format.Formatter
 import android.util.Base64
 import androidx.core.app.NotificationCompat
+import com.diabdata.core.database.DataRepository
 import com.diabdata.feature.casting.castServer.AuthPlugin
 import com.diabdata.feature.casting.castServer.utils.computeTrend
 import com.diabdata.core.database.DiabDataDatabase
 import com.diabdata.core.model.UserDetails
 import com.diabdata.shared.R
 import com.diabdata.core.utils.data.GsonFactory
+import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -40,8 +42,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import java.io.File
 import java.time.LocalDateTime
+import javax.inject.Inject
 
-class CastToUserServerService : Service() {
+@AndroidEntryPoint
+class CastToUserServerService : Service () {
+
+    @Inject
+    lateinit var db: DiabDataDatabase
 
     private var server: EmbeddedServer<*, *>? = null
 
@@ -87,7 +94,6 @@ class CastToUserServerService : Service() {
 
     private fun startServer() {
         val ip = getLocalIpAddress()
-        val db = DiabDataDatabase.getDatabase(this)
         serverUrl = "http://$ip:$PORT"
 
         authToken = (100000..999999).random().toString()

@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
@@ -19,16 +20,18 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModelProvider
 import com.diabdata.core.database.DataRepository
 import com.diabdata.core.database.DataViewModel
-import com.diabdata.core.database.DataViewModelFactory
 import com.diabdata.core.database.DiabDataDatabase
 import com.diabdata.core.ui.theme.DiabDataTheme
 import com.diabdata.core.utils.PermissionManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlin.getValue
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var dataViewModel: DataViewModel
+    private val dataViewModel: DataViewModel by viewModels()
 
     private val _shortcutDestination = MutableStateFlow<String?>(null)
     val shortcutDestination: StateFlow<String?> = _shortcutDestination.asStateFlow()
@@ -39,22 +42,6 @@ class MainActivity : ComponentActivity() {
 
         handleShortcutIntent(intent)
 
-        val db = DiabDataDatabase.getDatabase(this)
-        val repository = DataRepository(
-            weightDao = db.weightDao(),
-            hba1cDao = db.hba1cDao(),
-            appointmentDao = db.appointmentDao(),
-            treatmentDao = db.treatmentDao(),
-            importantDateDao = db.importantDateDao(),
-            medicationDao = db.medicationDao(),
-            medicalDevicesDao = db.medicalDevicesDao(),
-            medicalDeviceInfo = db.medicalDevicesInfoDao(),
-            userDetailsDao = db.userDetailsDao(),
-            database = db
-        )
-        val factory = DataViewModelFactory(repository, applicationContext as Application)
-        dataViewModel = ViewModelProvider(this, factory)[DataViewModel::class.java]
-
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
@@ -64,7 +51,7 @@ class MainActivity : ComponentActivity() {
 
             DiabDataTheme {
                 RequestPermissionsOnLaunch()
-                App(db, dataViewModel, shortcutDestination)
+                App(dataViewModel, shortcutDestination)
             }
         }
     }

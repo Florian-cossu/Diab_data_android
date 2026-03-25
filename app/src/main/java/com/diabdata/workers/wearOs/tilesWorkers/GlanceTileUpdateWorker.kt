@@ -2,6 +2,7 @@ package com.diabdata.workers.wearOs.tilesWorkers
 
 import android.content.Context
 import android.util.Log
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.diabdata.core.database.DiabDataDatabase
@@ -9,6 +10,8 @@ import com.diabdata.shared.utils.dateUtils.getNumberOfDaysUntil
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import com.google.gson.Gson
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.tasks.await
@@ -16,13 +19,14 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class GlanceTileUpdateWorker(
-    context: Context,
-    params: WorkerParameters
+@HiltWorker
+class GlanceTileUpdateWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val database: DiabDataDatabase
 ) : CoroutineWorker(context, params) {
 
     private val gson = Gson()
-    private val database = DiabDataDatabase.getDatabase(applicationContext)
 
     override suspend fun doWork(): Result {
         return try {
