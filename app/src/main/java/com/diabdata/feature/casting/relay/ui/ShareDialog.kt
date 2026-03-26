@@ -1,4 +1,4 @@
-package com.diabdata.feature.casting.relay
+package com.diabdata.feature.casting.relay.ui
 
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -33,6 +33,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.set
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.diabdata.feature.casting.relay.ConnectionState
+import com.diabdata.feature.casting.relay.RelayViewModel
+import com.diabdata.feature.casting.relay.ShareMode
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
 import com.diabdata.shared.R as shared
@@ -93,7 +96,7 @@ fun ShareDialog(
                         val token = viewModel.token ?: return@Column
 
                         val qrBitmap = remember(token) {
-                            generateQrCode("https://app.diabdata.fr/link_device/$token")
+                            generateQrCode("https://app.diabdata.fr/link_device?token=$token")
                         }
                         qrBitmap?.let {
                             Image(

@@ -1,19 +1,24 @@
 package com.diabdata.workers.wearOs.complicationsWorkers
 
 import android.content.Context
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.diabdata.core.database.DiabDataDatabase
+import com.diabdata.feature.treatments.data.TreatmentDao
 import com.diabdata.shared.utils.dateUtils.getNumberOfDaysUntil
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 
-class ExpiringTreatmentComplicationUpdateWorker(
-    context: Context,
-    params: WorkerParameters
+@HiltWorker
+class ExpiringTreatmentComplicationUpdateWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val dao: TreatmentDao
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -24,8 +29,6 @@ class ExpiringTreatmentComplicationUpdateWorker(
             if (nodes.isEmpty()) {
                 return Result.failure()
             }
-
-            val dao = DiabDataDatabase.getDatabase(applicationContext).treatmentDao()
 
             val today = LocalDate.now()
 

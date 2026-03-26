@@ -3,13 +3,16 @@ package com.diabdata.widget.workers
 import android.content.Context
 import android.util.Log
 import androidx.glance.appwidget.updateAll
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.diabdata.core.database.DiabDataDatabase
-import com.diabdata.glanceWidget.proto.WidgetAppointment
-import com.diabdata.glanceWidget.proto.WidgetDevice
+import com.diabdata.widget.WidgetAppointment
+import com.diabdata.widget.WidgetDevice
 import com.diabdata.widget.glanceWidget.GlanceWidget
 import com.diabdata.widget.widgetDataStore
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.firstOrNull
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -17,14 +20,15 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.roundToInt
 
-class GlanceWidgetWorker(
-    private val context: Context,
-    workerParameters: WorkerParameters
+@HiltWorker
+class GlanceWidgetWorker @AssistedInject constructor(
+    @Assisted private val context: Context,
+    @Assisted workerParameters: WorkerParameters,
+    private val db: DiabDataDatabase
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
 
-        val db = DiabDataDatabase.getDatabase(context)
         val today = LocalDateTime.now()
         val formatter = DateTimeFormatter.ISO_LOCAL_DATE
 
@@ -40,13 +44,13 @@ class GlanceWidgetWorker(
                 }"
             )
 
-            WidgetDevice.newBuilder()
-                .setName(it.name)
-                .setType(it.deviceType.toString())
-                .setDaysLeft(getDaysLeft(it.lifeSpanEndDate).toInt())
-                .setLifespanProgression(getLifeSpanProgress(it.date, it.lifeSpanEndDate))
-                .setLifeSpanEndDate(it.lifeSpanEndDate.format(formatter))
-                .build()
+            WidgetDevice(
+                name = it.name,
+                type = it.deviceType.toString(),
+                daysLeft = getDaysLeft(it.lifeSpanEndDate).toInt(),
+                lifespanProgression = getLifeSpanProgress(it.date, it.lifeSpanEndDate),
+                lifeSpanEndDate = it.lifeSpanEndDate.format(formatter)
+            )
         } ?: emptyList()
 
         Log.i("GlanceWidgetWorker", "Updating DataStore with devices: $devices")
@@ -56,20 +60,15 @@ class GlanceWidgetWorker(
         val nextAppt = apptsFlow.firstOrNull()?.firstOrNull()
 
         context.widgetDataStore.updateData { current ->
-            current.toBuilder()
-                .clearDevices()
-                .addAllDevices(devices)
-                .apply {
-                    if (nextAppt != null) {
-                        nextAppointment = WidgetAppointment.newBuilder()
-                            .setDate(nextAppt.date.toString())
-                            .setDoctor(nextAppt.doctor)
-                            .setType(nextAppt.type.toString())
-                            .build()
-                    }
-                }
-                .setLastUpdated(System.currentTimeMillis())
-                .build()
+            current.copy(
+                devices = devices,
+                nextAppointment = WidgetAppointment(
+                    date = nextAppt?.date?.toLocalDate()?.format(formatter) ?: "",
+                    doctor = nextAppt?.doctor ?: "",
+                    type = nextAppt?.type?.toString() ?: "",
+                ),
+                lastUpdated = System.currentTimeMillis()
+            )
         }
 
         GlanceWidget().updateAll(context)
@@ -79,6 +78,8 @@ class GlanceWidgetWorker(
 }
 
 fun getLifeSpanProgress(startDate: LocalDate, endDate: LocalDate): Int {
+    require(startDate < endDate) {"Start date cannot be set after endDate"}
+
     val today = LocalDate.now()
 
     val totalDays = ChronoUnit.DAYS.between(startDate, endDate).toDouble().coerceAtLeast(1.0)

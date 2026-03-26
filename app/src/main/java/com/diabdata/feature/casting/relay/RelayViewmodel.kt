@@ -5,21 +5,25 @@ import android.util.Base64
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.diabdata.feature.casting.castServer.utils.computeTrend
 import com.diabdata.core.database.DiabDataDatabase
 import com.diabdata.core.model.UserDetails
 import com.diabdata.core.utils.data.GsonFactory
+import com.diabdata.feature.casting.castServer.utils.computeTrend
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.io.File
 import java.time.LocalDateTime
-import kotlin.collections.get
+import javax.inject.Inject
 
-class RelayViewModel(application: Application): AndroidViewModel(application) {
+@HiltViewModel
+class RelayViewModel @Inject constructor(
+    private val db: DiabDataDatabase,
+    application: Application
+): AndroidViewModel(application) {
 
     private val relayClient = RelayClient()
-    private val db = DiabDataDatabase.getDatabase(application)
 
     val gson = GsonFactory.create()
 

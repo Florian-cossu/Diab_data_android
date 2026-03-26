@@ -2,11 +2,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("kotlin-kapt")
-    id("com.google.devtools.ksp") version "2.3.2"
-    id("com.google.protobuf") version "0.9.6"
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -40,25 +38,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-            freeCompilerArgs.addAll(
-                "-opt-in=kotlin.RequiresOptIn"
-            )
-        }
-    }
-
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-
-    sourceSets {
-        getByName("main") {
-            java.srcDir("build/generated/source/proto/main/java")
-            assets.srcDir("src/main/proto")
-        }
     }
 
     packaging {
@@ -71,12 +53,20 @@ android {
         }
     }
 
-    ksp {
-        arg("room.schemaLocation", "$projectDir/schemas")
-    }
-
-
     buildToolsVersion = "36.0.0"
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
+        freeCompilerArgs.addAll(
+            "-opt-in=kotlin.RequiresOptIn"
+        )
+    }
 }
 
 fun getVersionCode(): Int {
@@ -147,12 +137,18 @@ dependencies {
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.work.runtime.ktx)
 
+    // Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.common)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.hilt.compiler)
+    ksp(libs.androidx.hilt.compiler)
+
     // Widgets
     implementation(libs.androidx.glance)
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
     implementation(libs.androidx.datastore)
-    implementation(libs.protobuf.javalite)
     implementation(libs.androidx.lifecycle.process)
 
     // Wear OS complication
@@ -160,6 +156,7 @@ dependencies {
     implementation(libs.play.services.wearable)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.material3)
+
 
     // Annotation processing
     ksp(libs.androidx.room.compiler)
@@ -203,20 +200,4 @@ dependencies {
 
     // Shared
     implementation(project(":shared"))
-}
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:4.27.1"
-    }
-
-    generateProtoTasks {
-        all().forEach { task ->
-            task.builtins {
-                create("java") {
-                    option("lite")
-                }
-            }
-        }
-    }
 }

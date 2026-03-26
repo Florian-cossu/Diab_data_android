@@ -120,7 +120,7 @@ class DataRepository(
     fun getAllTreatments(): Flow<List<Treatment>> = treatmentDao.getAllTreatmentsFlow()
 
     /** Flow of upcoming treatments expiration dates */
-    fun getUpcomingExpDates(date: LocalDate): Flow<List<Treatment>> =
+    fun getUpcomingExpDates(): Flow<List<Treatment>> =
         treatmentDao.getUpcomingExpirationDatesFlow(LocalDate.now())
 
     /** Delete a treatments record by Id**/
