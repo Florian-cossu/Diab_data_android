@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.diabdata.core.database.DataViewModel
 import com.diabdata.core.model.Medication
 import com.diabdata.core.model.Treatment
@@ -34,7 +35,9 @@ import com.diabdata.feature.dataMatrixScanner.ui.ScannableTypes
 import com.diabdata.core.ui.components.addDataPopup.AddDataPopup
 import com.diabdata.feature.home.components.LatestMeasurements
 import com.diabdata.core.ui.components.noDataView.NoDataView
+import com.diabdata.feature.dataMatrixScanner.ScannerViewModel
 import com.diabdata.feature.dataMatrixScanner.utils.MedicationInfo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import com.diabdata.shared.R as shared
@@ -44,6 +47,7 @@ import com.diabdata.shared.R as shared
 fun HomeScreen(
     dataViewModel: DataViewModel
 ) {
+    val scannerViewModel: ScannerViewModel = hiltViewModel()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val availability by dataViewModel.dataAvailability.collectAsState()
@@ -95,12 +99,12 @@ fun HomeScreen(
                     when (result) {
                         is ScanResult.Medication -> {
                             val info = result.data
-                            val entity = dataViewModel.getMedicationByGtin(
+                            val entity = scannerViewModel.getMedicationByGtin(
                                 info.gtin.replace(regex = Regex("^0"), replacement = "")
                             )
                             if (entity != null) {
                                 val treatment = mapToTreatment(info, entity)
-                                dataViewModel.updatePrefilledTreatment(treatment)
+                                scannerViewModel.updatePrefilledTreatment(treatment)
                                 setSelectedType(AddableType.TREATMENT)
                             } else {
                                 Toast.makeText(context, unknownGtin, Toast.LENGTH_SHORT).show()
@@ -121,10 +125,10 @@ fun HomeScreen(
         AddDataPopup(
             type = type,
             dataViewModel = dataViewModel,
-            prefilledTreatment = dataViewModel.prefilledTreatment,
+            prefilledTreatment = scannerViewModel.prefilledTreatment,
             onDismiss = {
                 setSelectedType(null)
-                dataViewModel.prefilledTreatment = null
+                scannerViewModel.prefilledTreatment = null
             }
         )
     }

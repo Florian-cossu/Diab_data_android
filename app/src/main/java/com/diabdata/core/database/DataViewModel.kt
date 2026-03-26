@@ -606,27 +606,6 @@ class DataViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    // Section for scanned medication
-    var prefilledTreatment: Treatment? by mutableStateOf(null)
-    fun updatePrefilledTreatment(t: Treatment?) {
-        prefilledTreatment = t
-    }
-
-    suspend fun getMedicationByGtin(gtin: String): Medication? {
-        return repository.findMedicationByCode(gtin)
-    }
-
-    // Section for scanned medical devices
-    var prefilledMedicalDevice: MedicalDevice? by mutableStateOf(null)
-
-    fun updatePrefilledMedicalDevice(m: MedicalDevice?) {
-        prefilledMedicalDevice = m
-    }
-
-    suspend fun getMedicalDeviceByCode(code: String): MedicalDeviceInfoEntity? {
-        return repository.findMedicalDeviceByCode(code)
-    }
-
     // Section for data import/export
     fun exportDataAsJsonString(): String {
         val gson = GsonFactory.create(prettyPrint = true)

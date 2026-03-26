@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.diabdata.core.database.DataViewModel
 import com.diabdata.core.model.MedicalDevice
 import com.diabdata.core.model.MedicalDeviceInfoEntity
@@ -35,6 +36,7 @@ import com.diabdata.feature.dataMatrixScanner.ui.ScannableTypes
 import com.diabdata.core.ui.components.addDataPopup.AddDataPopup
 import com.diabdata.core.ui.components.noDataView.IconTypes
 import com.diabdata.core.ui.components.noDataView.NoDataView
+import com.diabdata.feature.dataMatrixScanner.ScannerViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -43,6 +45,8 @@ import java.time.LocalDate
 fun RecentDevicesScreen(
     dataViewModel: DataViewModel
 ) {
+    val scannerViewModel: ScannerViewModel = hiltViewModel()
+
     val availability by dataViewModel.dataAvailability.collectAsState()
     var showAddDevicePopup by remember { mutableStateOf(false) }
     var showScanner by remember { mutableStateOf(false) }
@@ -98,7 +102,7 @@ fun RecentDevicesScreen(
                     when (result) {
                         is ScanResult.Device -> {
                             val info = result.data
-                            val entity = dataViewModel.getMedicalDeviceByCode(info.gtin)
+                            val entity = scannerViewModel.getMedicalDeviceByCode(info.gtin)
                             Log.d("EXTRACTED-GTIN", info.gtin)
 
                             if (entity != null) {
