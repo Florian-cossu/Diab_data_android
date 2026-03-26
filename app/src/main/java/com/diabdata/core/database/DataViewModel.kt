@@ -140,7 +140,7 @@ class DataViewModel @Inject constructor(
 
     // Expiration dates
     val upcomingExpiringTreatmentDates: StateFlow<List<Treatment>> =
-        repository.getUpcomingExpDates(LocalDate.now())
+        repository.getUpcomingExpDates()
             .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
 
     // Current devices

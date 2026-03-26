@@ -37,7 +37,7 @@ class DiabDataApp : Application(), Configuration.Provider {
             combine(
                 repository.getAllCurrentConsumableDevices(),
                 repository.getUpcomingAppointments(),
-                repository.getUpcomingExpDates(LocalDate.now())
+                repository.getUpcomingExpDates()
             ) { devices, appointments, treatments ->
                 Triple(devices, appointments, treatments)
             }

@@ -38,15 +38,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-            freeCompilerArgs.addAll(
-                "-opt-in=kotlin.RequiresOptIn"
-            )
-        }
-    }
-
     buildFeatures {
         compose = true
         buildConfig = true
@@ -63,6 +54,19 @@ android {
     }
 
     buildToolsVersion = "36.0.0"
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
+        freeCompilerArgs.addAll(
+            "-opt-in=kotlin.RequiresOptIn"
+        )
+    }
 }
 
 fun getVersionCode(): Int {
