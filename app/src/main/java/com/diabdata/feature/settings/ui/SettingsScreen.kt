@@ -39,12 +39,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.work.WorkManager
 import com.diabdata.BuildConfig
 import com.diabdata.core.database.DataViewModel
-import com.diabdata.feature.settings.ui.components.changelog.ChangelogDialog
+import com.diabdata.core.notifications.showNotification
 import com.diabdata.core.ui.components.cardsList.CardItem
 import com.diabdata.core.ui.components.cardsList.CardsList
 import com.diabdata.core.utils.ui.SvgIcon
-import com.diabdata.core.notifications.showNotification
 import com.diabdata.feature.settings.ImExViewModel
+import com.diabdata.feature.settings.ui.components.changelog.ChangelogDialog
+import com.diabdata.feature.userProfile.UserProfileViewModel
 import com.diabdata.workers.reminders.scheduleAppointmentReminders
 import com.diabdata.workers.reminders.scheduleMedicationExpirationReminders
 import kotlinx.coroutines.Dispatchers
@@ -74,6 +75,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     val medicalDeviceGtinFileVersion = BuildConfig.MEDICAL_DEVICES_GTIN_FILE_VERSION
 
     val imExViewModel: ImExViewModel = hiltViewModel()
+    val userProfileViewModel: UserProfileViewModel = hiltViewModel()
 
     val scope = rememberCoroutineScope()
 
@@ -110,7 +112,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                                 zip.closeEntry()
 
                                 // 2. Export profile pic if it exists
-                                dataViewModel.userDetails.value?.profilePhotoPath?.let { path ->
+                                userProfileViewModel.userDetails.value?.profilePhotoPath?.let { path ->
                                     val photoFile = File(path)
                                     if (photoFile.exists()) {
                                         zip.putNextEntry(ZipEntry("profile_photo.jpg"))
@@ -147,7 +149,6 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     try {
                         context.contentResolver.openInputStream(uri)?.use { inputStream ->
                             val bytes = inputStream.readBytes()
-                            Log.d("Import", "1. File read: ${bytes.size} bytes")
 
                             val isZip = bytes.size >= 2
                                     && bytes[0] == 0x50.toByte()
@@ -190,12 +191,8 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
 
                                 jsonString?.let { json ->
                                     if (json.isNotEmpty()) {
-                                        imExViewModel.importDataFromJsonString(json)
+                                        imExViewModel.importDataFromJsonString(json, newPhotoPath)
                                     }
-                                }
-
-                                newPhotoPath?.let { path ->
-                                    dataViewModel.updateProfilePhotoPath(path)
                                 }
                             } else {
                                 val jsonString = String(bytes)

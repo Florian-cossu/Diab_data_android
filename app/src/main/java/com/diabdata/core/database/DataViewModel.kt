@@ -2,13 +2,8 @@ package com.diabdata.core.database
 
 import android.app.Application
 import android.content.Context
-import android.net.Uri
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import com.diabdata.core.database.converters.toEntity
@@ -16,10 +11,7 @@ import com.diabdata.core.model.Appointment
 import com.diabdata.core.model.Hba1c
 import com.diabdata.core.model.ImportantDate
 import com.diabdata.core.model.MedicalDevice
-import com.diabdata.core.model.MedicalDeviceInfoEntity
-import com.diabdata.core.model.Medication
 import com.diabdata.core.model.Treatment
-import com.diabdata.core.model.UserDetails
 import com.diabdata.core.model.Weight
 import com.diabdata.feature.graphs.classes.PlotPoint
 import com.diabdata.shared.R
@@ -27,7 +19,6 @@ import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.shared.utils.dataTypes.AppointmentType
 import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
 import com.diabdata.shared.utils.dataTypes.TreatmentType
-import com.diabdata.core.utils.data.GsonFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -38,7 +29,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -66,10 +56,6 @@ class DataViewModel @Inject constructor(
 
     val medicalDevices: StateFlow<List<MedicalDevice>> = repository.getAllDevices()
         .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
-
-    val userDetails: StateFlow<UserDetails?> = repository.getUserDetails()
-        .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), null)
-
 
     // Helpers to check if we have Data
     data class DataAvailability(
@@ -277,11 +263,6 @@ class DataViewModel @Inject constructor(
         }
     }
 
-    // Delete user details
-    fun deleteUserDetails() = viewModelScope.launch {
-        repository.deleteUserDetails()
-    }
-
     // Update function
     suspend fun updateEntry(entry: MixedDbEntry) {
         when (entry.addableType) {
@@ -296,39 +277,7 @@ class DataViewModel @Inject constructor(
 
     suspend fun updateDevice(device: MedicalDevice) = repository.updateDevice(device)
 
-    // Update user details
-    fun updateUserDetails(userDetails: UserDetails) {
-        viewModelScope.launch {
-            repository.updateUserDetails(userDetails)
-        }
-    }
-
     // DataViewModel
-    fun saveProfilePhoto(uri: Uri, onSaved: (String) -> Unit = {}) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val fileName = "profile_photo_${System.currentTimeMillis()}.jpg"
-            val file = File(application.filesDir, fileName)
-
-            application.filesDir.listFiles()
-                ?.filter { it.name.startsWith("profile_photo_") && it.name != fileName }
-                ?.forEach { it.delete() }
-
-            application.contentResolver.openInputStream(uri)?.use { input ->
-                file.outputStream().use { output -> input.copyTo(output) }
-            }
-
-            val path = file.absolutePath
-            repository.addProfilePhotoPath(path)
-
-            withContext(Dispatchers.Main) {
-                onSaved(path)
-            }
-        }
-    }
-
-    suspend fun updateProfilePhotoPath(path: String) {
-        repository.addProfilePhotoPath(path)
-    }
 
     fun getAllFaultyDevicesExpiredToday() = repository.getAllFaultyDevicesExpiredToday()
 

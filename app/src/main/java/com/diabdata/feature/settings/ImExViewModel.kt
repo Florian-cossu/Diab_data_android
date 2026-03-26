@@ -38,7 +38,7 @@ class ImExViewModel @Inject constructor (
         return gson.toJson(exportData)
     }
 
-    suspend fun importDataFromJsonString(json: String) {
+    suspend fun importDataFromJsonString(json: String, profilePhotoPath: String? = null) {
         val gson = GsonFactory.create()
 
         val importedData: ExportData = gson.fromJson(json, ExportData::class.java)
@@ -63,7 +63,7 @@ class ImExViewModel @Inject constructor (
                 repository.insertDevice(device.copy())
             }
             importedData.userDetails?.let { userDetails ->
-                repository.updateUserDetails(userDetails.copy(profilePhotoPath = null))
+                repository.updateUserDetails(userDetails.copy(profilePhotoPath = profilePhotoPath))
             }
         }
     }

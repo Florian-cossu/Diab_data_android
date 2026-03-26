@@ -37,8 +37,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.diabdata.core.database.DataViewModel
 import com.diabdata.core.model.UserDetails
 import com.diabdata.shared.utils.dataTypes.BloodType
 import com.diabdata.shared.utils.dataTypes.DiabetesType
@@ -46,24 +46,25 @@ import com.diabdata.shared.utils.dataTypes.Gender
 import com.diabdata.shared.utils.dataTypes.GlucoseUnit
 import com.diabdata.core.ui.components.actionInput.EnumDropdown
 import com.diabdata.core.ui.components.date_components.DateSelector
+import com.diabdata.feature.userProfile.UserProfileViewModel
 import java.time.LocalDate
 import com.diabdata.shared.R as shared
 
 @Composable
 fun UserDetailsScreen(
-    dataViewModel: DataViewModel,
     onNavigateBack: () -> Unit
 ) {
-    val userDetails by dataViewModel.userDetails.collectAsStateWithLifecycle(initialValue = null)
+    val userProfileViewModel: UserProfileViewModel = hiltViewModel()
+    val userDetails by userProfileViewModel.userDetails.collectAsStateWithLifecycle(initialValue = null)
 
     UserDetailsView(
         userDetails = userDetails ?: UserDetails(),
         onSave = { updated ->
-            dataViewModel.updateUserDetails(updated)
+            userProfileViewModel.updateUserDetails(updated)
             onNavigateBack()
         },
         onProfilePhotoPicked = { uri ->
-            dataViewModel.saveProfilePhoto(uri)
+            userProfileViewModel.saveProfilePhoto(uri)
         },
         onNavigateBack = onNavigateBack
     )
