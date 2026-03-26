@@ -2,10 +2,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.devtools.ksp") version "2.3.2"
-    id("com.google.protobuf") version "0.9.6"
+    alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
 }
 
@@ -54,13 +52,6 @@ android {
         buildConfig = true
     }
 
-    sourceSets {
-        getByName("main") {
-            java.directories.add(file("build/generated/source/proto/main/java").toString())
-            assets.directories.add(file("src/main/proto").toString())
-        }
-    }
-
     packaging {
         resources {
             excludes += setOf(
@@ -70,11 +61,6 @@ android {
             )
         }
     }
-
-    ksp {
-        arg("room.schemaLocation", "$projectDir/schemas")
-    }
-
 
     buildToolsVersion = "36.0.0"
 }
@@ -159,7 +145,6 @@ dependencies {
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
     implementation(libs.androidx.datastore)
-    implementation(libs.protobuf.javalite)
     implementation(libs.androidx.lifecycle.process)
 
     // Wear OS complication
@@ -211,20 +196,4 @@ dependencies {
 
     // Shared
     implementation(project(":shared"))
-}
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:4.27.1"
-    }
-
-    generateProtoTasks {
-        all().forEach { task ->
-            task.builtins {
-                create("java") {
-                    option("lite")
-                }
-            }
-        }
-    }
 }

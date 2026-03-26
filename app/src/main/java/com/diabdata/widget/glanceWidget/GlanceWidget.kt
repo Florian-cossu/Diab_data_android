@@ -32,10 +32,11 @@ import androidx.glance.text.TextStyle
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.diabdata.glanceWidget.proto.WidgetState
 import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.shared.utils.dateUtils.toRelativeString
+import com.diabdata.shared.utils.dateUtils.toShortenedFormatLocalDate
 import com.diabdata.shared.utils.dateUtils.toShortenedFormatLocalDateTime
+import com.diabdata.widget.WidgetState
 import com.diabdata.widget.glanceWidget.utils.ColorVariant
 import com.diabdata.widget.glanceWidget.utils.getAppointmentTypeOrNull
 import com.diabdata.widget.glanceWidget.utils.getDeviceTypeOrNull
@@ -103,7 +104,7 @@ class GlanceWidget : GlanceAppWidget() {
     private fun WidgetContent(context: Context) {
         val state = currentState<WidgetState>()
 
-        val devices = state.devicesList.sortedBy { it.type }
+        val devices = state.devices
         val appointment = state.nextAppointment
 
         Row(
@@ -158,7 +159,7 @@ class GlanceWidget : GlanceAppWidget() {
                         Spacer(modifier = GlanceModifier.height(4.dp))
 
                         Text(
-                            text = appointment.date.toShortenedFormatLocalDateTime(),
+                            text = appointment.date.toShortenedFormatLocalDate(),
                             style = TextStyle(
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,

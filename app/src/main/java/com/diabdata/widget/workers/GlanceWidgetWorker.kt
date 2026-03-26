@@ -7,8 +7,8 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.diabdata.core.database.DiabDataDatabase
-import com.diabdata.glanceWidget.proto.WidgetAppointment
-import com.diabdata.glanceWidget.proto.WidgetDevice
+import com.diabdata.widget.WidgetAppointment
+import com.diabdata.widget.WidgetDevice
 import com.diabdata.widget.glanceWidget.GlanceWidget
 import com.diabdata.widget.widgetDataStore
 import dagger.assisted.Assisted
@@ -44,13 +44,13 @@ class GlanceWidgetWorker @AssistedInject constructor(
                 }"
             )
 
-            WidgetDevice.newBuilder()
-                .setName(it.name)
-                .setType(it.deviceType.toString())
-                .setDaysLeft(getDaysLeft(it.lifeSpanEndDate).toInt())
-                .setLifespanProgression(getLifeSpanProgress(it.date, it.lifeSpanEndDate))
-                .setLifeSpanEndDate(it.lifeSpanEndDate.format(formatter))
-                .build()
+            WidgetDevice(
+                name = it.name,
+                type = it.deviceType.toString(),
+                daysLeft = getDaysLeft(it.lifeSpanEndDate).toInt(),
+                lifespanProgression = getLifeSpanProgress(it.date, it.lifeSpanEndDate),
+                lifeSpanEndDate = it.lifeSpanEndDate.format(formatter)
+            )
         } ?: emptyList()
 
         Log.i("GlanceWidgetWorker", "Updating DataStore with devices: $devices")
@@ -60,20 +60,15 @@ class GlanceWidgetWorker @AssistedInject constructor(
         val nextAppt = apptsFlow.firstOrNull()?.firstOrNull()
 
         context.widgetDataStore.updateData { current ->
-            current.toBuilder()
-                .clearDevices()
-                .addAllDevices(devices)
-                .apply {
-                    if (nextAppt != null) {
-                        nextAppointment = WidgetAppointment.newBuilder()
-                            .setDate(nextAppt.date.toString())
-                            .setDoctor(nextAppt.doctor)
-                            .setType(nextAppt.type.toString())
-                            .build()
-                    }
-                }
-                .setLastUpdated(System.currentTimeMillis())
-                .build()
+            current.copy(
+                devices = devices,
+                nextAppointment = WidgetAppointment(
+                    date = nextAppt?.date?.toLocalDate()?.format(formatter) ?: "",
+                    doctor = nextAppt?.doctor ?: "",
+                    type = nextAppt?.type?.toString() ?: "",
+                ),
+                lastUpdated = System.currentTimeMillis()
+            )
         }
 
         GlanceWidget().updateAll(context)
