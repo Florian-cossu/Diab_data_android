@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -59,5 +60,9 @@ class UserProfileViewModel @Inject constructor(
 
     suspend fun updateProfilePhotoPath(path: String) {
         repository.addProfilePhotoPath(path)
+    }
+
+    suspend fun getProfilePhotoPath(): String? {
+        return repository.getUserDetails().first()?.profilePhotoPath
     }
 }

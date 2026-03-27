@@ -103,26 +103,41 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
         onResult = { uri: Uri? ->
             uri?.let {
                 scope.launch(Dispatchers.IO) {
+                    val profilePhotoPath = userProfileViewModel.getProfilePhotoPath()
+                    // Log.d("Export", "First here's what the photo file path looks like : $profilePhotoPath")
                     try {
                         context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                            // Log.d("Export", "Creating zip")
                             ZipOutputStream(outputStream).use { zip ->
+                                // Log.d("Export", "Exporting data")
                                 val jsonString = imExViewModel.exportDataAsJsonString()
+                                // Log.d("Export", "putNextentry of Json")
                                 zip.putNextEntry(ZipEntry("data.json"))
+                                // Log.d("Export", "Writing data")
                                 zip.write(jsonString.toByteArray())
+                                // Log.d("Export", "Closing entry")
                                 zip.closeEntry()
+                                // Log.d("Export", "If there's a photo (${profilePhotoPath}) then it should be handled at this step")
 
                                 // 2. Export profile pic if it exists
-                                userProfileViewModel.userDetails.value?.profilePhotoPath?.let { path ->
+                                profilePhotoPath?.let { path ->
                                     val photoFile = File(path)
+                                    // Log.d("Export", "Exporting photo")
                                     if (photoFile.exists()) {
+                                        // Log.d("Export", "putNextentry of photo")
                                         zip.putNextEntry(ZipEntry("profile_photo.jpg"))
+                                        // Log.d("Export", "Writing photo")
                                         photoFile.inputStream().use { it.copyTo(zip) }
+                                        // Log.d("Export", "Closing entry")
                                         zip.closeEntry()
                                     }
                                 }
                             }
+                            // Log.d("Export", "Closing stream")
                         }
-                        Toast.makeText(context, dataExportSuccess, Toast.LENGTH_SHORT).show()
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, dataExportSuccess, Toast.LENGTH_SHORT).show()
+                        }
                         context.showNotification(
                             title = dataExportSuccess,
                             content = uri.lastPathSegment.orEmpty(),
@@ -274,7 +289,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         importFileLauncher.launch(
                             arrayOf(
                                 "application/json",
-                                "application/zip"
+                                "application/zip",
                             )
                         )
                     },
