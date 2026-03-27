@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.diabdata.core.database.DataViewModel
 import com.diabdata.core.model.MedicalDevice
 import com.diabdata.shared.utils.dataTypes.AddableType
@@ -47,14 +48,16 @@ import com.diabdata.core.ui.components.actionInput.FaultyToggleButton
 import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.core.utils.ui.darken
 import com.diabdata.core.utils.ui.getItemShape
+import com.diabdata.feature.devices.DevicesViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import com.diabdata.shared.R as shared
 
 @Composable
-fun CurrentConsumableDevicesList(viewModel: DataViewModel) {
-    val currentDevices by viewModel.currentConsumableDevices.collectAsState(initial = emptyList())
+fun CurrentConsumableDevicesList() {
+    val devicesViewModel: DevicesViewModel = hiltViewModel()
+    val currentDevices by devicesViewModel.currentConsumableDevices.collectAsState(initial = emptyList())
     val coroutineScope = rememberCoroutineScope()
 
     val filteredDevices = currentDevices
@@ -77,7 +80,7 @@ fun CurrentConsumableDevicesList(viewModel: DataViewModel) {
             filteredDevices,
             onMarkFaulty = { device ->
                 coroutineScope.launch {
-                    viewModel.updateDevice(
+                    devicesViewModel.updateDevice(
                         device.copy(
                             isFaulty = !device.isFaulty
                         )
@@ -86,7 +89,7 @@ fun CurrentConsumableDevicesList(viewModel: DataViewModel) {
             },
             onMarkRecycled = { device ->
                 coroutineScope.launch {
-                    viewModel.updateDevice(
+                    devicesViewModel.updateDevice(
                         device.copy(
                             isFaulty = !device.isLifeSpanOver
                         )

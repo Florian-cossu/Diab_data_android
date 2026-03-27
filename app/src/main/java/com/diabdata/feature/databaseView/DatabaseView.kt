@@ -68,6 +68,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.diabdata.R
 import com.diabdata.core.database.DataViewModel
 import com.diabdata.core.database.converters.toEntity
@@ -78,6 +79,7 @@ import com.diabdata.core.ui.components.actionInput.FlippableSelectionIcon
 import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.core.utils.ui.darken
 import com.diabdata.core.utils.ui.getItemShape
+import com.diabdata.feature.devices.DevicesViewModel
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
@@ -94,6 +96,7 @@ fun DatabaseEditionView(
     var selectedEntry by remember { mutableStateOf<DataViewModel.MixedDbEntry?>(null) }
 
     val mixedEntries by dataViewModel.allMixedEntries.collectAsState(emptyList())
+    val devicesViewModel: DevicesViewModel = hiltViewModel()
 
     val filteredEntries =
         mixedEntries.filter { it.addableType in selectedTypes || selectedTypes.isEmpty() }
@@ -189,7 +192,7 @@ fun DatabaseEditionView(
                                                 .filterIsInstance<DataViewModel.MixedDbEntry.DeviceEntry>()
                                                 .map { it.toEntity() as MedicalDevice }
 
-                                            dataViewModel.setDevicesLifespanOver(
+                                            devicesViewModel.setDevicesLifespanOver(
                                                 deviceEntries,
                                                 isOver = true
                                             )

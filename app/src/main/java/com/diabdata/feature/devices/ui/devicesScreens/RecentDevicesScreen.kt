@@ -72,8 +72,8 @@ fun RecentDevicesScreen(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(35.dp)
             ) {
-                CurrentNonConsumableDevicesList(dataViewModel)
-                CurrentConsumableDevicesList(dataViewModel)
+                CurrentNonConsumableDevicesList()
+                CurrentConsumableDevicesList()
                 Spacer(modifier = Modifier.height(70.dp))
             }
         } else {

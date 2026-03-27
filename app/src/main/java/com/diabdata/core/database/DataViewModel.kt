@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -129,37 +128,6 @@ class DataViewModel @Inject constructor(
         repository.getUpcomingExpDates()
             .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
 
-    // Current devices
-    val currentConsumableDevices: StateFlow<List<MedicalDevice>> =
-        repository.getAllCurrentConsumableDevices()
-            .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
-
-    val nonConsumableDevices: StateFlow<List<MedicalDevice>> =
-        repository.getAllNonConsumableDevices()
-            .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
-
-    val consumableDevices: StateFlow<List<MedicalDevice>> =
-        repository.getAllConsumableDevices()
-            .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
-
-    val faultyDevices: StateFlow<List<MedicalDevice>> =
-        repository.getAllUnreportedFaultyDevices()
-            .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
-
-    val reportedFaultyDevices: StateFlow<List<MedicalDevice>> =
-        repository.getAllReportedFaultyDevices()
-            .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
-
-    val faultyBatchNumbersTableData: StateFlow<List<List<String>>> =
-        repository.getAllFaultyBatchNumbers()
-            .map { list ->
-                list.map { entry ->
-                    listOf(entry.batchNumber, entry.count.toString())
-                }
-            }
-            .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
-
-
     // Insertion functions
     fun addWeight(weight: Weight) {
         viewModelScope.launch {
@@ -188,12 +156,6 @@ class DataViewModel @Inject constructor(
     fun addImportantDate(importantDate: ImportantDate) {
         viewModelScope.launch {
             repository.insertImportantDate(importantDate)
-        }
-    }
-
-    fun insertDevice(device: MedicalDevice) {
-        viewModelScope.launch {
-            repository.insertDevice(device)
         }
     }
 
@@ -275,20 +237,10 @@ class DataViewModel @Inject constructor(
         }
     }
 
-    suspend fun updateDevice(device: MedicalDevice) = repository.updateDevice(device)
-
     // DataViewModel
 
-    fun getAllFaultyDevicesExpiredToday() = repository.getAllFaultyDevicesExpiredToday()
-
-    suspend fun setDevicesLifespanOver(devices: List<MedicalDevice>, isOver: Boolean = true) {
-        for (device in devices) {
-            repository.updateDevice(device.copy(isLifeSpanOver = isOver))
-        }
-    }
-
     fun clearDatabase(context: Context) = viewModelScope.launch {
-        val workManager = WorkManager.Companion.getInstance(context)
+        val workManager = WorkManager.getInstance(context)
         val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
         withContext(Dispatchers.IO) {
@@ -551,7 +503,7 @@ class DataViewModel @Inject constructor(
     }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Companion.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
 }
