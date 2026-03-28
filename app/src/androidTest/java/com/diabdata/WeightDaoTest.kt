@@ -22,7 +22,7 @@ class WeightEntityTest {
     private lateinit var weightDao: WeightDao
     private lateinit var db: DiabDataDatabase
     
-    val today = LocalDate.now()
+    val today: LocalDate = LocalDate.now()
 
     @Before
     fun createDb() {

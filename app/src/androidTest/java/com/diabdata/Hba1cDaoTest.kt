@@ -22,7 +22,7 @@ class Hba1cEntityTest {
     private lateinit var hba1cDao: HBA1CDao
     private lateinit var db: DiabDataDatabase
 
-    val today = LocalDate.now()
+    val today: LocalDate = LocalDate.now()
 
     @Before
     fun createDb() {
