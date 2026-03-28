@@ -1,10 +1,6 @@
 name: DiabData build and test
 run-name: Build & Test - ${{ github.ref_name }}
 on:
-  push:
-    branches:
-      - 'main'
-      - 'dev'
   pull_request:
     branches:
       - 'main'
