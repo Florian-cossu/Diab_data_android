@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.diabdata.core.database.DataViewModel
 import com.diabdata.core.database.converters.toEntity
 import com.diabdata.core.model.MedicalDevice
@@ -34,6 +35,7 @@ import com.diabdata.core.ui.components.addDataPopup.BasePopupLayout
 import com.diabdata.core.ui.components.date_components.DateSelector
 import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.core.utils.ui.darken
+import com.diabdata.feature.devices.DevicesViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import com.diabdata.shared.R as shared
@@ -45,6 +47,7 @@ fun MedicalDevicePopup(
     prefilled: MedicalDevice? = null,
     toUpdate: DataViewModel.MixedDbEntry.DeviceEntry? = null
 ) {
+    val devicesViewModel: DevicesViewModel = hiltViewModel()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val today = LocalDate.now()
@@ -133,7 +136,7 @@ fun MedicalDevicePopup(
                 isLifeSpanOver = isLifeSpanOver,
             )
             if (toUpdate == null) {
-                dataViewModel.insertDevice(deviceEntry.toEntity() as MedicalDevice)
+                devicesViewModel.insertDevice(deviceEntry.toEntity() as MedicalDevice)
             } else {
                 scope.launch {
                     dataViewModel.updateEntry(deviceEntry)
@@ -141,9 +144,9 @@ fun MedicalDevicePopup(
             }
 
             if (setSimilarDevicesToExpired) {
-                val devicesToUpdate = dataViewModel.getAllFaultyDevicesExpiredToday()
+                val devicesToUpdate = devicesViewModel.getAllFaultyDevicesExpiredToday()
                 scope.launch {
-                    dataViewModel.setDevicesLifespanOver(devicesToUpdate, true)
+                    devicesViewModel.setDevicesLifespanOver(devicesToUpdate, true)
                 }
             }
             onDismiss()

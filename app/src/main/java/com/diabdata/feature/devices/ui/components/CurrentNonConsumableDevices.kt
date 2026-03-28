@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.diabdata.core.database.DataViewModel
 import com.diabdata.core.model.MedicalDevice
 import com.diabdata.shared.utils.dataTypes.AddableType
@@ -41,13 +42,15 @@ import com.diabdata.core.ui.components.actionInput.FaultyToggleButton
 import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.core.utils.ui.darken
 import com.diabdata.core.utils.ui.getItemShape
+import com.diabdata.feature.devices.DevicesViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import com.diabdata.shared.R as shared
 
 @Composable
-fun CurrentNonConsumableDevicesList(viewModel: DataViewModel) {
-    val currentDevices by viewModel.nonConsumableDevices.collectAsState(initial = emptyList())
+fun CurrentNonConsumableDevicesList() {
+    val devicesViewModel: DevicesViewModel = hiltViewModel()
+    val currentDevices by devicesViewModel.nonConsumableDevices.collectAsState(initial = emptyList())
     val showSection = currentDevices.isNotEmpty()
     val coroutineScope = rememberCoroutineScope()
 
@@ -56,7 +59,7 @@ fun CurrentNonConsumableDevicesList(viewModel: DataViewModel) {
             currentDevices,
             onMarkFaulty = { device ->
                 coroutineScope.launch {
-                    viewModel.updateDevice(
+                    devicesViewModel.updateDevice(
                         device.copy(
                             isFaulty = !device.isFaulty
                         )

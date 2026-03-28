@@ -13,6 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.diabdata"
+        testApplicationId = "com.diabdata.test"
         minSdk = 26
         targetSdk = 36
         versionCode = getVersionCode()
@@ -141,6 +142,8 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.common)
     implementation(libs.androidx.hilt.work)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.room.testing)
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.hilt.compiler)
 
