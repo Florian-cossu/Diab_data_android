@@ -30,7 +30,7 @@
   <summary>Table of Contents</summary>
 
 - [About The Project](#about-the-project)
-- [Screenshots](#screenhots)
+- [Screenshots](#screenshots)
   - [Built With](#built-with)
 - [Installation](#installation)
   - [Clone the repo](#clone-the-repo)
@@ -51,7 +51,7 @@ This project was born from my habit of tracking my diabetes related information 
 annoying on the long run. This app aims to let users add important dates and add their medical results to the app in order to
 have everything in the same place and easier to find and update.
 
-## Screenhots
+## Screenshots
 
 <details>
   <summary>Screenshots</summary>

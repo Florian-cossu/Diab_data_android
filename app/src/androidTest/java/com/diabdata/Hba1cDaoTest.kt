@@ -18,7 +18,7 @@ import java.io.IOException
 import java.time.LocalDate
 
 @RunWith(AndroidJUnit4::class)
-class Hba1cEntityTest {
+class Hba1cDaoTest {
     private lateinit var hba1cDao: HBA1CDao
     private lateinit var db: DiabDataDatabase
 

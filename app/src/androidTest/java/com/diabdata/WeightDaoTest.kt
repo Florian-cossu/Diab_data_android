@@ -18,7 +18,7 @@ import java.io.IOException
 import java.time.LocalDate
 
 @RunWith(AndroidJUnit4::class)
-class WeightEntityTest {
+class WeightDaoTest {
     private lateinit var weightDao: WeightDao
     private lateinit var db: DiabDataDatabase
     

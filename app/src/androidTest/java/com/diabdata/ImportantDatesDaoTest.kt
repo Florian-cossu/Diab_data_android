@@ -18,7 +18,7 @@ import java.io.IOException
 import java.time.LocalDate
 
 @RunWith(AndroidJUnit4::class)
-class ImportantDatesEntityTest {
+class ImportantDatesDaoTest {
     private lateinit var importantDateDao: ImportantDateDao
     private lateinit var db: DiabDataDatabase
 
