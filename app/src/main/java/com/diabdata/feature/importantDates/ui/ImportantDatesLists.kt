@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.diabdata.core.database.DataViewModel
 import com.diabdata.core.model.ImportantDate
 import com.diabdata.shared.utils.dataTypes.AddableType
@@ -29,14 +30,16 @@ import com.diabdata.core.utils.ui.ColoredIconCircleProps
 import com.diabdata.core.ui.components.cardsList.CardItem
 import com.diabdata.core.ui.components.cardsList.CardsList
 import com.diabdata.core.utils.ui.SvgIcon
+import com.diabdata.feature.userProfile.UserProfileViewModel
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import com.diabdata.shared.R as shared
 
 @Composable
 fun ImportantDatesList(viewModel: DataViewModel) {
+    val userProfileViewModel: UserProfileViewModel = hiltViewModel()
     val availability by viewModel.dataAvailability.collectAsState()
-    val userDetails by viewModel.userDetails.collectAsState()
+    val userDetails by userProfileViewModel.userDetails.collectAsState()
     val showSection = availability.hasImportantDates || userDetails?.diagnosisDate != null
     val importantDates by viewModel.importantDates.collectAsState(initial = emptyList())
 

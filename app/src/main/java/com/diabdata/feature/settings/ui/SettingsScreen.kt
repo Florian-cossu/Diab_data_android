@@ -35,18 +35,20 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.work.WorkManager
 import com.diabdata.BuildConfig
 import com.diabdata.core.database.DataViewModel
-import com.diabdata.feature.settings.ui.components.changelog.ChangelogDialog
+import com.diabdata.core.notifications.showNotification
 import com.diabdata.core.ui.components.cardsList.CardItem
 import com.diabdata.core.ui.components.cardsList.CardsList
 import com.diabdata.core.utils.ui.SvgIcon
-import com.diabdata.core.notifications.showNotification
+import com.diabdata.feature.settings.ImExViewModel
+import com.diabdata.feature.settings.ui.components.changelog.ChangelogDialog
+import com.diabdata.feature.userProfile.UserProfileViewModel
 import com.diabdata.workers.reminders.scheduleAppointmentReminders
 import com.diabdata.workers.reminders.scheduleMedicationExpirationReminders
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -69,8 +71,11 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
     val versionName = BuildConfig.VERSION_NAME
-    val medicationsGtinFileversion = BuildConfig.MEDICATION_GTIN_FILE_VERSION
+    val medicationsGtinFileVersion = BuildConfig.MEDICATION_GTIN_FILE_VERSION
     val medicalDeviceGtinFileVersion = BuildConfig.MEDICAL_DEVICES_GTIN_FILE_VERSION
+
+    val imExViewModel: ImExViewModel = hiltViewModel()
+    val userProfileViewModel: UserProfileViewModel = hiltViewModel()
 
     val scope = rememberCoroutineScope()
 
@@ -97,42 +102,43 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
         contract = ActivityResultContracts.CreateDocument("application/zip"),
         onResult = { uri: Uri? ->
             uri?.let {
-                val channelName = notifChannelName
-                val successText = dataExportSuccess
-                val errorText = dataExportError
-                try {
-                    context.contentResolver.openOutputStream(uri)?.use { outputStream ->
-                        ZipOutputStream(outputStream).use { zip ->
-                            // 1. Export JSON
-                            val jsonString = dataViewModel.exportDataAsJsonString()
-                            zip.putNextEntry(ZipEntry("data.json"))
-                            zip.write(jsonString.toByteArray())
-                            zip.closeEntry()
+                scope.launch(Dispatchers.IO) {
+                    val profilePhotoPath = userProfileViewModel.getProfilePhotoPath()
+                    try {
+                        context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                            ZipOutputStream(outputStream).use { zip ->
+                                val jsonString = imExViewModel.exportDataAsJsonString()
+                                zip.putNextEntry(ZipEntry("data.json"))
+                                zip.write(jsonString.toByteArray())
+                                zip.closeEntry()
 
-                            // 2. Export profile pic if it exists
-                            dataViewModel.userDetails.value?.profilePhotoPath?.let { path ->
-                                val photoFile = File(path)
-                                if (photoFile.exists()) {
-                                    zip.putNextEntry(ZipEntry("profile_photo.jpg"))
-                                    photoFile.inputStream().use { it.copyTo(zip) }
-                                    zip.closeEntry()
+                                // 2. Export profile pic if it exists
+                                profilePhotoPath?.let { path ->
+                                    val photoFile = File(path)
+                                    if (photoFile.exists()) {
+                                        zip.putNextEntry(ZipEntry("profile_photo.jpg"))
+                                        photoFile.inputStream().use { it.copyTo(zip) }
+                                        zip.closeEntry()
+                                    }
                                 }
                             }
                         }
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, dataExportSuccess, Toast.LENGTH_SHORT).show()
+                        }
+                        context.showNotification(
+                            title = dataExportSuccess,
+                            content = uri.lastPathSegment.orEmpty(),
+                            channelName = notifChannelName,
+                        )
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        context.showNotification(
+                            title = "$dataExportError : ${e.message}",
+                            content = uri.lastPathSegment.orEmpty(),
+                            channelName = notifChannelName,
+                        )
                     }
-                    Toast.makeText(context, successText, Toast.LENGTH_SHORT).show()
-                    context.showNotification(
-                        title = successText,
-                        content = uri.lastPathSegment.orEmpty(),
-                        channelName = channelName,
-                    )
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    context.showNotification(
-                        title = "$errorText : ${e.message}",
-                        content = uri.lastPathSegment.orEmpty(),
-                        channelName = channelName,
-                    )
                 }
             }
         }
@@ -142,16 +148,10 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri: Uri? ->
             uri?.let {
-                val channelName = notifChannelName
-                val successText = dataImportSuccess
-                val errorText = dataImportError
-                val errorEmptyFile = emptyImportFileError
-
                 scope.launch(Dispatchers.IO) {
                     try {
                         context.contentResolver.openInputStream(uri)?.use { inputStream ->
                             val bytes = inputStream.readBytes()
-                            Log.d("Import", "1. File read: ${bytes.size} bytes")
 
                             val isZip = bytes.size >= 2
                                     && bytes[0] == 0x50.toByte()
@@ -161,7 +161,6 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                                 var jsonString: String? = null
                                 var photoBytes: ByteArray? = null
 
-                                // 1. Lire TOUT le ZIP
                                 ZipInputStream(bytes.inputStream()).use { zip ->
                                     var entry = zip.nextEntry
                                     while (entry != null) {
@@ -174,7 +173,6 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                                     }
                                 }
 
-                                // 2. D'abord sauvegarder la photo
                                 var newPhotoPath: String? = null
                                 photoBytes?.let { pBytes ->
                                     val photoFile = File(
@@ -194,45 +192,38 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                                     newPhotoPath = photoFile.absolutePath
                                 }
 
-                                // 3. Ensuite importer le JSON
                                 jsonString?.let { json ->
                                     if (json.isNotEmpty()) {
-                                        dataViewModel.importDataFromJsonString(json)
+                                        imExViewModel.importDataFromJsonString(json, newPhotoPath)
                                     }
                                 }
-
-                                // 4. Enfin mettre à jour le path photo en DB après un délai
-                                //    pour s'assurer que le upsert du JSON est terminé
-                                newPhotoPath?.let { path ->
-                                    dataViewModel.updateProfilePhotoPath(path)
-                                }
                             } else {
-                                // Ancien format JSON
                                 val jsonString = String(bytes)
                                 if (jsonString.isNotEmpty()) {
-                                    dataViewModel.importDataFromJsonString(jsonString)
+                                    imExViewModel.importDataFromJsonString(jsonString)
                                 } else {
                                     withContext(Dispatchers.Main) {
-                                        Toast.makeText(context, errorEmptyFile, Toast.LENGTH_LONG).show()
+                                        Toast.makeText(context,
+                                            emptyImportFileError, Toast.LENGTH_LONG).show()
                                     }
                                     return@use
                                 }
                             }
 
                             withContext(Dispatchers.Main) {
-                                Toast.makeText(context, successText, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, dataImportSuccess, Toast.LENGTH_SHORT).show()
                             }
                             context.showNotification(
-                                title = successText,
+                                title = dataImportSuccess,
                                 content = uri.lastPathSegment.orEmpty(),
-                                channelName = channelName,
+                                channelName = notifChannelName,
                             )
                         }
                     } catch (e: Exception) {
                         Log.e("Import", "GLOBAL CRASH", e)
                         e.printStackTrace()
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(context, "$errorText : ${e.message}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "$dataImportError : ${e.message}", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
@@ -286,7 +277,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                         importFileLauncher.launch(
                             arrayOf(
                                 "application/json",
-                                "application/zip"
+                                "application/zip",
                             )
                         )
                     },
@@ -419,7 +410,7 @@ fun SettingsScreen(dataViewModel: DataViewModel) {
                     leadingIcon = shared.drawable.medication_info_icon_vector,
                     content = {
                         Row {
-                            Text("Medication information file version $medicationsGtinFileversion")
+                            Text("Medication information file version $medicationsGtinFileVersion")
                         }
                     },
                 ),

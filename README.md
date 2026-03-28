@@ -3,7 +3,7 @@
 <!-- PROJECT SHIELDS -->
 
 [![Static Badge](https://img.shields.io/badge/CONTRIBUTORS-1-blue)](https://github.com/Florian-cossu/Diab_data_android/graphs/contributors)
-[![Static Badge](https://img.shields.io/badge/VERSION-4.3.0-teal)](https://github.com/Florian-cossu/Diab_data_android/releases)
+[![Static Badge](https://img.shields.io/badge/VERSION-4.9.0-teal)](https://github.com/Florian-cossu/Diab_data_android/releases)
 [![Static Badge](https://img.shields.io/badge/OWNER-Florian%20Cossu-38bdf8)](https://github.com/Florian-cossu)
 
 <!-- PROJECT LOGO -->
@@ -15,7 +15,7 @@
 
   <h3 align="center">Diab Data</h3>
   <p align="center">
-  <a href="https://github.com/Florian-cossu/Diab_data_android/releases">Releases</a> • <a href="https://diabdata.vercel.app/">Website</a>
+  <a href="https://github.com/Florian-cossu/Diab_data_android/releases">Releases</a> • <a href="https://app.diabdata.fr/">Website</a>
   </p>
   <p align="center">
     An android app that lets you keep track of all diabetes related information that you may need to communicate on a regular basis.
@@ -30,11 +30,11 @@
   <summary>Table of Contents</summary>
 
 - [About The Project](#about-the-project)
+- [Screenshots](#screenshots)
   - [Built With](#built-with)
 - [Installation](#installation)
   - [Clone the repo](#clone-the-repo)
   - [Run project](#run-project)
-  <!-- - [PWA](#pwa) -->
 - [Contributing](#contributing)
 - [Roadmap](#roadmap)
 - [Acknowledgments](#acknowledgments)
@@ -51,21 +51,28 @@ This project was born from my habit of tracking my diabetes related information 
 annoying on the long run. This app aims to let users add important dates and add their medical results to the app in order to
 have everything in the same place and easier to find and update.
 
-<table>
-  <tr>
-    <td><img src="resources/screenshots/empty_homescreen_light.png" width="200"/></td>
-    <td><img src="resources/screenshots/filled_homescreen_light.png" width="200"/></td>
-    <td><img src="resources/screenshots/fab_menu_add_light.png" width="200"/></td>
-    <td><img src="resources/screenshots/data_matrix_scan_light.png" width="200"/></td>
-    <td><img src="resources/screenshots/graphs_screen_light.png" width="200"/></td>
-    <td><img src="resources/screenshots/database_view_screen_light.png" width="200"/></td>
-<td><img src="resources/screenshots/empty_devicescreen_light.png" width="200"/></td>
-    <td><img src="resources/screenshots/filled_devicescreen_light.png" width="200"/></td>
-    <td><img src="resources/screenshots/settings_screen_light.png" width="200"/></td>
-  </tr>
-</table>
+## Screenshots
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<details>
+  <summary>Screenshots</summary>
+  <table>
+    <tr>
+      <td><img src="resources/screenshots/filled_homescreen_light.png" width="200"/></td>
+      <td><img src="resources/screenshots/fab_menu_add_light.png" width="200"/></td>
+      <td><img src="resources/screenshots/data_matrix_scan_light.png" width="200"/></td>
+      <td><img src="resources/screenshots/graphs_screen_light.png" width="200"/></td>
+      <td><img src="resources/screenshots/database_view_screen_light.png" width="200"/></td>
+      <td><img src="resources/screenshots/filled_devicescreen_light.png" width="200"/></td>
+    </tr>
+    <tr>
+      <td><img src="resources/screenshots/settings_screen_light.png" width="200"/></td>
+      <td><img src="resources/screenshots/user_profile_screen_light.png" width="200"/></td>
+      <td><img src="resources/screenshots/empty_devicescreen_light.png" width="200"/></td>
+      <td><img src="resources/screenshots/empty_homescreen_light.png" width="200"/></td>
+      <td><img src="resources/screenshots/cast_data_mode_screen_light.png" width="200"/></td>
+    </tr>
+  </table>
+</details>
 
 ### Built With
 
@@ -109,7 +116,7 @@ When contributing to the project, always start by creating a branch from the `de
 
 - A short, capitalized identifier for the feature (spaces replaced by underscores)
 
-- **For example if Florian cossu is working on migrating the project to Next JS**
+- **For example if Florian cossu is working on updating the database**
 
 ```
 FCOSSU-Database_migration
@@ -130,25 +137,13 @@ proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- ACKNOWLEDGMENTS -->
-
-## Acknowledgments
-
-Here is a list of some of the sources used for the readme creation:
-
-- [Best-README-Template by othneildrew](https://github.com/othneildrew/Best-README-Template)
-- [Shields IO](https://shields.io/badges/static-badge)
-- [Simple icons](https://simpleicons.org/)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 <!-- CONTACT -->
 
 ## Contact
 
-Florian Cossu - [Linkedin](https://www.linkedin.com/in/florian-cossu/) - florian.cossu@gmail.com - [Github](https://github.com/Florian-cossu)
+Florian Cossu - [Linkedin](https://www.linkedin.com/in/florian-cossu/) - [Github](https://github.com/Florian-cossu)
 
 Project
-Link: [https://github.com/Florian-cossu/chat_mockup](https://github.com/Florian-cossu/Diab_data_android)
+Link: [https://github.com/Florian-cossu/Diab_data_android](https://github.com/Florian-cossu/Diab_data_android)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

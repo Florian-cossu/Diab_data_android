@@ -31,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.diabdata.core.database.DataViewModel
 import com.diabdata.core.model.MedicalDevice
 import com.diabdata.shared.utils.dataTypes.AddableType
@@ -47,6 +48,7 @@ import com.diabdata.core.ui.components.noDataView.IconTypes
 import com.diabdata.core.ui.components.noDataView.NoDataView
 import com.diabdata.core.utils.ui.darken
 import com.diabdata.core.utils.ui.getItemShape
+import com.diabdata.feature.devices.DevicesViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import com.diabdata.shared.R as shared
@@ -56,8 +58,9 @@ import com.diabdata.shared.R as shared
 fun FaultyDevices(
     dataViewModel: DataViewModel
 ) {
-    val faultyDevices by dataViewModel.faultyDevices.collectAsState(initial = emptyList())
-    val faultyCountsByBatches by dataViewModel.faultyBatchNumbersTableData.collectAsState()
+    val devicesViewModel: DevicesViewModel = hiltViewModel()
+    val faultyDevices by devicesViewModel.faultyDevices.collectAsState(initial = emptyList())
+    val faultyCountsByBatches by devicesViewModel.faultyBatchNumbersTableData.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
     FaultyDevicesScreen(
@@ -65,12 +68,12 @@ fun FaultyDevices(
         faultyCountsByBatchNumbers = faultyCountsByBatches,
         onMarkAsReported = { device ->
             coroutineScope.launch {
-                dataViewModel.updateDevice(device.copy(isReported = !device.isReported))
+                devicesViewModel.updateDevice(device.copy(isReported = !device.isReported))
             }
         },
         onMarkAsFaulty = { device ->
             coroutineScope.launch {
-                dataViewModel.updateDevice(device.copy(isFaulty = !device.isFaulty))
+                devicesViewModel.updateDevice(device.copy(isFaulty = !device.isFaulty))
             }
         }
     )

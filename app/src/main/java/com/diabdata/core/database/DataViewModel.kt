@@ -2,13 +2,8 @@ package com.diabdata.core.database
 
 import android.app.Application
 import android.content.Context
-import android.net.Uri
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import com.diabdata.core.database.converters.toEntity
@@ -16,10 +11,7 @@ import com.diabdata.core.model.Appointment
 import com.diabdata.core.model.Hba1c
 import com.diabdata.core.model.ImportantDate
 import com.diabdata.core.model.MedicalDevice
-import com.diabdata.core.model.MedicalDeviceInfoEntity
-import com.diabdata.core.model.Medication
 import com.diabdata.core.model.Treatment
-import com.diabdata.core.model.UserDetails
 import com.diabdata.core.model.Weight
 import com.diabdata.feature.graphs.classes.PlotPoint
 import com.diabdata.shared.R
@@ -27,18 +19,15 @@ import com.diabdata.shared.utils.dataTypes.AddableType
 import com.diabdata.shared.utils.dataTypes.AppointmentType
 import com.diabdata.shared.utils.dataTypes.MedicalDeviceInfoType
 import com.diabdata.shared.utils.dataTypes.TreatmentType
-import com.diabdata.core.utils.data.GsonFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -66,10 +55,6 @@ class DataViewModel @Inject constructor(
 
     val medicalDevices: StateFlow<List<MedicalDevice>> = repository.getAllDevices()
         .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
-
-    val userDetails: StateFlow<UserDetails?> = repository.getUserDetails()
-        .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), null)
-
 
     // Helpers to check if we have Data
     data class DataAvailability(
@@ -143,37 +128,6 @@ class DataViewModel @Inject constructor(
         repository.getUpcomingExpDates()
             .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
 
-    // Current devices
-    val currentConsumableDevices: StateFlow<List<MedicalDevice>> =
-        repository.getAllCurrentConsumableDevices()
-            .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
-
-    val nonConsumableDevices: StateFlow<List<MedicalDevice>> =
-        repository.getAllNonConsumableDevices()
-            .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
-
-    val consumableDevices: StateFlow<List<MedicalDevice>> =
-        repository.getAllConsumableDevices()
-            .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
-
-    val faultyDevices: StateFlow<List<MedicalDevice>> =
-        repository.getAllUnreportedFaultyDevices()
-            .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
-
-    val reportedFaultyDevices: StateFlow<List<MedicalDevice>> =
-        repository.getAllReportedFaultyDevices()
-            .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
-
-    val faultyBatchNumbersTableData: StateFlow<List<List<String>>> =
-        repository.getAllFaultyBatchNumbers()
-            .map { list ->
-                list.map { entry ->
-                    listOf(entry.batchNumber, entry.count.toString())
-                }
-            }
-            .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
-
-
     // Insertion functions
     fun addWeight(weight: Weight) {
         viewModelScope.launch {
@@ -202,12 +156,6 @@ class DataViewModel @Inject constructor(
     fun addImportantDate(importantDate: ImportantDate) {
         viewModelScope.launch {
             repository.insertImportantDate(importantDate)
-        }
-    }
-
-    fun insertDevice(device: MedicalDevice) {
-        viewModelScope.launch {
-            repository.insertDevice(device)
         }
     }
 
@@ -277,11 +225,6 @@ class DataViewModel @Inject constructor(
         }
     }
 
-    // Delete user details
-    fun deleteUserDetails() = viewModelScope.launch {
-        repository.deleteUserDetails()
-    }
-
     // Update function
     suspend fun updateEntry(entry: MixedDbEntry) {
         when (entry.addableType) {
@@ -294,52 +237,10 @@ class DataViewModel @Inject constructor(
         }
     }
 
-    suspend fun updateDevice(device: MedicalDevice) = repository.updateDevice(device)
-
-    // Update user details
-    fun updateUserDetails(userDetails: UserDetails) {
-        viewModelScope.launch {
-            repository.updateUserDetails(userDetails)
-        }
-    }
-
     // DataViewModel
-    fun saveProfilePhoto(uri: Uri, onSaved: (String) -> Unit = {}) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val fileName = "profile_photo_${System.currentTimeMillis()}.jpg"
-            val file = File(application.filesDir, fileName)
-
-            application.filesDir.listFiles()
-                ?.filter { it.name.startsWith("profile_photo_") && it.name != fileName }
-                ?.forEach { it.delete() }
-
-            application.contentResolver.openInputStream(uri)?.use { input ->
-                file.outputStream().use { output -> input.copyTo(output) }
-            }
-
-            val path = file.absolutePath
-            repository.addProfilePhotoPath(path)
-
-            withContext(Dispatchers.Main) {
-                onSaved(path)
-            }
-        }
-    }
-
-    suspend fun updateProfilePhotoPath(path: String) {
-        repository.addProfilePhotoPath(path)
-    }
-
-    fun getAllFaultyDevicesExpiredToday() = repository.getAllFaultyDevicesExpiredToday()
-
-    suspend fun setDevicesLifespanOver(devices: List<MedicalDevice>, isOver: Boolean = true) {
-        for (device in devices) {
-            repository.updateDevice(device.copy(isLifeSpanOver = isOver))
-        }
-    }
 
     fun clearDatabase(context: Context) = viewModelScope.launch {
-        val workManager = WorkManager.Companion.getInstance(context)
+        val workManager = WorkManager.getInstance(context)
         val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
         withContext(Dispatchers.IO) {
@@ -602,75 +503,7 @@ class DataViewModel @Inject constructor(
     }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Companion.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
-
-    // Section for scanned medication
-    var prefilledTreatment: Treatment? by mutableStateOf(null)
-    fun updatePrefilledTreatment(t: Treatment?) {
-        prefilledTreatment = t
-    }
-
-    suspend fun getMedicationByGtin(gtin: String): Medication? {
-        return repository.findMedicationByCode(gtin)
-    }
-
-    // Section for scanned medical devices
-    var prefilledMedicalDevice: MedicalDevice? by mutableStateOf(null)
-
-    fun updatePrefilledMedicalDevice(m: MedicalDevice?) {
-        prefilledMedicalDevice = m
-    }
-
-    suspend fun getMedicalDeviceByCode(code: String): MedicalDeviceInfoEntity? {
-        return repository.findMedicalDeviceByCode(code)
-    }
-
-    // Section for data import/export
-    fun exportDataAsJsonString(): String {
-        val gson = GsonFactory.create(prettyPrint = true)
-
-        val exportData = ExportData(
-            weights = weights.value,
-            hba1c = hba1cEntries.value,
-            appointments = appointments.value,
-            treatments = treatments.value,
-            importantDates = importantDates.value,
-            devices = medicalDevices.value,
-            userDetails = userDetails.value
-        )
-
-        return gson.toJson(exportData)
-    }
-
-    suspend fun importDataFromJsonString(json: String) {
-        val gson = GsonFactory.create()
-
-        val importedData: ExportData = gson.fromJson(json, ExportData::class.java)
-
-        withContext(Dispatchers.IO) {
-            importedData.weights.forEach { weight ->
-                repository.insertWeight(weight.copy()) // Reset IDs to have them auto incremented by Room to prevent app crashes
-            }
-            importedData.hba1c.forEach { hba1c ->
-                repository.insertHba1c(hba1c.copy())
-            }
-            importedData.appointments.forEach { appointment ->
-                repository.insertAppointment(appointment.copy())
-            }
-            importedData.treatments.forEach { treatment ->
-                repository.insertTreatment(treatment.copy())
-            }
-            importedData.importantDates.forEach { diagnosis ->
-                repository.insertImportantDate(diagnosis.copy())
-            }
-            importedData.devices.forEach { device ->
-                repository.insertDevice(device.copy())
-            }
-            importedData.userDetails?.let { userDetails ->
-                repository.updateUserDetails(userDetails.copy(profilePhotoPath = null))
-            }
-        }
-    }
 }

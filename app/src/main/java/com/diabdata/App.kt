@@ -39,10 +39,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -50,19 +50,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.diabdata.core.database.DataViewModel
-import com.diabdata.core.database.DiabDataDatabase
-import com.diabdata.feature.home.HomeScreen
-import com.diabdata.feature.settings.ui.SettingsScreen
+import com.diabdata.core.utils.ScreenSize
+import com.diabdata.core.utils.getScreenSize
+import com.diabdata.core.utils.ui.SvgIcon
 import com.diabdata.feature.databaseView.DatabaseEditionView
 import com.diabdata.feature.devices.ui.DevicesScreen
 import com.diabdata.feature.graphs.GraphViewer
-import com.diabdata.core.utils.ui.SvgIcon
+import com.diabdata.feature.home.HomeScreen
+import com.diabdata.feature.settings.ui.SettingsScreen
+import com.diabdata.feature.userProfile.UserProfileViewModel
 import com.diabdata.feature.userProfile.ui.UserAvatarWithMenu
 import com.diabdata.feature.userProfile.ui.UserDetailsScreen
-import com.diabdata.core.utils.ScreenSize
-import com.diabdata.core.utils.getScreenSize
-import com.diabdata.feature.dataMatrixScanner.utils.MedicalDevicesInitializer
-import com.diabdata.feature.dataMatrixScanner.utils.MedicationInitializer
 import kotlinx.coroutines.flow.StateFlow
 import com.diabdata.shared.R as shared
 
@@ -85,12 +83,15 @@ fun App(
     // ── Window Size ──
     val windowSize = getScreenSize()
 
+    // View Models
+    val userProfileViewModel: UserProfileViewModel = hiltViewModel()
+
+
     // ── State ──
-    val context = LocalContext.current.applicationContext
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val userDetails by dataViewModel.userDetails.collectAsStateWithLifecycle(initialValue = null)
+    val userDetails by userProfileViewModel.userDetails.collectAsStateWithLifecycle(initialValue = null)
     val pendingDestination by shortcutDestination.collectAsStateWithLifecycle()
     val activity = LocalActivity.current as? MainActivity
     val isProfileRoute = currentRoute == "profile"
@@ -462,10 +463,7 @@ fun DiabDataNavHost(
         composable("devices") { DevicesScreen(dataViewModel) }
         composable("settings") { SettingsScreen(dataViewModel) }
         composable("profile") {
-            UserDetailsScreen(
-                dataViewModel = dataViewModel,
-                onNavigateBack = { navController.popBackStack() }
-            )
+            UserDetailsScreen { navController.popBackStack() }
         }
     }
 }
