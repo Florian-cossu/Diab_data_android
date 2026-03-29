@@ -97,8 +97,8 @@ class UserDetailsDaoTest {
     @Throws(Exception::class)
     fun insertUserAndUpdateUser() = runBlocking {
         userDetailsDao.upsertUserDetails(testUser)
-        var retrievedUser = userDetailsDao.getUserDetails().first()
-        assertEquals(testUser, retrievedUser)
+        val retrievedUserBefore = userDetailsDao.getUserDetails().first()
+        assertEquals(testUser, retrievedUserBefore)
 
         val updatedUser = testUser.copy(
             firstName = "Updated",
@@ -106,8 +106,8 @@ class UserDetailsDaoTest {
         )
 
         userDetailsDao.upsertUserDetails(updatedUser)
-        retrievedUser = userDetailsDao.getUserDetails().first()
-        assertEquals(updatedUser, retrievedUser)
+        val retrievedUserAfter = userDetailsDao.getUserDetails().first()
+        assertEquals(updatedUser, retrievedUserAfter)
     }
 
     @Test
