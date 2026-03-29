@@ -71,14 +71,14 @@ class TreatmentDaoTest {
     fun updateTreatment() = runBlocking {
         treatmentDao.insert(treatment)
 
-        var treatments = treatmentDao.getAllTreatmentsFlow().first()
-        assertEquals(treatment, treatments[0])
+        val treatmentsBefore = treatmentDao.getAllTreatmentsFlow().first()
+        assertEquals(treatment, treatmentsBefore[0])
 
         val updatedTreatment = treatment.copy(name = "updated treatment")
         treatmentDao.update(updatedTreatment)
 
-        treatments = treatmentDao.getAllTreatmentsFlow().first()
-        assertEquals(updatedTreatment, treatments[0])
+        val treatmentsAfter = treatmentDao.getAllTreatmentsFlow().first()
+        assertEquals(updatedTreatment, treatmentsAfter[0])
     }
 
     @Test
@@ -86,12 +86,12 @@ class TreatmentDaoTest {
     fun deleteTreatmentById() = runBlocking {
         treatmentDao.insert(treatment)
 
-        var treatments = treatmentDao.getAllTreatmentsFlow().first()
-        assertEquals(treatment, treatments[0])
+        val treatmentsBefore = treatmentDao.getAllTreatmentsFlow().first()
+        assertEquals(treatment, treatmentsBefore[0])
 
         treatmentDao.deleteById(treatment.id)
-        treatments = treatmentDao.getAllTreatmentsFlow().first()
-        assertEquals(0, treatments.size)
+        val treatmentsAfter = treatmentDao.getAllTreatmentsFlow().first()
+        assertEquals(0, treatmentsAfter.size)
     }
 
     @Test
@@ -99,16 +99,16 @@ class TreatmentDaoTest {
     fun insertTreatmentAndSetArchived() = runBlocking {
         treatmentDao.insert(treatment)
 
-        var treatments = treatmentDao.getAllTreatmentsFlow().first()
-        assertEquals(treatment, treatments[0])
+        val treatmentsBefore = treatmentDao.getAllTreatmentsFlow().first()
+        assertEquals(treatment, treatmentsBefore[0])
 
         treatmentDao.setArchived(treatment.id, true)
-        treatments = treatmentDao.getAllTreatmentsFlow().first()
-        assertEquals(true, treatments[0].isArchived)
+        val treatmentsAfterArchive = treatmentDao.getAllTreatmentsFlow().first()
+        assertEquals(true, treatmentsAfterArchive[0].isArchived)
 
         treatmentDao.setArchived(treatment.id, false)
-        treatments = treatmentDao.getAllTreatmentsFlow().first()
-        assertEquals(false, treatments[0].isArchived)
+        val treatmentsAfterUnarchive = treatmentDao.getAllTreatmentsFlow().first()
+        assertEquals(false, treatmentsAfterUnarchive[0].isArchived)
     }
 
     @Test
@@ -132,11 +132,11 @@ class TreatmentDaoTest {
             treatmentDao.insert(it)
         }
 
-        var treatments = treatmentDao.getAllTreatmentsFlow().first()
-        assertEquals(4, treatments.size)
+        val allTreatments = treatmentDao.getAllTreatmentsFlow().first()
+        assertEquals(4, allTreatments.size)
 
-        treatments = treatmentDao.getUpcomingExpirationDatesFlow(today).first()
-        assertEquals(3, treatments.size)
-        assertEquals(treatment, treatments[0])
+        val upcomingTreatments = treatmentDao.getUpcomingExpirationDatesFlow(today).first()
+        assertEquals(3, upcomingTreatments.size)
+        assertEquals(treatment, upcomingTreatments[0])
     }
 }

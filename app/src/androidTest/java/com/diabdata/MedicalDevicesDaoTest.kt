@@ -162,15 +162,15 @@ class MedicalDevicesDaoTest {
     fun updateDeviceTest() = runBlocking {
         medicalDeviceDao.insert(consumableDevice)
 
-        var medicalDevices = medicalDeviceDao.getAllMedicalDevices().first()
-        assertEquals(1, medicalDevices.size)
-        assertEquals(consumableDevice, medicalDevices[0])
+        val medicalDevicesBefore = medicalDeviceDao.getAllMedicalDevices().first()
+        assertEquals(1, medicalDevicesBefore.size)
+        assertEquals(consumableDevice, medicalDevicesBefore[0])
 
         medicalDeviceDao.update(consumableDevice.copy(name = "updated", referenceNumber = "updated"))
-        medicalDevices = medicalDeviceDao.getAllMedicalDevices().first()
-        assertEquals(1, medicalDevices.size)
-        assertEquals("updated", medicalDevices[0].name)
-        assertEquals("updated", medicalDevices[0].referenceNumber)
+        val medicalDevicesAfter = medicalDeviceDao.getAllMedicalDevices().first()
+        assertEquals(1, medicalDevicesAfter.size)
+        assertEquals("updated", medicalDevicesAfter[0].name)
+        assertEquals("updated", medicalDevicesAfter[0].referenceNumber)
     }
 
     @Test
@@ -178,13 +178,13 @@ class MedicalDevicesDaoTest {
     fun deleteDeviceTest() = runBlocking {
         medicalDeviceDao.insert(consumableDevice)
 
-        var medicalDevices = medicalDeviceDao.getAllMedicalDevices().first()
-        assertEquals(1, medicalDevices.size)
-        assertEquals(consumableDevice, medicalDevices[0])
+        val medicalDevicesBefore = medicalDeviceDao.getAllMedicalDevices().first()
+        assertEquals(1, medicalDevicesBefore.size)
+        assertEquals(consumableDevice, medicalDevicesBefore[0])
 
         medicalDeviceDao.deleteById(consumableDevice.id)
-        medicalDevices = medicalDeviceDao.getAllMedicalDevices().first()
-        assertEquals(0, medicalDevices.size)
+        val medicalDevicesAfter = medicalDeviceDao.getAllMedicalDevices().first()
+        assertEquals(0, medicalDevicesAfter.size)
     }
 
     @Test

@@ -85,12 +85,12 @@ class UserDetailsDaoTest {
     @Throws(Exception::class)
     fun insertAndDeleteUser() = runBlocking {
         userDetailsDao.upsertUserDetails(testUser)
-        var retrievedUser = userDetailsDao.getUserDetails().first()
-        assertEquals(testUser, retrievedUser)
+        val retrievedUserBefore = userDetailsDao.getUserDetails().first()
+        assertEquals(testUser, retrievedUserBefore)
 
         userDetailsDao.deleteUserDetails()
-        retrievedUser = userDetailsDao.getUserDetails().first()
-        assertEquals(null, retrievedUser)
+        val retrievedUserAfter = userDetailsDao.getUserDetails().first()
+        assertEquals(null, retrievedUserAfter)
     }
 
     @Test
@@ -114,13 +114,13 @@ class UserDetailsDaoTest {
     @Throws(Exception::class)
     fun insertUserAndUpdatePhoto() = runBlocking {
         userDetailsDao.upsertUserDetails(testUser)
-        var retrievedUser = userDetailsDao.getUserDetails().first()
-        assertEquals(testUser, retrievedUser)
+        val retrievedUserBefore = userDetailsDao.getUserDetails().first()
+        assertEquals(testUser, retrievedUserBefore)
 
         val photoPath = "updated/photo/path"
         userDetailsDao.updateProfilePhotoPath(photoPath)
 
-        retrievedUser = userDetailsDao.getUserDetails().first()
-        assertEquals(photoPath, retrievedUser!!.profilePhotoPath)
+        val retrievedUserAfter = userDetailsDao.getUserDetails().first()
+        assertEquals(photoPath, retrievedUserAfter!!.profilePhotoPath)
     }
 }

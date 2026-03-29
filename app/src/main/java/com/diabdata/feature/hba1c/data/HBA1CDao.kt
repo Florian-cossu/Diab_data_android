@@ -27,7 +27,7 @@ interface HBA1CDao {
     @Query("SELECT value,date FROM hba1c_entries WHERE (date >= :minDate AND date <= :maxDate) AND isArchived = 0 ORDER BY date ASC ")
     fun getHBA1CPlotData(minDate: LocalDate, maxDate: LocalDate): Flow<List<PlotPoint>>
 
-    @Query("SELECT * FROM hba1c_entries WHERE (isArchived = 0 OR isArchived = 1) ORDER BY date DESC")
+    @Query("SELECT * FROM hba1c_entries ORDER BY date DESC")
     fun getAllHBA1CFlow(): Flow<List<Hba1c>>
 
     @Query("SELECT * FROM hba1c_entries WHERE date >= :minDate AND isArchived = 0 ORDER BY date DESC")

@@ -42,6 +42,7 @@ class AppointmentDaoTest {
     val appointment3 = appointment.copy(id = 3, date = today.plusMonths(3).plusDays(8).atTime(16, 30), doctor = "Dr. Smith")
     val appointment4 = appointment.copy(id = 4, date = today.plusMonths(3).plusDays(20).atTime(16, 30), doctor = "Dr. Smith", type = AppointmentType.ANNUAL_CHECKUP)
 
+    val allAppointments = listOf(appointment, appointment2, appointment3, appointment4)
 
     @Before
     fun createDb() {
@@ -74,13 +75,13 @@ class AppointmentDaoTest {
     fun deleteAppointmentTest() = runBlocking {
         appointmentDao.insert(appointment)
 
-        var appointments = appointmentDao.getAllAppointmentsFlow().first()
-        assertEquals(1, appointments.size)
-        assertEquals(appointment, appointments[0])
+        val appointmentsBefore = appointmentDao.getAllAppointmentsFlow().first()
+        assertEquals(1, appointmentsBefore.size)
+        assertEquals(appointment, appointmentsBefore[0])
 
         appointmentDao.deleteById(appointment.id)
-        appointments = appointmentDao.getAllAppointmentsFlow().first()
-        assertEquals(0, appointments.size)
+        val appointmentsAfter = appointmentDao.getAllAppointmentsFlow().first()
+        assertEquals(0, appointmentsAfter.size)
     }
 
     @Test
@@ -88,14 +89,14 @@ class AppointmentDaoTest {
     fun updateAppointmentTest() = runBlocking {
         appointmentDao.insert(appointment)
 
-        var appointments = appointmentDao.getAllAppointmentsFlow().first()
-        assertEquals(1, appointments.size)
-        assertEquals(appointment, appointments[0])
+        val appointmentsBefore = appointmentDao.getAllAppointmentsFlow().first()
+        assertEquals(1, appointmentsBefore.size)
+        assertEquals(appointment, appointmentsBefore[0])
 
         appointmentDao.update(appointment.copy(doctor = "Dr. Smith"))
-        appointments = appointmentDao.getAllAppointmentsFlow().first()
-        assertEquals(1, appointments.size)
-        assertEquals("Dr. Smith", appointments[0].doctor)
+        val appointmentsAfter = appointmentDao.getAllAppointmentsFlow().first()
+        assertEquals(1, appointmentsAfter.size)
+        assertEquals("Dr. Smith", appointmentsAfter[0].doctor)
     }
 
     @Test
@@ -103,25 +104,24 @@ class AppointmentDaoTest {
     fun setAppointmentAsArchivedTest() = runBlocking {
         appointmentDao.insert(appointment)
 
-        var appointments = appointmentDao.getAllAppointmentsFlow().first()
-        assertEquals(1, appointments.size)
-        assertEquals(appointment, appointments[0])
+        val appointmentsBefore = appointmentDao.getAllAppointmentsFlow().first()
+        assertEquals(1, appointmentsBefore.size)
+        assertEquals(appointment, appointmentsBefore[0])
 
         appointmentDao.setArchived(appointment.id, true)
-        appointments = appointmentDao.getAllAppointmentsFlow().first()
-        assertEquals(1, appointments.size)
-        assertEquals(true, appointments[0].isArchived)
+        val appointmentsAfterArchive = appointmentDao.getAllAppointmentsFlow().first()
+        assertEquals(1, appointmentsAfterArchive.size)
+        assertEquals(true, appointmentsAfterArchive[0].isArchived)
 
         appointmentDao.setArchived(appointment.id, false)
-        appointments = appointmentDao.getAllAppointmentsFlow().first()
-        assertEquals(1, appointments.size)
-        assertEquals(false, appointments[0].isArchived)
+        val appointmentsAfterUnarchive = appointmentDao.getAllAppointmentsFlow().first()
+        assertEquals(1, appointmentsAfterUnarchive.size)
+        assertEquals(false, appointmentsAfterUnarchive[0].isArchived)
     }
 
     @Test
     @Throws(Exception::class)
     fun getAllAppointmentsTest() = runBlocking {
-        val allAppointments = listOf(appointment, appointment2, appointment3, appointment4)
         allAppointments.forEach { appointmentDao.insert(it) }
 
         val appointments = appointmentDao.getAllAppointmentsFlow().first()
@@ -131,7 +131,6 @@ class AppointmentDaoTest {
     @Test
     @Throws(Exception::class)
     fun getAllUpcomingAppointmentsTest() = runBlocking {
-        val allAppointments = listOf(appointment, appointment2, appointment3, appointment4)
         allAppointments.forEach { appointmentDao.insert(it) }
 
         val appointments = appointmentDao.getUpcomingAppointmentsFlow(today.atTime(0,0)).first()
