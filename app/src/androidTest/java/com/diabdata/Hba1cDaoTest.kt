@@ -17,6 +17,9 @@ import org.junit.runner.RunWith
 import java.io.IOException
 import java.time.LocalDate
 
+/**
+ * Tests for [HBA1CDao] found at [com.diabdata.feature.hba1c.data.HBA1CDao].
+ */
 @RunWith(AndroidJUnit4::class)
 class Hba1cDaoTest {
     private lateinit var hba1cDao: HBA1CDao

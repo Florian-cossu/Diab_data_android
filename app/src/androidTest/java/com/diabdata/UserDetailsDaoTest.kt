@@ -21,6 +21,9 @@ import org.junit.runner.RunWith
 import java.io.IOException
 import java.time.LocalDate
 
+/**
+ * Tests for [UserDetailsDao] found at [com.diabdata.feature.userProfile.data.UserDetailsDao].
+ */
 @RunWith(AndroidJUnit4::class)
 class UserDetailsDaoTest {
     private lateinit var userDetailsDao: UserDetailsDao

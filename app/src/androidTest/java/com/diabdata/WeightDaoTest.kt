@@ -17,6 +17,9 @@ import org.junit.runner.RunWith
 import java.io.IOException
 import java.time.LocalDate
 
+/**
+ * Tests for [WeightDao] found at [com.diabdata.feature.weight.data.WeightDao].
+ */
 @RunWith(AndroidJUnit4::class)
 class WeightDaoTest {
     private lateinit var weightDao: WeightDao
