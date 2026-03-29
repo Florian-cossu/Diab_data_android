@@ -21,16 +21,16 @@ interface MedicalDeviceDao {
     @Query("DELETE FROM medical_devices WHERE id = :id")
     suspend fun deleteById(id: Int)
 
-    @Query("SELECT * FROM medical_devices WHERE (isArchived = 0 OR isArchived = 1) ORDER BY date DESC")
+    @Query("SELECT * FROM medical_devices ORDER BY date DESC")
     fun getAllMedicalDevices(): Flow<List<MedicalDevice>>
 
-    @Query("SELECT * FROM medical_devices WHERE (isArchived = 0 OR isArchived = 1) AND (deviceType != 'WIRELESS_PATCH_REMOTE' OR deviceType != 'WIRED_PUMP') ORDER BY date DESC")
+    @Query("SELECT * FROM medical_devices WHERE (deviceType != 'WIRELESS_PATCH_REMOTE' AND deviceType != 'WIRED_PUMP') ORDER BY date DESC")
     fun getAllConsumableDevices(): Flow<List<MedicalDevice>>
 
-    @Query("SELECT * FROM medical_devices WHERE (isArchived = 0 OR isArchived = 1) AND (deviceType = 'WIRELESS_PATCH_REMOTE' OR deviceType = 'WIRED_PUMP') ORDER BY date DESC")
+    @Query("SELECT * FROM medical_devices WHERE (deviceType = 'WIRELESS_PATCH_REMOTE' OR deviceType = 'WIRED_PUMP') ORDER BY date DESC")
     fun getAllNonConsumableDevices(): Flow<List<MedicalDevice>>
 
-    @Query("SELECT * FROM medical_devices WHERE (isArchived = 0 OR isArchived = 1) AND (lifeSpanEndDate >= :today AND isFaulty = 0) AND isLifeSpanOver = 0 AND (deviceType != 'WIRELESS_PATCH_REMOTE' AND deviceType != 'WIRED_PUMP')")
+    @Query("SELECT * FROM medical_devices WHERE (lifeSpanEndDate >= :today AND isFaulty = 0) AND isLifeSpanOver = 0 AND (deviceType != 'WIRELESS_PATCH_REMOTE' AND deviceType != 'WIRED_PUMP')")
     fun getAllCurrentConsumableMedicalDevices(today: LocalDate): Flow<List<MedicalDevice>>
 
     @Query("SELECT * FROM medical_devices WHERE isFaulty=1 AND isReported=0")
@@ -55,10 +55,4 @@ interface MedicalDeviceDao {
         today: LocalDate,
         deviceType: MedicalDeviceInfoType
     ): List<MedicalDevice>
-
-    @Query("SELECT * FROM medical_devices WHERE :expirationDate >= :today AND isArchived = 0 ORDER BY deviceType, date ASC")
-    fun getUpcomingExpirationDatesFlow(
-        today: LocalDate,
-        expirationDate: LocalDate
-    ): Flow<List<MedicalDevice>>
 }

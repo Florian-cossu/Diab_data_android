@@ -17,6 +17,9 @@ import org.junit.runner.RunWith
 import java.io.IOException
 import java.time.LocalDate
 
+/**
+ * Tests for [ImportantDateDao] found at [com.diabdata.feature.importantDates.data.ImportantDateDao]
+ */
 @RunWith(AndroidJUnit4::class)
 class ImportantDatesDaoTest {
     private lateinit var importantDateDao: ImportantDateDao

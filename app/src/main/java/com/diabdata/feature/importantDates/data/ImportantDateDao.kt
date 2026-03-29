@@ -21,6 +21,6 @@ interface ImportantDateDao {
     @Query("DELETE FROM important_date_entries WHERE id = :id")
     suspend fun deleteById(id: Int)
 
-    @Query("SELECT * FROM important_date_entries WHERE (isArchived = 0 OR isArchived = 1) ORDER BY date DESC")
+    @Query("SELECT * FROM important_date_entries ORDER BY date DESC")
     fun getAllImportantDates(): Flow<List<ImportantDate>>
 }
