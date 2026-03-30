@@ -31,8 +31,7 @@ class MigrationTest {
     @Test
     @Throws(IOException::class)
     fun migrateAll() {
-        helper.createDatabase(diabDataTestDb, 19).apply {
-            close()
+        helper.createDatabase(diabDataTestDb, 19).use {
         }
 
         Room.databaseBuilder(
@@ -47,29 +46,25 @@ class MigrationTest {
     @Test
     @Throws(IOException::class)
     fun migrate20To21Test() {
-        val db = helper.createDatabase(diabDataTestDb, 20)
+        helper.createDatabase(diabDataTestDb, 20).use { db ->
+            db.execSQL(
+                """
+                    INSERT INTO appointments 
+                    (id, date, doctor, type, createdAt, isArchived, notes, updatedAt)
+                    VALUES (1, '2026-01-15', 'Dr. Dre', 'APPOINTMENT', '2026-01-15', 0, '', '2026-01-15')
+                """.trimIndent()
+            )
+        }
 
-        db.execSQL(
-            """
-                INSERT INTO appointments 
-                (id, date, doctor, type, createdAt, isArchived, notes, updatedAt)
-                VALUES (1, '2026-01-15', 'Dr. Dre', 'APPOINTMENT', '2026-01-15', 0, '', '2026-01-15')
-            """.trimIndent()
-        )
+        helper.runMigrationsAndValidate(diabDataTestDb, 21, true, MIGRATION_20_21).use { updatedDb ->
+            updatedDb.query("""
+                SELECT date FROM appointments
+            """.trimIndent()).use { updatedAppointment ->
+                updatedAppointment.moveToFirst()
 
-        db.close()
-
-        val updatedDb = helper.runMigrationsAndValidate(diabDataTestDb, 21, true, MIGRATION_20_21)
-
-        val updatedAppointment = updatedDb.query("""
-            SELECT date FROM appointments
-        """.trimIndent())
-
-        updatedAppointment.moveToFirst()
-
-        assertEquals(1, updatedAppointment.count)
-        assertEquals("2026-01-15T00:00", updatedAppointment.getString(0))
-
-        updatedDb.close()
+                assertEquals(1, updatedAppointment.count)
+                assertEquals("2026-01-15T00:00", updatedAppointment.getString(0))
+            }
+        }
     }
 }
