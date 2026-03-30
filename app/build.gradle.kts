@@ -34,6 +34,12 @@ android {
         }
     }
 
+    sourceSets {
+        getByName("androidTest") {
+            assets.directories.add("$projectDir/schemas")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -143,7 +149,7 @@ dependencies {
     implementation(libs.androidx.hilt.common)
     implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.room.testing)
+    androidTestImplementation(libs.androidx.room.testing)
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.hilt.compiler)
 
