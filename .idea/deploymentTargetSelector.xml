@@ -24,19 +24,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="Hba1cEntityTest">
+      <SelectionState runConfigName="AppointmentDaoTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ImportantDatesEntityTest">
+      <SelectionState runConfigName="MedicalDevicesDaoTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="Hba1cDaoTest">
+      <SelectionState runConfigName="getAllFaultyDevicesTest()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ImportantDatesDaoTest">
+      <SelectionState runConfigName="Tests in 'com.diabdata'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="WeightDaoTest">
+      <SelectionState runConfigName="MigrationTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

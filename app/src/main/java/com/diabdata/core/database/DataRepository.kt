@@ -198,11 +198,6 @@ class DataRepository(
     fun getAllFaultyBatchNumbers(): Flow<List<FaultyBatchCount>> =
         medicalDevicesDao.getFaultyBatchNumbersCounts()
 
-
-    /** Flow of upcoming devices expiration dates */
-    fun getUpcomingDevicesExpDates(date: LocalDate): Flow<List<MedicalDevice>> =
-        medicalDevicesDao.getUpcomingExpirationDatesFlow(LocalDate.now(), date)
-
     // ----------------
     // Medical devices
     // ----------------
