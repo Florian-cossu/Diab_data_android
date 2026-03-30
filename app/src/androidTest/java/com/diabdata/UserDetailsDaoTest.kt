@@ -54,7 +54,7 @@ class UserDetailsDaoTest {
         targetGlucoseMax = 120f,
         glucoseUnit = GlucoseUnit.MG_DL,
         emergencyContactName = "Jane Doe",
-        emergencyContactPhone = " 123-456-7890"
+        emergencyContactPhone = "123-456-7890"
     )
 
     @Before
