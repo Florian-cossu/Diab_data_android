@@ -111,18 +111,6 @@ class MedicalDevicesDaoTest {
         nonConsumableDevice2
     )
 
-    val allConsumableDevices = listOf(
-        consumableDevice,
-        consumableDeviceFaulty,
-        consumableDeviceFaultyReported,
-        consumableDeviceExpired
-    )
-
-    val allNonConsumableDevices = listOf(
-        nonConsumableDevice,
-        nonConsumableDevice2
-    )
-
     @Before
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
