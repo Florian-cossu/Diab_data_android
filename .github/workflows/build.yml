@@ -11,6 +11,9 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v5
+      - name: Create local.properties
+        run: |
+          echo "RELAY_SERVER_URL=${{ secrets.RELAY_SERVER_URL }}" >> local.properties
       - name: Install Java 21 temurin JDK
         uses: actions/setup-java@v4
         with:
