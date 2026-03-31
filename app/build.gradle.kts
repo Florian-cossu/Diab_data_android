@@ -1,10 +1,18 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
+}
+
+val localProperties = Properties()
+val localPropertiesFile: File? = rootProject.file("local.properties")
+if (localPropertiesFile?.exists() == true) {
+    localProperties.load(localPropertiesFile.inputStream())
 }
 
 android {
@@ -18,6 +26,7 @@ android {
         targetSdk = 36
         versionCode = getVersionCode()
         versionName = "4.9.0"
+        buildConfigField("String", "RELAY_SERVER_URL","\"${localProperties.getProperty("RELAY_SERVER_URL", "")}\"")
         buildConfigField("String", "MEDICATION_GTIN_FILE_VERSION", "\"1.2.0\"")
         buildConfigField("String", "MEDICAL_DEVICES_GTIN_FILE_VERSION", "\"1.0.3\"")
 
@@ -67,7 +76,7 @@ ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+tasks.withType<KotlinCompile>().configureEach {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_11)
         freeCompilerArgs.addAll(

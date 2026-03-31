@@ -96,6 +96,14 @@ Clone repository
 git clone https://github.com/Florian-cossu/Diab_data_android.git
 ```
 
+#### Setting up your variables
+
+Next rename the local.properties.sample file to local.properties and fill in the required fields:
+```
+sdk.dir=/path/to/your/sdk
+RELAY_SERVER_URL=your.relay.adress
+```
+
 You can then open the project in Android Studio.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

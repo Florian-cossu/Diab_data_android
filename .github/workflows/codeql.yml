@@ -56,6 +56,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+    - name: Create local.properties
+      run: |
+        echo "RELAY_SERVER_URL=${{ secrets.RELAY_SERVER_URL }}" >> local.properties
     - name: Install Java 21
       uses: actions/setup-java@v4
       with:
