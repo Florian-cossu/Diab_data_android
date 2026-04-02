@@ -2,9 +2,10 @@
 
 <!-- PROJECT SHIELDS -->
 
-[![Static Badge](https://img.shields.io/badge/CONTRIBUTORS-1-blue)](https://github.com/Florian-cossu/Diab_data_android/graphs/contributors)
-[![Static Badge](https://img.shields.io/badge/VERSION-4.9.0-teal)](https://github.com/Florian-cossu/Diab_data_android/releases)
-[![Static Badge](https://img.shields.io/badge/OWNER-Florian%20Cossu-38bdf8)](https://github.com/Florian-cossu)
+![GitHub contributors](https://img.shields.io/github/contributors/DiabdataApp/diab-data-android?color=blue&label=CONTRIBUTORS)
+![GitHub Release](https://img.shields.io/github/v/release/DiabdataApp/diab-data-android?color=teal&label=VERSION)
+![Build Status](https://img.shields.io/github/actions/workflow/status/DiabdataApp/diab-data-android/build.yml?branch=main&label=BUILD)
+![GitHub top language](https://img.shields.io/github/languages/top/DiabdataApp/diab-data-android)
 
 <!-- PROJECT LOGO -->
 <br />
